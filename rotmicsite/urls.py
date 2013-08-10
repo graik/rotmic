@@ -6,8 +6,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'rotmicproject.views.home', name='home'),
-    # url(r'^rotmicproject/', include('rotmicproject.foo.urls')),
+    # url(r'^$', 'rotmicsite.views.home', name='home'),
+    # url(r'^rotmicsite/', include('rotmicsite.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
