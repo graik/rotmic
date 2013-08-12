@@ -1,4 +1,5 @@
-# from rotmic.models import Unit
 from django.contrib import admin
 
-# admin.site.register(Unit)
+from rotmic.models import DnaComponent
+
+admin.site.register(DnaComponent)
