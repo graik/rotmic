@@ -4,6 +4,7 @@ import datetime
 
 from rotmic.models import DnaComponent
 from rotmic.utils.customadmin import ViewFirstModelAdmin
+from rotmic.forms import DnaComponentForm
 
 
 class BaseAdminMixin():
@@ -22,6 +23,27 @@ class BaseAdminMixin():
 
 
 class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
-    pass
+    form = DnaComponentForm
+
+    fieldsets = (
+        (None, {
+            'fields': (('displayId', 'name','status'),
+##                       ('componentType','componentSubType',
+                        ('circular',),
+                       ('vectorBackbone','marker','insert' ),
+                       ('registeredBy','registeredAt')
+                       )
+        }
+         ),
+        ('Details', {
+            'fields' : (('comment',),
+                        ('sequence'),
+##                        ('attachements',)
+                        )
+        }
+         ),            
+    )
+
+    list_display = ('displayId', 'name', 'registeredBy','insert','vectorBackbone', 'comment','status')
 
 admin.site.register(DnaComponent, DnaComponentAdmin)
