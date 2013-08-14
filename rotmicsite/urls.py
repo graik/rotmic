@@ -16,6 +16,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^rotmic/dna/(?P<displayId>.*)/$',view_dnacomponent,name='dna'),
+##    url(r'^rotmic/dna/(?P<displayId>.*)/$',view_dnacomponent,name='dna'),
     url(r'^', include(admin.site.urls)),
 )
