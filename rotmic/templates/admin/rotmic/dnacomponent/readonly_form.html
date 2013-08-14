@@ -14,7 +14,7 @@
     <!-- Content -->
     <div id="content" class="colM">
         
-        <h1>DNA: {{ dnaComponent.displayId }} ({{ dnaComponent.name }})<a href="/rotmic/dnacomponent/{{ dnaComponent.id }}/"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a></h1>
+        <h1>DNA: {{ original.displayId }} ({{ original.name }})<a href="/rotmic/dnacomponent/{{ original.id }}/"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a></h1>
         <div id="content-main">
         
 <form enctype="multipart/form-data" action="" method="post" id="dnacomponent_form"><input type='hidden' name='csrfmiddlewaretoken' value='EknmgaCUBMqzsw9pwmQU3V4QhERiqKaO' />
@@ -24,19 +24,19 @@
     <div class="module" id="recent-actions-module">
         <h2>{% trans 'Specifications' %}</h2>
         <h3>{% trans 'Status' %}</h3>
-            <p>{% trans dnaComponent.status %}</p>
+            <p>{% trans original.status %}</p>
             <ul class="actionlist">
         <h3>{% trans 'Type / Categorie' %}</h3>
-<!--        <p>{% for o in dnaComponent.componentSubType.all %}{{ o }}-->
+<!--        <p>{% for o in original.componentSubType.all %}{{ o }}-->
 <!--            /{{ o.subTypeOf }}        -->
 <!--        {% endfor %}</p>-->
         
         
         <h3>{% trans 'Marker' %}</h3>
-        <p>{% for o in dnaComponent.marker.all %}{{ o.name }}<br>{% endfor %}</p>
+        <p>{% for o in original.marker.all %}{{ o.name }}<br>{% endfor %}</p>
        
         <h3>{% trans 'Circular' %}</h3>
-        <p>{% if dnaComponent.circular == True %} <img src="/static/admin/img/icon-yes.gif" alt="True" /> {% endif %}
+        <p>{% if original.circular == True %} <img src="/static/admin/img/icon-yes.gif" alt="True" /> {% endif %}
                
             <ul class="actionlist">
             
@@ -51,38 +51,38 @@
                 <CAPTION> Description </CAPTION> 
                     <TR>
                     <TH> <div>
-                            <p>{{ dnaComponent.comment }}</p>
+                            <p>{{ original.comment }}</p>
                         </TH> 
                     </TR>
                 <TR> 
                 
                         <TH> <div class="field-box field-baseVector">
                         <label>Vector Backbone :</label>
-                            <p>{% if dnaComponent.vectorBackbone != None %} {{ dnaComponent.vectorBackbone }}  {% endif %}</p>
+                            <p>{% if original.vectorBackbone != None %} {{ original.vectorBackbone }}  {% endif %}</p>
                              </div>
                        </TH> 
                 </TR>
                 <TR>
                 <TH><div class="field-box field-insert">
                         <label class="inline">Insert:</label>
-                            <p>{% if dnaComponent.insert != None %} {{ dnaComponent.insert }}  {% endif %}</p>
+                            <p>{% if original.insert != None %} {{ original.insert }}  {% endif %}</p>
                 </div></TH>
                 </TR>
                 <TR>
                 <TH><div class="field-box field-created_by">
                         <label>Created by:</label>
-                            <p>{{dnaComponent.registeredBy.get_username}} ({{dnaComponent.registeredBy.get_full_name}})</p>
+                            <p>{{original.registeredBy.get_username}} ({{original.registeredBy.get_full_name}})</p>
                 </div></TH>
                 </TR>
                 <TR>
                 <TH><div class="field-box field-registration_date">
                         <label>Registred:</label>
-                            <p>{{ dnaComponent.registeredAt }}</p>
+                            <p>{{ original.registeredAt }}</p>
                 </div></TH>
                 
                 <TH><div class="field-box field-source">
                         <label class="inline">Source:</label>
-                            <p>{% for o in dnaComponent.source.all %}
+                            <p>{% for o in original.source.all %}
                                 {{ o }}
                                {% endfor %}</p>
                         <p class="help">external source</p>
@@ -99,7 +99,7 @@
 <!--    <h2>Sequence</h2>-->
 <!--    <TABLE BORDER="0" width="600"> -->
 <!--                <pre class="literal-block">-->
-<!--                            <p> {% for o in dnaComponent.split_len %}-->
+<!--                            <p> {% for o in original.split_len %}-->
 <!--                            {{ o }}{% endfor %}</p>-->
 <!--                        <p class="help">nucleotide sequence</p>-->
 <!--                </pre>   -->
@@ -111,7 +111,7 @@
 <!--<fieldset class="module aligned ">-->
 <!--    <h2>Attachements</h2>-->
 <!--    <TABLE BORDER="0"> -->
-<!--        {% for o in dnaComponent.attachements.all %}   -->
+<!--        {% for o in original.attachements.all %}   -->
 <!--                <TR> -->
 <!--                        <TH><p>{{ o.get_absolute_html_url|safe }}</p></TH>-->
 <!--                        <TH><p><{{ o.description }}</p></TH>-->
@@ -133,10 +133,10 @@
 <!--                        <TH>Amount</TH>-->
 <!---->
 <!--                </TR> -->
-<!--        {% for o in dnaComponent.related_dnaSamples.all %}   -->
+<!--        {% for o in original.related_dnaSamples.all %}   -->
 <!--                <TR> -->
 <!--                        <TD><a href="../../reviewplasmid/{{ o.id }}/">{{ o.displayId|safe }}</a></TD>-->
-<!--                        <TD><a href="../../reviewdna/{{ o.dnaComponent.displayId }}/">{{ o.dnaComponent|safe }}</a></TD>-->
+<!--                        <TD><a href="../../reviewdna/{{ o.original.displayId }}/">{{ o.original|safe }}</a></TD>-->
 <!--                        <TD><a href="../../reviewcell/{{ o.inCell.id }}/">{{ o.inCell|safe }}</a></TD>-->
 <!--                        <TD>{{ o.status|safe }}</TD>-->
 <!--                        <TD>{% if o.concentration != None %} {{ o.concentration }}{{ o.concentrationUnit }} {% endif %}</TD>-->
