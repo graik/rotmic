@@ -23,6 +23,7 @@ from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 
+##import rotmic.models.componentTypes as T
 
 class UserMixin( models.Model ):
     """
@@ -99,9 +100,9 @@ class DnaComponent(Component):
     sequence = models.TextField( help_text='nucleotide sequence', blank=True, 
                                  null=True )      
     
-##    componentSubType = models.ManyToManyField(DnaComponentType, 
-##                                           verbose_name='Type',
-##                                           related_name='Type',  blank=True, null=True)    
+    componentSubType = models.ManyToManyField('DnaComponentType', 
+                                           verbose_name='Type',
+                                           related_name='Type',  blank=True, null=True)    
     
     circular = models.BooleanField( 'Circular', default=True)
     
