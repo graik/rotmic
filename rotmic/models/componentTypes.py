@@ -28,6 +28,11 @@ class DnaComponentType( ComponentType ):
     subTypeOf = models.ForeignKey('self', blank=True, 
                             null=True, related_name='subTypes')
     
+    def __unicode__(self):
+        r = unicode(self.name)
+        if self.subTypeOf:
+            r = self.subTypeOf.__unicode__() + ' / ' + r
+        return r    
   
     class Meta:
         app_label = 'rotmic' 
