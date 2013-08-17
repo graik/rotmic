@@ -2,7 +2,7 @@ from django.contrib import admin
 
 import datetime
 
-from rotmic.models import DnaComponent
+from rotmic.models import DnaComponent, DnaComponentType
 from rotmic.utils.customadmin import ViewFirstModelAdmin
 from rotmic.forms import DnaComponentForm
 
@@ -28,8 +28,7 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     fieldsets = (
         (None, {
             'fields': (('displayId', 'name','status'),
-##                       ('componentType','componentSubType',
-                        ('circular',),
+                       ('componentType', 'circular',),
                        ('vectorBackbone','marker','insert' ),
                        ('registeredBy','registeredAt')
                        )
@@ -47,3 +46,4 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     list_display = ('displayId', 'name', 'registeredBy','insert','vectorBackbone', 'comment','status')
 
 admin.site.register(DnaComponent, DnaComponentAdmin)
+admin.site.register(DnaComponentType)

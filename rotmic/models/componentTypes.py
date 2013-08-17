@@ -1,6 +1,7 @@
 """definition of Component Categories (types)"""
 
-from django.contrib.admin import models
+from django.db import models
+
 
 class ComponentType( models.Model ):
     """

@@ -100,7 +100,7 @@ class DnaComponent(Component):
     sequence = models.TextField( help_text='nucleotide sequence', blank=True, 
                                  null=True )      
     
-    componentSubType = models.ManyToManyField('DnaComponentType', 
+    componentType = models.ManyToManyField('DnaComponentType', 
                                            verbose_name='Type',
                                            related_name='Type',  blank=True, null=True)    
     
