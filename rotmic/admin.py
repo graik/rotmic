@@ -29,7 +29,7 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         (None, {
             'fields': (('displayId', 'name','status'),
                        ('componentCategory', 'componentType', 'circular',),
-                       ('vectorBackbone','marker','insert' ),
+                       ('insert', 'vectorBackbone','marker' ),
                        ('registeredBy','registeredAt')
                        )
         }

@@ -7,7 +7,7 @@ class DnaComponentForm(forms.ModelForm):
     componentCategory = forms.ModelChoiceField(label='Category',
                                                queryset=DnaComponentType.objects.filter(subTypeOf=None),
                                                required=True, 
-                                               widget=forms.RadioSelect, empty_label=None)
+                                               empty_label=None)
     componentType = forms.ModelChoiceField(label='Type',
                                            queryset=DnaComponentType.objects.exclude(subTypeOf=None),
                                            required=True, 
