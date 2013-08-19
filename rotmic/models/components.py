@@ -100,9 +100,9 @@ class DnaComponent(Component):
     sequence = models.TextField( help_text='nucleotide sequence', blank=True, 
                                  null=True )      
     
-    componentType = models.ManyToManyField('DnaComponentType', 
+    componentType = models.ForeignKey('DnaComponentType', 
                                            verbose_name='Type',
-                                           related_name='Type',  blank=True, null=True)    
+                                           related_name='Type',  blank=False )    
     
     circular = models.BooleanField( 'Circular', default=True)
     

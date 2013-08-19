@@ -14,7 +14,7 @@
     <!-- Content -->
     <div id="content" class="colM">
         
-        <h1>DNA: {{ original.displayId }} ({{ original.name }})<a href="/rotmic/dnacomponent/{{ original.id }}/"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a></h1>
+        <h1>DNA: {{ original.displayId }} ({{ original.name }})<a href="/rotmic/dnacomponent/{{ original.id }}/edit"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a></h1>
         <div id="content-main">
         
 <form enctype="multipart/form-data" action="" method="post" id="dnacomponent_form"><input type='hidden' name='csrfmiddlewaretoken' value='EknmgaCUBMqzsw9pwmQU3V4QhERiqKaO' />
@@ -26,10 +26,8 @@
         <h3>{% trans 'Status' %}</h3>
             <p>{% trans original.status %}</p>
             <ul class="actionlist">
-        <h3>{% trans 'Type / Categorie' %}</h3>
-<!--        <p>{% for o in original.componentSubType.all %}{{ o }}-->
-<!--            /{{ o.subTypeOf }}        -->
-<!--        {% endfor %}</p>-->
+        <h3>{% trans 'Type / Category' %}</h3>
+        {{original.componentType }}
         
         
         <h3>{% trans 'Marker' %}</h3>
