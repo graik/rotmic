@@ -70,5 +70,23 @@
         "uri": "", 
         "name": "ampR"
     }
+},
+{
+    "pk": 13, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 1, 
+        "uri": "", 
+        "name": "generic plasmid"
+    }
+},
+{
+    "pk": 14, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 8, 
+        "uri": "", 
+        "name": "generic insert"
+    }
 }
 ]
