@@ -5,6 +5,11 @@ from rotmic.models import DnaComponent, DnaComponentType
 
 class DnaComponentForm(forms.ModelForm):
     
+    typeInsert = DnaComponentType.objects.get(name='Insert')
+    typePlasmid = DnaComponentType.objects.get(name='Plasmid')
+    typeVectorBB = DnaComponentType.objects.get(name='Vector Backbone')
+    typeMarker = DnaComponentType.objects.get(name='Marker')
+    
     componentCategory = forms.ModelChoiceField(label='Category',
                                                queryset=DnaComponentType.objects.filter(subTypeOf=None),
                                                required=True, 
@@ -15,9 +20,18 @@ class DnaComponentForm(forms.ModelForm):
                                            queryset=DnaComponentType.objects.exclude(subTypeOf=None),
                                            required=True,
                                            initial=DnaComponentType.objects.get(name='generic plasmid').id,
-                                           widget=forms.RadioSelect, empty_label=None)
+                                           empty_label=None)
     
-    
+    insert = forms.ModelChoiceField(label='Insert',
+                                    queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeInsert),
+                                    required=False,
+                                    empty_label='no insert')
+        
+    vectorBackbone = forms.ModelChoiceField(label='Vector Backbone',
+                                    queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeVectorBB),
+                                    required=False,
+                                    empty_label='---specify backbone---')
+
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
