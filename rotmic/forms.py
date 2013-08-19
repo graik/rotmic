@@ -6,7 +6,6 @@ from rotmic.models import DnaComponent, DnaComponentType
 class DnaComponentForm(forms.ModelForm):
     
     typeInsert = DnaComponentType.objects.get(name='Insert')
-    typePlasmid = DnaComponentType.objects.get(name='Plasmid')
     typeVectorBB = DnaComponentType.objects.get(name='Vector Backbone')
     typeMarker = DnaComponentType.objects.get(name='Marker')
     
@@ -31,6 +30,11 @@ class DnaComponentForm(forms.ModelForm):
                                     queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeVectorBB),
                                     required=False,
                                     empty_label='---specify backbone---')
+
+    marker = forms.ModelMultipleChoiceField(label='Marker',
+                                    queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeMarker),
+                                    required=False)
+
 
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
