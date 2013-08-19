@@ -1,0 +1,256 @@
+{% extends "admin/change_form.html" %}
+
+{% load i18n admin_modify  %}
+
+{% block after_field_sets %}
+
+
+{% load staticfiles %}
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+
+
+<script language=javascript type='text/javascript'>
+
+    var txtContent;
+    var currSelectedVectorSeq = '';
+    var currSelectedAnnot = '';
+    var jsonObjectPartTypes;
+    var jsonObjectOptimizedFor;
+
+    window.onload = function()
+    {
+        //adding links automaticaly
+        document.getElementById("add_id_vectorBackbone").href = "admin/rotmic/dnacomponent/add/?componentType="+VectorIndexType();
+        document.getElementById("add_id_insert").href = "admin/rotmic/dnacomponent/add/?componentType="+InsertIndexType();
+        document.getElementById("add_id_marker").href = "admin/rotmic/dnacomponent/add/?componentType="+MarkerIndexType();
+        
+        
+        initIdDiv();
+        listContent = document.getElementById("id_componentCategory");
+
+        listContentChild = document.getElementById("id_componentType");
+         if (listContentChild.selectedIndex==-1){
+            listContent.selectedIndex = PlasmidIndexType();
+            i = listContent.selectedIndex;
+            selectedValue = listContent.options[i].text;
+            updateList(selectedValue,'id_componentType');
+            hideShowElementMain('Plasmid');
+        } else {
+        
+            selectedSubType = listContentChild.selectedIndex;
+            childValue = listContentChild[selectedSubType].value;
+            
+            setParentType(childValue,'id_componentCategory');
+            
+            listContent = document.getElementById("id_componentCategory");
+            i = listContent.selectedIndex;
+            selectedValue = listContent.options[i].text;
+            hideShowElementMain(selectedValue);
+            updateList(selectedValue,'id_componentType');
+            
+            var selectobject=document.getElementById('id_componentType')
+                    for (var i=0; i<selectobject.length; i++){
+                        selectobject.options[i].selected = false;                            
+                    }
+                    for (var i=0; i<selectobject.length; i++){
+                        if (selectobject.options[i].value==childValue){
+                        selectobject.options[i].selected = true;                            
+                    }
+                }
+        }
+        
+        listContent.onchange = listTypeOnChange;
+        clearNoneSelected('id_attachements');
+    };
+    
+    function clearNoneSelected(listboxID){
+        var mylistbox = document.getElementById(listboxID);
+        if (mylistbox!=null){
+            for(var i=mylistbox.options.length-1;i>=0;i--){
+                if(!mylistbox.options[i].selected) {
+                    mylistbox.remove(i);
+                }
+            }
+        }
+    }
+    
+    function PlasmidIndexType(){
+        var selectobject=document.getElementById("id_componentCategory")
+            for (var i=0; i<selectobject.length; i++){
+                if (selectobject.options[i].text=='Plasmid') {
+                    return i;
+                }
+    }
+    return 0;
+
+    }
+    function InsertIndexType(){
+        var selectobject=document.getElementById("id_componentCategory")
+            for (var i=0; i<selectobject.length; i++){
+                if (selectobject.options[i].text=='Insert') {
+                    return selectobject.options[i].value;
+                }
+        }
+        return 0;
+
+    }
+    function MarkerIndexType(){
+        var selectobject=document.getElementById("id_componentCategory")
+            for (var i=0; i<selectobject.length; i++){
+                if (selectobject.options[i].text=='Marker') {
+                    return selectobject.options[i].value;
+                }
+        }
+        return 0;
+    }
+    function VectorIndexType(){
+        var selectobject=document.getElementById("id_componentCategory")
+            for (var i=0; i<selectobject.length; i++){
+                if (selectobject.options[i].text=='Vector Backbone') {
+                    return selectobject.options[i].value;
+                }
+        }
+        return 0;
+    }
+    function listTypeOnChange(e){
+
+    listContent = document.getElementById("id_componentCategory");
+    i = listContent.selectedIndex;
+    selectedValue = listContent.options[i].text;
+    updateList(selectedValue,'id_componentType');
+    hideShowElementMain(selectedValue);
+    }
+    function initIdDiv()
+    {
+        try{
+            var scr = "";
+            var divs = document.getElementsByTagName("div");
+                for(var i = 0; i < divs.length; i++){
+                    //do assigning an id name to be retrieved later on to each div like
+                    if (divs[i].className=='field-box field-insert') {
+                        divs[i].id = 'id_field_insert';
+                        } else {
+                        if (divs[i].className=='field-box field-marker') {
+                        divs[i].id = 'id_field_marker';
+                        } else {
+                            if (divs[i].className=='field-box field-vectorBackbone') {
+                                divs[i].id = 'id_field_vectorBackbone';
+                            }
+                        }   
+                    }
+                    }
+                
+        } catch (e) {
+            log(e.message);
+        }
+    
+    
+    }
+    function hideShowElementMain(selectedValue)
+    {
+        switch (selectedValue)
+        {
+        case 'Plasmid':
+            HideShowElement('id_field_vectorBackbone','visible');
+            HideShowElement('id_field_marker','hidden');
+            HideShowElement('id_field_insert','visible');
+            break;       
+        case 'Vector Backbone':
+            HideShowElement('id_field_vectorBackbone','hidden');
+            HideShowElement('id_field_marker','visible');
+            HideShowElement('id_field_insert','hidden');
+            break;
+        case 'Insert':
+            HideShowElement('id_field_vectorBackbone','hidden');
+            HideShowElement('id_field_marker','visible');
+            HideShowElement('id_field_insert','hidden');
+            break;
+        case 'Marker':
+            HideShowElement('id_field_vectorBackbone','hidden');
+            HideShowElement('id_field_marker','hidden');
+            HideShowElement('id_field_insert','hidden');
+            break;
+        default:
+            break;
+        
+        }        
+    }
+
+    function setParentType(selectedSubTypeID,elementID){
+        clearListBox('id_componentType');   
+    
+            $.ajax({
+                async: false,
+                type: 'GET',
+                url: "/getParentTypeDnaInfo/"+selectedSubTypeID+"/",
+                success: function(data){
+                    p = jQuery.parseJSON(data);
+                    var mylistbox = document.getElementById(elementID);
+                    for (var key in p) {
+                                if (p.hasOwnProperty(key)) {
+                                var selectobject=document.getElementById(elementID)
+                                    for (var i=0; i<selectobject.length; i++){
+                                        if (selectobject.options[i].value==p[key].pk){
+                                        selectobject.options[i].selected = true;
+                                        }
+                                }
+                            }
+                        }                            
+                }
+            }                
+        );	
+    
+    }
+    function updateList(selectedType,elementID){
+        var myCricularElement = document.getElementById('id_circular');
+        if (selectedType=='Plasmid'){
+            myCricularElement.checked = true;
+        }else{
+            myCricularElement.checked = false;
+        };
+         
+        clearListBox('id_componentType');        
+
+        $.ajax({
+                        async: false,
+                        type: 'GET',
+                        url: "/getTypeDnaInfo/"+selectedType+"/",
+                        success: function(data){
+                            p = jQuery.parseJSON(data);
+                            var mylistbox = document.getElementById(elementID);
+                            for (var key in p) {
+                                        if (p.hasOwnProperty(key)) {
+                                        mylistbox.options[key] = new Option(p[key].fields.name, p[key].pk);
+                                    }
+                                }                            
+                        }
+                    }                
+                    );	
+        var mylistbox = document.getElementById(elementID);
+        mylistbox.options[0].selected = true;
+        };
+    
+    
+    function HideShowElement(elementName,status) {
+        if (document.getElementById) { // DOM3 = IE5, NS6
+        document.getElementById(elementName).style.visibility = status;
+        }
+    }    
+    
+    function clearListBox(listboxID)
+    {
+        // returns 1 if all items are sucessfully removed
+        // otherwise returns zero.
+        var mylistbox = document.getElementById(listboxID);
+        if(mylistbox == null)
+         return 1;
+        while(mylistbox.length > 0)
+        {
+         mylistbox.remove(0);
+        }
+        return 1;
+    }
+</script>
+{% endblock %}

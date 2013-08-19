@@ -2,7 +2,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.template import loader, Context, RequestContext
 
-from rotmic.models import DnaComponent
+from rotmic.models import DnaComponent, DnaComponentType
 
 def view_dnacomponent(request, displayId):
     """DC View"""
