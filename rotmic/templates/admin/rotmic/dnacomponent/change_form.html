@@ -1,0 +1,74 @@
+{% extends "admin/change_form.html" %}
+
+{% load i18n admin_modify  %}
+
+{% block after_field_sets %}
+
+{% load staticfiles %}
+
+<script language=javascript type='text/javascript'>
+
+    // Assign IDs to vector, marker and insert fields (complete <div> with Label and help text)
+    // By default, input elements themselves are accessible by, for example:
+    // "id_marker" and "add_id_marker" (the Plus symbol for sub-forms). 
+    function initIdDiv(){
+        try{
+            var scr = "";
+            var divs = document.getElementsByTagName("div");
+            for(var i = 0; i < divs.length; i++){
+                if (divs[i].className=='field-box field-insert') {
+                    divs[i].id = 'id_field_insert';
+                }
+                if (divs[i].className=='field-box field-marker') {
+                    divs[i].id = 'id_field_marker';
+                }
+                if (divs[i].className=='field-box field-vectorBackbone') {
+                    divs[i].id = 'id_field_vectorBackbone';
+                }
+            }    
+        } catch (e) {
+            log(e.message);
+        }
+    }
+
+    function hideShow() {
+<!--        alert( document.getElementById('id_field_insert') )-->
+        categoryElement = document.getElementById('id_componentCategory');
+        category = categoryElement.options[categoryElement.selectedIndex].label
+
+        switch ( category ) {
+            case 'Vector Backbone':
+                document.getElementById('id_field_insert').style.visibility = 'hidden';
+                document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
+                document.getElementById('id_field_marker').style.visibility = 'visible';
+                break;
+            case 'Plasmid':
+                document.getElementById('id_field_insert').style.visibility = 'visible';
+                document.getElementById('id_field_vectorBackbone').style.visibility = 'visible';
+                document.getElementById('id_field_marker').style.visibility = 'hidden';
+                break;
+            case 'Insert':
+                document.getElementById('id_field_insert').style.visibility = 'hidden';
+                document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
+                document.getElementById('id_field_marker').style.visibility = 'visible';
+                break;
+            case 'Marker':
+                document.getElementById('id_field_insert').style.visibility = 'hidden';
+                document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
+                document.getElementById('id_field_marker').style.visibility = 'hidden';
+                break;
+            default:
+                break;
+        }
+    }
+    
+    window.onload = function() {
+        initIdDiv();
+        document.getElementById( 'id_componentCategory' ).onchange = hideShow;
+        hideShow();
+    };
+    
+</script>
+
+
+{% endblock %}
