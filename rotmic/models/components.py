@@ -23,7 +23,6 @@ from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 
-##import rotmic.models.componentTypes as T
 
 class UserMixin( models.Model ):
     """
@@ -37,7 +36,7 @@ class UserMixin( models.Model ):
                                     verbose_name="registered")
     
     class Meta:
-        app_label = 'labrack'        
+        app_label = 'rotmic'        
         abstract = True
 
 
@@ -66,10 +65,6 @@ class Component(UserMixin, models.Model):
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='planning')
 
-    def formatedUrl(self):
-        name = self.name or ''
-        return mark_safe("<a href='/admin/labrack/" +self.get_relative_url() \
-                           + "'>" + self.displayId + ' - ' +  name + "</a>")
     
     def __unicode__(self):
         name = self.name or ''
