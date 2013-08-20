@@ -1,6 +1,7 @@
 """definition of Component Categories (types)"""
 
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class ComponentType( models.Model ):
@@ -15,6 +16,19 @@ class ComponentType( models.Model ):
 
     def __unicode__( self ):
         return unicode(self.name)
+
+    def save(self, *args, **kwargs):
+        ## enforce single parent?
+        return super(ComponentType,self).save(*args, **kwargs)
+        
+    def clean(self):
+        """Enforce single level of type inheritance."""
+        assert not type(self) is ComponentType, 'abstract method ComponentType.clean'
+
+        if self.subTypeOf and self.subTypeOf.subTypeOf:
+            raise ValidationError('Currently, SubTypeOf only support one level of inheritance')
+        
+        return super(ComponentType, self).clean()
 
     class Meta:
         app_label = 'rotmic' 
