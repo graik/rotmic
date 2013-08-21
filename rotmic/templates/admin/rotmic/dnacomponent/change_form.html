@@ -6,6 +6,8 @@
 
 {% load staticfiles %}
 
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
 <script language=javascript type='text/javascript'>
 
     // Assign IDs to vector, marker and insert fields (complete <div> with Label and help text)
@@ -31,10 +33,54 @@
         }
     }
 
+    // returns 1 if all items are sucessfully removed
+    // otherwise returns zero.
+    function clearListBox(listboxID){
+        var box = document.getElementById(listboxID);
+        if(box == null)
+            return 0;
+        while(box.length > 0){
+            box.remove(0);
+        }
+        return 1;
+    }
+    
+    function clearTypeBox(){
+        return clearListBox('id_componentType')
+    }
+    
+    // update content of Type ChoiceField depending on Category selection
+    function updateListBox(selectedType){
+        clearTypeBox();
+        elementId = 'id_componentType'
+
+        $.ajax({
+                        async: false,
+                        type: 'GET',
+                        url: "/getTypeDnaInfo/"+selectedType+"/",
+                        success: function(data){
+                            p = jQuery.parseJSON(data);
+                            var mylistbox = document.getElementById(elementId);
+                            for (var key in p) {
+                                        if (p.hasOwnProperty(key)) {
+                                        mylistbox.options[key] = new Option(p[key].fields.name, p[key].pk);
+                                    }
+                                }                            
+                        }
+                    }                
+                    );	
+        var mylistbox = document.getElementById(elementId);
+        mylistbox.options[0].selected = true;
+    }
+
+
     function hideShow() {
 <!--        alert( document.getElementById('id_field_insert') )-->
         categoryElement = document.getElementById('id_componentCategory');
         category = categoryElement.options[categoryElement.selectedIndex].label
+        
+        updateListBox(category)
+        alert('Name: {{original.name}}')
 
         switch ( category ) {
             case 'Vector Backbone':
@@ -64,6 +110,7 @@
                 break;
         }
     }
+    
     
     window.onload = function() {
         initIdDiv();
