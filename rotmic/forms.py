@@ -10,30 +10,30 @@ class DnaComponentForm(forms.ModelForm):
     typeMarker = DnaComponentType.objects.get(name='Marker')
     
     componentCategory = forms.ModelChoiceField(label='Category',
-                                               queryset=DnaComponentType.objects.filter(subTypeOf=None),
-                                               required=True, 
-                                               empty_label=None,
-                                               initial=DnaComponentType.objects.get(name='Plasmid').id)
+                            queryset=DnaComponentType.objects.filter(subTypeOf=None),
+                            required=True, 
+                            empty_label=None,
+                            initial=DnaComponentType.objects.get(name='Plasmid').id)
 
     componentType = forms.ModelChoiceField(label='Type',
-                                           queryset=DnaComponentType.objects.exclude(subTypeOf=None),
-                                           required=True,
-                                           initial=DnaComponentType.objects.get(name='generic plasmid').id,
-                                           empty_label=None)
+                            queryset=DnaComponentType.objects.exclude(subTypeOf=None),
+                            required=True,
+                            initial=DnaComponentType.objects.get(name='generic plasmid').id,
+                            empty_label=None)
     
     insert = forms.ModelChoiceField(label='Insert',
-                                    queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeInsert),
-                                    required=False,
-                                    empty_label='no insert')
+                            queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeInsert),
+                            required=False,
+                            empty_label='no insert')
         
     vectorBackbone = forms.ModelChoiceField(label='Vector Backbone',
-                                    queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeVectorBB),
-                                    required=False,
-                                    empty_label='---specify backbone---')
+                            queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeVectorBB),
+                            required=False,
+                            empty_label='---specify backbone---')
 
     marker = forms.ModelMultipleChoiceField(label='Marker',
-                                    queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeMarker),
-                                    required=False)
+                            queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeMarker),
+                            required=False)
 
 
     def __init__(self, *args, **kwargs):
