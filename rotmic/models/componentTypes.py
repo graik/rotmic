@@ -9,10 +9,11 @@ class ComponentType( models.Model ):
     Helper class for classifying parts.
     Following SBOL, each type should in theory correspond to a Sequence Ontology term.
     """
-    uri = models.URLField( unique=False, blank=True, null=True,
-                           help_text='Typically a sequence ontology URI, example: http://purl.obolibrary.org/obo/SO_0000167' )
     name = models.CharField('Name', unique=True, max_length=200, 
                             help_text='Informative name')
+
+    uri = models.URLField( unique=False, blank=True, null=True,
+                           help_text='Typically a sequence ontology URI, example: http://purl.obolibrary.org/obo/SO_0000167' )
 
     def __unicode__( self ):
         return unicode(self.name)
@@ -38,9 +39,11 @@ class ComponentType( models.Model ):
 class DnaComponentType( ComponentType ):
     """Classification of DnaComponents"""
 
-    #: required ? directional relationship to parent type or types
-    subTypeOf = models.ForeignKey('self', blank=True, 
-                            null=True, related_name='subTypes')
+    #: directional relationship to parent type or types
+    subTypeOf = models.ForeignKey('self', blank=True, null=True,
+                                  limit_choices_to={'subTypeOf':None},
+                                  related_name='subTypes',
+                                  help_text='Assign to existing category or leave blank to create a new top-level category')
     
     def __unicode__(self):
         r = unicode(self.name)
