@@ -21,6 +21,17 @@ class BaseAdminMixin():
 
         obj.save()
 
+    def registrationDate(self, obj):
+        """extract date from date+time"""
+        return obj.registeredAt.date().isoformat()
+    registrationDate.short_description = 'registered'
+    
+    def registrationTime(self, obj):
+        """extract time from date+time"""
+        return obj.registeredAt.time()
+    registrationTime.short_description = 'at'
+    
+
 
 class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     form = DnaComponentForm
@@ -43,7 +54,7 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
          ),            
     )
 
-    list_display = ('displayId', 'name', 'registeredBy','insert','vectorBackbone', 'comment','status')
+    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy','insert','vectorBackbone', 'comment','status')
 
 admin.site.register(DnaComponent, DnaComponentAdmin)
 admin.site.register(DnaComponentType)

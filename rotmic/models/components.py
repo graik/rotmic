@@ -30,17 +30,18 @@ class UserMixin( models.Model ):
     """
 
     registeredBy = models.ForeignKey(User, null=True, blank=True, 
-                                  related_name='%(class)s_created_by')
+                                related_name='%(class)s_created_by',
+                                verbose_name='by')
     
     registeredAt = models.DateTimeField(default=datetime.now(), 
-                                    verbose_name="registered")
+                                verbose_name="registered")
     
     class Meta:
         app_label = 'rotmic'        
         abstract = True
 
 
-class Component(UserMixin, models.Model):
+class Component(UserMixin):
     """
     Base class for cells, nucleic acids, proteins, and chemicals.
     Not shown to the user (currently) but the table exists and collects
