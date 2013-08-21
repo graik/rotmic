@@ -18,6 +18,7 @@
 from datetime import datetime
 
 from django.db import models
+from django.db.models.query import QuerySet as Q
 from django.utils.safestring import mark_safe
 
 from django.contrib.auth.models import User
@@ -70,7 +71,6 @@ class Component(UserMixin):
     def __unicode__(self):
         name = self.name or ''
         return u'%s - %s' % (self.displayId, name)
-
 
     def showComment( self ):
         """
@@ -134,6 +134,23 @@ class DnaComponent(Component):
         name = unicode(self.displayId + ' - ' + self.name)
         return name
           
+    def save(self, *args, **kwargs):
+        """
+        Enforce optional fields depending on category.
+        """
+        category = self.componentType.category().name
+
+        if category != 'Plasmid':
+            self.insert = None
+            self.vectorBackbone = None
+        
+        ## this part somehow has no effect. Maybe related to the many2many special case
+        if category not in ['Vector Backbone', 'Insert']:
+            self.marker = Q()
+        
+        return super(DnaComponent,self).save(*args, **kwargs)
+            
+
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'DNA'

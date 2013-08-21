@@ -30,6 +30,12 @@ class ComponentType( models.Model ):
             raise ValidationError('Currently, SubTypeOf only support one level of inheritance')
         
         return super(ComponentType, self).clean()
+    
+    def category(self):
+        """Return parent type if any or self"""
+        if self.subTypeOf:
+            return self.subTypeOf.category()
+        return self
 
     class Meta:
         app_label = 'rotmic' 
