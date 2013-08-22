@@ -27,6 +27,10 @@
                 if (divs[i].className=='field-box field-vectorBackbone') {
                     divs[i].id = 'id_field_vectorBackbone';
                 }
+                if (divs[i].className=='field-box field-circular') {
+                    divs[i].id = 'id_field_circular';
+                }
+                
             }    
         } catch (e) {
             log(e.message);
@@ -76,7 +80,6 @@
                         }
                 }                
             );	
-        var listbox = document.getElementById(elementId);
     }
 
 
@@ -92,26 +95,31 @@
                 document.getElementById('id_field_insert').style.visibility = 'hidden';
                 document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
                 document.getElementById('id_field_marker').style.visibility = 'visible';
+                document.getElementById('id_field_circular').style.visibility = 'hidden';
                 break;
             case 'Plasmid':
                 document.getElementById('id_field_insert').style.visibility = 'visible';
                 document.getElementById('id_field_vectorBackbone').style.visibility = 'visible';
                 document.getElementById('id_field_marker').style.visibility = 'hidden';
+                document.getElementById('id_field_circular').style.visibility = 'visible';
                 break;
             case 'Insert':
                 document.getElementById('id_field_insert').style.visibility = 'hidden';
                 document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
                 document.getElementById('id_field_marker').style.visibility = 'visible';
+                document.getElementById('id_field_circular').style.visibility = 'hidden';
                 break;
             case 'Marker':
                 document.getElementById('id_field_insert').style.visibility = 'hidden';
                 document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
                 document.getElementById('id_field_marker').style.visibility = 'hidden';
+                document.getElementById('id_field_circular').style.visibility = 'hidden';
                 break;
             default:
                 document.getElementById('id_field_insert').style.visibility = 'hidden';
                 document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
                 document.getElementById('id_field_marker').style.visibility = 'hidden';
+                document.getElementById('id_field_circular').style.visibility = 'hidden';
                 break;
         }
     }

@@ -143,10 +143,11 @@ class DnaComponent(Component):
         if category != 'Plasmid':
             self.insert = None
             self.vectorBackbone = None
+            self.circular = False
         
-        ## this part somehow has no effect. Maybe related to the many2many special case
-        if category not in ['Vector Backbone', 'Insert']:
-            self.marker = Q()
+##        ## this part somehow has no effect and leads to bugs.
+##        if category not in ['Vector Backbone', 'Insert']:
+##            self.marker = Q()
         
         return super(DnaComponent,self).save(*args, **kwargs)
             
