@@ -39,7 +39,7 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     fieldsets = (
         (None, {
             'fields': (('displayId', 'name','status'),
-                       ('componentCategory', 'componentType', 'circular',),
+                       ('componentCategory', 'componentType'),
                        ('insert', 'vectorBackbone','marker' ),
                        ('registeredBy','registeredAt')
                        )

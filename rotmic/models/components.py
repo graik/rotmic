@@ -100,9 +100,6 @@ class DnaComponent(Component):
                                            verbose_name='Type',
                                            related_name='Type',  blank=False )    
     
-    circular = models.BooleanField( 'Circular', default=True)
-    
-        
     vectorBackbone = models.ForeignKey( 'self', blank=True, null=True ,
                                         verbose_name='Vector Backbone')
     
@@ -143,7 +140,6 @@ class DnaComponent(Component):
         if category != 'Plasmid':
             self.insert = None
             self.vectorBackbone = None
-            self.circular = False
         
 ##        ## this part somehow has no effect and leads to bugs.
 ##        if category not in ['Vector Backbone', 'Insert']:

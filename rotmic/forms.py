@@ -58,7 +58,6 @@ class DnaComponentForm(forms.ModelForm):
         if category != self.typePlasmid:
             data['insert'] = None
             data['vectorBackbone'] = None
-            data['circular'] = False
         
         if category not in [self.typeVectorBB, self.typeInsert] and 'marker' in data:
             data['marker'] = Q()
