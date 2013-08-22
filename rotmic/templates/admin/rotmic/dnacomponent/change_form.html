@@ -52,7 +52,7 @@
     // update content of Type ChoiceField depending on Category selection
     function updateListBox(selectedType){
         clearTypeBox();
-        elementId = 'id_componentType'
+        var elementId = 'id_componentType'
 
         $.ajax({
                         async: false,
@@ -60,17 +60,23 @@
                         url: "/getTypeDnaInfo/"+selectedType+"/",
                         success: function(data){
                             p = jQuery.parseJSON(data);
-                            var mylistbox = document.getElementById(elementId);
+                            var listbox = document.getElementById(elementId);
+                            listbox.options[0] = new Option('---specifiy type---', "");
+                            listbox.options[0].selected = true;
                             for (var key in p) {
-                                        if (p.hasOwnProperty(key)) {
-                                        mylistbox.options[key] = new Option(p[key].fields.name, p[key].pk);
-                                    }
-                                }                            
+                                var i = parseInt(key)
+                                if (p.hasOwnProperty(key)) {
+                                    listbox.options[i+1] = new Option(p[key].fields.name, p[key].pk);
+                                    {% if original %}
+                                        if ({{original.componentType.pk}} == p[key].pk)
+                                            listbox.options[i+1].selected = true;
+                                    {% endif %}
+                                }
+                            }                            
                         }
-                    }                
-                    );	
-        var mylistbox = document.getElementById(elementId);
-        mylistbox.options[0].selected = true;
+                }                
+            );	
+        var listbox = document.getElementById(elementId);
     }
 
 
@@ -80,7 +86,6 @@
         category = categoryElement.options[categoryElement.selectedIndex].label
         
         updateListBox(category)
-        alert('Name: {{original.name}}')
 
         switch ( category ) {
             case 'Vector Backbone':
