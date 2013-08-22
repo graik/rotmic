@@ -100,14 +100,14 @@ class DnaComponent(Component):
                                            verbose_name='Type',
                                            related_name='Type',  blank=False )    
     
+    insert = models.ForeignKey( 'self', blank=True, null=True, 
+                                        related_name='Insert')
+    
     vectorBackbone = models.ForeignKey( 'self', blank=True, null=True ,
                                         verbose_name='Vector Backbone')
     
     marker = models.ManyToManyField( 'self', blank=True, null=True, 
                                       related_name='Marker')
-    
-    insert = models.ForeignKey( 'self', blank=True, null=True, 
-                                        related_name='Insert')
     
 ##    def related_dnaSamples(self):
 ##        """
