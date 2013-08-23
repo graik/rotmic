@@ -9,5 +9,5 @@ def view_dnacomponent(request, displayId):
     dnaComponent = DnaComponent.objects.get(displayId=displayId)
     t = loader.get_template('view_dnacomponent.html')
     
-    html = t.render(Context({'dnaComponent': dnaComponent}))
+    html = t.render(RequestContext({'dnaComponent': dnaComponent}))
     return HttpResponse(html)

@@ -10,11 +10,6 @@
 
 <script language=javascript type='text/javascript'>
 
-    //adding links automaticaly
-    document.getElementById("add_id_marker").href = "/rotmic/dnacomponent/add/?componentType=1";
-    //document.getElementById("add_id_vectorBackbone").href = "/rotmic/dnacomponent/add/;
-
-
     // Assign IDs to vector, marker and insert fields (complete <div> with Label and help text)
     // By default, input elements themselves are accessible by, for example:
     // "id_marker" and "add_id_marker" (the Plus symbol for sub-forms). 
@@ -65,7 +60,7 @@
                         type: 'GET',
                         url: "/getTypeDnaInfo/"+selectedType+"/",
                         success: function(data){
-                            p = jQuery.parseJSON(data);
+                            var p = jQuery.parseJSON(data);
                             var listbox = document.getElementById(elementId);
                             listbox.options[0] = new Option('---specifiy type---', "");
                             listbox.options[0].selected = true;
@@ -73,6 +68,8 @@
                                 var i = parseInt(key)
                                 if (p.hasOwnProperty(key)) {
                                     listbox.options[i+1] = new Option(p[key].fields.name, p[key].pk);
+                                    //if object already exists and we go back to the original
+                                    //category, always select current type of object
                                     {% if original %}
                                         if ({{original.componentType.pk}} == p[key].pk)
                                             listbox.options[i+1].selected = true;
@@ -84,11 +81,10 @@
             );	
     }
 
-
     function hideShow() {
 <!--        alert( document.getElementById('id_field_insert') )-->
-        categoryElement = document.getElementById('id_componentCategory');
-        category = categoryElement.options[categoryElement.selectedIndex].label
+        var categoryElement = document.getElementById('id_componentCategory');
+        var category = categoryElement.options[categoryElement.selectedIndex].label
         
         updateListBox(category)
 
@@ -119,11 +115,46 @@
                 document.getElementById('id_field_marker').style.visibility = 'hidden';
                 break;
         }
+    }   
+    
+    // return a dictionary of Category names mapping to their position in listbox 
+    function captureCategories() {
+        var listbox = document.getElementById('id_componentCategory')
+        var table = {};    
+        for (var i=0; i < listbox.options.length; i++){
+            table[ listbox.options[i].text ] = i;
+        }
+        return table;
+    }
+
+    //pre-select category if given in URL; requires context_processors.request
+    function preselectCategory() {
+        if ("{{request.GET.category}}" != ""){
+            var i = parseInt("{{request.GET.category}}");
+            document.getElementById('id_componentCategory').options[i].selected = true;
+        }
     }
     
-    
+    // override the link for "+" Buttons so that the correct category is pre-selected    
+    function setPlusLinks() {
+        var categories = captureCategories();
+        var cat_marker = categories['Marker'].toString();
+        var cat_vector = categories['Vector Backbone'].toString();
+        var cat_insert = categories['Insert'].toString();
+        
+        var urladd = "/rotmic/dnacomponent/add/?category="
+        document.getElementById("add_id_marker").href = urladd + cat_marker;
+        document.getElementById("add_id_vectorBackbone").href = urladd + cat_vector;
+        document.getElementById("add_id_insert").href = urladd + cat_insert;
+    }
+
     window.onload = function() {
+        
         initIdDiv();
+        setPlusLinks();
+        
+        preselectCategory();
+
         document.getElementById( 'id_componentCategory' ).onchange = hideShow;
         hideShow();
     };
