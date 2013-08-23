@@ -17,21 +17,21 @@ class DnaComponentForm(forms.ModelForm):
                             empty_label=None,
                             initial=DnaComponentType.objects.get(name='Plasmid').id)
 
-    componentType = forms.ModelChoiceField(label='Type',
-                            queryset=DnaComponentType.objects.exclude(subTypeOf=None),
-                            required=True,
-                            initial=DnaComponentType.objects.get(name='generic plasmid').id,
-                            empty_label=None)
+##    componentType = forms.ModelChoiceField(label='Type',
+##                            queryset=DnaComponentType.objects.exclude(subTypeOf=None),
+##                            required=True,
+##                            initial=DnaComponentType.objects.get(name='generic plasmid').id,
+##                            empty_label=None)
     
 ##    insert = forms.ModelChoiceField(label='Insert',
 ##                            queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeInsert),
 ##                            required=False,
 ##                            empty_label='no insert')
         
-    vectorBackbone = forms.ModelChoiceField(label='Vector Backbone',
-                            queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeVectorBB),
-                            required=False,
-                            empty_label='---specify backbone---')
+##    vectorBackbone = forms.ModelChoiceField(label='Vector Backbone',
+##                            queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeVectorBB),
+##                            required=False,
+##                            empty_label='---specify backbone---')
 
 ##    marker = forms.ModelMultipleChoiceField(label='Marker',
 ##                            queryset=DnaComponent.objects.filter(componentType__subTypeOf=typeMarker),

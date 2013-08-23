@@ -14,7 +14,6 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 
-
 from datetime import datetime
 
 from django.db import models
@@ -25,7 +24,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 
 
-class UserMixin( models.Model ):
+class UserMixin(models.Model):
     """
     Basic record keeping of registration dates and user.
     """

@@ -7,7 +7,7 @@ from rotmic.utils.customadmin import ViewFirstModelAdmin
 from rotmic.forms import DnaComponentForm
 
 
-class BaseAdminMixin():
+class BaseAdminMixin:
     """
     Automatically save and assign house-keeping information like by whom and
     when a record was saved.
@@ -54,7 +54,8 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
          ),            
     )
 
-    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy','insert','vectorBackbone', 'comment','status')
+    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
+                    'insert','vectorBackbone', 'comment','status')
 
     def get_form(self, request, obj=None, **kwargs):
         """
@@ -64,13 +65,32 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         """
         typeMarker = DnaComponentType.objects.get(name='Marker')
         typeInsert = DnaComponentType.objects.get(name='Insert')
+        typeVectorBB = DnaComponentType.objects.get(name='Vector Backbone')
         
         form = super(DnaComponentAdmin,self).get_form(request, obj,**kwargs)
+
         # form class is created per request by modelform_factory function
         # so it's safe to modify
         #we modify the the queryset
-        form.base_fields['insert'].queryset = form.base_fields['insert'].queryset.filter(componentType__subTypeOf=typeInsert)
-        form.base_fields['marker'].queryset = form.base_fields['marker'].queryset.filter(componentType__subTypeOf=typeMarker)
+        field = form.base_fields['componentType']
+        field.queryset = field.queryset.exclude(subTypeOf=None)
+        field.initial = DnaComponentType.objects.get(name='generic plasmid').id
+##        field.empty_label = '---specifiy type---'
+
+        form.base_fields['insert'].queryset = \
+            form.base_fields['insert'].queryset.filter(componentType__subTypeOf=typeInsert)
+        form.base_fields['insert'].empty_label = '---no insert---'
+        
+        form.base_fields['marker'].queryset = \
+            form.base_fields['marker'].queryset.filter(componentType__subTypeOf=typeMarker)
+##        form.base_fields['marker'].empty_label = '---no marker---'
+        ## form.base_fields['marker'].widget.widget.allow_multiple_selected = True
+        form.base_fields['marker'].help_text = 'select multiple with Control/Command key'
+        
+        form.base_fields['vectorBackbone'].queryset = \
+            form.base_fields['vectorBackbone'].queryset.filter(componentType__subTypeOf=typeVectorBB)
+        form.base_fields['vectorBackbone'].empty_label = '---specifiy vector---'
+        
         return form
 
 
