@@ -35,13 +35,12 @@ class BaseAdminMixin:
 
 class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     form = DnaComponentForm
-
+    
     fieldsets = (
         (None, {
             'fields': (('displayId', 'name','status'),
                        ('componentCategory', 'componentType'),
                        ('insert', 'vectorBackbone','marker' ),
-                       ('registeredBy','registeredAt')
                        )
         }
          ),

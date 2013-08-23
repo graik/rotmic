@@ -2,6 +2,13 @@
 
 {% load i18n admin_modify  %}
 
+<!-- django-guardian admin modification -->
+{% block object-tools-items %}
+<li><a href="permissions/" class="permissionslink">{% trans "Object permissions" %}</a></li>
+{{ block.super }}
+{% endblock %}
+
+
 {% block after_field_sets %}
 
 {% load staticfiles %}
