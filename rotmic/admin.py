@@ -92,14 +92,14 @@ class DnaComponentTypeAdmin( admin.ModelAdmin ):
     fieldsets = (
         (None, {
             'fields': (('name', 'subTypeOf',),
-                       ('isInsert',),
+                       ('description', 'isInsert',),
                        ('uri',),
                        )
             }
          ),
         )
     
-    list_display = ('__unicode__','subTypeOf', 'isInsert')
+    list_display = ('__unicode__','subTypeOf', 'description', 'isInsert')
     list_display_links = ('__unicode__',)
     list_editable = ('isInsert',)
     

@@ -11,6 +11,9 @@ class ComponentType( models.Model ):
     """
     name = models.CharField('Name', unique=True, max_length=200, 
                             help_text='Informative name')
+    
+    description = models.CharField('Description', blank=True, max_length=200,
+                                   help_text='short description for users')
 
     uri = models.URLField( unique=False, blank=True, null=True,
                            help_text='Typically a sequence ontology URI, example: http://purl.obolibrary.org/obo/SO_0000167' )
