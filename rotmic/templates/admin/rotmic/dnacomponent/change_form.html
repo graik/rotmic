@@ -75,8 +75,8 @@
                                 var i = parseInt(key)
                                 if (p.hasOwnProperty(key)) {
                                     listbox.options[i+1] = new Option(p[key].fields.name, p[key].pk);
-                                    //if object already exists and we go back to the original
-                                    //category, always select current type of object
+                                    //if DC object already exists and we go back to the original
+                                    //category, always select current dc.componentType
                                     {% if original %}
                                         if ({{original.componentType.pk}} == p[key].pk)
                                             listbox.options[i+1].selected = true;
