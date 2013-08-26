@@ -68,9 +68,6 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         
         form = super(DnaComponentAdmin,self).get_form(request, obj,**kwargs)
 
-        # form class is created per request by modelform_factory function
-        # so it's safe to modify
-        #we modify the the queryset
         field = form.base_fields['componentType']
         field.queryset = field.queryset.exclude(subTypeOf=None)
         field.initial = DnaComponentType.objects.get(name='generic plasmid').id
