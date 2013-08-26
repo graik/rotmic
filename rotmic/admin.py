@@ -87,5 +87,24 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         return form
 
 
+class DnaComponentTypeAdmin( admin.ModelAdmin ):
+    
+    fieldsets = (
+        (None, {
+            'fields': (('name', 'subTypeOf',),
+                       ('isInsert',),
+                       ('uri',),
+                       )
+            }
+         ),
+        )
+    
+    list_display = ('__unicode__','subTypeOf', 'isInsert')
+    list_display_links = ('__unicode__',)
+    list_editable = ('isInsert',)
+    
+    list_filter = ('subTypeOf', 'isInsert')
+                       
+
 admin.site.register(DnaComponent, DnaComponentAdmin)
-admin.site.register(DnaComponentType)
+admin.site.register(DnaComponentType, DnaComponentTypeAdmin)
