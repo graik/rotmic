@@ -29,7 +29,7 @@ class UserMixin(models.Model):
     Basic record keeping of registration dates and user.
     """
 
-    registeredBy = models.ForeignKey(User, null=True, blank=True, 
+    registeredBy = models.ForeignKey(User, null=False, blank=False, 
                                 related_name='%(class)s_created_by',
                                 verbose_name='by')
     
@@ -81,6 +81,12 @@ class Component(UserMixin):
             return unicode(self.comment)
         return unicode(self.comment[:38] + '..')
     showComment.short_description = 'Comment'
+    
+    def category(self):
+        """
+        @return: ComponentType.category
+        """
+        pass
 
     class Meta:
         app_label = 'rotmic'

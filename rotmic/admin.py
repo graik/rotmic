@@ -33,6 +33,35 @@ class BaseAdminMixin:
     registrationTime.short_description = 'at'
     
 
+class DnaCategoryListFilter( admin.SimpleListFilter):
+    """
+    Provide filter for DnaComponentType.category (all root types)
+    """
+    title = 'Category'
+    parameter_name = 'category'
+    
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        categories = DnaComponentType.objects.filter(subTypeOf=None)
+        return ( (c.name, c.name) for c in categories )
+    
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if not self.value():
+            return DnaComponent.objects.all()
+        return DnaComponent.objects.filter(componentType__subTypeOf__name=self.value())
+
+
 
 class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     form = DnaComponentForm
@@ -56,7 +85,9 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
                     'insert','vectorBackbone', 'comment','status')
-
+    
+    list_filter = ( DnaCategoryListFilter, 'status','registeredBy')
+    
     def get_form(self, request, obj=None, **kwargs):
         """
         Override queryset of ForeignKey fields without overriding the field itself.
