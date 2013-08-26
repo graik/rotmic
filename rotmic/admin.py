@@ -5,6 +5,7 @@ import datetime
 from rotmic.models import DnaComponent, DnaComponentType
 from rotmic.utils.customadmin import ViewFirstModelAdmin
 from rotmic.forms import DnaComponentForm
+import rotmic.initialTypes as T
 
 
 class BaseAdminMixin:
@@ -62,10 +63,6 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         This preserves the "+" Button which is otherwise lost.
         See http://djangosnippets.org/snippets/1558/#c4674
         """
-        typeMarker = DnaComponentType.objects.get(name='Marker')
-        typeInsert = DnaComponentType.objects.get(name='Insert')
-        typeVectorBB = DnaComponentType.objects.get(name='Vector Backbone')
-        
         form = super(DnaComponentAdmin,self).get_form(request, obj,**kwargs)
 
         field = form.base_fields['componentType']
@@ -74,21 +71,23 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
 ##        field.empty_label = '---specifiy type---'
 
         form.base_fields['insert'].queryset = \
-            form.base_fields['insert'].queryset.filter(componentType__subTypeOf=typeInsert)
+            form.base_fields['insert'].queryset.filter(\
+                componentType__subTypeOf=T.dcFragment)
         form.base_fields['insert'].empty_label = '---no insert---'
         
         form.base_fields['marker'].queryset = \
-            form.base_fields['marker'].queryset.filter(componentType__subTypeOf=typeMarker)
+            form.base_fields['marker'].queryset.filter(\
+                componentType__subTypeOf=T.dcMarker)
 ##        form.base_fields['marker'].empty_label = '---no marker---'
         ## form.base_fields['marker'].widget.widget.allow_multiple_selected = True
         form.base_fields['marker'].help_text = 'select multiple with Control/Command key'
         
         form.base_fields['vectorBackbone'].queryset = \
-            form.base_fields['vectorBackbone'].queryset.filter(componentType__subTypeOf=typeVectorBB)
+            form.base_fields['vectorBackbone'].queryset.filter(\
+                componentType__subTypeOf=T.dcVectorBB)
         form.base_fields['vectorBackbone'].empty_label = '---specifiy vector---'
         
         return form
-
 
 
 admin.site.register(DnaComponent, DnaComponentAdmin)

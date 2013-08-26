@@ -106,7 +106,7 @@
                 document.getElementById('id_field_vectorBackbone').style.visibility = 'visible';
                 document.getElementById('id_field_marker').style.visibility = 'hidden';
                 break;
-            case 'Insert':
+            case 'Fragment':
                 document.getElementById('id_field_insert').style.visibility = 'hidden';
                 document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
                 document.getElementById('id_field_marker').style.visibility = 'visible';
@@ -147,7 +147,7 @@
         var categories = captureCategories();
         var cat_marker = categories['Marker'].toString();
         var cat_vector = categories['Vector Backbone'].toString();
-        var cat_insert = categories['Insert'].toString();
+        var cat_insert = categories['Fragment'].toString();
         
         var urladd = "/rotmic/dnacomponent/add/?category="
         document.getElementById("add_id_marker").href = urladd + cat_marker;
