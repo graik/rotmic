@@ -68,24 +68,21 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         field = form.base_fields['componentType']
         field.queryset = field.queryset.exclude(subTypeOf=None)
         field.initial = DnaComponentType.objects.get(name='generic plasmid').id
-##        field.empty_label = '---specifiy type---'
-
-        form.base_fields['insert'].queryset = \
-            form.base_fields['insert'].queryset.filter(\
-                componentType__subTypeOf=T.dcFragment)
-        form.base_fields['insert'].empty_label = '---no insert---'
         
-        form.base_fields['marker'].queryset = \
-            form.base_fields['marker'].queryset.filter(\
-                componentType__subTypeOf=T.dcMarker)
-##        form.base_fields['marker'].empty_label = '---no marker---'
-        ## form.base_fields['marker'].widget.widget.allow_multiple_selected = True
-        form.base_fields['marker'].help_text = 'select multiple with Control/Command key'
+        field = form.base_fields['insert']
+        field.queryset = field.queryset.filter(\
+            componentType__subTypeOf=T.dcFragment,
+            componentType__isInsert=True)
+        field.empty_label = '---no insert---'
         
-        form.base_fields['vectorBackbone'].queryset = \
-            form.base_fields['vectorBackbone'].queryset.filter(\
-                componentType__subTypeOf=T.dcVectorBB)
-        form.base_fields['vectorBackbone'].empty_label = '---specifiy vector---'
+        field = form.base_fields['marker']
+        field.queryset = field.queryset.filter(componentType__subTypeOf=T.dcMarker)
+        ## field.widget.widget.allow_multiple_selected = True
+        field.help_text = 'select multiple with Control/Command key'
+        
+        field = form.base_fields['vectorBackbone']
+        field.queryset = field.queryset.filter(componentType__subTypeOf=T.dcVectorBB)
+        field.empty_label = '---specifiy vector---'
         
         return form
 

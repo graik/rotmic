@@ -5,14 +5,16 @@ and pre-defined actions.
 from rotmic.models import DnaComponentType
 import logging
 
-def getcreate(typeClass=DnaComponentType, name='', uri=None, subTypeOf=None):
+def getcreate(typeClass=DnaComponentType, name='', uri=None, subTypeOf=None,
+              **kwargs):
     """
     Look up type of given name or create a new one and save it to the DB.
     """
     try:
         r = typeClass.objects.get(name=name, subTypeOf=subTypeOf)
     except DnaComponentType.DoesNotExist:
-        r = DnaComponentType( name=name, uri=uri, subTypeOf=subTypeOf)
+        r = DnaComponentType( name=name, uri=uri, subTypeOf=subTypeOf,
+                              **kwargs)
         r.save()
         logging.warning('Created missing type: %s %s.' \
                          % (typeClass.__name__, name) )
@@ -48,16 +50,16 @@ dcVectorYeastIntegrating = getcreate(DnaComponentType, subTypeOf=dcVectorBB,
 
 ## Fragments
 dcFragmentCDS = getcreate(DnaComponentType, subTypeOf=dcFragment, 
-                          name = 'CDS')
+                          name = 'CDS', isInsert=True)
 
 dcFragmentProteinPart = getcreate(DnaComponentType, subTypeOf=dcFragment,
-                                    name = 'protein part')
+                                    name = 'protein part', isInsert=True)
 
 dcFragmentIntegration = getcreate(DnaComponentType, subTypeOf=dcFragment,
-                                    name = 'integration casette')
+                                    name = 'integration casette', isInsert=True)
 
 dcFragmentConstruction = getcreate(DnaComponentType, subTypeOf=dcFragment,
-                                    name = 'construction intermediate')
+                                    name = 'construction intermediate', isInsert=True)
 
 dcFragmentOther = getcreate(DnaComponentType, subTypeOf=dcFragment,
                                     name = 'other fragment')
