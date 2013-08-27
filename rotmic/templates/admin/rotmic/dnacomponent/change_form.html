@@ -8,12 +8,18 @@
 {{ block.super }}
 {% endblock %}
 
-
 {% block after_field_sets %}
 
 {% load staticfiles %}
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>
+{% block extrahead %} {{ block.super }}
+    {% load selectable_tags %}
+    {% include_ui_theme %}
+    {% include_jquery_libs %}
+{% endblock %}
+
+<!--Now Imported by statement in DnaComponentAdmin.Media class-->
+<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>-->
 
 <script language=javascript type='text/javascript'>
 
@@ -67,7 +73,7 @@
                         type: 'GET',
                         url: "/getTypeDnaInfo/"+selectedType+"/",
                         success: function(data){
-                            var p = jQuery.parseJSON(data);
+                            var p = django.jQuery.parseJSON(data);
                             var listbox = document.getElementById(elementId);
                             listbox.options[0] = new Option('---specifiy type---', "");
                             listbox.options[0].selected = true;

@@ -42,6 +42,7 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
             'fields': (('displayId', 'name','status'),
                        ('componentCategory', 'componentType'),
                        ('insert', 'vectorBackbone','marker' ),
+                       ('autoInsert',),
                        )
         }
          ),
@@ -59,8 +60,9 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     
     list_filter = ( DnaCategoryListFilter, DnaTypeListFilter, 'status','registeredBy')
     
-##    class Meta:
-##        js = ['jquery-1.7.2.min.js']
+    class Media:
+        js = ('jquery-2.0.1.min.js','jquery-ui.min.js')
+##        css= ('jquery-ui.css',)
     
     def get_form(self, request, obj=None, **kwargs):
         """

@@ -4,6 +4,19 @@ from django.db.models.query import QuerySet as Q
 from rotmic.models import DnaComponent, DnaComponentType
 import rotmic.initialTypes as T
 
+## third-party ForeignKey lookup field
+from selectable.base import ModelLookup
+from selectable.registry import registry
+import selectable.forms as sforms
+
+class DnaComponentLookup(ModelLookup):
+    model = DnaComponent
+    search_fields = ('displayId__icontains', 'name__icontains')
+    
+    def get_item_id(self,item):
+        return item.displayId
+
+registry.register(DnaComponentLookup)
 
 class DnaComponentForm(forms.ModelForm):
     
@@ -14,6 +27,8 @@ class DnaComponentForm(forms.ModelForm):
                             empty_label=None,
                             initial=DnaComponentType.objects.get(name='Plasmid').id)
     
+
+    autoInsert = sforms.AutoCompleteSelectField(lookup_class=DnaComponentLookup, allow_new=True)
 
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
