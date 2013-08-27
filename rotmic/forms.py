@@ -9,14 +9,19 @@ from selectable.base import ModelLookup
 from selectable.registry import registry
 import selectable.forms as sforms
 
-class DnaComponentLookup(ModelLookup):
+class InsertLookup(ModelLookup):
     model = DnaComponent
-    search_fields = ('displayId__icontains', 'name__icontains')
+    search_fields = ('displayId__startswith', 'name__icontains')
+    
+    filters = {'componentType__subTypeOf': T.dcFragment,
+               'componentType__isInsert' : True}
     
     def get_item_id(self,item):
-        return item.displayId
+        return item.pk
 
-registry.register(DnaComponentLookup)
+registry.register(InsertLookup)
+
+
 
 class DnaComponentForm(forms.ModelForm):
     
@@ -28,7 +33,8 @@ class DnaComponentForm(forms.ModelForm):
                             initial=DnaComponentType.objects.get(name='Plasmid').id)
     
 
-    autoInsert = sforms.AutoCompleteSelectField(lookup_class=DnaComponentLookup, allow_new=True)
+    insert = sforms.AutoCompleteSelectField(lookup_class=InsertLookup, required=False,
+                                            help_text='start typing ID or name to select plasmid insert')
 
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
