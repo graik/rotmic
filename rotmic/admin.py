@@ -42,7 +42,6 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
             'fields': (('displayId', 'name','status'),
                        ('componentCategory', 'componentType'),
                        ('insert', 'vectorBackbone','marker' ),
-##                       ('autoInsert',),
                        )
         }
          ),
@@ -75,14 +74,6 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         field = form.base_fields['componentType']
         field.queryset = field.queryset.exclude(subTypeOf=None)
         field.initial = DnaComponentType.objects.get(name='generic plasmid').id
-        
-##        field = form.base_fields['insert']
-##        form.base_fields['insert'] = sforms.AutoCompleteSelectField(lookup_class=InsertLookup, 
-##                                                                    allow_new=True)
-####        field.queryset = field.queryset.filter(\
-####            componentType__subTypeOf=T.dcFragment,
-####            componentType__isInsert=True)
-####        field.empty_label = '---no insert---'
         
         field = form.base_fields['marker']
         field.queryset = field.queryset.filter(componentType__subTypeOf=T.dcMarker)
