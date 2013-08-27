@@ -20,5 +20,6 @@ urlpatterns = patterns('',
     # url(r'^rotmic/dna/(?P<displayId>.*)/$',view_dnacomponent,name='dna'),
     url(r'^getTypeDnaInfo/(?P<maintype>.*)/$',getTypeDnaInfo,name='getTypeDnaInfo'),    
     url(r'^getParentTypeDnaInfo/(?P<subtype>.*)/$',getParentTypeDnaInfo,name='getParentTypeDnaInfo'),
+##    url(r'^ext/', include('django_select2.urls')),
     url(r'^', include(admin.site.urls)),
 )

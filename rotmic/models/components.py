@@ -31,7 +31,7 @@ class UserMixin(models.Model):
 
     registeredBy = models.ForeignKey(User, null=False, blank=False, 
                                 related_name='%(class)s_created_by',
-                                verbose_name='by')
+                                verbose_name='author')
     
     registeredAt = models.DateTimeField(default=datetime.now(), 
                                 verbose_name="registered")

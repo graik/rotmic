@@ -37,13 +37,12 @@ class BaseAdminMixin:
 class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     form = DnaComponentForm
     
-    
-    
     fieldsets = (
         (None, {
             'fields': (('displayId', 'name','status'),
                        ('componentCategory', 'componentType'),
                        ('insert', 'vectorBackbone','marker' ),
+                       ('insert2',),
                        )
         }
          ),
@@ -60,6 +59,9 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
                     'insert','vectorBackbone', 'comment','status')
     
     list_filter = ( DnaCategoryListFilter, DnaTypeListFilter, 'status','registeredBy')
+    
+##    class Meta:
+##        js = ['jquery-1.7.2.min.js']
     
     def get_form(self, request, obj=None, **kwargs):
         """
