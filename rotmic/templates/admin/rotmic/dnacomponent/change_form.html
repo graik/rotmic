@@ -10,8 +10,6 @@
 
 {% block after_field_sets %}
 
-{% load staticfiles %}
-
 {% block extrahead %} {{ block.super }}
     {% load selectable_tags %}
     {% include_ui_theme %}
@@ -23,6 +21,20 @@
 
 <script language=javascript type='text/javascript'>
 
+    function addPlusLink(field){
+        var categories = captureCategories();
+        var cat_insert = categories['Fragment'].toString();
+
+        var aTag = document.createElement('a');
+        aTag.setAttribute('href',"/rotmic/dnacomponent/add/?category="+cat_insert);
+        aTag.innerHTML = "Add";
+        aTag.setAttribute( "className", "add-another");
+        aTag.setAttribute( "target", "_blank" );
+        aTag.setAttribute( "onclick", "return showAddAnotherPopup(this);");
+        aTag.setAttribute( "id", "add_id_insert");
+        field.appendChild(aTag);
+    }
+ 
     // Assign IDs to vector, marker and insert fields (complete <div> with Label and help text)
     // By default, input elements themselves are accessible by, for example:
     // "id_marker" and "add_id_marker" (the Plus symbol for sub-forms). 
@@ -33,6 +45,7 @@
             for(var i = 0; i < divs.length; i++){
                 if (divs[i].className=='field-box field-insert') {
                     divs[i].id = 'id_field_insert';
+<!--                    addPlusLink(divs[i]);-->
                 }
                 if (divs[i].className=='field-box field-marker') {
                     divs[i].id = 'id_field_marker';
@@ -158,7 +171,7 @@
         var urladd = "/rotmic/dnacomponent/add/?category="
         document.getElementById("add_id_marker").href = urladd + cat_marker;
         document.getElementById("add_id_vectorBackbone").href = urladd + cat_vector;
-<!--        document.getElementById("add_id_insert").href = urladd + cat_insert;-->
+        document.getElementById("add_id_insert").href = urladd + cat_insert;
     }
 
     window.onload = function() {
@@ -167,7 +180,7 @@
         setPlusLinks();
         
         preselectCategory();
-
+        
         document.getElementById( 'id_componentCategory' ).onchange = hideShow;
         hideShow();
     };

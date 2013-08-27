@@ -1,4 +1,5 @@
 from django.contrib import admin
+import django.contrib.admin.widgets as widgets
 
 import datetime
 
@@ -33,6 +34,21 @@ class BaseAdminMixin:
         return obj.registeredAt.time()
     registrationTime.short_description = 'at'
     
+class CustomRelatedFieldWidgetWrapper( widgets.RelatedFieldWidgetWrapper):
+    
+    pass
+##    def id_for_label(self, id_):
+##        """
+##        Returns the HTML ID attribute of this Widget for use by a <label>,
+##        given the ID of the field. Returns None if no ID is available.
+##
+##        This hook is necessary because some widgets have multiple HTML
+##        elements and, thus, multiple IDs. In that case, this method should
+##        return an ID value that corresponds to the first ID in the widget's
+##        tags.
+##        """
+##        return 'id_' + id_ + '_0'
+
 
 class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     form = DnaComponentForm
@@ -61,14 +77,15 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     
     class Media:
         js = ('jquery-2.0.1.min.js','jquery-ui.min.js')
-##        css= ('jquery-ui.css',)
     
+        
     def get_form(self, request, obj=None, **kwargs):
         """
         Override queryset of ForeignKey fields without overriding the field itself.
         This preserves the "+" Button which is otherwise lost.
         See http://djangosnippets.org/snippets/1558/#c4674
         """
+
         form = super(DnaComponentAdmin,self).get_form(request, obj,**kwargs)
 
         field = form.base_fields['componentType']
@@ -83,7 +100,19 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         field = form.base_fields['vectorBackbone']
         field.queryset = field.queryset.filter(componentType__subTypeOf=T.dcVectorBB)
         field.empty_label = '---specifiy vector---'
-        
+
+        ## add an "Add related" (plus) Button to selectable widget
+        ## http://dashdrum.com/blog/2012/07/relatedfieldwidgetwrapper/
+        field = form.base_fields['insert']
+        if not isinstance(field.widget, CustomRelatedFieldWidgetWrapper ):
+            relation = DnaComponent._meta.get_field('insert').rel
+            field.widget.choices = []  ## workaround to simulate choicefield
+            field.widget = CustomRelatedFieldWidgetWrapper( field.widget,
+                                                              relation,
+                                                              self.admin_site,
+                                                              can_add_related=True
+                                                              )
+            
         return form
 
 
