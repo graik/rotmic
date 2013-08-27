@@ -1,8 +1,6 @@
 import django.forms as forms
 from django.db.models.query import QuerySet as Q
 
-from django_select2 import ModelSelect2Field
-
 from rotmic.models import DnaComponent, DnaComponentType
 import rotmic.initialTypes as T
 
@@ -16,8 +14,6 @@ class DnaComponentForm(forms.ModelForm):
                             empty_label=None,
                             initial=DnaComponentType.objects.get(name='Plasmid').id)
     
-    insert2 = ModelSelect2Field(queryset=DnaComponent.objects.filter(componentType__isInsert=True))
-
 
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
