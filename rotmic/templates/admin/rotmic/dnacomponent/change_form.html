@@ -46,57 +46,65 @@
         }
     }
 
+    // get (name of) currently selected Category
+    function getCurrentCategory(){
+        var categoryElement = document.getElementById('id_componentCategory');
+        var category = categoryElement.options[categoryElement.selectedIndex].label
+        return category
+    }
+    
     // returns 1 if all items are sucessfully removed
     // otherwise returns zero.
-    function clearListBox(listboxID){
-        var box = document.getElementById(listboxID);
+    function clearTypeBox(){
+        var box = document.getElementById('id_componentType');
         if(box == null)
-            return 0;
+            return 0;        
         while(box.length > 0){
             box.remove(0);
         }
         return 1;
     }
     
-    function clearTypeBox(){
-        return clearListBox('id_componentType')
-    }
-    
     // update content of Type ChoiceField depending on Category selection
-    function updateListBox(selectedType){
+    // this could propably be replaced by a django template fill-in
+    function updateListBox(selectedCategory){
         clearTypeBox();
         var elementId = 'id_componentType'
 
         $.ajax({
-                        async: false,
-                        type: 'GET',
-                        url: "/getTypeDnaInfo/"+selectedType+"/",
-                        success: function(data){
-                            var p = django.jQuery.parseJSON(data);
-                            var listbox = document.getElementById(elementId);
-                            listbox.options[0] = new Option('---specifiy type---', "");
-                            listbox.options[0].selected = true;
-                            for (var key in p) {
-                                var i = parseInt(key)
-                                if (p.hasOwnProperty(key)) {
-                                    listbox.options[i+1] = new Option(p[key].fields.name, p[key].pk);
-                                    //if DC object already exists and we go back to the original
-                                    //category, always select current dc.componentType
-                                    {% if original %}
-                                        if ({{original.componentType.pk}} == p[key].pk)
-                                            listbox.options[i+1].selected = true;
-                                    {% endif %}
-                                }
-                            }                            
+                async: false,
+                type: 'GET',
+                url: "/getTypeDnaInfo/"+selectedCategory+"/",
+                success: function(data){
+                    var p = django.jQuery.parseJSON(data);
+                    var listbox = document.getElementById(elementId);
+                    listbox.options[0] = new Option('---specifiy type---', "");
+                    listbox.options[0].selected = true;
+                    for (var key in p) {
+                        var i = parseInt(key)
+                        if (p.hasOwnProperty(key)) {
+                            listbox.options[i+1] = new Option(p[key].fields.name, p[key].pk);
+                            //if DC object already exists and we go back to the original
+                            //category, always select current dc.componentType
+                            {% if original %}
+                                if ({{original.componentType.pk}} == p[key].pk)
+                                    listbox.options[i+1].selected = true;
+                            {% endif %}
+                            // ... but a cached value for this category always takes precedence
+                            if ((lastType.hasOwnProperty(selectedCategory)) & 
+                                (lastType[ selectedCategory ] == i+1)) {
+                                listbox.options[i+1].selected = true;
+                            }
                         }
-                }                
-            );	
+                    }                            
+                }
+            }                
+        );	
     }
 
     function hideShow() {
 <!--        alert( document.getElementById('id_field_insert') )-->
-        var categoryElement = document.getElementById('id_componentCategory');
-        var category = categoryElement.options[categoryElement.selectedIndex].label
+        var category = getCurrentCategory();
         
         updateListBox(category)
 
@@ -132,14 +140,26 @@
     // return a dictionary of Category names mapping to their position in listbox 
     function captureCategories() {
         var listbox = document.getElementById('id_componentCategory')
-        var table = {};    
+        var table = {};
         for (var i=0; i < listbox.options.length; i++){
             table[ listbox.options[i].text ] = i;
+            lastType[ listbox.options[i].text ] = -1;
         }
         return table;
     }
 
+    // cache last position in componentType listbox for each category selection
+    lastType = {}
+    // Memorize the last selected componentType so that it can be re-instantiated
+    // after the listbox is wiped
+    function cacheTypeSelection() {
+        var category = getCurrentCategory();
+        lastType[ category ] = document.getElementById( 'id_componentType' ).selectedIndex;
+        var s = category + ':' + lastType[ category ];
+    }
+
     //pre-select category if given in URL; requires context_processors.request
+    //requires context_processors.request in settings.py
     function preselectCategory() {
         if ("{{request.GET.category}}" != ""){
             var i = parseInt("{{request.GET.category}}");
@@ -160,6 +180,7 @@
         document.getElementById("add_id_insert").href = urladd + cat_insert;
     }
 
+    // "Main" function
     window.onload = function() {
         
         initIdDiv();
@@ -168,6 +189,7 @@
         preselectCategory();
         
         document.getElementById( 'id_componentCategory' ).onchange = hideShow;
+        document.getElementById( 'id_componentType' ).onchange = cacheTypeSelection;
         hideShow();
     };
     
