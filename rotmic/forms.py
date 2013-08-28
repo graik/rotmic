@@ -22,7 +22,6 @@ class InsertLookup(ModelLookup):
 registry.register(InsertLookup)
 
 
-
 class DnaComponentForm(forms.ModelForm):
     
     
@@ -32,9 +31,6 @@ class DnaComponentForm(forms.ModelForm):
                             empty_label=None,
                             initial=DnaComponentType.objects.get(name='Plasmid').id)
     
-
-    insert = sforms.AutoCompleteSelectField(lookup_class=InsertLookup, required=False,
-                                            help_text='start typing ID or name to select plasmid insert')
 
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
@@ -66,5 +62,6 @@ class DnaComponentForm(forms.ModelForm):
     class Meta:
         model = DnaComponent
         widgets = {  ## customize widget dimensions
-            'sequence' : forms.Textarea(attrs={'cols': 80, 'rows': 4}) 
+            'sequence' : forms.Textarea(attrs={'cols': 80, 'rows': 4}) ,
+            'insert' : sforms.AutoComboboxSelectWidget(lookup_class=InsertLookup, allow_new=False)
         }
