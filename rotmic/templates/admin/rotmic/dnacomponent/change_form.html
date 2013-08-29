@@ -85,13 +85,14 @@
                         var i = parseInt(key)
                         if (p.hasOwnProperty(key)) {
                             listbox.options[i+1] = new Option(p[key].fields.name, p[key].pk);
-                            //if DC object already exists and we go back to the original
-                            //category, always select current dc.componentType
+                            //... but select previously assigned dc.componentType if object already exists with this category
                             {% if original %}
-                                if ({{original.componentType.pk}} == p[key].pk)
+                                if (({{original.componentType.pk}} == p[key].pk)){
                                     listbox.options[i+1].selected = true;
+                                    cachedTypeIndex = 0;  // reset to prevent selection of type from previous form
+                                }
                             {% endif %}
-                            // ... but a cached value for this category always takes precedence
+                            // go back to previously selected type for this category
                             if ( cachedTypeIndex == i+1 ){
                                 listbox.options[i+1].selected = true;
                             }
@@ -184,9 +185,23 @@
         document.getElementById("add_id_insert").href = urladd + cat_insert;
     }
 
+    function resetStorageBetweenForms() {
+        {% if original %} var objectId = {{original.pk}}; {% else %} var objectId = -1; {% endif %}
+        if (sessionStorage.getItem( 'DnaComponent_lastvisited' )){
+            if (sessionStorage.getItem( 'DnaComponent_lastvisited' ) != objectId){
+                if (objectId != -1){
+                    sessionStorage.clear();
+                    // Note: insert more specific code here to only delete entry for each category name
+                }
+            }
+        }
+        sessionStorage.setItem( 'DnaComponent_lastvisited', objectId );
+    }
+
     // "Main" function
     window.onload = function() {
         
+        resetStorageBetweenForms();
         initIdDiv();
         setPlusLinks();
         
