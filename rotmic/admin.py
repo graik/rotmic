@@ -70,13 +70,8 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         This preserves the "+" Button which is otherwise lost.
         See http://djangosnippets.org/snippets/1558/#c4674
         """
-
         form = super(DnaComponentAdmin,self).get_form(request, obj,**kwargs)
 
-        field = form.base_fields['componentType']
-        field.queryset = field.queryset.exclude(subTypeOf=None)
-        field.initial = DnaComponentType.objects.get(name='generic plasmid').id
-        
         field = form.base_fields['marker']
         field.queryset = field.queryset.filter(componentType__subTypeOf=T.dcMarker)
         field.help_text = 'select multiple with Control/Command key'

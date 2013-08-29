@@ -70,6 +70,7 @@
     function updateListBox(selectedCategory){
         clearTypeBox();
         var elementId = 'id_componentType'
+        var cachedTypeIndex = lastTypeSelection(selectedCategory);
 
         $.ajax({
                 async: false,
@@ -91,8 +92,7 @@
                                     listbox.options[i+1].selected = true;
                             {% endif %}
                             // ... but a cached value for this category always takes precedence
-                            if ((lastType.hasOwnProperty(selectedCategory)) & 
-                                (lastType[ selectedCategory ] == i+1)) {
+                            if ( cachedTypeIndex == i+1 ){
                                 listbox.options[i+1].selected = true;
                             }
                         }
@@ -143,19 +143,23 @@
         var table = {};
         for (var i=0; i < listbox.options.length; i++){
             table[ listbox.options[i].text ] = i;
-            lastType[ listbox.options[i].text ] = -1;
         }
         return table;
     }
 
     // cache last position in componentType listbox for each category selection
-    lastType = {}
     // Memorize the last selected componentType so that it can be re-instantiated
     // after the listbox is wiped
+    // see: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Storage?redirectlocale=en-US&redirectslug=DOM%2FStorage
     function cacheTypeSelection() {
         var category = getCurrentCategory();
-        lastType[ category ] = document.getElementById( 'id_componentType' ).selectedIndex;
-        var s = category + ':' + lastType[ category ];
+        sessionStorage.setItem( category, document.getElementById( 'id_componentType' ).selectedIndex);
+    }
+    
+    function lastTypeSelection(category) {
+        var r = sessionStorage.getItem( category );
+        if (! r){ return 0; }
+        return r; 
     }
 
     //pre-select category if given in URL; requires context_processors.request
