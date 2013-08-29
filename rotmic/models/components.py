@@ -156,4 +156,5 @@ class DnaComponent(Component):
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'DNA'
+        ordering = ['displayId']
 
