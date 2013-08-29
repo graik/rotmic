@@ -77,7 +77,6 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         field.help_text = 'select multiple with Control/Command key'
         
         field = form.base_fields['vectorBackbone']
-        field.queryset = field.queryset.filter(componentType__subTypeOf=T.dcVectorBB)
         field.empty_label = '---specifiy vector---'
             
         return form

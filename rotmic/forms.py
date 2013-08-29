@@ -22,6 +22,18 @@ class InsertLookup(ModelLookup):
 registry.register(InsertLookup)
 
 
+class VectorLookup(ModelLookup):
+    model = DnaComponent
+    search_fields = ('displayId__startswith', 'name__icontains')
+    
+    filters = {'componentType__subTypeOf': T.dcVectorBB }
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(VectorLookup)
+
+
 class DnaComponentForm(forms.ModelForm):
     
     
@@ -40,6 +52,7 @@ class DnaComponentForm(forms.ModelForm):
         if o:
             self.fields['componentCategory'].initial = o.componentType.subTypeOf
         
+
     def clean(self):
         """
         Remove values for hidden fields, which might have been set before final
@@ -55,6 +68,11 @@ class DnaComponentForm(forms.ModelForm):
         
         if category not in [T.dcVectorBB, T.dcFragment] and 'marker' in data:
             data['marker'] = Q()
+            
+        ## validate that a vector backbone is given if category == Plasmid
+        if category == T.dcPlasmid and not data.get('vectorBackbone',None):
+            msg = u'Vector Backbone is required for Plasmids.'
+            self._errors['vectorBackbone'] = self.error_class([msg])
         
         return data
       
@@ -63,5 +81,6 @@ class DnaComponentForm(forms.ModelForm):
         model = DnaComponent
         widgets = {  ## customize widget dimensions
             'sequence' : forms.Textarea(attrs={'cols': 80, 'rows': 4}) ,
-            'insert' : sforms.AutoComboboxSelectWidget(lookup_class=InsertLookup, allow_new=False)
+            'insert' : sforms.AutoComboboxSelectWidget(lookup_class=InsertLookup, allow_new=False),
+            'vectorBackbone' : sforms.AutoComboboxSelectWidget(lookup_class=VectorLookup, allow_new=False)
         }
