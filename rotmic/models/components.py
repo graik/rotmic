@@ -82,11 +82,6 @@ class Component(UserMixin):
         return unicode(self.comment[:38] + '..')
     showComment.short_description = 'Comment'
     
-    def category(self):
-        """
-        @return: ComponentType.category
-        """
-        pass
 
     class Meta:
         app_label = 'rotmic'
@@ -126,12 +121,19 @@ class DnaComponent(Component):
 ##        """
 ##        return 'dnacomponent/%i/' % self.id
 ##    
-##    def get_absolute_url(self):
-##        """
-##        Define standard URL for object views in templates.
-##        """
-##        return '../../reviewdna/%s/' % self.displayId
+    def get_absolute_url(self):
+        """
+        Define standard URL for object views
+        see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
+        """
+        from django.core.urlresolvers import reverse
+        return reverse('admin:rotmic_dnacomponent_readonly', args=(self.id,))
+    
+    def get_absolute_url_edit(self):
+        from django.core.urlresolvers import reverse
+        return reverse('admin:rotmic_dnacomponent_change', args=(self.id,))
    
+
     def __unicode__(self):
         name = unicode(self.displayId + ' - ' + self.name)
         return name

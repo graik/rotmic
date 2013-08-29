@@ -1,5 +1,6 @@
 from django.contrib import admin
 import django.contrib.admin.widgets as widgets
+import django.utils.html as html
 
 import datetime
 
@@ -56,10 +57,15 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'insert','vectorBackbone', 'comment','status')
+                    'showInsertUrl', 'showVectorUrl', 'comment','status')
     
     list_filter = ( DnaCategoryListFilter, DnaTypeListFilter, 'status','registeredBy')
     
+    search_fields = ('displayId', 'name', 'comment', 
+                     'insert__name', 'insert__displayId',
+                     'vectorBackbone__name', 'vectorBackbone__displayId')
+    
+##    list_editable = ('status',)
 ##    class Media:
 ##        js = ('jquery-2.0.1.min.js','jquery-ui.min.js')
     
@@ -80,6 +86,26 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         field.empty_label = '---specifiy vector---'
             
         return form
+
+    def showInsertUrl(self, obj):
+        """Table display of linked insert or ''"""
+        x = obj.insert
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s">%s</a>- %s' % (url, x.displayId, x.name))
+    showInsertUrl.allow_tags = True
+    showInsertUrl.short_description = 'Insert'
+        
+    def showVectorUrl(self, obj):
+        """Table display of linked insert or ''"""
+        x = obj.vectorBackbone
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s">%s</a>- %s' % (url, x.displayId, x.name))
+    showVectorUrl.allow_tags = True
+    showVectorUrl.short_description = 'Vector'
 
 
 class DnaComponentTypeAdmin( admin.ModelAdmin ):

@@ -43,6 +43,7 @@ class ComponentType( models.Model ):
     class Meta:
         app_label = 'rotmic' 
         abstract = True
+        ordering = 'name'
 
 
 class DnaComponentType( ComponentType ):
