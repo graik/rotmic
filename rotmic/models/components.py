@@ -59,9 +59,9 @@ class Component(UserMixin):
         help_text='Unique identification')
 
     name = models.CharField('Name', max_length=200, blank=True, 
-                            help_text='Descriptive name (e.g. "TEV protease")')
+                            help_text='Descriptive name (e.g. "EGFP_pUC19")')
 
-    comment = models.TextField('Detailed description', blank=True)
+    comment = models.TextField('Description', blank=True)
     
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='planning')

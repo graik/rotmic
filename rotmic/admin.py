@@ -57,13 +57,17 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showInsertUrl', 'showVectorUrl', 'comment','status')
+                    'showInsertUrl', 'showVectorUrl', 'showMarkerUrls', 'comment','status')
     
     list_filter = ( DnaCategoryListFilter, DnaTypeListFilter, 'status','registeredBy')
     
     search_fields = ('displayId', 'name', 'comment', 
                      'insert__name', 'insert__displayId',
                      'vectorBackbone__name', 'vectorBackbone__displayId')
+    
+    date_hierarchy = 'registeredAt'
+    
+    ordering = ('displayId', 'name', 'registeredBy')
     
 ##    list_editable = ('status',)
 ##    class Media:
@@ -89,6 +93,7 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
 
     def showInsertUrl(self, obj):
         """Table display of linked insert or ''"""
+        assert isinstance(obj, DnaComponent), 'object missmatch'
         x = obj.insert
         if not x:
             return u''
@@ -99,6 +104,7 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         
     def showVectorUrl(self, obj):
         """Table display of linked insert or ''"""
+        assert isinstance(obj, DnaComponent), 'object missmatch'
         x = obj.vectorBackbone
         if not x:
             return u''
@@ -106,6 +112,21 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         return html.mark_safe('<a href="%s">%s</a>- %s' % (url, x.displayId, x.name))
     showVectorUrl.allow_tags = True
     showVectorUrl.short_description = 'Vector'
+    
+    def showMarkerUrls(self, obj):
+        """Table display of Vector Backbone markers"""
+        assert isinstance(obj, DnaComponent), 'object missmatch'
+        category = obj.componentType.category()
+        v = obj if category == T.dcVectorBB else obj.vectorBackbone
+        r = u''
+        if v:
+            markers = [ m.name for m in v.marker.all() ]
+            r += ', '.join(markers)
+        return r
+    showMarkerUrls.allow_tags = True
+    showMarkerUrls.short_description = 'Markers'
+    
+        
 
 
 class DnaComponentTypeAdmin( admin.ModelAdmin ):
