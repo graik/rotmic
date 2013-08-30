@@ -71,16 +71,6 @@ class Component(UserMixin):
         name = self.name or ''
         return u'%s - %s' % (self.displayId, name)
 
-    def showComment( self ):
-        """
-        @return: str; truncated comment
-        """
-        if not self.comment:
-            return u''
-        if len(self.comment) < 40:
-            return unicode(self.comment)
-        return unicode(self.comment[:38] + '..')
-    showComment.short_description = 'Comment'
     
 
     class Meta:

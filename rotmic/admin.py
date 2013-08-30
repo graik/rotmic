@@ -57,7 +57,7 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showInsertUrl', 'showVectorUrl', 'showMarkerUrls', 'comment','status')
+                    'showInsertUrl', 'showVectorUrl', 'showMarkerUrls', 'showComment','status')
     
     list_filter = ( DnaCategoryListFilter, DnaTypeListFilter, 'status','registeredBy')
     
@@ -67,7 +67,7 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     
     date_hierarchy = 'registeredAt'
     
-    ordering = ('displayId', 'name', 'registeredBy')
+    ordering = ('displayId', 'name',)
     
 ##    list_editable = ('status',)
 ##    class Media:
@@ -98,7 +98,8 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         if not x:
             return u''
         url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s">%s</a>- %s' % (url, x.displayId, x.name))
+        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
+                              % (url, x.comment, x.displayId, x.name))
     showInsertUrl.allow_tags = True
     showInsertUrl.short_description = 'Insert'
         
@@ -109,7 +110,8 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         if not x:
             return u''
         url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s">%s</a>- %s' % (url, x.displayId, x.name))
+        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
+                              % (url, x.comment, x.displayId, x.name))
     showVectorUrl.allow_tags = True
     showVectorUrl.short_description = 'Vector'
     
@@ -126,7 +128,20 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     showMarkerUrls.allow_tags = True
     showMarkerUrls.short_description = 'Markers'
     
-        
+    def showComment(self, obj):
+        """
+        @return: str; truncated comment with full comment mouse-over
+        """
+        if not obj.comment: 
+            return u''
+        if len(obj.comment) < 40:
+            return unicode(obj.comment)
+        r = unicode(obj.comment[:38])
+        r = '<a title="%s">%s..</a>' % (obj.comment, obj.comment[:38])
+        return r
+    showComment.allow_tags = True
+    showComment.short_description = 'Description'
+    
 
 
 class DnaComponentTypeAdmin( admin.ModelAdmin ):
