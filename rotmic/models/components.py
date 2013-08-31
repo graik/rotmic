@@ -23,6 +23,8 @@ from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 
+from rotmic.utils.filefields import DocumentModelField
+
 
 class UserMixin(models.Model):
     """
@@ -41,6 +43,23 @@ class UserMixin(models.Model):
         abstract = True
 
 
+##class Attachment( models.Model ):
+##    """Wrap a single file attachment"""
+##    
+##    upload_to = 'attachments/component/'
+##    
+##    f = DocumentModelField('file', 
+##                                  upload_to=upload_to, blank=True, null=True)
+##    
+##    description = models.CharField(max_length=100, blank=True)
+##    
+####    parent = models.ForeignKey('Component',
+##
+##    class Meta:
+##        app_label = 'rotmic'
+##        abstract = False
+        
+
 class Component(UserMixin):
     """
     Base class for cells, nucleic acids, proteins, and chemicals.
@@ -49,6 +68,7 @@ class Component(UserMixin):
     
     See Meta.abstract
     """
+    upload_to = 'attachments/Component'
 
     STATUS_CHOICES = ( ('available', 'available'),
                        ('planning', 'planning'),
@@ -66,6 +86,8 @@ class Component(UserMixin):
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='planning')
 
+    attachment = DocumentModelField( 'attachment', upload_to=upload_to,
+                                     blank=True, null=True)
     
     def __unicode__(self):
         name = self.name or ''
