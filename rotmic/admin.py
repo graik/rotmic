@@ -50,6 +50,7 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         ('Details', {
             'fields' : (('comment',),
                         ('sequence'),
+                        ('attachment'),
 ##                        ('attachements',)
                         )
         }
