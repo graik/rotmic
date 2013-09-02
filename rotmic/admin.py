@@ -4,7 +4,7 @@ import django.utils.html as html
 
 import datetime
 
-from rotmic.models import DnaComponent, DnaComponentType
+from rotmic.models import DnaComponent, DnaComponentType, Attachment
 from rotmic.utils.customadmin import ViewFirstModelAdmin
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter
 from rotmic.forms import DnaComponentForm
@@ -36,7 +36,24 @@ class BaseAdminMixin:
     registrationTime.short_description = 'at'
     
 
+class AttachmentInline(admin.TabularInline):
+    model = Attachment
+    extra = 1
+    max_num = 5
+
+    def get_formset(self, request, obj=None, **kwargs):
+        """Returns a BaseInlineFormSet class for use in admin add/change views."""
+        import django.forms as forms
+        
+        r = super(admin.TabularInline, self).get_formset(request, obj=obj, **kwargs)
+        field = r.form.base_fields['description'] 
+        field.widget = forms.TextInput(attrs={'size':30})
+        return r
+
+
+
 class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
+    inlines = [ AttachmentInline ]
     form = DnaComponentForm
     
     fieldsets = (
@@ -50,8 +67,6 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
         ('Details', {
             'fields' : (('comment',),
                         ('sequence'),
-                        ('attachment'),
-##                        ('attachements',)
                         )
         }
          ),            
@@ -70,7 +85,6 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     
     ordering = ('displayId', 'name',)
     
-##    list_editable = ('status',)
 ##    class Media:
 ##        js = ('jquery-2.0.1.min.js','jquery-ui.min.js')
     
@@ -144,6 +158,8 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     showComment.short_description = 'Description'
     
 
+admin.site.register(DnaComponent, DnaComponentAdmin)
+
 
 class DnaComponentTypeAdmin( admin.ModelAdmin ):
     
@@ -164,5 +180,4 @@ class DnaComponentTypeAdmin( admin.ModelAdmin ):
     list_filter = ('subTypeOf', 'isInsert')
                        
 
-admin.site.register(DnaComponent, DnaComponentAdmin)
 admin.site.register(DnaComponentType, DnaComponentTypeAdmin)

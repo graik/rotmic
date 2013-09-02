@@ -37,7 +37,7 @@ class DocumentFormField(forms.FileField):
       
         f = super(DocumentFormField, self).validate(value)
         
-        if f is None and not self.required:  ## non-required empty field
+        if f is None:  ## non-required empty field
             return
         
         try:

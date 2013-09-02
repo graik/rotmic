@@ -15,10 +15,13 @@
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
+import os
 
 from django.db import models
 from django.db.models.query import QuerySet as Q
 from django.utils.safestring import mark_safe
+from django.dispatch import receiver
+
 
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -43,22 +46,57 @@ class UserMixin(models.Model):
         abstract = True
 
 
-##class Attachment( models.Model ):
-##    """Wrap a single file attachment"""
-##    
-##    upload_to = 'attachments/component/'
-##    
-##    f = DocumentModelField('file', 
-##                                  upload_to=upload_to, blank=True, null=True)
-##    
-##    description = models.CharField(max_length=100, blank=True)
-##    
-####    parent = models.ForeignKey('Component',
-##
-##    class Meta:
-##        app_label = 'rotmic'
-##        abstract = False
-        
+
+class Attachment(models.Model):
+    """
+    Handle a single uploaded file. Also manage the removal of this file if the
+    attachment is deleted (which is not done automatically by django).
+    """
+    upload_to = 'attachments'
+    
+    f = DocumentModelField('file', upload_to=upload_to, 
+                           blank=False, null=False)
+    
+    description = models.CharField(max_length=100, blank=True)
+
+    parent = models.ForeignKey('Component', related_name='attachments')
+    
+    def __unicode__(self):
+        return os.path.basename(self.f.name)
+
+    class Meta:
+        app_label = 'rotmic'
+        abstract = False
+    
+# These two auto-delete files from filesystem when they are unneeded:
+@receiver(models.signals.post_delete, sender=Attachment)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """Deletes file from filesystem
+    when corresponding `MediaFile` object is deleted.
+    """
+    if instance.f:
+        if os.path.isfile(instance.f.path):
+            os.remove(instance.f.path)
+
+@receiver(models.signals.pre_save, sender=Attachment)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+    """Deletes file from filesystem
+    when corresponding `Attachment` object is changed.
+    """
+    if not instance.pk:
+        return False
+
+    try:
+        old_file = Attachment.objects.get(pk=instance.pk).f
+    except Attachment.DoesNotExist:
+        return False
+
+    new_file = instance.f
+    if not old_file == new_file:
+        if os.path.isfile(old_file.path):
+            os.remove(old_file.path)
+
+
 
 class Component(UserMixin):
     """
@@ -85,15 +123,11 @@ class Component(UserMixin):
     
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='planning')
-
-    attachment = DocumentModelField( 'attachment', upload_to=upload_to,
-                                     blank=True, null=True)
     
     def __unicode__(self):
         name = self.name or ''
         return u'%s - %s' % (self.displayId, name)
 
-    
 
     class Meta:
         app_label = 'rotmic'
