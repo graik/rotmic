@@ -41,16 +41,6 @@ class AttachmentInline(admin.TabularInline):
     extra = 1
     max_num = 5
 
-    def get_formset(self, request, obj=None, **kwargs):
-        """Returns a BaseInlineFormSet class for use in admin add/change views."""
-        import django.forms as forms
-        
-        r = super(admin.TabularInline, self).get_formset(request, obj=obj, **kwargs)
-        field = r.form.base_fields['description'] 
-        field.widget = forms.TextInput(attrs={'size':30})
-        return r
-
-
 
 class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     inlines = [ AttachmentInline ]
