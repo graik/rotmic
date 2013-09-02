@@ -2,6 +2,8 @@ from django.contrib import admin
 import django.contrib.admin.widgets as widgets
 import django.utils.html as html
 
+import reversion
+
 import datetime
 
 from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment
@@ -41,8 +43,14 @@ class AttachmentInline(admin.TabularInline):
     extra = 1
     max_num = 5
 
+class ComponentVersionAdapter(reversion.VersionAdapter):
+    exclude = ('componentCategory',)
+    ## doesn't work yet
 
-class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
+## ToDo: create custom VersionAdmin which uses a different revision_manager
+## create custom RevisionManager where register() is using a custom VersionAdapter
+## create custom VersionAdapter where exclude is set to exclude 'componentCategory'
+class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
     inlines = [ AttachmentInline ]
     form = DnaComponentForm
     
@@ -75,10 +83,20 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
     
     ordering = ('displayId', 'name',)
     
-##    class Media:
-##        js = ('jquery-2.0.1.min.js','jquery-ui.min.js')
-    
         
+    def _autoregister(self, model, follow=None):
+        """Registers a model with reversion, if required."""
+        if model._meta.proxy:
+            raise RegistrationError("Proxy models cannot be used with django-reversion, register the parent class instead")
+        if not self.revision_manager.is_registered(model):
+            follow = follow or []
+            for parent_cls, field in model._meta.parents.items():
+                follow.append(field.name)
+                self._autoregister(parent_cls)
+            self.revision_manager.register(model, adapter_cls=ComponentVersionAdapter, 
+                                           follow=follow, format=self.reversion_format)
+
+
     def get_form(self, request, obj=None, **kwargs):
         """
         Override queryset of ForeignKey fields without overriding the field itself.
@@ -151,7 +169,7 @@ class DnaComponentAdmin( BaseAdminMixin, ViewFirstModelAdmin ):
 admin.site.register(DnaComponent, DnaComponentAdmin)
 
 
-class DnaComponentTypeAdmin( admin.ModelAdmin ):
+class DnaComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
     
     fieldsets = (
         (None, {

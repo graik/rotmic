@@ -91,8 +91,8 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
         return False
 
     try:
-        old_file = Attachment.objects.get(pk=instance.pk).f
-    except Attachment.DoesNotExist:
+        old_file = sender.objects.get(pk=instance.pk).f
+    except sender.DoesNotExist:
         return False
 
     new_file = instance.f
@@ -113,6 +113,8 @@ models.signals.post_delete.connect(auto_delete_file_on_delete,
 
 models.signals.pre_save.connect(auto_delete_file_on_change, 
                                    sender=ComponentAttachment)
+
+
 
 class Component(UserMixin):
     """
@@ -148,6 +150,7 @@ class Component(UserMixin):
     class Meta:
         app_label = 'rotmic'
         abstract = False
+
 
 
 class DnaComponent(Component):

@@ -4,6 +4,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 
+
 class ComponentType( models.Model ):
     """
     Helper class for classifying parts.
@@ -44,6 +45,7 @@ class ComponentType( models.Model ):
         app_label = 'rotmic' 
         abstract = True
         ordering = 'name'
+        
 
 
 class DnaComponentType( ComponentType ):
@@ -68,3 +70,4 @@ class DnaComponentType( ComponentType ):
         app_label = 'rotmic' 
         verbose_name = 'DNA Type'
         abstract = False
+
