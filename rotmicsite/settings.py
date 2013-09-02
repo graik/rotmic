@@ -149,6 +149,7 @@ INSTALLED_APPS = (
     'south',
     'guardian',
     'selectable',
+    'reversion',
     'rotmic',
 )
 
