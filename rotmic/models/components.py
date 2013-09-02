@@ -53,23 +53,27 @@ class Attachment(models.Model):
     attachment is deleted (which is not done automatically by django).
     """
     upload_to = 'attachments'
+    valid_extensions = ()  ## disable extension checking
+    parent_class = 'Component'
     
-    f = DocumentModelField('file', upload_to=upload_to, 
+    f = DocumentModelField('file', 
+                           upload_to=upload_to+'/'+parent_class,
+                           extensions=valid_extensions,
                            blank=False, null=False)
     
     description = models.CharField(max_length=100, blank=True)
 
-    parent = models.ForeignKey('Component', related_name='attachments')
+    parent = models.ForeignKey(parent_class, related_name='attachments')
     
     def __unicode__(self):
         return os.path.basename(self.f.name)
 
     class Meta:
         app_label = 'rotmic'
-        abstract = False
+        abstract = True
     
 # These two auto-delete files from filesystem when they are unneeded:
-@receiver(models.signals.post_delete, sender=Attachment)
+##@receiver(models.signals.post_delete, sender=Attachment)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
     """Deletes file from filesystem
     when corresponding `MediaFile` object is deleted.
@@ -78,7 +82,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
         if os.path.isfile(instance.f.path):
             os.remove(instance.f.path)
 
-@receiver(models.signals.pre_save, sender=Attachment)
+##@receiver(models.signals.pre_save, sender=Attachment)
 def auto_delete_file_on_change(sender, instance, **kwargs):
     """Deletes file from filesystem
     when corresponding `Attachment` object is changed.
@@ -97,6 +101,18 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
             os.remove(old_file.path)
 
 
+class ComponentAttachment(Attachment):
+    parent_class = 'Component'
+    
+    class Meta:
+        app_label='rotmic'
+        abstract=False
+
+models.signals.post_delete.connect(auto_delete_file_on_delete, 
+                                   sender=ComponentAttachment)
+
+models.signals.pre_save.connect(auto_delete_file_on_change, 
+                                   sender=ComponentAttachment)
 
 class Component(UserMixin):
     """

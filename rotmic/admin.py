@@ -4,7 +4,7 @@ import django.utils.html as html
 
 import datetime
 
-from rotmic.models import DnaComponent, DnaComponentType, Attachment
+from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment
 from rotmic.utils.customadmin import ViewFirstModelAdmin
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter
 from rotmic.forms import DnaComponentForm
@@ -37,7 +37,7 @@ class BaseAdminMixin:
     
 
 class AttachmentInline(admin.TabularInline):
-    model = Attachment
+    model = ComponentAttachment
     extra = 1
     max_num = 5
 

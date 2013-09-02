@@ -48,7 +48,7 @@ class DocumentFormField(forms.FileField):
                                         params={'fname': f.name}
                                         )
 
-        if not ext in self.extensions:
+        if self.extensions and not ext in self.extensions:
             raise forms.ValidationError(
                 'Invalid file extension %(ext)s. Allowed are %(allowed)r',
                 code='invalid file',
