@@ -41,6 +41,16 @@ class UserMixin(models.Model):
     registeredAt = models.DateTimeField(default=datetime.now(), 
                                 verbose_name="registered")
     
+    def registrationDate(self):
+        """extract date from date+time"""
+        return self.registeredAt.date().isoformat()
+    registrationDate.short_description = 'registered'
+    
+    def registrationTime(self):
+        """extract time from date+time"""
+        return self.registeredAt.time()
+    registrationTime.short_description = 'at'
+
     class Meta:
         app_label = 'rotmic'        
         abstract = True

@@ -1,0 +1,211 @@
+{% extends "admin/base_site.html" %}
+{% load adminmedia admin_list i18n %}
+{% load markup %}
+{% load brickit_filters %}  
+{% block extrastyle %}<link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/changelists.css" />{% endblock %}
+
+{% block bodyclass %}change-list{% endblock %}
+
+{% block breadcrumbs%}<div class="breadcrumbs">
+  <a href="../../../">Home</a> &rsaquo;
+  <a href="../../">Registry</a> &rsaquo;
+  <a href="../">Biobricks</a> &rsaquo;
+  {{ bb.name }}
+</div>
+{% endblock %}
+{% block coltype %}flex{% endblock %}
+
+{% block title %}Biobrick {{bb.name}}{% endblock %}
+
+{% block content %}
+
+
+<h1>Biobrick {{bb.name}} {% if bb.mit_id %}/ {{bb.mit_id }}{% endif %}
+{% if bb.nickname %}({{bb.nickname}}){% endif %}
+</h1>
+
+<div id="content-main">
+
+
+  <div class="module filtered" id="changelist">
+
+    {% block object-tools %}
+    <ul class="object-tools">
+      {% if bb.mit_id %} 
+         <li><a href="http://parts.mit.edu/registry/index.php/Part:{{bb.mit_id}}">MiT: {{bb.mit_id}}</a></li> 
+      {% endif %}
+      <li><a href="history/" class="historylink">{% trans "History"%}</a></li>
+      <li><a href="./edit">Edit</a></li>
+    </ul>
+    {% endblock %}
+
+    <div  id="changelist-filter">
+    {% block filters %}
+      <h2>Specifications</h2>
+
+      <ul>    
+         <li><B>Status</B>:<p> {{bb.status}}</p></li>
+         <li><B>Experience</B>:<p> {{bb.experience}}</p></li>
+         <li><B>Type</B>:<p> {{bb.brick_type}}</p></li>
+         <li><B>Size (bp)</B>:<p>{{bb.size}}</p></li>
+         <li><B>Users</B>:
+           <p>
+             {% for u in bb.users.all %}
+                {{ u }}
+             {% endfor %}
+           </p>
+         </li>
+      </ul>
+
+      <h2>Actions</h2>
+
+	  <ul>
+	    <h3><a href="./edit" class="changelink">Edit</a></h3>
+		<h3><a href="./delete" class="deletelink">Delete</a></h3>
+		<h3><a href="../../sample/add/?insert={{bb.id}}"  class="addlink">Add Sample</a></h3> 
+      </ul>
+
+    {% endblock %}
+    </div>
+
+   <table><tbody><td>
+
+      <h2>Description</h2>
+       <p class="description"><B>{{bb.short_description}}</B></p>
+
+             {{ bb.description|restructuredtext }}
+      
+      {% if bb.comments %}
+        <h2>Comments</h2>
+
+          <p>{{ bb.comments|restructuredtext }}</p>
+
+      {% endif %}
+
+      <h2>Sources & References</h2>
+      
+        <p><B>Source:</B> {{ bb.source_txt }}</p>
+
+        <p><B>Source gene:</B>{{ bb.source_gi }}</p>
+
+        <h4>References</h4>
+          {{ bb.references|restructuredtext }}
+
+      
+      <h2>Sequence</h2>
+      <p>    
+        <B>Part Composition:</B>
+        <p>
+        {% if bb.iscomposite %}
+          {% for part, scar in bb.brick_chain.get_biobricks_and_scars %}
+              <a href="{{part.get_absolute_url}}" title="{{part.description}}">
+                 <b>{{ part.name }}</b></a>
+              {% if part.nickname %}
+                  ({{ part.nickname }})
+              {% endif %}
+              {% if scar %}
+                 <b>
+                 <a href="{{ scar.get_absolute_url }}" title="{{scar.name}}">
+                 &mdash;&bull;&mdash;</a>
+                 </b>
+              {% endif %}
+          {% endfor %}
+          <br>
+          <a class='help'>
+             Hover over Biobrick or scar (&mdash;&bull;&mdash;) to read description. 
+             Click to follow links to individual Biobricks or scar formats.
+          </a>
+
+	  {% if bb.mit_composition %}
+             <br>Part composition using partsregistry.org IDs:<br>
+             {{ bb.mit_composition }}<br>
+          {% endif %}
+
+        {% else %}
+            This Biobrick is a basic part and has no sub-parts.
+        {% endif %}
+        </p>
+      </p>
+        
+      <p>
+        <B>Nucleotide sequence without Prefix and Suffix:</B>
+		  <br><a class='help'>Biobrick scar sequences are capitalized</a>
+             {{ bb.get_pretty_sequence|fasta|restcode|restructuredtext }}
+      </p>
+
+      <p>
+		<B>Amino acid sequence (simple in-frame translation)</B>
+	     {{ bb.get_aa_sequence|fasta|restcode|restructuredtext }}
+      </p>
+             
+      <p>
+		<B>Fasta-style Nucleotide sequence for available Biobrick formats</B>
+  		  <br><a class='help'>Click to open view in new page. Views are generated for all formats this 
+		  Biobrick is available in.<br>
+		  They start with the Prefix and end with the Suffix sequence.</a><br>
+		  <ul>
+  			<li><a href="./sequence/">blunt (no prefix or suffix)</a></li>  
+			{%for format in bb.available_formats %}
+			  <li><a href="./sequence/?format={{format.name}}">{{format.name}} format</a></li>
+			{%endfor%}
+		  </ul>
+      </p>
+
+      <h2>Availability</h2>
+      <div class="description">This Biobrick can be found in the
+      following Vectors and Samples:</div>
+      <p>
+
+      <table cellspacing="0">
+        <thead>
+          <tr>
+            <th>Sample</th><th>in
+            Vector</th><th>Format</th><th>Container</th>
+              <th>Storage</th>
+			{#  <th>Physical DNA</th> #}
+			  <th>Comment</th><th>Sequencing</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dna in bb.in_dnas.iterator %}
+             {% if dna.in_samples.count %}
+                {% for sample in dna.in_samples.iterator %}
+                  <tr class="{% cycle 'row1' 'row2' %}">
+                    <td><a href="{{sample.get_absolute_url}}">{{sample.label}}</a></td>
+                    <td><a href="{{dna.vector.get_absolute_url}}">{{ dna.vector }}</a></td>
+                    <td><a href="{{dna.vector.format.get_absolute_url}}">{{ dna.vector.format }}</a></td>
+                    <td><a href="{{sample.container.get_absolute_url}}">{{ sample.container }}</a></td>
+                    <td>{{sample.storage_type}}</td>
+{#                    <td><a href="{{dna.get_absolute_url}}">{{ dna }}</a></td> #}
+                    <td>{{sample.comments|truncate:40}}</td>
+                    <td>
+                      {% if sample.sequencing.all %}
+                          <i>{{sample.get_sequencing_evaluation}}</i>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+             {% else %}
+               <tr class="{% cycle 'row1' 'row2' %}">
+                 <td><a href="{{dna.get_absolute_url}}">{{ dna }}</a></td>
+                 <td><a href="{{dna.vector.get_absolute_url}}">{{ dna.vector }}</a></td>
+                 <td><a href="{{dna.vector.format.get_absolute_url}}">{{ dna.vector.format }}</a></td>
+                 <td>none</td>
+                 <td>none</td>
+                 <td>none</td>
+                 <td>none</td>
+                 <td>none</td>
+               </tr>
+             {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+
+      </p>
+
+    </td></tbody></table>
+
+  </div>
+
+</div>
+{% endblock %}

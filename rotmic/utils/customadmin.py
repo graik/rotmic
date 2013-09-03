@@ -128,10 +128,10 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
             raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {'name': force_text(opts.verbose_name), 'key': escape(object_id)})
         
         context = {
-            'title': _('Read %s') % force_text(opts.verbose_name),
+##            'title': _('Read %s') % force_text(opts.verbose_name),
 ##            'adminform': adminForm,
             'object_id': object_id,
-            'original': obj,
+            'o': obj,
             'is_popup': "_popup" in request.REQUEST,
             'media': self.media,
 ##            'inline_admin_formsets': inline_admin_formsets,
@@ -147,9 +147,9 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
         context.update(extra_context or {})
 
         return TemplateResponse(request, [
-            "admin/%s/%s/readonly_form.html" % (app_label, opts.object_name.lower()),
-            "admin/%s/readonly_form.html" % app_label,
-            "admin/readonly_form.html"
+            "admin/%s/%s/readonly.html" % (app_label, opts.object_name.lower()),
+            "admin/%s/readonly.html" % app_label,
+            "admin/readonly.html"
         ], context, current_app=self.admin_site.name)
 
 

@@ -1,0 +1,95 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_list %}
+{% load admin_urls %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />
+{% endblock %}
+
+{% if not is_popup %}
+    {% block breadcrumbs%}<div class="breadcrumbs">
+      <a href="../../../">Home</a> &rsaquo;
+      <a href="../../">Rotmic</a> &rsaquo;
+      <a href="../">Dna constructs</a> &rsaquo;
+      {{ o.displayId }}
+    </div>
+    {% endblock %}
+{% endif %}
+
+{% block coltype %}colMS{% endblock %}
+{% block bodyclass %}change-list{% endblock %}
+
+{% block title %}DNA construct {{o.displayId}}{% endblock %}
+
+
+{% block content %}
+<h3>DNA construct</h3><h1>{{o}}</h1>
+
+<div id="content-main">
+
+    {% block object-tools %}
+    {% if not is_popup %}
+      <ul class="object-tools">
+        {% block object-tools-items %}
+        <li><a href="{% url opts|admin_urlname:'history' o.pk|admin_urlquote %}" class="historylink">{% trans "History" %}</a></li>
+        <li><a href="edit">Edit</a></li>
+        {% endblock %}
+      </ul>
+    {% endif %}
+    {% endblock %}
+
+    <div class="module filtered" id="changelist">
+
+    {% block filter %}
+        <div id="changelist-filter">
+            <h2>Record</h2>
+            <ul>    
+                <li><B>Status</B>:<p> {{o.status}}</p></li>
+                <li><B>Category / Type</B>:
+                    <p> {{o.componentType.category}} /<br>
+                    {{o.componentType.name}}
+                    </p>
+                </li>
+                <li><B>registered</B>: 
+                    <p>
+                        {{o.registrationDate}}<br>
+                        {{o.registrationTime}}<br>
+                        by {{o.registeredBy.first_name}} {{o.registeredBy.last_name}} ({{o.registeredBy}})
+                    </p>
+                </li>
+            </ul
+        </div>
+    {% endblock %}
+    
+    </div>
+    
+    <h2>Description</h2>
+    <p class='description'>
+        {{o.comment}}
+        <br><br>
+    </p>
+    
+    <h2>Sequence & Composition</h2>
+    
+    {% if o.componentType.category|upper == 'PLASMID' %}
+        <h4><center>Plasmid Features</center></h4>
+            <p><b>Insert: </b><a href="{{o.insert.get_absolute_url}}">{{o.insert}}</a></p>
+            <p><b>Vector Backbone:</b> <a href="{{o.vectorBackbone.get_absolute_url}}">{{o.vectorBackbone}}</a></p>
+            <p><b>Selective Markers: </b>
+                <ul>
+                {% for m in o.vectorBackbone.marker.all %}
+                    <li><a href="{{m.get_absolute_url}}">{{m}}</a></li>
+                {% endfor %}
+                </ul>
+            <p>
+    {% endif %}
+
+    {% if o.sequence %}
+        <h4>Raw Sequence</h4>
+        {{o.sequence|truncatechars:80}}
+    {% endif %}
+    
+</div>
+    
+{% endblock %}
