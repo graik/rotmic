@@ -79,8 +79,11 @@ class DnaComponentForm(forms.ModelForm):
                 
     class Meta:
         model = DnaComponent
-        widgets = {  ## customize widget dimensions
-            'sequence' : forms.Textarea(attrs={'cols': 80, 'rows': 4}) ,
+        widgets = {  ## customize widget dimensions and include dynamic select widgets
+            'sequence': forms.Textarea(attrs={'cols': 100, 'rows': 4,
+                                               'style':'font-family:monospace'}), 
+            'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 15,
+                                              'style':'font-family:monospace'}),
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=InsertLookup, allow_new=False),
             'vectorBackbone' : sforms.AutoComboboxSelectWidget(lookup_class=VectorLookup, allow_new=False)
         }

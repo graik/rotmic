@@ -147,7 +147,8 @@ class Component(UserMixin):
     name = models.CharField('Name', max_length=200, blank=True, 
                             help_text='Descriptive name (e.g. "EGFP_pUC19")')
 
-    comment = models.TextField('Description', blank=True)
+    comment = models.TextField('Description', blank=True,
+                help_text='You can format your text and include links. See: <a href="http://docutils.sourceforge.net/docs/user/rst/quickref.html">reStructuredText Quick Reference</a>')
     
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='planning')
