@@ -29,3 +29,46 @@ def convertTxt(value):
     return mark_safe(markdown2.markdown(force_unicode(value)))
 
 register.filter('markdown', convertTxt)
+
+@stringfilter
+def fasta( seq, name='', block=80, upper=False):
+    """
+    Format a sequence into a fasta format
+    @param seq: sequence
+    @type  seq: str
+    @param name: name to be used for header ('>name') [None]
+    @type  name: str
+    @param upper: capitalize letters
+    @type  upper: bool
+    """
+    if upper:
+        seq = seq.upper()
+    r = ''
+    n_chunks = int( len( seq ) / block )
+
+    if name:
+        r += '>%s\n' % name
+
+    for i in range(0, n_chunks+1):
+
+        if i * block + block < len( seq ):
+            chunk = seq[i * block : i * block + block] + '\n'
+        else:
+            chunk = seq[i * block :]
+
+        r += chunk
+
+    return  r
+
+register.filter('fasta', fasta)
+
+@register.filter(is_safe=True)
+@stringfilter
+def markcode(value):
+    """Mark a given text input as code"""
+    lines = value.split('\n')
+    lines = [ '    ' + l for l in lines ]
+    r = '\n'.join( lines )
+    return convertTxt( r )
+
+register.filter('markcode', markcode )
