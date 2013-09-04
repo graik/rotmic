@@ -232,6 +232,6 @@ class DnaComponent(Component):
 
     class Meta:
         app_label = 'rotmic'
-        verbose_name = 'DNA'
+        verbose_name = 'DNA construct'
         ordering = ['displayId']
 
