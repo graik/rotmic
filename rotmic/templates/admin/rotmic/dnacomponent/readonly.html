@@ -94,12 +94,16 @@
                 </ul>
             <p>
     {% endif %}
-
-    {% if o.sequence %}
-        <h4>Raw Sequence</h4>
-        {{o.sequence|truncatechars:80}}
-    {% endif %}
     
+</div>
+
+<div class='module'>    
+    <h2>Raw Sequence</h2>
+    {% if o.sequence %}
+        <p>
+        <p style='font-family:monospace;word-wrap:break-word'>&gt;{{o.displayId}}<br>{{o.sequence}}</p>
+        </p>
+    {% endif %}
 </div>
 
 {% endblock %}
