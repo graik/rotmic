@@ -1,10 +1,11 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_static admin_list %}
 {% load admin_urls %}
+{% load rotmicfilters %}
 
 {% block extrastyle %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "dashboard.css" %}" />
 {% endblock %}
 
 {% if not is_popup %}
@@ -18,9 +19,9 @@
 {% endif %}
 
 {% block coltype %}colMS{% endblock %}
-{% block bodyclass %}change-list{% endblock %}
+{% block bodyclass %}change-list{% endblock %}  {# keeps center scalable #}
 
-{% block title %}DNA construct {{o.displayId}}{% endblock %}
+{% block title %}DNA construct {{o.displayId}}{% endblock %} {# window title #}
 
 
 {% block content %}
@@ -39,34 +40,43 @@
     {% endif %}
     {% endblock %}
 
-    <div class="module filtered" id="changelist">
 
-    {% block filter %}
-        <div id="changelist-filter">
-            <h2>Record</h2>
-            <ul>    
-                <li><B>Status</B>:<p> {{o.status}}</p></li>
-                <li><B>Category / Type</B>:
-                    <p> {{o.componentType.category}} /<br>
-                    {{o.componentType.name}}
-                    </p>
-                </li>
-                <li><B>registered</B>: 
-                    <p>
-                        {{o.registrationDate}}<br>
-                        {{o.registrationTime}}<br>
-                        by {{o.registeredBy.first_name}} {{o.registeredBy.last_name}} ({{o.registeredBy}})
-                    </p>
-                </li>
-            </ul
-        </div>
+    <div class="module" id="sidebar">
+    {% block filters %}
+        <div id="content-related"> 
+
+            <div class="module" id="recent-actions-module">
+                <h2>Rating</h2>
+                <p>Not yet implemented.</p>
+            </div>
+    
+            <div class="module" id="recent-actions-module">
+                <h2>Record</h2>
+                <ul>    
+                    <li><B>Status</B>:<p> {{o.status}}</p></li>
+                    <li><B>Category / Type</B>:
+                        <p> {{o.componentType.category}} /<br>
+                        {{o.componentType.name}}
+                        </p>
+                    </li>
+                    <li><B>registered</B>: 
+                        <p>
+                            {{o.registrationDate}}<br>
+                            {{o.registrationTime}}<br>
+                            by {{o.registeredBy.first_name}} {{o.registeredBy.last_name}} ({{o.registeredBy}})
+                        </p>
+                    </li>
+                </ul
+            </div>
+            
+        </div> 
+                
     {% endblock %}
-    
     </div>
-    
+
     <h2>Description</h2>
     <p class='description'>
-        {{o.comment}}
+        {{o.comment|markdown}}
         <br><br>
     </p>
     
@@ -91,5 +101,5 @@
     {% endif %}
     
 </div>
-    
+
 {% endblock %}
