@@ -148,7 +148,7 @@ class Component(UserMixin):
                             help_text='Descriptive name (e.g. "EGFP_pUC19")')
 
     comment = models.TextField('Description', blank=True,
-                help_text='You can format your text and include links. See: <a href="http://docutils.sourceforge.net/docs/user/rst/quickref.html">reStructuredText Quick Reference</a>')
+                help_text='You can format your text and include links. See: <a href="http://daringfireball.net/projects/markdown/basics">Markdown Quick Reference</a>')
     
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='planning')
