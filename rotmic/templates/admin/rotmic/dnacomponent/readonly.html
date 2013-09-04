@@ -79,11 +79,12 @@
         {{o.comment|markdown}}
         <br><br>
     </p>
-    
-    <h2>Sequence & Composition</h2>
+</div>
+
+<div class='module'>        
+    <h2>Features</h2>
     
     {% if o.componentType.category|upper == 'PLASMID' %}
-        <h4><center>Plasmid Features</center></h4>
             <p><b>Insert: </b><a href="{{o.insert.get_absolute_url}}">{{o.insert}}</a></p>
             <p><b>Vector Backbone:</b> <a href="{{o.vectorBackbone.get_absolute_url}}">{{o.vectorBackbone}}</a></p>
             <p><b>Selective Markers: </b>
@@ -94,7 +95,6 @@
                 </ul>
             <p>
     {% endif %}
-    
 </div>
 
 <div class='module'>    
