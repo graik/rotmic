@@ -101,7 +101,6 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
                 name='%s_%s_readonly' % info),
         )
         
-        ## extract django-guardian - specific url patterns 
         return urlpatterns
     
     
@@ -151,6 +150,24 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
             "admin/%s/readonly.html" % app_label,
             "admin/readonly.html"
         ], context, current_app=self.admin_site.name)
+
+
+    def response_post_save_change(self, request, obj):
+        """
+        Figure out where to redirect after the 'Save' button has been pressed
+        when editing an existing object.
+        """
+        opts = self.model._meta
+        if self.has_change_permission(request, None):
+            ## originally 'admin:%s_%s_changelist', added obj.pk as argument for view
+            post_url = reverse('admin:%s_%s_readonly' %
+                               (opts.app_label, opts.module_name),
+                               args=(obj.pk,),
+                               current_app=self.admin_site.name)
+        else:
+            post_url = reverse('admin:index',
+                               current_app=self.admin_site.name)
+        return HttpResponseRedirect(post_url)
 
 
     ## following code taken from 
