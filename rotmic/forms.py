@@ -9,7 +9,21 @@ from selectable.base import ModelLookup
 from selectable.registry import registry
 import selectable.forms as sforms
 
+class SilentSelectWidget( forms.Select ):
+    """
+    Custom Select Widget which is never reporting to have changed.
+    This fixes the issue that reversion is reporting componentCategory as
+    changed whenever the form is saved.
+    The category field is not backed by any model value but only reports the 
+    parent of componentType. That's why it cannot change by itself.
+    """    
+    def _has_changed(self,initial, data):
+        """never mark as changed."""
+        return False
+
+
 class InsertLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
     model = DnaComponent
     search_fields = ('displayId__startswith', 'name__icontains')
     
@@ -23,6 +37,7 @@ registry.register(InsertLookup)
 
 
 class VectorLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
     model = DnaComponent
     search_fields = ('displayId__startswith', 'name__icontains')
     
@@ -38,6 +53,7 @@ class DnaComponentForm(forms.ModelForm):
     
     
     componentCategory = forms.ModelChoiceField(label='Category',
+                            widget=SilentSelectWidget,
                             queryset=DnaComponentType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,
