@@ -11,6 +11,8 @@ from rotmic.utils.customadmin import ViewFirstModelAdmin
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter
 from rotmic.forms import DnaComponentForm
 import rotmic.initialTypes as T
+import rotmic.templatetags.rotmicfilters as F
+
 
 
 class BaseAdminMixin:
@@ -32,16 +34,6 @@ class BaseAdminMixin:
 
         obj.save()
 
-##    def registrationDate(self, obj):
-##        """extract date from date+time"""
-##        return obj.registeredAt.date().isoformat()
-##    registrationDate.short_description = 'registered'
-##    
-##    def registrationTime(self, obj):
-##        """extract time from date+time"""
-##        return obj.registeredAt.time()
-##    registrationTime.short_description = 'at'
-    
 
 class AttachmentInline(admin.TabularInline):
     model = ComponentAttachment
@@ -165,7 +157,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelA
         if len(obj.comment) < 40:
             return unicode(obj.comment)
         r = unicode(obj.comment[:38])
-        r = '<a title="%s">%s..</a>' % (obj.comment, obj.comment[:38])
+        r = '<a title="%s">%s</a>' % (obj.comment, F.truncate(obj.commentText(), 40))
         return r
     showComment.allow_tags = True
     showComment.short_description = 'Description'

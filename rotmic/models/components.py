@@ -15,6 +15,7 @@
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
+import re
 
 from django.db import models
 from django.db.models.query import QuerySet as Q
@@ -99,6 +100,14 @@ class Component(UserMixin):
     def __unicode__(self):
         name = self.name or ''
         return u'%s - %s' % (self.displayId, name)
+
+    def commentText(self):
+        """remove some formatting characters from text"""
+        r = re.sub('--','', self.comment)
+        r = re.sub('=','', r)
+        r = re.sub('__','', r)
+        return r
+    commentText.short_description = 'description'
 
 
     class Meta:

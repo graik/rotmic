@@ -72,3 +72,12 @@ def markcode(value):
     return convertTxt( r )
 
 register.filter('markcode', markcode )
+
+@stringfilter
+def truncate( s, size ):
+    """truncate given string to specified length"""
+    if len( s ) <= size:
+        return s
+    return s[:size-3] + '...'
+
+register.filter('truncate', truncate )
