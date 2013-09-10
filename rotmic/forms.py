@@ -1,8 +1,10 @@
 import django.forms as forms
 from django.db.models.query import QuerySet as Q
+from django.core.exceptions import ValidationError
 
 from rotmic.models import DnaComponent, DnaComponentType
 import rotmic.initialTypes as T
+import rotmic.utils.sequtils as sequtils
 
 ## third-party ForeignKey lookup field
 from selectable.base import ModelLookup
@@ -68,6 +70,19 @@ class DnaComponentForm(forms.ModelForm):
         if o:
             self.fields['componentCategory'].initial = o.componentType.subTypeOf
         
+
+    def clean_sequence(self):
+        """Enforce DNA sequence."""
+        r = self.cleaned_data['sequence']
+        if not r:
+            return r
+
+        r = sequtils.cleanseq( r )
+        
+        if not sequtils.isdna( r ):
+            raise ValidationError('This is not a DNA sequence.', code='invalid')        
+        return r
+
 
     def clean(self):
         """

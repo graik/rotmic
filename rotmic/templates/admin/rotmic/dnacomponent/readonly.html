@@ -130,7 +130,7 @@
                     <th style="text-align: center;">Vector Backbone</th> <th width="20"></th>
                     <th style="text-align: center;">Selective Markers</th> <th></th>
                 {% endif %}
-                {% if o.markers.all %}
+                {% if o.marker.all %}
                     <th style="text-align: center;">Selective Markers</th> <th></th>
                 {% endif %}
             </tr>
@@ -162,7 +162,7 @@
                         </td> <td></td>
                     {% endwith %}
                 {% endif %}
-                {% if o.markers.all %}
+                {% if o.marker.all %}
                     <td style="text-align: center;">
                         {% for m in o.marker.all %}
                             <a href="{{m.get_absolute_url}}">{{m}}</a><br>
@@ -171,6 +171,10 @@
                 {% endif %}
             </tr>            
         </table>
+        
+        {% if not o.insert and not o.vectorBackbone and not o.marker.all %}
+            <p>There are no sequence features described.</p>
+        {% endif %}
     {% endwith %}
 </div>
 
