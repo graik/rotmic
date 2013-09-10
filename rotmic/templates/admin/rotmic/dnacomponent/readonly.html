@@ -53,17 +53,19 @@
             </div>
     
             <div class="module" id="recent-actions-module">
-                <h2>Record</h2>
-                <ul>    
-                    <li><B>Status</B>:<p> {{o.status}}</p></li>
-                    <li><B>Category / Type</B>:
+                <h2>Classification</h2>
                         <p> 
                         {% with o.componentType as T %}
                             <a href="../?category={{T.category}}">{{T.category}}</a> /<br>
                             <a href="../?category={{T.category}}&type={{T.name}}">{{T.name}}</a>
                         {% endwith %}
                         </p>
-                    </li>
+            </div>
+
+            <div class="module" id="recent-actions-module">
+                <h2>Record</h2>
+                <ul>    
+                    <li><B>Status</B>:<p> {{o.status}}</p></li>
                     <li><B>registered</B>: 
                         <p>
                         {% with o.registeredBy as U %}
