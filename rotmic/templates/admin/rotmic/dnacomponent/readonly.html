@@ -57,15 +57,21 @@
                 <ul>    
                     <li><B>Status</B>:<p> {{o.status}}</p></li>
                     <li><B>Category / Type</B>:
-                        <p> {{o.componentType.category}} /<br>
-                        {{o.componentType.name}}
+                        <p> 
+                        {% with o.componentType as T %}
+                            <a href="../?category={{T.category}}">{{T.category}}</a> /<br>
+                            <a href="../?category={{T.category}}&type={{T.name}}">{{T.name}}</a>
+                        {% endwith %}
                         </p>
                     </li>
                     <li><B>registered</B>: 
                         <p>
+                        {% with o.registeredBy as U %}
                             {{o.registrationDate}}<br>
                             {{o.registrationTime}}<br>
-                            by {{o.registeredBy.first_name}} {{o.registeredBy.last_name}} ({{o.registeredBy}})
+                            by <a href="../?registeredBy__id__exact={{U.id}}">
+                                {{U.first_name}} {{U.last_name}} ({{U}})</a>
+                        {% endwith %}
                         </p>
                     </li>
                 </ul
@@ -114,17 +120,58 @@
 <div class='module'>        
     <h2>Features</h2>
     
-    {% if o.componentType.category|upper == 'PLASMID' %}
-            <p><b>Insert: </b><a href="{{o.insert.get_absolute_url}}">{{o.insert}}</a></p>
-            <p><b>Vector Backbone:</b> <a href="{{o.vectorBackbone.get_absolute_url}}">{{o.vectorBackbone}}</a></p>
-            <p><b>Selective Markers: </b>
-                <ul>
-                {% for m in o.vectorBackbone.marker.all %}
-                    <li><a href="{{m.get_absolute_url}}">{{m}}</a></li>
-                {% endfor %}
-                </ul>
-            <p>
-    {% endif %}
+    {% with o.componentType.category|upper as category %}
+        <table>
+            <tr>
+                {% if o.insert %} 
+                    <th style="text-align: center;">Insert</th> <th width="20"></th> 
+                {% endif %}
+                {% if o.vectorBackbone %} 
+                    <th style="text-align: center;">Vector Backbone</th> <th width="20"></th>
+                    <th style="text-align: center;">Selective Markers</th> <th></th>
+                {% endif %}
+                {% if o.markers.all %}
+                    <th style="text-align: center;">Selective Markers</th> <th></th>
+                {% endif %}
+            </tr>
+            <tr>
+                {% if o.insert %} 
+                    <td style="text-align: center;">
+                        <a href="{{o.insert.get_absolute_url}}">{{o.insert.displayId}}</a>
+                        <p>
+                            <em>{{o.insert.name}}</em>
+                        </p>
+                        [{{o.insert.componentType}}]
+                    </td> <td></td>
+                {% endif %}
+                {% if o.vectorBackbone %} 
+                    {% with o.vectorBackbone as vector %}
+                        <td style="text-align: center;">
+                            <a href="{{vector.get_absolute_url}}">{{vector.displayId}}</a>
+                            <p>
+                                <em>{{vector.name}}</em>
+                            </p>
+                            [{{vector.componentType.name}}]
+                        </td> <td></td>
+                        <td style="text-align: center;">
+                            {% if vector.marker.all %}
+                                {% for m in vector.marker.all %}
+                                    <a href="{{m.get_absolute_url}}">{{m}}</a><br>
+                                {% endfor %}
+                            {% endif %}
+                        </td> <td></td>
+                    {% endwith %}
+                {% endif %}
+                {% if o.markers.all %}
+                    <td style="text-align: center;">
+                        {% for m in o.marker.all %}
+                            <a href="{{m.get_absolute_url}}">{{m}}</a><br>
+                        {% endfor %}
+                    </td> <td></td>
+                {% endif %}
+            </tr>            
+        </table>
+    {% endwith %}
 </div>
 
 <div class='module'>    
