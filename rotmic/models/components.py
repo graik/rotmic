@@ -36,6 +36,14 @@ class UserMixin(models.Model):
     registeredAt = models.DateTimeField(default=datetime.now(), 
                                 verbose_name="registered")
     
+    modifiedBy = models.ForeignKey(User, null=True, blank=False, 
+                                related_name='%(class)s_modified_by',
+                                verbose_name='modified by')
+    
+    modifiedAt = models.DateTimeField(default=datetime.now(), 
+                                verbose_name="modified")
+    
+    
     def registrationDate(self):
         """extract date from date+time"""
         return self.registeredAt.date().isoformat()
@@ -45,6 +53,16 @@ class UserMixin(models.Model):
         """extract time from date+time"""
         return self.registeredAt.time()
     registrationTime.short_description = 'at'
+
+    def modificationDate(self):
+        """extract date from date+time"""
+        return self.modifiedAt.date().isoformat()
+    modificationDate.short_description = 'modified'
+
+    def modificationTime(self):
+        """extract time from date+time"""
+        return self.modifiedAt.time()
+    modificationTime.short_description = 'at'
 
     class Meta:
         app_label = 'rotmic'        

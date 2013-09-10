@@ -21,21 +21,26 @@ class BaseAdminMixin:
 
     def save_model(self, request, obj, form, change):
         """Override to save user who created this record"""
-        if not change:
+        ## do if new object or if object is being recovered by reversion
+        if not change or '/recover/' in request.META['HTTP_REFERER']:
             obj.registeredBy = request.user
             obj.registeredAt = datetime.datetime.now()
+            
+        if change and form.has_changed():
+            obj.modifiedBy = request.user
+            obj.modifiedAt = datetime.datetime.now()
 
         obj.save()
 
-    def registrationDate(self, obj):
-        """extract date from date+time"""
-        return obj.registeredAt.date().isoformat()
-    registrationDate.short_description = 'registered'
-    
-    def registrationTime(self, obj):
-        """extract time from date+time"""
-        return obj.registeredAt.time()
-    registrationTime.short_description = 'at'
+##    def registrationDate(self, obj):
+##        """extract date from date+time"""
+##        return obj.registeredAt.date().isoformat()
+##    registrationDate.short_description = 'registered'
+##    
+##    def registrationTime(self, obj):
+##        """extract time from date+time"""
+##        return obj.registeredAt.time()
+##    registrationTime.short_description = 'at'
     
 
 class AttachmentInline(admin.TabularInline):

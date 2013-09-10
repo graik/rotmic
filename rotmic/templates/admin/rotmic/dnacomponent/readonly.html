@@ -74,6 +74,18 @@
                         {% endwith %}
                         </p>
                     </li>
+                    {% if o.modifiedBy %}
+                        <li><B>last modified</B>: 
+                            <p>
+                            {% with o.modifiedBy as U %}
+                                {{o.modificationDate}}<br>
+                                {{o.modificationTime}}<br>
+                                by {{U.first_name}} {{U.last_name}} ({{U}})
+                            {% endwith %}
+                            </p>
+                        </li>
+                    {% endif %}
+                    
                 </ul
             </div>
             
