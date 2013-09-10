@@ -14,7 +14,6 @@ import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
 
 
-
 class BaseAdminMixin:
     """
     Automatically save and assign house-keeping information like by whom and
