@@ -43,6 +43,7 @@ class Attachment(models.Model):
     def __unicode__(self):
         return os.path.basename(self.f.name)
 
+
     class Meta:
         app_label = 'rotmic'
         abstract = True

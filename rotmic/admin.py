@@ -12,7 +12,7 @@ from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
 from rotmic.utils.customadmin import ViewFirstModelAdmin
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter
 
-from rotmic.forms import DnaComponentForm, CellComponentForm
+from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm
 
 import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
@@ -37,9 +37,13 @@ class BaseAdminMixin:
 
         obj.save()
 
+from django.template.loader import get_template
 
 class AttachmentInline(admin.TabularInline):
     model = ComponentAttachment
+    form = AttachmentForm
+    template = 'admin/rotmic/componentattachment/tabular.html'
+    can_delete=True
     extra = 1
     max_num = 5
 

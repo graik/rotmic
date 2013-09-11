@@ -1,6 +1,10 @@
+import os
+
 import django.forms as forms
+import django.db.models as models
 from django.db.models.query import QuerySet as Q
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext as _
 
 from rotmic.models import DnaComponent, DnaComponentType, \
      CellComponent, CellComponentType
@@ -83,7 +87,7 @@ class DnaComponentForm(forms.ModelForm):
         if not sequtils.isdna( r ):
             raise ValidationError('This is not a DNA sequence.', code='invalid')        
         return r
-
+    
 
     def clean(self):
         """
@@ -119,7 +123,6 @@ class DnaComponentForm(forms.ModelForm):
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=InsertLookup, allow_new=False),
             'vectorBackbone' : sforms.AutoComboboxSelectWidget(lookup_class=VectorLookup, allow_new=False)
         }
-
 
 
 class CellComponentForm(forms.ModelForm):
@@ -161,3 +164,20 @@ class CellComponentForm(forms.ModelForm):
             'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 15,
                                               'style':'font-family:monospace'}),
         }
+
+class AttachmentForm(forms.ModelForm):
+    """
+    Catch missing files which can happen if object is resurrected by 
+    reversion / History.
+    """
+        
+    def clean_f(self):
+        """Enforce existing file"""
+        f = self.cleaned_data['f']
+        if isinstance(f, models.fields.files.FieldFile) \
+           and not os.path.exists( f.path ):
+
+            fname = os.path.split( f.path )[-1]
+            raise ValidationError('Attached file %s does not exist.' % fname, 
+                                  code='file error')
+        return f
