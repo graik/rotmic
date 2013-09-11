@@ -82,8 +82,11 @@ class CellComponentType( ComponentType ):
                                   verbose_name='sub-strain of',
                                   help_text='Assign to existing species or leave blank to create a new top-level species')
     
-    hasPlasmids = models.BooleanField('allow plasmids', default=False,
+    hasPlasmids = models.BooleanField('allow plasmids', default=True,
                                    help_text='Can cells of this type contain plasmids?')
+    
+    hasMarkers = models.BooleanField('allow markers', default=True,
+                                   help_text='Can cells of this type contain markers?')
     
     def __unicode__(self):
         r = unicode(self.name)
