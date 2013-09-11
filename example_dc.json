@@ -1,0 +1,106 @@
+[
+{
+    "pk": 1, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "componentType": 12, 
+        "insert": null, 
+        "vectorBackbone": null, 
+        "marker": [], 
+        "sequence": ""
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "componentType": 6, 
+        "insert": null, 
+        "vectorBackbone": null, 
+        "marker": [
+            3
+        ], 
+        "sequence": ""
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "componentType": 17, 
+        "insert": null, 
+        "vectorBackbone": null, 
+        "marker": [
+            2
+        ], 
+        "sequence": ""
+    }
+},
+{
+    "pk": 4, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "componentType": 5, 
+        "insert": 1, 
+        "vectorBackbone": 2, 
+        "marker": [], 
+        "sequence": ""
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.component", 
+    "fields": {
+        "comment": "EGFP fluorescent protein optimized for E. coli", 
+        "status": "planning", 
+        "name": "eGFP_EC", 
+        "registeredBy": 1, 
+        "modifiedAt": "2013-09-11T14:03:01.730Z", 
+        "displayId": "sb0001", 
+        "modifiedBy": null, 
+        "registeredAt": "2013-09-11T14:05:00.086Z"
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.component", 
+    "fields": {
+        "comment": "__DNA 2.0 expression vector backbone__\r\n\r\n* T7 promoter\r\n* high copy\r\n\r\nfor protein expression from E. coli BL21 \r\n", 
+        "status": "planning", 
+        "name": "pJExpress411", 
+        "registeredBy": 1, 
+        "modifiedAt": "2013-09-11T14:07:48.118Z", 
+        "displayId": "vsb0001", 
+        "modifiedBy": 1, 
+        "registeredAt": "2013-09-11T14:06:13.339Z"
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.component", 
+    "fields": {
+        "comment": "Kanamycin resistance marker, optimized for E. coli", 
+        "status": "planning", 
+        "name": "KanR_EC", 
+        "registeredBy": 1, 
+        "modifiedAt": "2013-09-11T14:03:01.730Z", 
+        "displayId": "x_kan01", 
+        "modifiedBy": null, 
+        "registeredAt": "2013-09-11T14:06:59.900Z"
+    }
+},
+{
+    "pk": 4, 
+    "model": "rotmic.component", 
+    "fields": {
+        "comment": "eGFP expression plasmid", 
+        "status": "planning", 
+        "name": "eGFP_pJEx411", 
+        "registeredBy": 1, 
+        "modifiedAt": "2013-09-11T14:03:01.730Z", 
+        "displayId": "sbp0001", 
+        "modifiedBy": null, 
+        "registeredAt": "2013-09-11T14:07:38.007Z"
+    }
+}
+]
