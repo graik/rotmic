@@ -82,14 +82,14 @@ class Component(UserMixin):
 
     STATUS_CHOICES = ( ('available', 'available'),
                        ('planning', 'planning'),
-                       ('under_construction', 'under construction'),
+                       ('construction', 'construction'),
                        ('abandoned', 'abandoned'))
 
     displayId = models.CharField('ID', max_length=20, unique=True, 
         help_text='Unique identification')
 
     name = models.CharField('Name', max_length=200, blank=True, 
-                            help_text='Descriptive name (e.g. "EGFP_pUC19")')
+                            help_text='Descriptive name (e.g. "eGFP_pUC19")')
 
     comment = models.TextField('Description', blank=True,
                 help_text='You can format your text and include links. See: <a href="http://daringfireball.net/projects/markdown/basics">Markdown Quick Reference</a>')
@@ -126,16 +126,18 @@ class DnaComponent(Component):
     
     componentType = models.ForeignKey('DnaComponentType', 
                                            verbose_name='Type',
-                                           related_name='Type',  blank=False )    
+                                           blank=False )    
     
-    insert = models.ForeignKey( 'self', blank=True, null=True, 
-                                        related_name='Insert')
+    insert = models.ForeignKey( 'self', blank=True, null=True,
+                                related_name='as_insert_in_dna+')
     
     vectorBackbone = models.ForeignKey( 'self', blank=True, null=True ,
-                                        verbose_name='Vector Backbone')
+                                        verbose_name='Vector Backbone',
+                                        related_name='as_vector_in_plasmid')
     
     marker = models.ManyToManyField( 'self', blank=True, null=True, 
-                                      related_name='Marker')
+                                     symmetrical=False,
+                                     related_name='as_marker_in_dna') ## end with + to suppress reverse relationship
     
 ##    def related_dnaSamples(self):
 ##        """
@@ -178,13 +180,91 @@ class DnaComponent(Component):
         
 ##        ## this part somehow has no effect and leads to bugs.
 ##        if category not in ['Vector Backbone', 'Insert']:
-##            self.marker = Q()
-        
+##            self.marker = Q()        
         return super(DnaComponent,self).save(*args, **kwargs)
+
+
+    def allMarkers( self ):
+        """
+        @return: [DnaComponent]
+        All markers contained in this DC directly or within a linked
+        insert or vector backbone.
+        """
+        r = []
+        if self.marker:
+            r += self.marker.all()
+        if self.vectorBackbone:
+            r += self.vectorBackbone.allMarkers()
+        if self.insert:
+            r += self.insert.allMarkers()
+        return r
             
 
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'DNA construct'
+        ordering = ['displayId']
+
+
+class CellComponent(Component):
+    """
+    Description of a cell (modified or not)
+    """
+    componentType = models.ForeignKey('CellComponentType', 
+                                      verbose_name='Species',
+                                      blank=False )    
+    
+    plasmid = models.ForeignKey( 'DnaComponent', blank=True, null=True, 
+                                 verbose_name='Plasmid',
+                                 related_name='as_plasmid_in_cell')
+    
+    marker = models.ManyToManyField( 'DnaComponent', blank=True, null=True, 
+                                      related_name='as_marker_in_cell')
+    
+        
+##    def related_dnaSamples(self):
+##        """
+##        """       
+##        r = PlasmidSample.objects.filter(dnaComponent=self.id)
+##        return r
+    
+##    def get_relative_url(self):
+##        """
+##        Define standard relative URL for object access in templates
+##        """
+##        return 'dnacomponent/%i/' % self.id
+##    
+    def get_absolute_url(self):
+        """
+        Define standard URL for object views
+        see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
+        """
+        from django.core.urlresolvers import reverse
+        return reverse('admin:rotmic_cellcomponent_readonly', args=(self.id,))
+    
+    def get_absolute_url_edit(self):
+        from django.core.urlresolvers import reverse
+        return reverse('admin:rotmic_cellcomponent_change', args=(self.id,))
+   
+
+    def __unicode__(self):
+        name = unicode(self.displayId + ' - ' + self.name)
+        return name
+          
+    def save(self, *args, **kwargs):
+        """
+        Enforce optional fields depending on category.
+        """
+        category = self.componentType.category().name
+
+        if not self.componentType.hasPlasmids:
+            self.plasmid = None
+
+        return super(CellComponent,self).save(*args, **kwargs)
+            
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'Cell'
         ordering = ['displayId']
 

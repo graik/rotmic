@@ -71,3 +71,28 @@ class DnaComponentType( ComponentType ):
         verbose_name = 'DNA Type'
         abstract = False
 
+
+class CellComponentType( ComponentType ):
+    """Classification of DnaComponents"""
+
+    #: directional relationship to parent type or types
+    subTypeOf = models.ForeignKey('self', blank=True, null=True,
+                                  limit_choices_to={'subTypeOf':None},
+                                  related_name='subTypes',
+                                  verbose_name='sub-strain of',
+                                  help_text='Assign to existing species or leave blank to create a new top-level species')
+    
+    hasPlasmids = models.BooleanField('allow plasmids', default=False,
+                                   help_text='Can cells of this type contain plasmids?')
+    
+    def __unicode__(self):
+        r = unicode(self.name)
+        if self.subTypeOf:
+            r = self.subTypeOf.__unicode__() + ' / ' + r
+        return r    
+  
+    class Meta:
+        app_label = 'rotmic' 
+        verbose_name = 'Cell Type'
+        abstract = False
+

@@ -6,10 +6,14 @@ import reversion
 
 import datetime
 
-from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment
+from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
+     CellComponent, CellComponentType
+
 from rotmic.utils.customadmin import ViewFirstModelAdmin
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter
-from rotmic.forms import DnaComponentForm
+
+from rotmic.forms import DnaComponentForm, CellComponentForm
+
 import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
 
@@ -43,10 +47,9 @@ class ComponentVersionAdapter(reversion.VersionAdapter):
     exclude = ('componentCategory',)
     ## doesn't work yet
 
-## ToDo: create custom VersionAdmin which uses a different revision_manager
-## create custom RevisionManager where register() is using a custom VersionAdapter
-## create custom VersionAdapter where exclude is set to exclude 'componentCategory'
+
 class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
+    """Admin interface description for DNA constructs."""
     inlines = [ AttachmentInline ]
     form = DnaComponentForm
     
@@ -137,13 +140,25 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelA
     def showMarkerUrls(self, obj):
         """Table display of Vector Backbone markers"""
         assert isinstance(obj, DnaComponent), 'object missmatch'
-        category = obj.componentType.category()
-        v = obj if category == T.dcVectorBB else obj.vectorBackbone
-        r = u''
-        if v:
-            markers = [ m.name for m in v.marker.all() ]
-            r += ', '.join(markers)
-        return r
+        urls = []
+        for m in obj.allMarkers():
+            u = m.get_absolute_url()
+            urls += [ html.mark_safe('<a href="%s" title="%s">%s</a>' \
+                                % (u, m.comment, m.name))]
+        return ', '.join(urls)
+    
+    showMarkerUrls.allow_tags = True
+    showMarkerUrls.short_description = 'Markers'
+
+##
+##
+##        category = obj.componentType.category()
+##        v = obj if category == T.dcVectorBB else obj.vectorBackbone
+##        r = u''
+##        if v:
+##            markers = [ m.name for m in v.marker.all() ]
+##            r += ', '.join(markers)
+##        return r
     showMarkerUrls.allow_tags = True
     showMarkerUrls.short_description = 'Markers'
     
@@ -185,3 +200,107 @@ class DnaComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
                        
 
 admin.site.register(DnaComponentType, DnaComponentTypeAdmin)
+
+
+class CellComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
+    
+    fieldsets = (
+        (None, {
+            'fields': (('name', 'subTypeOf',),
+                       ('description', 'hasPlasmids',),
+                       ('uri',),
+                       )
+            }
+         ),
+        )
+    
+    list_display = ('__unicode__','subTypeOf', 'description', 'hasPlasmids')
+    list_display_links = ('__unicode__',)
+    list_editable = ('hasPlasmids',)
+    
+    list_filter = ('subTypeOf', 'hasPlasmids')
+
+admin.site.register(CellComponentType, CellComponentTypeAdmin)
+    
+
+class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
+    """Admin interface description for DNA constructs."""
+    inlines = [ AttachmentInline ]
+    form = CellComponentForm
+    
+    fieldsets = (
+        (None, {
+            'fields': (('displayId', 'name','status'),
+                       ('componentCategory', 'componentType'),
+                       ('plasmid', 'marker' ),
+                       )
+        }
+         ),
+        ('Details', {
+            'fields' : (('comment',),
+                        )
+        }
+         ),            
+    )
+
+    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
+                    'showPlasmidUrl', 'showComment','status')
+    
+    list_filter = ( 'status','registeredBy')
+    
+    search_fields = ('displayId', 'name', 'comment')
+    
+    date_hierarchy = 'registeredAt'
+    
+    ordering = ('displayId', 'name',)
+    
+        
+    def _autoregister(self, model, follow=None):
+        """Registers a model with reversion, if required."""
+        if model._meta.proxy:
+            raise RegistrationError("Proxy models cannot be used with django-reversion, register the parent class instead")
+        if not self.revision_manager.is_registered(model):
+            follow = follow or []
+            for parent_cls, field in model._meta.parents.items():
+                follow.append(field.name)
+                self._autoregister(parent_cls)
+            self.revision_manager.register(model, adapter_cls=ComponentVersionAdapter, 
+                                           follow=follow, format=self.reversion_format)
+
+
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Override queryset of ForeignKey fields without overriding the field itself.
+        This preserves the "+" Button which is otherwise lost.
+        See http://djangosnippets.org/snippets/1558/#c4674
+        """
+        form = super(CellComponentAdmin,self).get_form(request, obj,**kwargs)
+        return form
+    
+    def showComment(self, obj):
+        """
+        @return: str; truncated comment with full comment mouse-over
+        """
+        if not obj.comment: 
+            return u''
+        if len(obj.comment) < 40:
+            return unicode(obj.comment)
+        r = unicode(obj.comment[:38])
+        r = '<a title="%s">%s</a>' % (obj.comment, F.truncate(obj.commentText(), 40))
+        return r
+    showComment.allow_tags = True
+    showComment.short_description = 'Description'
+    
+    def showPlasmidUrl(self, obj):
+        """Table display of linked insert or ''"""
+        assert isinstance(obj, CellComponent), 'object missmatch'
+        x = obj.plasmid
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
+                              % (url, x.comment, x.displayId, x.name))
+    showPlasmidUrl.allow_tags = True
+    showPlasmidUrl.short_description = 'Plasmid'
+    
+admin.site.register(CellComponent, CellComponentAdmin)

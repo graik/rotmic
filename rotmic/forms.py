@@ -2,7 +2,8 @@ import django.forms as forms
 from django.db.models.query import QuerySet as Q
 from django.core.exceptions import ValidationError
 
-from rotmic.models import DnaComponent, DnaComponentType
+from rotmic.models import DnaComponent, DnaComponentType, \
+     CellComponent, CellComponentType
 import rotmic.initialTypes as T
 import rotmic.utils.sequtils as sequtils
 
@@ -52,7 +53,7 @@ registry.register(VectorLookup)
 
 
 class DnaComponentForm(forms.ModelForm):
-    
+    """Customized Form for DnaComponent (DNA construct) add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
                             widget=SilentSelectWidget,
@@ -117,4 +118,46 @@ class DnaComponentForm(forms.ModelForm):
                                               'style':'font-family:monospace'}),
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=InsertLookup, allow_new=False),
             'vectorBackbone' : sforms.AutoComboboxSelectWidget(lookup_class=VectorLookup, allow_new=False)
+        }
+
+
+
+class CellComponentForm(forms.ModelForm):
+    """Customized Form for DnaComponent (DNA construct) add / change"""
+    
+    componentCategory = forms.ModelChoiceField(label='Category',
+                            widget=SilentSelectWidget,
+                            queryset=CellComponentType.objects.filter(subTypeOf=None),
+                            required=True, 
+                            empty_label=None,
+                            initial=CellComponentType.objects.get(name='E. coli').id)
+    
+
+    def __init__(self, *args, **kwargs):
+        super(CellComponentForm, self).__init__(*args, **kwargs)
+        self.request = kwargs.pop('request', None)
+
+        o = kwargs.get('instance', None)
+        if o:
+            self.fields['componentCategory'].initial = o.componentType.subTypeOf
+        
+
+
+    def clean(self):
+        """
+        Remove values for hidden fields, which might have been set before final
+        category was selected.
+        Note: this is also partly enforced by the DnaComponent.save method.
+        """
+        data = super(CellComponentForm, self).clean()
+        category = data['componentCategory'] 
+
+        return data
+      
+                
+    class Meta:
+        model = CellComponent
+        widgets = {  ## customize widget dimensions and include dynamic select widgets
+            'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 15,
+                                              'style':'font-family:monospace'}),
         }
