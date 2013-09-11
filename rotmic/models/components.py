@@ -125,8 +125,8 @@ class DnaComponent(Component):
                                  null=True )      
     
     componentType = models.ForeignKey('DnaComponentType', 
-                                           verbose_name='Type',
-                                           blank=False )    
+                                      verbose_name='Type',
+                                      blank=False )    
     
     insert = models.ForeignKey( 'self', blank=True, null=True,
                                 related_name='as_insert_in_dna+')

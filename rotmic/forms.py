@@ -56,6 +56,30 @@ class VectorLookup(ModelLookup):
 registry.register(VectorLookup)
 
 
+class PlasmidLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = DnaComponent
+    search_fields = ('displayId__startswith', 'name__icontains')
+    filters = {'componentType__subTypeOf': T.dcPlasmid }
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(PlasmidLookup)
+
+
+class MarkerLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = DnaComponent
+    search_fields = ('displayId__startswith', 'name__icontains')
+    filters = {'componentType__subTypeOf': T.dcMarker }
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(MarkerLookup)
+
+
 class DnaComponentForm(forms.ModelForm):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
@@ -163,7 +187,10 @@ class CellComponentForm(forms.ModelForm):
         widgets = {  ## customize widget dimensions and include dynamic select widgets
             'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 15,
                                               'style':'font-family:monospace'}),
+            'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=PlasmidLookup, allow_new=False),
+            'marker' : sforms.AutoComboboxSelectMultipleWidget(lookup_class=MarkerLookup)
         }
+
 
 class AttachmentForm(forms.ModelForm):
     """

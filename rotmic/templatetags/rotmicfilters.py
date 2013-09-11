@@ -20,6 +20,8 @@ from django.template.defaultfilters import stringfilter
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 
+from rotmic.models import DnaComponentType
+
 register = template.Library()
 
 @register.filter(is_safe=True)
@@ -81,3 +83,12 @@ def truncate( s, size ):
     return s[:size-3] + '...'
 
 register.filter('truncate', truncate )
+
+@register.filter
+def dnaCategoryToId(catName):
+    """Get position in Category dropdown for given category"""
+    categories = DnaComponentType.objects.filter(subTypeOf=None)
+    for i, cat in enumerate(categories):
+        if cat.name == catName:
+            return i
+    return 1

@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 
 from rotmic.views import view_dnacomponent
-from rotmic.jsviews import getTypeDnaInfo, getParentTypeDnaInfo
+from rotmic.jsviews import getTypeDnaInfo, getCellTypes
 import rotmicsite.settings as settings
 
 # Uncomment the next two lines to enable the admin:
@@ -19,8 +19,8 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
     # url(r'^rotmic/dna/(?P<displayId>.*)/$',view_dnacomponent,name='dna'),
-    url(r'^getTypeDnaInfo/(?P<maintype>.*)/$',getTypeDnaInfo,name='getTypeDnaInfo'),    
-    url(r'^getParentTypeDnaInfo/(?P<subtype>.*)/$',getParentTypeDnaInfo,name='getParentTypeDnaInfo'),
+    url(r'^getTypeDnaInfo/(?P<maintype>.*)/$',getTypeDnaInfo,name='getTypeDnaInfo'),
+    url(r'^getCellTypes/(?P<maintype>.*)/$',getCellTypes,name='getCellTypes'),
     url(r'^selectable/', include('selectable.urls')),
     url(r'^', include(admin.site.urls)),
 )

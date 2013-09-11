@@ -279,6 +279,11 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModel
         See http://djangosnippets.org/snippets/1558/#c4674
         """
         form = super(CellComponentAdmin,self).get_form(request, obj,**kwargs)
+        
+        field = form.base_fields['marker']
+        field.queryset = field.queryset.filter(componentType__subTypeOf=T.dcMarker)
+        field.help_text = ''
+    
         return form
     
     def showComment(self, obj):
