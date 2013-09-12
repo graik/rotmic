@@ -233,3 +233,16 @@ class ComponentModelAdmin( ViewFirstModelAdmin ):
         return super(ComponentModelAdmin, self).change_view(\
             request, object_id, form_url, extra_context=extra_context)
 
+
+    def add_view(self, request, form_url='', extra_context=None):
+        "The 'Add new' admin view for this model."
+        extra_context = extra_context or {}
+        
+        extra_context['dnaTypes'] = M.DnaComponentType.objects.all()
+        extra_context['dnaCategories'] = M.DnaComponentType.objects.filter(subTypeOf=None)
+        extra_context['cellTypes'] = M.CellComponentType.objects.all()
+        extra_context['cellCategories'] = M.CellComponentType.objects.filter(subTypeOf=None)
+        
+        return super(ComponentModelAdmin, self).add_view(\
+            request, form_url, extra_context=extra_context)
+

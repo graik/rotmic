@@ -19,9 +19,6 @@ class ComponentType( models.Model ):
     uri = models.URLField( unique=False, blank=True, null=True,
                            help_text='Typically a sequence ontology URI, example: http://purl.obolibrary.org/obo/SO_0000167' )
 
-    isDefault = models.BooleanField( default=False, null=False, verbose_name='default',
-                                     help_text='Default type within its category.' )
-
     def __unicode__( self ):
         return unicode(self.name)
 
@@ -44,13 +41,6 @@ class ComponentType( models.Model ):
             return self.subTypeOf.category()
         return self
     
-    def save(self, *args, **kwargs):
-        """Ensure only one type is selected as default."""
-        if self.isDefault:
-            others = self.__class__.objects.filter( isDefault=True ).exclude(id=self.id)
-            others.update( isDefault=False )
-            
-        return super(ComponentType, self).save( *args, **kwargs)
 
     class Meta:
         app_label = 'rotmic' 
@@ -76,15 +66,6 @@ class DnaComponentType( ComponentType ):
         if self.subTypeOf:
             r = self.subTypeOf.__unicode__() + ' / ' + r
         return r    
-  
-    def save(self, *args, **kwargs):
-        """Ensure only one type is selected within a category."""
-        if self.isDefault:
-            others = self.__class__.objects.filter( isDefault=True, subTypeOf=self.subTypeOf ).exclude(id=self.id)
-            others.update( isDefault=False )
-            
-        return super(DnaComponentType, self).save( *args, **kwargs)
-
   
     class Meta:
         app_label = 'rotmic' 
@@ -114,15 +95,6 @@ class CellComponentType( ComponentType ):
         if self.subTypeOf:
             r = self.subTypeOf.__unicode__() + ' / ' + r
         return r    
-  
-    def save(self, *args, **kwargs):
-        """Ensure only one type is selected within a category."""
-        if self.isDefault:
-            others = self.__class__.objects.filter( isDefault=True, subTypeOf=self.subTypeOf ).exclude(id=self.id)
-            others.update( isDefault=False )
-            
-        return super(CellComponentType, self).save( *args, **kwargs)
-
   
     class Meta:
         app_label = 'rotmic' 
