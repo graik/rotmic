@@ -133,7 +133,6 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
             'o': obj,
             'is_popup': "_popup" in request.REQUEST,
             'media': self.media,
-##            'inline_admin_formsets': inline_admin_formsets,
 ##            'errors': helpers.AdminErrorList(form, formsets),
             'app_label': opts.app_label,
         }
