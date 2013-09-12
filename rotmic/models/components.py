@@ -260,9 +260,6 @@ class CellComponent(Component):
         if not self.componentType.allowPlasmids:
             self.plasmid = None
             
-        if not self.componentType.allowMarkers:
-            self.marker = None
-
         return super(CellComponent,self).save(*args, **kwargs)
             
 

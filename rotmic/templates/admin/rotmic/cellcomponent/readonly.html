@@ -134,25 +134,50 @@
 </div>
 
 <div class='module'>        
-    <h2>Features</h2>
+    <h2>DNA features</h2>
+    <table>
+        <tr>
+            {% if o.plasmid %} 
+                <th style="text-align: center;">Plasmid</th> <th width="20"></th>
+                <th style="text-align: center;">Plasmid Markers</th> <th></th>
+            {% endif %}
+            {% if o.marker.all %}
+                <th style="text-align: center;">Integrated Markers</th> <th></th>
+            {% endif %}
+        </tr>
+        <tr>
+            {% if o.plasmid %} 
+                {% with plasmid=o.plasmid insert=o.plasmid.insert vector=o.plasmid.vectorBackbone %}
+                    <td style="text-align: center;">
+                        <a href="{{plasmid.get_absolute_url}}">{{plasmid.displayId}}</a>
+                        <p>
+                            <em>{{plasmid.name}}</em>
+                        </p>
+                        [{{plasmid.componentType.name}}]
+                    </td> <td></td>
+                    <td style="text-align: center;">
+                        {% if vector.marker.all %}
+                            {% for m in vector.marker.all %}
+                                <a href="{{m.get_absolute_url}}">{{m}}</a><br>
+                            {% endfor %}
+                        {% endif %}
+                    </td> <td></td>
+                {% endwith %}
+            {% endif %}
+            {% if o.marker.all %}
+                <td style="text-align: center;">
+                    {% for m in o.marker.all %}
+                        <a href="{{m.get_absolute_url}}">{{m}}</a><br>
+                    {% endfor %}
+                </td> <td></td>
+            {% endif %}
+        </tr>            
+    </table>
     
-    {% with o.componentType.category|upper as category %}
-        <table>
-<!--            <tr>-->
-<!--                {% if o.marker.all %}-->
-<!--                    <td style="text-align: center;">-->
-<!--                        {% for m in o.marker.all %}-->
-<!--                            <a href="{{m.get_absolute_url}}">{{m}}</a><br>-->
-<!--                        {% endfor %}-->
-<!--                    </td> <td></td>-->
-<!--                {% endif %}-->
-<!--            </tr>            -->
-        </table>
-        
-<!--        {% if not o.marker.all %}-->
-            <p>There are no cell features described.</p>
-<!--        {% endif %}-->
-    {% endwith %}
+    {% if not o.marker and not o.plasmid %}
+        <p>There are no DNA modifications described.</p>
+    {% endif %}
+    
 </div>
 
 {% endblock %}
