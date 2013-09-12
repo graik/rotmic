@@ -10,7 +10,8 @@ from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
      CellComponent, CellComponentType
 
 from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentModelAdmin
-from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter
+from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter,\
+     CellCategoryListFilter, CellTypeListFilter
 
 from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm
 
@@ -234,7 +235,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
                     'showPlasmidUrl', 'showComment','status')
     
-    list_filter = ( 'status','registeredBy')
+    list_filter = ( CellCategoryListFilter, CellTypeListFilter, 'status','registeredBy')
     
     search_fields = ('displayId', 'name', 'comment')
     

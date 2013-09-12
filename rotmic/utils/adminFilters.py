@@ -1,15 +1,17 @@
 from django.contrib import admin
 from django.db.models.query import QuerySet as Q
 
-from rotmic.models import DnaComponent, DnaComponentType
+from rotmic.models import DnaComponentType, CellComponentType
 
 
-class DnaCategoryListFilter( admin.SimpleListFilter):
+class CategoryListFilter( admin.SimpleListFilter):
     """
     Provide filter for DnaComponentType.category (all root types)
     """
     title = 'Category'
     parameter_name = 'category'
+    
+    _class = None
 
     def lookups(self, request, model_admin):
         """
@@ -19,7 +21,7 @@ class DnaCategoryListFilter( admin.SimpleListFilter):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        categories = DnaComponentType.objects.filter(subTypeOf=None)
+        categories = self._class.objects.filter(subTypeOf=None)
         return ( (c.name, c.name) for c in categories )
     
 
@@ -37,7 +39,8 @@ class DnaCategoryListFilter( admin.SimpleListFilter):
         return q.filter(componentType__subTypeOf__name=self.value())
 
 
-class DnaTypeListFilter( admin.SimpleListFilter):
+
+class TypeListFilter( admin.SimpleListFilter):
     """
     Provide filter for DnaComponentType (the actual "second level" type).
     
@@ -49,6 +52,8 @@ class DnaTypeListFilter( admin.SimpleListFilter):
     """
     title = 'Type'
     parameter_name = 'type'
+    
+    _class = None
     
     def lookups(self, request, model_admin):
         """
@@ -62,7 +67,7 @@ class DnaTypeListFilter( admin.SimpleListFilter):
             return ()
         
         category_name = request.GET[u'category']
-        types = DnaComponentType.objects.filter(subTypeOf__name=category_name)
+        types = self._class.objects.filter(subTypeOf__name=category_name)
         return ( (t.name, t.name) for t in types )
     
     def queryset(self, request, queryset):
@@ -75,7 +80,7 @@ class DnaTypeListFilter( admin.SimpleListFilter):
             return queryset
         
         category = request.GET[u'category']
-        subtypes = DnaComponentType.objects.filter(subTypeOf__name=category)
+        subtypes = self._class.objects.filter(subTypeOf__name=category)
         
         r = queryset.filter(componentType__subTypeOf__name=category)
         
@@ -90,3 +95,15 @@ class DnaTypeListFilter( admin.SimpleListFilter):
         return r.filter(componentType__name=self.value())
 
 
+class DnaCategoryListFilter( CategoryListFilter ):
+    _class = DnaComponentType
+
+
+class DnaTypeListFilter( TypeListFilter ):
+    _class = DnaComponentType
+
+class CellCategoryListFilter( CategoryListFilter ):
+    _class = CellComponentType
+    
+class CellTypeListFilter( TypeListFilter ):
+    _class = CellComponentType
