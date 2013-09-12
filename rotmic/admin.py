@@ -195,18 +195,18 @@ class CellComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
         (None, {
             'fields': (('name', 'subTypeOf',),
                        ('description',),
-                       ( 'hasPlasmids', 'hasMarkers'),
+                       ( 'allowPlasmids', 'allowMarkers'),
                        ('uri',),
                        )
             }
          ),
         )
     
-    list_display = ('__unicode__','subTypeOf', 'description', 'hasPlasmids', 'hasMarkers')
+    list_display = ('__unicode__','subTypeOf', 'description', 'allowPlasmids', 'allowMarkers')
     list_display_links = ('__unicode__',)
-    list_editable = ('hasPlasmids','hasMarkers')
+    list_editable = ('allowPlasmids','allowMarkers')
     
-    list_filter = ('subTypeOf', 'hasPlasmids', 'hasMarkers')
+    list_filter = ('subTypeOf', 'allowPlasmids', 'allowMarkers')
 
 admin.site.register(CellComponentType, CellComponentTypeAdmin)
     

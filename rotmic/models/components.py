@@ -257,8 +257,11 @@ class CellComponent(Component):
         """
         category = self.componentType.category().name
 
-        if not self.componentType.hasPlasmids:
+        if not self.componentType.allowPlasmidsds:
             self.plasmid = None
+            
+        if not self.componentType.allowMarkers:
+            self.marker = None
 
         return super(CellComponent,self).save(*args, **kwargs)
             

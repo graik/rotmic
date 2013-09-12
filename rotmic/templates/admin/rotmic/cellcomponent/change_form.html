@@ -121,7 +121,7 @@
     // copy plasmid visibility flags from all registered CellComponentTypes
     function typeAllowsPlasmid(name) {
         var map = {
-            {% for t in cellTypes %}"{{t.name}}" : {% if t.hasPlasmids %} true {% else %} false {%endif%},
+            {% for t in cellTypes %}"{{t.name}}" : {% if t.allowPlasmids %} true {% else %} false {%endif%},
             {% endfor %}};
 
         if ( !(name in map) ){ return false; };
@@ -131,7 +131,7 @@
     // copy marker visibility flags from all registered CellComponentTypes
     function typeAllowsMarkers(name) {
         var map = {
-            {% for t in cellTypes %}"{{t.name}}" : {% if t.hasMarkers %} true {% else %} false {%endif%},
+            {% for t in cellTypes %}"{{t.name}}" : {% if t.allowMarkers %} true {% else %} false {%endif%},
             {% endfor %}};
     
         if ( !(name in map) ){ return false; };
