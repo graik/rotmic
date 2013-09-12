@@ -149,7 +149,7 @@
             {% if o.plasmid %} 
                 {% with plasmid=o.plasmid insert=o.plasmid.insert vector=o.plasmid.vectorBackbone %}
                     <td style="text-align: center;">
-                        <a href="{{plasmid.get_absolute_url}}">{{plasmid.displayId}}</a>
+                        <a href="{{plasmid.get_absolute_url}}" title="{{plasmid.comment}}">{{plasmid.displayId}}</a>
                         <p>
                             <em>{{plasmid.name}}</em>
                         </p>
@@ -158,7 +158,7 @@
                     <td style="text-align: center;">
                         {% if vector.marker.all %}
                             {% for m in vector.marker.all %}
-                                <a href="{{m.get_absolute_url}}">{{m}}</a><br>
+                                <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
                             {% endfor %}
                         {% endif %}
                     </td> <td></td>
@@ -167,7 +167,7 @@
             {% if o.marker.all %}
                 <td style="text-align: center;">
                     {% for m in o.marker.all %}
-                        <a href="{{m.get_absolute_url}}">{{m}}</a><br>
+                        <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
                     {% endfor %}
                 </td> <td></td>
             {% endif %}

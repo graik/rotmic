@@ -151,7 +151,7 @@
             <tr>
                 {% if o.insert %} 
                     <td style="text-align: center;">
-                        <a href="{{o.insert.get_absolute_url}}">{{o.insert.displayId}}</a>
+                        <a href="{{o.insert.get_absolute_url}}" title="{{o.insert.comment}}">{{o.insert.displayId}}</a>
                         <p>
                             <em>{{o.insert.name}}</em>
                         </p>
@@ -161,7 +161,7 @@
                 {% if o.vectorBackbone %} 
                     {% with o.vectorBackbone as vector %}
                         <td style="text-align: center;">
-                            <a href="{{vector.get_absolute_url}}">{{vector.displayId}}</a>
+                            <a href="{{vector.get_absolute_url}}" title="{{vector.comment}}">{{vector.displayId}}</a>
                             <p>
                                 <em>{{vector.name}}</em>
                             </p>
@@ -170,7 +170,7 @@
                         <td style="text-align: center;">
                             {% if vector.marker.all %}
                                 {% for m in vector.marker.all %}
-                                    <a href="{{m.get_absolute_url}}">{{m}}</a><br>
+                                    <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
                                 {% endfor %}
                             {% endif %}
                         </td> <td></td>
@@ -179,7 +179,7 @@
                 {% if o.marker.all %}
                     <td style="text-align: center;">
                         {% for m in o.marker.all %}
-                            <a href="{{m.get_absolute_url}}">{{m}}</a><br>
+                            <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
                         {% endfor %}
                     </td> <td></td>
                 {% endif %}
