@@ -195,18 +195,18 @@ class CellComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
         (None, {
             'fields': (('name', 'subTypeOf',),
                        ('description',),
-                       ( 'allowPlasmids', 'allowMarkers'),
+                       ( 'allowPlasmids', 'allowMarkers', 'isDefault'),
                        ('uri',),
                        )
             }
          ),
         )
     
-    list_display = ('__unicode__','subTypeOf', 'description', 'allowPlasmids', 'allowMarkers')
+    list_display = ('__unicode__','subTypeOf', 'description', 'allowPlasmids', 'allowMarkers', 'isDefault')
     list_display_links = ('__unicode__',)
     list_editable = ('allowPlasmids','allowMarkers')
     
-    list_filter = ('subTypeOf', 'allowPlasmids', 'allowMarkers')
+    list_filter = ('subTypeOf', 'allowPlasmids', 'allowMarkers', 'isDefault')
 
 admin.site.register(CellComponentType, CellComponentTypeAdmin)
     
@@ -220,7 +220,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
         (None, {
             'fields': (('displayId', 'name','status'),
                        ('componentCategory', 'componentType'),
-                       ('plasmid', 'marker' ),
+                       ('plasmid', 'marker'),
                        )
         }
          ),
