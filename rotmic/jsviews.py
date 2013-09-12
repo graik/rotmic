@@ -8,9 +8,12 @@ from rotmic.models import DnaComponent, DnaComponentType, \
 #### called by Javascript when the user select a categorie
 
 def getTypeDnaInfo(request, maintype):
-    currentMainType = DnaComponentType.objects.filter(subTypeOf__name=maintype)
+    if maintype == -1:
+        subtypes = DnaComponentType.objects.all()
+    else:    
+        subtypes = DnaComponentType.objects.filter(subTypeOf__name=maintype)
     
-    json_models = serializers.serialize("json", currentMainType)
+    json_models = serializers.serialize("json", subtypes)
     return HttpResponse(json_models, mimetype="application/javascript") 
 
 def getCellTypes(request, maintype):

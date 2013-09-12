@@ -57,8 +57,17 @@
     // get (name of) currently selected Category
     function getCurrentCategory(){
         var categoryElement = document.getElementById('id_componentCategory');
-        var category = categoryElement.options[categoryElement.selectedIndex].label
-        return category
+        var category = categoryElement.options[categoryElement.selectedIndex].label;
+        return category;
+    }
+    
+    // get (name of) currently selected componentType
+    function getCurrentType(){
+        var index = document.getElementById('id_componentType').selectedIndex;
+        if ( index != -1 ){
+            return document.getElementById('id_componentType').options[index].label;
+        }
+        return "";
     }
     
     // returns 1 if all items are sucessfully removed
@@ -109,30 +118,60 @@
         );	
     }
 
-    function hideShow() {
-        var category = getCurrentCategory();
-        
-        updateListBox(category)
+    // copy plasmid visibility flags from all registered CellComponentTypes
+    function typeAllowsPlasmid(name) {
+        var map = {
+            {% for t in cellTypes %}"{{t.name}}" : {% if t.hasPlasmids %} true {% else %} false {%endif%},
+            {% endfor %}};
 
-        switch ( category ) {
-            case 'E. coli':
-{#                document.getElementById('id_field_insert').style.visibility = 'visible';#}
-                document.getElementById('id_field_plasmid').style.visibility = 'visible';
-                document.getElementById('id_field_marker').style.visibility = 'hidden';
-                break;
-            case 'H. sapiens':
-{#                document.getElementById('id_field_insert').style.visibility = 'visible';#}
-                document.getElementById('id_field_plasmid').style.visibility = 'visible';
-                document.getElementById('id_field_marker').style.visibility = 'hidden';
-                break;
-            default:
-{#                document.getElementById('id_field_insert').style.visibility = 'hidden'; #}
-                document.getElementById('id_field_plasmid').style.visibility = 'visible';
-                document.getElementById('id_field_marker').style.visibility = 'visible';
-                break;
+        if ( !(name in map) ){ return false; };
+        return map[ name ];
+    }
+
+    // copy marker visibility flags from all registered CellComponentTypes
+    function typeAllowsMarkers(name) {
+        var map = {
+            {% for t in cellTypes %}"{{t.name}}" : {% if t.hasMarkers %} true {% else %} false {%endif%},
+            {% endfor %}};
+    
+        if ( !(name in map) ){ return false; };
+        return map[ name ];
+    }
+
+    // hide or show input elements depending on chosen category or sub-type
+    function hideShow() {
+        var current_type = getCurrentType();
+        
+        if (typeAllowsPlasmid(current_type)){
+            document.getElementById('id_field_plasmid').style.visibility = 'visible';
+        } else {
+            document.getElementById('id_field_plasmid').style.visibility = 'hidden';
+        }
+
+        if (typeAllowsMarkers(current_type)){
+            document.getElementById('id_field_marker').style.visibility = 'visible';
+        } else {
+            document.getElementById('id_field_marker').style.visibility = 'hidden';
         }
     }   
     
+    // cache last position in componentType listbox for each category selection
+    // Memorize the last selected componentType so that it can be re-instantiated
+    // after the listbox is wiped
+    // see: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Storage?redirectlocale=en-US&redirectslug=DOM%2FStorage
+    function cacheTypeSelection() {
+        var category = getCurrentCategory();
+        sessionStorage.setItem( category, document.getElementById( 'id_componentType' ).selectedIndex);
+    }
+    
+    // update content of Species listbox depending on selected category
+    function updateSubtypes(){
+        cacheTypeSelection();
+        var category = getCurrentCategory();        
+        updateListBox(category);
+        hideShow();
+    }
+
     // return a dictionary of Category names mapping to their position in listbox 
     function captureCategories() {
         var listbox = document.getElementById('id_componentCategory')
@@ -143,15 +182,6 @@
         return table;
     }
 
-    // cache last position in componentType listbox for each category selection
-    // Memorize the last selected componentType so that it can be re-instantiated
-    // after the listbox is wiped
-    // see: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Storage?redirectlocale=en-US&redirectslug=DOM%2FStorage
-    function cacheTypeSelection() {
-        var category = getCurrentCategory();
-        sessionStorage.setItem( category, document.getElementById( 'id_componentType' ).selectedIndex);
-    }
-    
     function lastTypeSelection(category) {
         var r = sessionStorage.getItem( category );
         if (! r){ return 0; }
@@ -182,7 +212,7 @@
             if (sessionStorage.getItem( 'CellComponent_lastvisited' ) != objectId){
                 if (objectId != -1){
                     sessionStorage.clear();
-                    // Note: insert more specific code here to only delete entry for each category name
+                    // Note: insert more specific code here to only delete entry generated by this form
                 }
             }
         }
@@ -198,8 +228,9 @@
         
         preselectCategory();
         
-        document.getElementById( 'id_componentCategory' ).onchange = hideShow;
-        document.getElementById( 'id_componentType' ).onchange = cacheTypeSelection;
+        document.getElementById( 'id_componentCategory' ).onchange = updateSubtypes;
+        document.getElementById( 'id_componentType' ).onchange = hideShow;
+        updateSubtypes();        
         hideShow();
     };
     

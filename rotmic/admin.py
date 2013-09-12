@@ -9,7 +9,7 @@ import datetime
 from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
      CellComponent, CellComponentType
 
-from rotmic.utils.customadmin import ViewFirstModelAdmin
+from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentModelAdmin
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter
 
 from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm
@@ -47,10 +47,6 @@ class AttachmentInline(admin.TabularInline):
     extra = 1
     max_num = 5
 
-class ComponentVersionAdapter(reversion.VersionAdapter):
-    exclude = ('componentCategory',)
-    ## doesn't work yet
-
 
 class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
     """Admin interface description for DNA constructs."""
@@ -87,19 +83,6 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelA
     ordering = ('displayId', 'name',)
     
         
-    def _autoregister(self, model, follow=None):
-        """Registers a model with reversion, if required."""
-        if model._meta.proxy:
-            raise RegistrationError("Proxy models cannot be used with django-reversion, register the parent class instead")
-        if not self.revision_manager.is_registered(model):
-            follow = follow or []
-            for parent_cls, field in model._meta.parents.items():
-                follow.append(field.name)
-                self._autoregister(parent_cls)
-            self.revision_manager.register(model, adapter_cls=ComponentVersionAdapter, 
-                                           follow=follow, format=self.reversion_format)
-
-
     def get_form(self, request, obj=None, **kwargs):
         """
         Override queryset of ForeignKey fields without overriding the field itself.
@@ -228,7 +211,7 @@ class CellComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
 admin.site.register(CellComponentType, CellComponentTypeAdmin)
     
 
-class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
+class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelAdmin ):
     """Admin interface description for DNA constructs."""
     inlines = [ AttachmentInline ]
     form = CellComponentForm
@@ -259,19 +242,6 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModel
     
     ordering = ('displayId', 'name',)
     
-        
-    def _autoregister(self, model, follow=None):
-        """Registers a model with reversion, if required."""
-        if model._meta.proxy:
-            raise RegistrationError("Proxy models cannot be used with django-reversion, register the parent class instead")
-        if not self.revision_manager.is_registered(model):
-            follow = follow or []
-            for parent_cls, field in model._meta.parents.items():
-                follow.append(field.name)
-                self._autoregister(parent_cls)
-            self.revision_manager.register(model, adapter_cls=ComponentVersionAdapter, 
-                                           follow=follow, format=self.reversion_format)
-
 
     def get_form(self, request, obj=None, **kwargs):
         """

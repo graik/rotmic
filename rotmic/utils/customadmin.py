@@ -24,6 +24,8 @@ from django.contrib.admin.util import quote
 from guardian.admin import GuardedModelAdmin
 from guardian.shortcuts import get_objects_for_user
 
+import rotmic.models as M
+
 
 class ViewFirstChangeList( ChangeList ):
     """
@@ -204,3 +206,30 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
         return super(ViewFirstModelAdmin, self).has_delete_permission(request, obj) \
                 or (obj is not None and request.user.has_perm(self.opts.get_delete_permission(), obj))
         
+
+
+class ComponentModelAdmin( ViewFirstModelAdmin ):
+    """
+    Custom version of admin.ModelAdmin which shows a read-only
+    View for a given object instead of the normal ChangeForm. The changeForm
+    is accessed by admin/ModelName/id/edit. 
+    
+    In addition, there is extra_context provided to the change_view:
+    * dnaTypes -- all registered instances of DnaComponentType
+    * cellTypes -- all CellComponentTypes
+    * dnaCategories -- all "super" or base-level DnaComponentTypes
+    * cellCategories -- all "super" or base-level CellComponentTypes
+    """
+    
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        "The 'Edit' admin view for this model."
+        extra_context = extra_context or {}
+        
+        extra_context['dnaTypes'] = M.DnaComponentType.objects.all()
+        extra_context['dnaCategories'] = M.DnaComponentType.objects.filter(subTypeOf=None)
+        extra_context['cellTypes'] = M.CellComponentType.objects.all()
+        extra_context['cellCategories'] = M.CellComponentType.objects.filter(subTypeOf=None)
+        
+        return super(ComponentModelAdmin, self).change_view(\
+            request, object_id, form_url, extra_context=extra_context)
+
