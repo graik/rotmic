@@ -10,6 +10,7 @@ from rotmic.models import DnaComponent, DnaComponentType, \
      CellComponent, CellComponentType
 import rotmic.initialTypes as T
 import rotmic.utils.sequtils as sequtils
+from rotmic.utils.filefields import DocumentFormField
 
 ## third-party ForeignKey lookup field
 from selectable.base import ModelLookup
@@ -90,6 +91,10 @@ class DnaComponentForm(forms.ModelForm):
                             empty_label=None,
                             initial=DnaComponentType.objects.get(name='Plasmid').id)
     
+    genbankFile = DocumentFormField(label='GenBank file', required=False,
+                                    help_text='upload genbank-formatted file',
+                                     extensions=['gbk','gb','genebank'])
+    
 
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
@@ -133,6 +138,9 @@ class DnaComponentForm(forms.ModelForm):
         if category == T.dcPlasmid and not data.get('vectorBackbone',None):
             msg = u'Vector Backbone is required for Plasmids.'
             self._errors['vectorBackbone'] = self.error_class([msg])
+        
+        if 'genbankFile' in data:
+            data['genbank'] = data['genbankFile'].readlines()
         
         return data
       

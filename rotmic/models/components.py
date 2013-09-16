@@ -122,7 +122,10 @@ class DnaComponent(Component):
     """
    
     sequence = models.TextField( help_text='nucleotide sequence', blank=True, 
-                                 null=True )      
+                                 null=True )
+    
+    genbank = models.TextField( help_text='genbank file content', blank=True,
+                                null=True )
     
     componentType = models.ForeignKey('DnaComponentType', 
                                       verbose_name='Type',

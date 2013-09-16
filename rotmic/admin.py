@@ -64,7 +64,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelA
          ),
         ('Details', {
             'fields' : (('comment',),
-                        ('sequence'),
+                        ('sequence', 'genbankFile'),
                         )
         }
          ),            
