@@ -129,15 +129,18 @@ class DnaComponent(Component):
                                       blank=False )    
     
     insert = models.ForeignKey( 'self', blank=True, null=True,
-                                related_name='as_insert_in_dna+')
+                                related_name='as_insert_in_dna+',
+                                help_text='start typing for auto-completion')
     
     vectorBackbone = models.ForeignKey( 'self', blank=True, null=True ,
                                         verbose_name='Vector Backbone',
-                                        related_name='as_vector_in_plasmid')
+                                        related_name='as_vector_in_plasmid',
+                                        help_text='start typing for auto-completion')
     
     marker = models.ManyToManyField( 'self', blank=True, null=True, 
                                      symmetrical=False,
-                                     related_name='as_marker_in_dna') ## end with + to suppress reverse relationship
+                                     related_name='as_marker_in_dna',   ## end with + to suppress reverse relationship
+                                     verbose_name='Selection markers')
     
 ##    def related_dnaSamples(self):
 ##        """
@@ -216,10 +219,13 @@ class CellComponent(Component):
     
     plasmid = models.ForeignKey( 'DnaComponent', blank=True, null=True, 
                                  verbose_name='Plasmid',
-                                 related_name='as_plasmid_in_cell')
+                                 related_name='as_plasmid_in_cell',
+                                 help_text='start typing for auto-completion')
     
     marker = models.ManyToManyField( 'DnaComponent', blank=True, null=True, 
-                                      related_name='as_marker_in_cell')
+                                      related_name='as_marker_in_cell',
+                                      verbose_name='genomic markers',
+                                      help_text='start typing...')
     
         
 ##    def related_dnaSamples(self):

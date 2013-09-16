@@ -187,7 +187,8 @@ class CellComponentForm(forms.ModelForm):
         widgets = {  ## customize widget dimensions and include dynamic select widgets
             'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 15,
                                               'style':'font-family:monospace'}),
-            'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=PlasmidLookup, allow_new=False),
+            'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=PlasmidLookup, 
+                                                       allow_new=False),
             'marker' : sforms.AutoComboboxSelectMultipleWidget(lookup_class=MarkerLookup)
         }
 

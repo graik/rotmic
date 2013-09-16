@@ -135,44 +135,68 @@
 
 <div class='module'>        
     <h2>DNA features & modifications</h2>
-    <table>
-        <tr>
-            {% if o.plasmid %} 
-                <th style="text-align: center;">Plasmid</th> <th width="20"></th>
-                <th style="text-align: center;">Plasmid Markers</th> <th></th>
-            {% endif %}
-            {% if o.marker.all %}
-                <th style="text-align: center;">Integrated Markers</th> <th></th>
-            {% endif %}
-        </tr>
-        <tr>
-            {% if o.plasmid %} 
-                {% with plasmid=o.plasmid insert=o.plasmid.insert vector=o.plasmid.vectorBackbone %}
-                    <td style="text-align: center;">
+    <p></p>
+    {% if o.marker.all %}
+        <table>
+            <tr><th style="text-align: center;">Genomic Markers</th><tr>
+            <tr><td><ul>
+                {% for m in o.marker.all %}
+                    <li><a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a></li>
+                {% endfor %}
+            </ul></td></tr>
+        </table>
+    {% endif %}
+    <p></p><p></p>
+    {% if o.plasmid %}
+        {% with plasmid=o.plasmid insert=o.plasmid.insert vector=o.plasmid.vectorBackbone %}
+            <table>
+                <tr>
+                    <th style="text-align: center;">Plasmid 
                         <a href="{{plasmid.get_absolute_url}}" title="{{plasmid.comment}}">{{plasmid.displayId}}</a>
-                        <p>
-                            <em>{{plasmid.name}}</em>
-                        </p>
-                        [{{plasmid.componentType.name}}]
-                    </td> <td></td>
-                    <td style="text-align: center;">
-                        {% if vector.marker.all %}
-                            {% for m in vector.marker.all %}
-                                <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
-                            {% endfor %}
-                        {% endif %}
-                    </td> <td></td>
-                {% endwith %}
-            {% endif %}
-            {% if o.marker.all %}
-                <td style="text-align: center;">
-                    {% for m in o.marker.all %}
-                        <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
-                    {% endfor %}
-                </td> <td></td>
-            {% endif %}
-        </tr>            
-    </table>
+                        - <em>{{plasmid.name}}</em> [{{plasmid.componentType.name}}]
+                    </th>
+                </tr>
+                <tr>
+                    <td><table>
+                        <tr>
+                            <th></th>
+                            <td style="text-align: center; font-weight:bold">Insert</td> <td></td> 
+                            <td style="text-align: center; font-weight:bold">Vector</td> <td></td> 
+                            <td style="text-align: center; font-weight:bold">Markers</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                {% if insert %}
+                                    <a href="{{insert.get_absolute_url}}" title="{{insert.comment}}">
+                                        {{insert.displayId}}</a> -- {{insert.name}}<br>
+                                        <dfn>[{{insert.componentType.name}}]</dfn>
+                                {% else %}
+                                    No insert found.
+                                {% endif %}
+                            </td><td></td>
+                            <td>
+                                {% if vector %}
+                                    <a href="{{vector.get_absolute_url}}" title="{{vector.comment}}">
+                                        {{vector.displayId}}</a> -- {{vector.name}}<br>
+                                        <dfn>[{{vector.componentType.name}}]</dfn>
+                                {% else %}
+                                    No vector found.
+                                {% endif %}
+                            </td><td></td>
+                            <td>
+                                {% if vector.marker.all %}
+                                    {% for m in vector.marker.all %}
+                                        <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a></br>
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table></td>
+                </tr>
+            </table>
+        {% endwith %}
+    {% endif %}
     
     {% if not o.marker and not o.plasmid %}
         <p>There are no DNA modifications described.</p>
