@@ -107,6 +107,13 @@
     <p><br></p>
 
     <div>
+        {% if o.genbank %}
+            <form action="genbank/" style='display:inline;'>
+                <p><input type="submit" value="Download Genbank" style='display:inline;'></p>
+            </form>
+        {% else %}
+            <div><p>No genbank file attached.</p></div>
+        {% endif %}
         {% if o.attachments.count != 0 %}
             <table border="0" rules="none">
                 <tr>
