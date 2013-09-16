@@ -14,7 +14,7 @@ class DocumentFormField(forms.FileField):
     See also: http://www.neverfriday.com/sweetfriday/2008/09/-a-long-time-ago.html
     """
     widget = adminwidgets.AdminFileWidget
-    valid_file_extensions = ('pdf','doc','txt','rtf','fasta','abl')
+    extensions = ('pdf','doc','txt','rtf','fasta','abl')
     default_max_size = 5e6
     valid_content_types = ('text/html', 'text/plain', 'text/rtf',
                            'text/xml', 'application/msword',
@@ -26,7 +26,7 @@ class DocumentFormField(forms.FileField):
         @param extensions: [str], allowed file extensions
         @param size: int, maximum file size
         """
-        self.extensions = kw.pop( 'extensions', self.valid_file_extensions )
+        self.extensions = kw.pop( 'extensions', self.extensions )
         self.size = kw.pop('size', self.default_max_size )
         
         super(DocumentFormField, self).__init__( *args, **kw )
@@ -35,31 +35,30 @@ class DocumentFormField(forms.FileField):
     def validate(self, value):
         """Enforce file ending and file size"""
       
-        f = super(DocumentFormField, self).validate(value)
+        super(DocumentFormField, self).validate(value)
         
-        if f is None:  ## non-required empty field
+        if value is None:  ## non-required empty field
             return
         
         try:
-            ext = f.name.split('.')[-1].lower()  
+            ext = value.name.split('.')[-1].lower()  
         except:
-            raise forms.ValidationError('Invalid file name %(fname)s',
+            raise forms.ValidationError('Invalid file name %s' \
+                                        % value.name,
                                         code='invalid file',
-                                        params={'fname': f.name}
                                         )
 
         if self.extensions and not ext in self.extensions:
             raise forms.ValidationError(
-                'Invalid file extension %(ext)s. Allowed are %(allowed)r',
-                code='invalid file',
-                params={'ext':ext, 'allowed':self.extensions}
+                'Invalid file extension %s. Allowed are %r' \
+                % (ext, self.extensions),
+                code='invalid file'
             )
 
-        if f.size > self.size:
+        if value.size > self.size:
             raise forms.ValidationError(
-                'File is too big (%(actual)i > %(allowed)i)',
-                code='invalid file',
-                params={'actual':f.size, 'allowed':self.size} )
+                'File is too big (%i > %i)' % (value.size,self.size),
+                code='invalid file')
 
        
     
@@ -72,7 +71,7 @@ class DocumentModelField( models.FileField ):
         @param size: int, maximum file size
         """
         self.extensions = kw.pop( 'extensions', 
-                                  DocumentFormField.valid_file_extensions )
+                                  DocumentFormField.extensions )
         self.size = kw.pop('size', DocumentFormField.default_max_size )
         
         super(DocumentModelField, self).__init__( *args, **kw )
@@ -91,7 +90,7 @@ add_introspection_rules([
         [DocumentModelField], # Class(es) these apply to
         [],         # Positional arguments (not used)
         {           # Keyword argument
-            "extensions": ["extensions", {"default": DocumentFormField.valid_file_extensions}],
+            "extensions": ["extensions", {"default": DocumentFormField.extensions}],
             'size': ['size', {'default':DocumentFormField.default_max_size}]
         },
     ),
