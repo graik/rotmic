@@ -1,13 +1,22 @@
+import StringIO
+
 from django.core import serializers
+from django.core.servers.basehttp import FileWrapper
 from django.http import HttpResponse
 from django.template import loader, Context, RequestContext
 
 from rotmic.models import DnaComponent, DnaComponentType
 
-def view_dnacomponent(request, displayId):
+
+def view_genbankfile(request, pk):
     """DC View"""
-    dnaComponent = DnaComponent.objects.get(displayId=displayId)
-    t = loader.get_template('view_dnacomponent.html')
+    o = DnaComponent.objects.get(id=pk)
+    txt = o.genbank
+    f = StringIO.StringIO( txt )
     
-    html = t.render(RequestContext({'dnaComponent': dnaComponent}))
-    return HttpResponse(html)
+    response = HttpResponse( FileWrapper( f ),
+                             content_type='text/gbk')
+    
+    response['Content-Disposition'] = 'attachment; filename="%s.gbk"' % o.displayId
+    
+    return response

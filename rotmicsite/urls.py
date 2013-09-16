@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 
-from rotmic.views import view_dnacomponent
+from rotmic.views import view_genbankfile
 from rotmic.jsviews import getTypeDnaInfo, getCellTypes
 import rotmicsite.settings as settings
 
@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^getTypeDnaInfo/(?P<maintype>.*)/$',getTypeDnaInfo,name='getTypeDnaInfo'),
     url(r'^getCellTypes/(?P<maintype>.*)/$',getCellTypes,name='getCellTypes'),
     url(r'^selectable/', include('selectable.urls')),
+    url(r'^rotmic/dnacomponent/(?P<pk>.*)/genbank/$',view_genbankfile,name='genbankfile'),
     url(r'^', include(admin.site.urls)),
 )
 

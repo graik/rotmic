@@ -91,6 +91,7 @@ class DnaComponentForm(forms.ModelForm):
                             empty_label=None,
                             initial=DnaComponentType.objects.get(name='Plasmid').id)
     
+    ## genbankFile upload into textfield 'genbank' is handled by ModelAdmin.save_model
     genbankFile = DocumentFormField(label='GenBank file', required=False,
                                     help_text='upload genbank-formatted file',
                                      extensions=['gbk','gb','genebank'])
@@ -138,9 +139,6 @@ class DnaComponentForm(forms.ModelForm):
         if category == T.dcPlasmid and not data.get('vectorBackbone',None):
             msg = u'Vector Backbone is required for Plasmids.'
             self._errors['vectorBackbone'] = self.error_class([msg])
-        
-        if 'genbankFile' in data:
-            data['genbank'] = data['genbankFile'].readlines()
         
         return data
       

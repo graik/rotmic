@@ -83,6 +83,13 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelA
     
     ordering = ('displayId', 'name',)
     
+ 
+    def save_model(self, request, obj, form, change):
+        """Extract uploaded genbank file from request"""
+        if request.FILES and 'genbankFile' in request.FILES:
+            obj.genbank = ''.join(request.FILES['genbankFile'].readlines())
+        super(DnaComponentAdmin, self).save_model( request, obj, form, change)
+ 
         
     def get_form(self, request, obj=None, **kwargs):
         """
