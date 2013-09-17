@@ -29,7 +29,6 @@ class SilentSelectWidget( forms.Select ):
         """never mark as changed."""
         return False
 
-
 class FixedSelectMultipleWidget( sforms.AutoComboboxSelectMultipleWidget ):
     """
     Bug fix the change detection method
@@ -39,6 +38,7 @@ class FixedSelectMultipleWidget( sforms.AutoComboboxSelectMultipleWidget ):
         old_values = [ unicode(i) for i in (initial or [u''])]
         new_values = [ unicode(i) for i in (data or [u''])]
         return not set(new_values) == set(old_values)
+
 
 class InsertLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
