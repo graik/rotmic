@@ -200,9 +200,9 @@ class DnaComponent(Component):
         if self.marker:
             r += self.marker.all()
         if self.vectorBackbone:
-            r += self.vectorBackbone.allMarkers()
+            r += [ m for m in self.vectorBackbone.allMarkers() if not m in r ]
         if self.insert:
-            r += self.insert.allMarkers()
+            r += [ m for m in self.insert.allMarkers() if not m in r ]
         return r
             
 
@@ -271,6 +271,19 @@ class CellComponent(Component):
             
         return super(CellComponent,self).save(*args, **kwargs)
             
+
+    def allMarkers( self ):
+        """
+        @return: [DnaComponent]
+        All markers contained in this cell directly or within a linked
+        plasmid.
+        """
+        r = []
+        if self.marker:
+            r += [ m for m in self.marker.all() if not m in r ]
+        if self.plasmid:
+            r += [ m for m in self.plasmid.allMarkers() if not m in r ]
+        return r
 
     class Meta:
         app_label = 'rotmic'

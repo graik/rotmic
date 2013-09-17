@@ -240,7 +240,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showPlasmidUrl', 'showComment','status')
+                    'showPlasmidUrl', 'showMarkerUrls', 'showComment','status')
     
     list_filter = ( CellCategoryListFilter, CellTypeListFilter, 'status','registeredBy')
     
@@ -291,4 +291,17 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
     showPlasmidUrl.allow_tags = True
     showPlasmidUrl.short_description = 'Plasmid'
     
+    def showMarkerUrls(self, obj):
+        """Table display of Vector Backbone markers"""
+        assert isinstance(obj, CellComponent), 'object missmatch'
+        urls = []
+        for m in obj.allMarkers():
+            u = m.get_absolute_url()
+            urls += [ html.mark_safe('<a href="%s" title="%s">%s</a>' \
+                                % (u, m.comment, m.name))]
+        return ', '.join(urls)
+    
+    showMarkerUrls.allow_tags = True
+    showMarkerUrls.short_description = 'Markers'
+
 admin.site.register(CellComponent, CellComponentAdmin)
