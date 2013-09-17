@@ -1,13 +1,14 @@
 from django.contrib import admin
 import django.contrib.admin.widgets as widgets
 import django.utils.html as html
+from django.utils.safestring import mark_safe
 
 import reversion
 
 import datetime
 
 from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
-     CellComponent, CellComponentType, Unit
+     CellComponent, CellComponentType, Unit, Sample
 
 from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentModelAdmin
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter,\
@@ -321,4 +322,69 @@ class UnitAdmin( admin.ModelAdmin ):
     list_filter = ('unitType',)
     
 admin.site.register( Unit, UnitAdmin )
+
+
+class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
+##    form = PlasmidSampleForm     
+
+    date_hierarchy = 'preparedAt'
     
+    fieldsets = [
+        (None, {
+            'fields' : ((('displayId', 'status'),
+                         ('preparedAt',),
+                         ('concentration','concentrationUnit','amount','amountUnit',),
+                         ('solvent','aliquotNr',),
+                         ('comment'),
+                         )
+                        )
+        }
+        ), 
+          
+    ]
+    list_display = ('displayId', 'preparedAt', 'registeredBy',
+                    'showConcentration', 'showAmount',
+                    'showComment','status','showSampleEdit')
+    
+    ordering = ('displayId',)
+
+    save_as = True
+    save_on_top = True
+
+    search_fields = ('diplayId', 'name','comment')
+    
+    list_filter = ('status',)
+    
+    def showConcentration(self, o):
+        conc = unicode(o.concentration or '')
+        unit = unicode(o.concentrationUnit or '')
+        return conc + ' '+ unit
+    showConcentration.short_description = 'Concentration' 
+    
+    def showAmount(self, o):
+        amount = unicode( o.amount or '' )
+        unit   = unicode( o.amountUnit or '' )
+        return amount + ' '+ unit
+    showAmount.short_description = 'Amount' 
+    
+    def showComment(self, obj):
+        """
+        @return: str; truncated comment with full comment mouse-over
+        """
+        if not obj.comment: 
+            return u''
+        if len(obj.comment) < 40:
+            return unicode(obj.comment)
+        r = unicode(obj.comment[:38])
+        r = '<a title="%s">%s</a>' % (obj.comment, F.truncate(obj.commentText(), 40))
+        return r
+    showComment.allow_tags = True
+    showComment.short_description = 'Description'
+
+    def showSampleEdit(self, obj):
+        return mark_safe('<a href="%s"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a>'\
+                         % (obj.get_absolute_url_edit() ) )
+    showSampleEdit.allow_tags = True    
+    showSampleEdit.short_description = 'Edit'     
+
+admin.site.register( Sample, SampleAdmin )

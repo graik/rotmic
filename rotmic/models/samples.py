@@ -1,0 +1,89 @@
+## Rotten Microbes (rotmic) -- Laboratory Sequence and Sample Management
+## Copyright 2013 Raik Gruenberg
+
+## This file is part of the rotmic project (https://github.com/graik/rotmic).
+## rotmic is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as
+## published by the Free Software Foundation, either version 3 of the
+## License, or (at your option) any later version.
+
+## rotmic is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+## You should have received a copy of the GNU Affero General Public
+## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
+from datetime import datetime
+import re
+
+from django.db import models
+from django.core.urlresolvers import reverse
+
+from rotmic.models.components import UserMixin
+
+class Sample( UserMixin ):
+    """Base class for DNA, cell and protein samples."""
+
+    displayId = models.CharField('ID/Position', max_length=20,
+                                 help_text='Label or well position. Must be unique within container.')
+
+    
+    #: link to a single container
+##    container = models.ForeignKey(Container, related_name='samples')
+
+    aliquotNr = models.PositiveIntegerField('Number of aliquots', 
+                                            null=True, blank=True)
+
+    STATUS_CHOICES = (('ok', 'ok'),
+                      ('preparation', 'in preparation'),
+                      ('empty', 'empty'),
+                      ('bad', 'bad'),
+                      )
+    
+    status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
+                               default='ok')
+    
+    comment = models.TextField('Comments', blank=True)
+
+    preparedAt = models.DateField(default=datetime.now(), verbose_name="Prepared")
+    
+    source = models.CharField('External Source', blank=True, null=True, 
+                              max_length=100,
+                              help_text='external lab or company' )
+    
+    solvent = models.CharField('in Buffer/Medium', max_length=100, blank=True)
+
+    concentration = models.FloatField('Concentration', null=True, blank=True)
+
+    concentrationUnit = models.ForeignKey('Unit', 
+                                          verbose_name='Unit',
+                                          related_name='concUnit+',  ## supress back-reference
+                                          null=True, blank=True,
+                                          limit_choices_to = {'unitType': 'concentration'})    
+    
+    amount = models.FloatField('Amount', null=True, blank=True)
+    amountUnit = models.ForeignKey('Unit', 
+                                   verbose_name='Unit',
+                                   related_name='amountUnit+', ## suppress back-reference
+                                   null=True, blank=True, 
+                                   limit_choices_to = {'unitType': ['volume','number', 'mass']})
+    
+
+    def commentText(self):
+        """remove some formatting characters from text"""
+        r = re.sub('--','', self.comment)
+        r = re.sub('=','', r)
+        r = re.sub('__','', r)
+        return r
+    commentText.short_description = 'description'
+
+    def get_absolute_url(self):
+        """
+        Define standard URL for object views
+        see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
+        """
+        return reverse('admin:rotmic_sample_readonly', args=(self.id,))
+    
+    def get_absolute_url_edit(self):
+        return reverse('admin:rotmic_sample_change', args=(self.id,))
+   

@@ -38,11 +38,8 @@ class Attachment(models.Model):
     
     description = models.CharField(max_length=100, blank=True)
 
-    parent = models.ForeignKey(parent_class, related_name='attachments')
-    
     def __unicode__(self):
         return os.path.basename(self.f.name)
-
 
     class Meta:
         app_label = 'rotmic'
@@ -80,14 +77,33 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
 class ComponentAttachment(Attachment):
     parent_class = 'Component'
     
+    parent = models.ForeignKey(parent_class, related_name='attachments')
+    
     class Meta:
         app_label='rotmic'
         abstract=False
-        verbose_name='Attachment'
+        verbose_name='Component Attachment'
 
 models.signals.post_delete.connect(auto_delete_file_on_delete, 
                                    sender=ComponentAttachment)
 
 models.signals.pre_save.connect(auto_delete_file_on_change, 
                                    sender=ComponentAttachment)
+
+
+class SampleAttachment(Attachment):
+    parent_class = 'Sample'
+    
+    parent = models.ForeignKey(parent_class, related_name='attachments')
+
+    class Meta:
+        app_label='rotmic'
+        abstract=False
+        verbose_name='Sample Attachment'
+
+models.signals.post_delete.connect(auto_delete_file_on_delete, 
+                                   sender=SampleAttachment)
+
+models.signals.pre_save.connect(auto_delete_file_on_change, 
+                                   sender=SampleAttachment)
 
