@@ -8,7 +8,7 @@ import reversion
 import datetime
 
 from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
-     CellComponent, CellComponentType, Unit, Sample
+     CellComponent, CellComponentType, Unit, Sample, SampleAttachment
 
 from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentModelAdmin
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter,\
@@ -40,7 +40,7 @@ class BaseAdminMixin:
         obj.save()
 
 
-class AttachmentInline(admin.TabularInline):
+class ComponentAttachmentInline(admin.TabularInline):
     model = ComponentAttachment
     form = AttachmentForm
     template = 'admin/rotmic/componentattachment/tabular.html'
@@ -51,7 +51,7 @@ class AttachmentInline(admin.TabularInline):
 
 class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
     """Admin interface description for DNA constructs."""
-    inlines = [ AttachmentInline ]
+    inlines = [ ComponentAttachmentInline ]
     form = DnaComponentForm
     
     fieldsets = (
@@ -177,7 +177,7 @@ admin.site.register(DnaComponent, DnaComponentAdmin)
 
 class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelAdmin ):
     """Admin interface description for DNA constructs."""
-    inlines = [ AttachmentInline ]
+    inlines = [ ComponentAttachmentInline ]
     form = CellComponentForm
     
     fieldsets = (
@@ -324,9 +324,29 @@ class UnitAdmin( admin.ModelAdmin ):
 admin.site.register( Unit, UnitAdmin )
 
 
+class SampleAttachmentInline(admin.TabularInline):
+    model = SampleAttachment
+    form = AttachmentForm
+    template = 'admin/rotmic/componentattachment/tabular.html'
+    can_delete=True
+    extra = 1
+    max_num = 5
+
+    fieldsets = (
+        (None, {
+            'fields': ('f', 'description',),
+            'description': 'Only attach files that are specific to this very sample\n'\
+                           +'Use DNA or Cell attachments otherwise.',
+            'classes': ('collapse',),
+            
+        }),
+    )
+    
+
 class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
 ##    form = PlasmidSampleForm     
 
+    inlines = [ SampleAttachmentInline ]
     date_hierarchy = 'preparedAt'
     
     fieldsets = [

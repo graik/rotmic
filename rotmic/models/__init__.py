@@ -1,4 +1,4 @@
-from rotmic.models.attachments import ComponentAttachment
+from rotmic.models.attachments import ComponentAttachment, SampleAttachment
 
 from rotmic.models.components import Component, DnaComponent, CellComponent
 
