@@ -7,7 +7,7 @@ import reversion
 import datetime
 
 from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
-     CellComponent, CellComponentType
+     CellComponent, CellComponentType, Unit
 
 from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentModelAdmin
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter,\
@@ -38,7 +38,6 @@ class BaseAdminMixin:
 
         obj.save()
 
-from django.template.loader import get_template
 
 class AttachmentInline(admin.TabularInline):
     model = ComponentAttachment
@@ -175,50 +174,6 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelA
 admin.site.register(DnaComponent, DnaComponentAdmin)
 
 
-class DnaComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
-    
-    fieldsets = (
-        (None, {
-            'fields': (('name', 'subTypeOf',),
-                       ('description', 'isInsert',),
-                       ('uri',),
-                       )
-            }
-         ),
-        )
-    
-    list_display = ('__unicode__','subTypeOf', 'description', 'isInsert')
-    list_display_links = ('__unicode__',)
-    list_editable = ('isInsert',)
-    
-    list_filter = ('subTypeOf', 'isInsert')
-                       
-
-admin.site.register(DnaComponentType, DnaComponentTypeAdmin)
-
-
-class CellComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
-    
-    fieldsets = (
-        (None, {
-            'fields': (('name', 'subTypeOf',),
-                       ('description',),
-                       ( 'allowPlasmids', 'allowMarkers'),
-                       ('uri',),
-                       )
-            }
-         ),
-        )
-    
-    list_display = ('__unicode__','subTypeOf', 'description', 'allowPlasmids', 'allowMarkers')
-    list_display_links = ('__unicode__',)
-    list_editable = ('allowPlasmids','allowMarkers')
-    
-    list_filter = ('subTypeOf', 'allowPlasmids', 'allowMarkers')
-
-admin.site.register(CellComponentType, CellComponentTypeAdmin)
-    
-
 class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelAdmin ):
     """Admin interface description for DNA constructs."""
     inlines = [ AttachmentInline ]
@@ -305,3 +260,65 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
     showMarkerUrls.short_description = 'Markers'
 
 admin.site.register(CellComponent, CellComponentAdmin)
+
+
+class DnaComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
+    
+    fieldsets = (
+        (None, {
+            'fields': (('name', 'subTypeOf',),
+                       ('description', 'isInsert',),
+                       ('uri',),
+                       )
+            }
+         ),
+        )
+    
+    list_display = ('__unicode__','subTypeOf', 'description', 'isInsert')
+    list_display_links = ('__unicode__',)
+    list_editable = ('isInsert',)
+    
+    list_filter = ('subTypeOf', 'isInsert')
+                       
+
+admin.site.register(DnaComponentType, DnaComponentTypeAdmin)
+
+
+class CellComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
+    
+    fieldsets = (
+        (None, {
+            'fields': (('name', 'subTypeOf',),
+                       ('description',),
+                       ( 'allowPlasmids', 'allowMarkers'),
+                       ('uri',),
+                       )
+            }
+         ),
+        )
+    
+    list_display = ('__unicode__','subTypeOf', 'description', 'allowPlasmids', 'allowMarkers')
+    list_display_links = ('__unicode__',)
+    list_editable = ('allowPlasmids','allowMarkers')
+    
+    list_filter = ('subTypeOf', 'allowPlasmids', 'allowMarkers')
+
+admin.site.register(CellComponentType, CellComponentTypeAdmin)
+    
+
+class UnitAdmin( admin.ModelAdmin ):
+    
+    fieldsets = (
+        (None, {
+            'fields': (('name', 'unitType',),
+                       ('conversion',),
+                       )
+            }
+         ),
+        )
+    
+    list_display = ('name','unitType', 'conversion')
+    list_filter = ('unitType',)
+    
+admin.site.register( Unit, UnitAdmin )
+    

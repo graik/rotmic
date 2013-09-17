@@ -1,0 +1,137 @@
+[
+    {
+        "pk": 1,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 1.0,
+            "name": "M",
+            "unitType": "concentration"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 1e-06,
+            "name": "\u00b5M",
+            "unitType": "concentration"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 0.001,
+            "name": "mM",
+            "unitType": "concentration"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 1.0,
+            "name": "l",
+            "unitType": "volume"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 0.001,
+            "name": "ml",
+            "unitType": "volume"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 1e-06,
+            "name": "\u00b5l",
+            "unitType": "volume"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 1.0,
+            "name": "g",
+            "unitType": "mass"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 0.001,
+            "name": "mg",
+            "unitType": "mass"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 1e-06,
+            "name": "\u00b5g",
+            "unitType": "mass"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 1.0,
+            "name": "mol",
+            "unitType": "number"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 0.001,
+            "name": "mmol",
+            "unitType": "number"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 1e-06,
+            "name": "\u00b5mol",
+            "unitType": "number"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 1e-09,
+            "name": "nmol",
+            "unitType": "number"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 1.0,
+            "name": "g / l",
+            "unitType": "concentration"
+        }
+    },
+    {
+        "pk": 15,
+        "model": "rotmic.unit",
+        "fields": {
+            "conversion": 0.001,
+            "name": "ng / \u00b5l",
+            "unitType": "concentration"
+        }
+    }
+]
