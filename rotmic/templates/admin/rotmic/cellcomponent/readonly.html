@@ -25,11 +25,7 @@
 
 {% block content %}
 
-<h3>Cell or Strain</h3><h1>{{o}}</h1>
-
-
-
-<div id="content-main">
+    <h3>Cell or Strain</h3><h1>{{o}}</h1>
 
     {% block object-tools %}
     {% if not is_popup %}
@@ -42,167 +38,187 @@
     {% endif %}
     {% endblock %}
 
-
-    <div class="module" id="sidebar">
-    {% block filters %}
-        <div id="content-related"> 
-
-            <div class="module" id="recent-actions-module">
-                <h2>Rating</h2>
-                <p>Not implemented</p>
+    <div id="content-main">
+    
+        <div class='module'>
+            <h2>Description</h2>
+            <div>
+                <p class='description'>
+                    {{o.comment|markdown}}
+                </p>
             </div>
     
-            <div class="module" id="recent-actions-module">
-                <h2>Classification</h2>
-                        <p> 
-                        {% with o.componentType as T %}
-                            <a href="../?category={{T.category}}">{{T.category}}</a> /<br>
-                            <a href="../?category={{T.category}}&type={{T.name}}">{{T.name}}</a>
-                        {% endwith %}
-                        </p>
+            <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;"><h4>Attachments</h4></div>
+            <p><br></p>
+    
+            <div>
+                {% if o.attachments.count != 0 %}
+                    <table border="0" rules="none">
+                        <tr>
+                            {% for a in o.attachments.all %}
+                                <th style="text-align: center;">
+                                    <a href="{{a.f.url}}">{{a}}</a> <br>
+                                </th>
+                                <th></th>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            {% for a in o.attachments.all %}
+                                <td style="text-align: center;">{{a.description}} ({{a.f.size|filesizeformat}})</td> 
+                                <td></td>
+                            {% endfor %}
+                        </tr>
+                    </table>
+                {% else %}
+                    <div><p>No attachments found.</p></div>
+                {% endif %}
+                <p></p>
+            </div>
+        </div>
+
+
+        <div class='module'>        
+            <h2>DNA features & modifications</h2>
+            <p></p>
+
+            <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;"><h4>Genomic Markers</h4></div>
+            <p><br></p>
+            
+            <div>
+                {% if o.marker.all %}
+                    <table border="0" rules="none">
+                        <tr>
+                            {% for m in o.marker.all %}
+                                <th style="text-align: center;">
+                                    <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a> <br>
+                                </th>
+                                <th></th>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            {% for m in o.marker.all %}
+                                <td style="text-align: center;">[{{m.componentType}}]</td> 
+                                <td></td>
+                            {% endfor %}
+                        </tr>
+                    </table>
+                {% else %}
+                    <p>No genomic markers found.</p>
+                {% endif %}
             </div>
 
-            <div class="module" id="recent-actions-module">
-                <h2>Record</h2>
-                <ul>    
-                    <li><B>Status</B>:<p> {{o.status}}</p></li>
-                    <li><B>registered</B>: 
+            <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;"><h4>Plasmids</h4></div>
+            <p><br></p>
+            
+            <div>
+                {% if o.plasmid %}
+                    {% with plasmid=o.plasmid insert=o.plasmid.insert vector=o.plasmid.vectorBackbone %}
+                        <table>
+                            <tr>
+                                <td style="text-align: center;"><dfn>[{{plasmid.componentType.name}}]</dfn></td>
+                            </tr>
+                            <tr>
+                                <th style="text-align: center; borders=None"> 
+                                    <a href="{{plasmid.get_absolute_url}}" title="{{plasmid.comment}}">{{plasmid.displayId}}</a>
+                                    - {{plasmid.name}}
+                                </th>
+                            </tr>
+                            <tr>
+                                <td><table>
+                                    <tr>
+                                        <th></th>
+                                        <td style="text-align: center; font-weight:bold">Insert</td> <td></td> 
+                                        <td style="text-align: center; font-weight:bold">Vector</td> <td></td> 
+                                        <td style="text-align: center; font-weight:bold">Markers</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td style="text-align: center;">
+                                            {% if insert %}
+                                                <a href="{{insert.get_absolute_url}}" title="{{insert.comment}}">
+                                                    {{insert.displayId}}</a> -- {{insert.name}}<br>
+                                                    <dfn>[{{insert.componentType.name}}]</dfn>
+                                            {% else %}
+                                                No insert found.
+                                            {% endif %}
+                                        </td><td></td>
+                                        <td style="text-align: center;">
+                                            {% if vector %}
+                                                <a href="{{vector.get_absolute_url}}" title="{{vector.comment}}">
+                                                    {{vector.displayId}}</a> -- {{vector.name}}<br>
+                                                    <dfn>[{{vector.componentType.name}}]</dfn>
+                                            {% else %}
+                                                No vector found.
+                                            {% endif %}
+                                        </td><td></td>
+                                        <td style="text-align: center;">
+                                            {% if vector.marker.all %}
+                                                {% for m in vector.marker.all %}
+                                                    <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a></br>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </table></td>
+                            </tr>
+                        </table>
+                    {% endwith %}
+                {% else %}
+                    <p>No Plasmids found.</p>
+                {% endif %}
+                
+            </div>            
+        
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block sidebar %}
+    <div id="content-related">
+
+        <div class="module" id="rating-module">
+            <h2>Rating</h2>
+            <p>Not implemented</p>
+        </div>
+
+        <div class="module" id="classification-module">
+            <h2>Classification</h2>
+                <p> 
+                {% with o.componentType as T %}
+                    <a href="../?category={{T.category}}">{{T.category}}</a> /<br>
+                    &nbsp&nbsp<a href="../?category={{T.category}}&type={{T.name}}">{{T.name}}</a>
+                {% endwith %}
+                </p>
+        </div>
+
+        <div class="module" id="record-module">
+            <h2>Record</h2>
+            <ul>    
+                <li><B>Status</B>:<p>{{o.status}}</p></li>
+                <li><B>registered</B>: 
+                    <p>
+                    {% with o.registeredBy as U %}
+                        {{o.registrationDate}}; &nbsp{{o.registrationTime}}<br>
+                        by <a href="../?registeredBy__id__exact={{U.id}}">
+                            {{U.first_name}} {{U.last_name}} ({{U}})</a>
+                    {% endwith %}
+                    </p>
+                </li>
+                {% if o.modifiedBy %}
+                    <li><B>last modified</B>: 
                         <p>
-                        {% with o.registeredBy as U %}
-                            {{o.registrationDate}}<br>
-                            {{o.registrationTime}}<br>
-                            by <a href="../?registeredBy__id__exact={{U.id}}">
-                                {{U.first_name}} {{U.last_name}} ({{U}})</a>
+                        {% with o.modifiedBy as U %}
+                            {{o.modificationDate}}; &nbsp{{o.modificationTime}}<br>
+                            by {{U.first_name}} {{U.last_name}} ({{U}})
                         {% endwith %}
                         </p>
                     </li>
-                    {% if o.modifiedBy %}
-                        <li><B>last modified</B>: 
-                            <p>
-                            {% with o.modifiedBy as U %}
-                                {{o.modificationDate}}<br>
-                                {{o.modificationTime}}<br>
-                                by {{U.first_name}} {{U.last_name}} ({{U}})
-                            {% endwith %}
-                            </p>
-                        </li>
-                    {% endif %}
-                    
-                </ul
-            </div>
-            
+                {% endif %}   
+            </ul>
         </div> 
-                
-    {% endblock %}
+
     </div>
-
-    <h2>Description</h2>
-    <div>
-        <p class='description'>
-            {{o.comment|markdown}}
-        </p>
-    </div>
-
-    <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;"><h4>Attachments</h3></div>
-    <p><br></p>
-
-    <div>
-        {% if o.attachments.count != 0 %}
-            <table border="0" rules="none">
-                <tr>
-                    {% for a in o.attachments.all %}
-                        <th style="text-align: center;">
-                            <a href="{{a.f.url}}">{{a}}</a> <br>
-                        </th>
-                        <th></th>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    {% for a in o.attachments.all %}
-                        {% if a.f %}
-                            <td style="text-align: center;">{{a.description}} ({{a.f.size|filesizeformat}})</td>
-                            <td></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            </table>
-        {% else %}
-            <div><p>No attachments found.</p></div>
-        {% endif %}
-        <p></p>
-    </div>
-</div>
-
-<div class='module'>        
-    <h2>DNA features & modifications</h2>
-    <p></p>
-    {% if o.marker.all %}
-        <table>
-            <tr><th style="text-align: center;">Genomic Markers</th><tr>
-            <tr><td><ul>
-                {% for m in o.marker.all %}
-                    <li><a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a></li>
-                {% endfor %}
-            </ul></td></tr>
-        </table>
-    {% endif %}
-    <p></p><p></p>
-    {% if o.plasmid %}
-        {% with plasmid=o.plasmid insert=o.plasmid.insert vector=o.plasmid.vectorBackbone %}
-            <table>
-                <tr>
-                    <th style="text-align: center;">Plasmid 
-                        <a href="{{plasmid.get_absolute_url}}" title="{{plasmid.comment}}">{{plasmid.displayId}}</a>
-                        - <em>{{plasmid.name}}</em> [{{plasmid.componentType.name}}]
-                    </th>
-                </tr>
-                <tr>
-                    <td><table>
-                        <tr>
-                            <th></th>
-                            <td style="text-align: center; font-weight:bold">Insert</td> <td></td> 
-                            <td style="text-align: center; font-weight:bold">Vector</td> <td></td> 
-                            <td style="text-align: center; font-weight:bold">Markers</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                {% if insert %}
-                                    <a href="{{insert.get_absolute_url}}" title="{{insert.comment}}">
-                                        {{insert.displayId}}</a> -- {{insert.name}}<br>
-                                        <dfn>[{{insert.componentType.name}}]</dfn>
-                                {% else %}
-                                    No insert found.
-                                {% endif %}
-                            </td><td></td>
-                            <td>
-                                {% if vector %}
-                                    <a href="{{vector.get_absolute_url}}" title="{{vector.comment}}">
-                                        {{vector.displayId}}</a> -- {{vector.name}}<br>
-                                        <dfn>[{{vector.componentType.name}}]</dfn>
-                                {% else %}
-                                    No vector found.
-                                {% endif %}
-                            </td><td></td>
-                            <td>
-                                {% if vector.marker.all %}
-                                    {% for m in vector.marker.all %}
-                                        <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a></br>
-                                    {% endfor %}
-                                {% endif %}
-                            </td>
-                        </tr>
-                    </table></td>
-                </tr>
-            </table>
-        {% endwith %}
-    {% endif %}
-    
-    {% if not o.marker and not o.plasmid %}
-        <p>There are no DNA modifications described.</p>
-    {% endif %}
-    
-</div>
-
 {% endblock %}
 
