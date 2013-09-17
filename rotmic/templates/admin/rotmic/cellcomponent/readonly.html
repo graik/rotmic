@@ -45,7 +45,21 @@
             <div>
                 <p class='description'>
                     {{o.comment|markdown}}
+                    {% if not o.comment %}
+                        <p>No description found.</p>
+                    {% endif %}
                 </p>
+
+                {% if o.plasmid and o.plasmid.comment %}
+                    <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;">
+                        <h4>Description of Plasmid <a href="{{o.plasmid.get_absolute_url}}">{{o.plasmid}}</a></h4>
+                    </div>
+                    <p class='description'>
+                        {{o.plasmid.comment|markdown}} 
+                    </p>
+                    
+                {% endif %}
+
             </div>
     
             <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;"><h4>Attachments</h4></div>
