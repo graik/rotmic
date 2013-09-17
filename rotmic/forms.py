@@ -30,6 +30,16 @@ class SilentSelectWidget( forms.Select ):
         return False
 
 
+class FixedSelectMultipleWidget( sforms.AutoComboboxSelectMultipleWidget ):
+    """
+    Bug fix the change detection method
+    """    
+    def _has_changed(self,initial, data):
+        """override buggy method from SelectWidget"""
+        old_values = [ unicode(i) for i in (initial or [u''])]
+        new_values = [ unicode(i) for i in (data or [u''])]
+        return not set(new_values) == set(old_values)
+
 class InsertLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
     model = DnaComponent
@@ -195,7 +205,7 @@ class CellComponentForm(forms.ModelForm):
                                               'style':'font-family:monospace'}),
             'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=PlasmidLookup, 
                                                        allow_new=False),
-            'marker' : sforms.AutoComboboxSelectMultipleWidget(lookup_class=MarkerLookup)
+            'marker' : FixedSelectMultipleWidget(lookup_class=MarkerLookup)
         }
 
 
