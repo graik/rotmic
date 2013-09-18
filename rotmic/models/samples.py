@@ -25,7 +25,7 @@ class Sample( UserMixin ):
     """Base class for DNA, cell and protein samples."""
 
     displayId = models.CharField('ID/Position', max_length=20,
-                                 help_text='Label or well position. Must be unique within container.')
+                                 help_text='Label or well position.')
 
     
     #: link to a single container

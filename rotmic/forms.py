@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 from rotmic.models import DnaComponent, DnaComponentType, \
-     CellComponent, CellComponentType
+     CellComponent, CellComponentType, Sample
 import rotmic.initialTypes as T
 import rotmic.utils.sequtils as sequtils
 from rotmic.utils.filefields import DocumentFormField
@@ -209,6 +209,22 @@ class CellComponentForm(forms.ModelForm):
                                                        allow_new=False),
             'marker' : FixedSelectMultipleWidget(lookup_class=MarkerLookup)
         }
+
+
+class SampleForm(forms.ModelForm):
+    """Customized Form for Sample add / change"""
+    
+    class Meta:
+        model = Sample
+        widgets = { ## customize widget dimensions and include dynamic select widgets
+            'displayId' : forms.TextInput(attrs={'size':5}),
+            'concentration' : forms.TextInput(attrs={'size':5}),
+            'amount' : forms.TextInput(attrs={'size':5}),
+            'aliquotNr' : forms.TextInput(attrs={'size':2}),
+            'comment': forms.Textarea(attrs={'cols': 100, 'rows': 5,
+                                              'style':'font-family:monospace'}),
+            }
+            
 
 
 class AttachmentForm(forms.ModelForm):

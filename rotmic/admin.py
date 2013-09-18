@@ -14,7 +14,8 @@ from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentModelAdmin
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter,\
      CellCategoryListFilter, CellTypeListFilter
 
-from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm
+from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm,\
+     SampleForm
 
 import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
@@ -344,7 +345,7 @@ class SampleAttachmentInline(admin.TabularInline):
     
 
 class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
-##    form = PlasmidSampleForm     
+    form = SampleForm     
 
     inlines = [ SampleAttachmentInline ]
     date_hierarchy = 'preparedAt'
