@@ -21,6 +21,11 @@ from django.db import models
 
 from rotmic.utils.filefields import DocumentModelField
 
+def get_upload_to(instance, filename):
+    parent = instance.parent
+    return os.path.join( instance.upload_to, parent.__class__.__name__, 
+                         str(parent.pk), filename )
+
 
 class Attachment(models.Model):
     """
@@ -31,6 +36,11 @@ class Attachment(models.Model):
     valid_extensions = ()  ## disable extension checking
     parent_class = 'Component'
     
+    f = DocumentModelField('file', 
+                           upload_to=get_upload_to,
+                           extensions=valid_extensions,
+                           blank=False, null=False)
+     
     description = models.CharField(max_length=100, blank=True)
 
     def __unicode__(self):
@@ -43,17 +53,23 @@ class Attachment(models.Model):
 # These two auto-delete files from filesystem when they are unneeded:
 ##@receiver(models.signals.post_delete, sender=Attachment)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """Deletes file from filesystem
-    when corresponding `MediaFile` object is deleted.
+    """
+    Deletes file from filesystem when corresponding `MediaFile` object is deleted.
+    Also deletes containing folder if it is empty.
     """
     if instance.f:
         if os.path.isfile(instance.f.path):
             os.remove(instance.f.path)
 
+            folder = os.path.split( instance.f.path )[0]
+            if len( os.listdir( folder ) ) == 0:
+                os.removedirs( folder )
+
 ##@receiver(models.signals.pre_save, sender=Attachment)
 def auto_delete_file_on_change(sender, instance, **kwargs):
-    """Deletes file from filesystem
-    when corresponding `Attachment` object is changed.
+    """
+    Deletes file from filesystem when corresponding `Attachment` object is replaced.
+    Also deletes containing folder if it is empty.
     """
     if not instance.pk:
         return False
@@ -68,16 +84,15 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
         if os.path.isfile(old_file.path):
             os.remove(old_file.path)
 
+            folder = os.path.split( old_file.path )[0]
+            if len( os.listdir( folder ) ) == 0:
+                os.removedirs( folder )
+
 
 class ComponentAttachment(Attachment):
     parent_class = 'Component'
-    upload_to = 'attachments'
     valid_extensions = ()  ## disable extension checking    
     
-    f = DocumentModelField('file', 
-                           upload_to=upload_to+'/'+parent_class,
-                           extensions=valid_extensions,
-                           blank=False, null=False)
     
     parent = models.ForeignKey(parent_class, related_name='attachments')
     
@@ -95,13 +110,7 @@ models.signals.pre_save.connect(auto_delete_file_on_change,
 
 class SampleAttachment(Attachment):
     parent_class = 'Sample'
-    upload_to = 'attachments'
     valid_extensions = ()  ## disable extension checking
-    
-    f = DocumentModelField('file', 
-                           upload_to=upload_to+'/'+parent_class,
-                           extensions=valid_extensions,
-                           blank=False, null=False)
     
     parent = models.ForeignKey(parent_class, related_name='attachments')
 
