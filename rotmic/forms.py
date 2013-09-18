@@ -2,7 +2,7 @@ import os
 
 import django.forms as forms
 import django.db.models as models
-from django.db.models.query import QuerySet as Q
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 

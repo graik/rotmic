@@ -18,6 +18,7 @@ import re
 
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 
 from rotmic.models.components import UserMixin
 
@@ -66,7 +67,8 @@ class Sample( UserMixin ):
                                    verbose_name='Unit',
                                    related_name='amountUnit+', ## suppress back-reference
                                    null=True, blank=True, 
-                                   limit_choices_to = {'unitType': ['volume','number', 'mass']})
+                                   limit_choices_to = Q(unitType__in=['volume','number', 'mass'])
+                                   )
     
 
     def commentText(self):

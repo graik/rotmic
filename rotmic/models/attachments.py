@@ -91,8 +91,6 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
 
 class ComponentAttachment(Attachment):
     parent_class = 'Component'
-    valid_extensions = ()  ## disable extension checking    
-    
     
     parent = models.ForeignKey(parent_class, related_name='attachments')
     
@@ -110,7 +108,6 @@ models.signals.pre_save.connect(auto_delete_file_on_change,
 
 class SampleAttachment(Attachment):
     parent_class = 'Sample'
-    valid_extensions = ()  ## disable extension checking
     
     parent = models.ForeignKey(parent_class, related_name='attachments')
 

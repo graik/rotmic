@@ -18,7 +18,6 @@ from datetime import datetime
 import re
 
 from django.db import models
-from django.db.models.query import QuerySet as Q
 from django.utils.safestring import mark_safe
 
 from django.contrib.auth.models import User
