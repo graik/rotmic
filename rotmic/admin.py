@@ -28,8 +28,10 @@ from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
      Location, Rack, Container
 
 from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentModelAdmin
+
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter,\
-     CellCategoryListFilter, CellTypeListFilter
+     CellCategoryListFilter, CellTypeListFilter, \
+     RackListFilter
 
 from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm,\
      SampleForm, LocationForm, RackForm, ContainerForm
@@ -485,7 +487,7 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin):
         ]
 
     list_display = ('__unicode__', 'showRackUrl', 'showLocationUrl', 'containerType')
-    list_filter =  ('containerType', 'rack__location', 'rack')
+    list_filter =  ('containerType', 'rack__location', RackListFilter)
     search_fields = ('displayId', 'name','comment')
 
     save_as = True

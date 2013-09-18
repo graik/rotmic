@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models.query import QuerySet as Q
 
-from rotmic.models import DnaComponentType, CellComponentType
+from rotmic.models import DnaComponentType, CellComponentType, Rack, Location
 
 
 class CategoryListFilter( admin.SimpleListFilter):
@@ -107,3 +107,51 @@ class CellCategoryListFilter( CategoryListFilter ):
     
 class CellTypeListFilter( TypeListFilter ):
     _class = CellComponentType
+    
+    
+class RackListFilter( admin.SimpleListFilter):
+    """
+    Provide filter for Racks responding to currently selected Location.
+    """
+    title = 'Rack'
+    parameter_name = 'rack'
+    
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        if not u'rack__location__id__exact' in request.GET:
+            return ()
+        
+        location_id = request.GET[u'rack__location__id__exact']
+        racks = Rack.objects.filter(location=location_id)
+        return ( (r.id, r.__unicode__()) for r in racks )
+    
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if not u'rack__location__id__exact' in request.GET:
+            return queryset
+        
+        location_id = request.GET[u'rack__location__id__exact']
+        racks = Rack.objects.filter(location=location_id)
+        
+        r = queryset.filter(rack__location=location_id)
+        
+        if not self.value():
+            return r
+        
+        ## special case: missmatch between subtype and category
+        ## which happens after switching the category
+        if len(racks.filter(id=self.value())) == 0:
+            return r
+        
+        return r.filter(rack=self.value())
+
