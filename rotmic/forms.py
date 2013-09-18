@@ -156,6 +156,7 @@ class DnaComponentForm(forms.ModelForm):
     class Meta:
         model = DnaComponent
         widgets = {  ## customize widget dimensions and include dynamic select widgets
+            'displayId' : forms.TextInput(attrs={'size':10}),
             'sequence': forms.Textarea(attrs={'cols': 100, 'rows': 4,
                                                'style':'font-family:monospace'}), 
             'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 15,
@@ -201,6 +202,7 @@ class CellComponentForm(forms.ModelForm):
     class Meta:
         model = CellComponent
         widgets = {  ## customize widget dimensions and include dynamic select widgets
+            'displayId' : forms.TextInput(attrs={'size':10}),
             'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 15,
                                               'style':'font-family:monospace'}),
             'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=PlasmidLookup, 
