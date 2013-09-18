@@ -1,3 +1,18 @@
+## Rotten Microbes (rotmic) -- Laboratory Sequence and Sample Management
+## Copyright 2013 Raik Gruenberg
+
+## This file is part of the rotmic project (https://github.com/graik/rotmic).
+## rotmic is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as
+## published by the Free Software Foundation, either version 3 of the
+## License, or (at your option) any later version.
+
+## rotmic is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+## You should have received a copy of the GNU Affero General Public
+## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 import os
 
 import django.forms as forms
@@ -7,7 +22,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 from rotmic.models import DnaComponent, DnaComponentType, \
-     CellComponent, CellComponentType, Sample
+     CellComponent, CellComponentType, Sample, Location
 import rotmic.initialTypes as T
 import rotmic.utils.sequtils as sequtils
 from rotmic.utils.filefields import DocumentFormField
@@ -228,7 +243,6 @@ class SampleForm(forms.ModelForm):
             }
             
 
-
 class AttachmentForm(forms.ModelForm):
     """
     Catch missing files which can happen if object is resurrected by 
@@ -245,3 +259,17 @@ class AttachmentForm(forms.ModelForm):
             raise ValidationError('Attached file %s does not exist.' % fname, 
                                   code='file error')
         return f
+    
+    
+class LocationForm(forms.ModelForm):
+    """Customized Form for Location add / change"""
+    
+    class Meta:
+        model = Location
+        widgets = { ## customize widget dimensions and include dynamic select widgets
+            'displayId' : forms.TextInput(attrs={'size':10}),
+            'name' : forms.TextInput(attrs={'size':25}),
+            'temperature' : forms.TextInput(attrs={'size':3}),
+            'room' : forms.TextInput(attrs={'size':10}),
+            }
+    

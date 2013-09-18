@@ -1,3 +1,19 @@
+## Rotten Microbes (rotmic) -- Laboratory Sequence and Sample Management
+## Copyright 2013 Raik Gruenberg
+
+## This file is part of the rotmic project (https://github.com/graik/rotmic).
+## rotmic is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as
+## published by the Free Software Foundation, either version 3 of the
+## License, or (at your option) any later version.
+
+## rotmic is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+## You should have received a copy of the GNU Affero General Public
+## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
+
 from django.contrib import admin
 import django.contrib.admin.widgets as widgets
 import django.utils.html as html
@@ -8,14 +24,15 @@ import reversion
 import datetime
 
 from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
-     CellComponent, CellComponentType, Unit, Sample, SampleAttachment
+     CellComponent, CellComponentType, Unit, Sample, SampleAttachment, \
+     Location, Rack, Container
 
 from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentModelAdmin
 from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter,\
      CellCategoryListFilter, CellTypeListFilter
 
 from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm,\
-     SampleForm
+     SampleForm, LocationForm
 
 import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
@@ -409,3 +426,25 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     showSampleEdit.short_description = 'Edit'     
 
 admin.site.register( Sample, SampleAdmin )
+
+
+class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin):
+    form = LocationForm
+
+    fieldsets = [
+        (None, {
+            'fields' : ((('displayId', 'name'),
+                         ('temperature','room'),
+                        )),
+            'description' : 'Describe a freezer, row of shelves or similar storage location.'
+            }
+         )
+        ]
+
+    list_display = ('displayId', 'name', 'temperature', 'room')
+    list_filter = ('room', 'temperature')
+    search_fields = ('displayId', 'name',)
+
+    save_as = True
+
+admin.site.register( Location, LocationAdmin )

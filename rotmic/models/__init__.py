@@ -8,3 +8,5 @@ from rotmic.models.componentTypes import ComponentType, DnaComponentType, \
 from rotmic.models.units import Unit
 
 from rotmic.models.samples import Sample
+
+from rotmic.models.storage import Location, Rack, Container
