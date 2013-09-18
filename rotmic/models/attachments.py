@@ -31,11 +31,6 @@ class Attachment(models.Model):
     valid_extensions = ()  ## disable extension checking
     parent_class = 'Component'
     
-    f = DocumentModelField('file', 
-                           upload_to=upload_to+'/'+parent_class,
-                           extensions=valid_extensions,
-                           blank=False, null=False)
-    
     description = models.CharField(max_length=100, blank=True)
 
     def __unicode__(self):
@@ -76,6 +71,13 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
 
 class ComponentAttachment(Attachment):
     parent_class = 'Component'
+    upload_to = 'attachments'
+    valid_extensions = ()  ## disable extension checking    
+    
+    f = DocumentModelField('file', 
+                           upload_to=upload_to+'/'+parent_class,
+                           extensions=valid_extensions,
+                           blank=False, null=False)
     
     parent = models.ForeignKey(parent_class, related_name='attachments')
     
@@ -93,6 +95,13 @@ models.signals.pre_save.connect(auto_delete_file_on_change,
 
 class SampleAttachment(Attachment):
     parent_class = 'Sample'
+    upload_to = 'attachments'
+    valid_extensions = ()  ## disable extension checking
+    
+    f = DocumentModelField('file', 
+                           upload_to=upload_to+'/'+parent_class,
+                           extensions=valid_extensions,
+                           blank=False, null=False)
     
     parent = models.ForeignKey(parent_class, related_name='attachments')
 
@@ -106,4 +115,3 @@ models.signals.post_delete.connect(auto_delete_file_on_delete,
 
 models.signals.pre_save.connect(auto_delete_file_on_change, 
                                    sender=SampleAttachment)
-
