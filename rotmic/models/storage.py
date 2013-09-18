@@ -32,7 +32,7 @@ class Location(UserMixin):
     name = models.CharField('Name', max_length=200, blank=True, 
                             help_text='Informative name')
 
-    temperature = models.FloatField('Temperature', 
+    temperature = models.FloatField('Temperature', default=25.0,
                                     blank=True, null=True,
                                     help_text= unichr(176) +'C')
 
@@ -45,10 +45,13 @@ class Location(UserMixin):
         return r    
 
     def __unicode__(self):
-        r = self.displayId
+        r = unicode(self.displayId)
         if self.room:
             r += ' (R. %s)' % self.room
         return r
+
+    def get_absolute_url(self):
+        return reverse('admin:rotmic_location_change', args=(self.id,))
 
     class Meta:
         app_label = 'rotmic'
@@ -70,7 +73,13 @@ class Rack(UserMixin):
     location = models.ForeignKey( 'Location', blank=True, null=True )
         
     def __unicode__(self):
-        return u'%s' % (self.displayId)
+        r = unicode(self.displayId)
+        if self.name:
+            r += ' (%s)' % self.name
+        return r
+
+    def get_absolute_url(self):
+        return reverse('admin:rotmic_rack_change', args=(self.id,))
 
     def child_containers( self ):
         r = Container.objects.filter( rack=self.id )
@@ -78,7 +87,7 @@ class Rack(UserMixin):
 
     class Meta:
         app_label = 'rotmic'   
-        ordering = ('displayId',)
+        ordering = ('location__displayId', 'displayId',)
         unique_together = ('displayId', 'location')
 
 
@@ -98,9 +107,10 @@ class Container( UserMixin ):
                                  help_text='Unique identifier')
 
     name = models.CharField('Name', max_length=100, blank=True,
-                            help_text='Informative name for tables and listings')
+                            help_text='Informative name or actual label')
 
-    containerType = models.CharField('Type of container', max_length=30, 
+    containerType = models.CharField('Type of container', max_length=30,
+                                     default='box',
                                      choices=STORAGE_CONTAINER_TYPES )
 
     rack = models.ForeignKey(Rack)
@@ -108,8 +118,14 @@ class Container( UserMixin ):
     #: optional long description
     comment = models.TextField( 'Detailed description', blank=True)
 
-    def __unicode__( self ):
-        return u"%s  / %s" % (unicode(self.rack), self.displayId)
+    def __unicode__(self):
+        r = unicode(self.displayId)
+        if self.name:
+            r += ' (%s)' % self.name
+        return r
+
+    def get_absolute_url(self):
+        return reverse('admin:rotmic_container_change', args=(self.id,))
 
 
     class Meta:

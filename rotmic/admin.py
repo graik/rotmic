@@ -32,7 +32,7 @@ from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter,\
      CellCategoryListFilter, CellTypeListFilter
 
 from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm,\
-     SampleForm, LocationForm
+     SampleForm, LocationForm, RackForm, ContainerForm
 
 import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
@@ -448,3 +448,71 @@ class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin):
     save_as = True
 
 admin.site.register( Location, LocationAdmin )
+
+class RackAdmin(BaseAdminMixin, reversion.VersionAdmin):
+    form = RackForm
+
+    fieldsets = [
+        (None, {
+            'fields' : ((('location', 'displayId', 'name'),
+                        )),
+            'description' : 'Describe a freezer rack, single shelve or similar holder of containers.'
+            }
+         )
+        ]
+
+    list_display = ('displayId', 'location', 'name',)
+    list_filter = ('location',)
+    search_fields = ('displayId', 'name',)
+
+    save_as = True
+
+admin.site.register( Rack, RackAdmin )
+
+
+class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin):
+    form = ContainerForm
+
+    fieldsets = [
+        (None, {
+            'fields' : ((('rack', 'displayId', 'name'),
+                         ('containerType',),
+                         ('comment',),
+                        )),
+            'description' : 'Describe a freezer rack, single shelve or similar holder of containers.'
+            }
+         )
+        ]
+
+    list_display = ('__unicode__', 'showRackUrl', 'showLocationUrl', 'containerType')
+    list_filter =  ('containerType', 'rack__location', 'rack')
+    search_fields = ('displayId', 'name','comment')
+
+    save_as = True
+
+    def showLocationUrl(self, obj):
+        """Table display of linked insert or ''"""
+        assert isinstance(obj, Container), 'object missmatch'
+        x = obj.rack.location
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s" title="">%s</a>' \
+                              % (url, unicode(x)) )
+    showLocationUrl.allow_tags = True
+    showLocationUrl.short_description = 'Location'
+
+    def showRackUrl(self, obj):
+        """Table display of linked insert or ''"""
+        assert isinstance(obj, Container), 'object missmatch'
+        x = obj.rack
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s" title="">%s</a>' \
+                              % (url, unicode(x)) )
+    showRackUrl.allow_tags = True
+    showRackUrl.short_description = 'Rack'
+
+admin.site.register( Container, ContainerAdmin )
+

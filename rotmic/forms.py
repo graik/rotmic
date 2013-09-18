@@ -22,7 +22,9 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 from rotmic.models import DnaComponent, DnaComponentType, \
-     CellComponent, CellComponentType, Sample, Location
+     CellComponent, CellComponentType, Sample, \
+     Location, Rack, Container
+
 import rotmic.initialTypes as T
 import rotmic.utils.sequtils as sequtils
 from rotmic.utils.filefields import DocumentFormField
@@ -271,5 +273,27 @@ class LocationForm(forms.ModelForm):
             'name' : forms.TextInput(attrs={'size':25}),
             'temperature' : forms.TextInput(attrs={'size':3}),
             'room' : forms.TextInput(attrs={'size':10}),
+            }
+
+
+class RackForm(forms.ModelForm):
+    """Customized Form for Location add / change"""
+    
+    class Meta:
+        model = Rack
+        widgets = { ## customize widget dimensions and include dynamic select widgets
+            'displayId' : forms.TextInput(attrs={'size':10}),
+            'name' : forms.TextInput(attrs={'size':25}),
+            }
+
+
+class ContainerForm(forms.ModelForm):
+    """Customized Form for Location add / change"""
+    
+    class Meta:
+        model = Container
+        widgets = { ## customize widget dimensions and include dynamic select widgets
+            'displayId' : forms.TextInput(attrs={'size':10}),
+            'name' : forms.TextInput(attrs={'size':25}),
             }
     
