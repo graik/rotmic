@@ -148,8 +148,8 @@ class RackListFilter( admin.SimpleListFilter):
         if not self.value():
             return r
         
-        ## special case: missmatch between subtype and category
-        ## which happens after switching the category
+        ## special case: missmatch between current rack and location
+        ## which happens after switching the location
         if len(racks.filter(id=self.value())) == 0:
             return r
         
