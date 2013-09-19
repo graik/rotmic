@@ -22,8 +22,8 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 from rotmic.models import DnaComponent, DnaComponentType, \
-     CellComponent, CellComponentType, Sample, \
-     Location, Rack, Container
+     CellComponent, CellComponentType, Sample, DnaSample,\
+     Location, Rack, Container, Unit
 
 import rotmic.initialTypes as T
 import rotmic.utils.sequtils as sequtils
@@ -230,21 +230,80 @@ class CellComponentForm(forms.ModelForm):
         }
 
 
+class UnitLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = Unit
+    search_fields = ('name__startswith', )
+    
+    def get_query(self, request, term):
+        """Special case: replace 'u' by \micro during autocomplete"""
+        r = super(UnitLookup, self).get_query(request, term)
+        
+        if 'u' in term:
+            microterm = term.replace('u',u"\u00B5")
+            r = r | super(UnitLookup, self).get_query(request, microterm)
+        return r    
+
+    def get_item_id(self,item):
+        return item.pk
+
+
+class ConcentrationUnitLookup(UnitLookup):
+    """Limit choices to concentration units"""
+    def get_query(self, request, term):
+        r = super(ConcentrationUnitLookup, self).get_query(request, term)
+        return r.filter(unitType='concentration')
+
+registry.register(ConcentrationUnitLookup)
+
+class AmountUnitLookup(UnitLookup):
+    """Limit choices to amount units"""
+    def get_query(self, request, term):
+        r = super(AmountUnitLookup, self).get_query(request, term)
+        r = r.filter(unitType__in=['volume', 'mass','number'])
+        return r
+
+registry.register(AmountUnitLookup)
+
+
+def getSampleWidgets( extra={} ):
+    """widgets shared between different types of Sample forms."""
+    r = {
+        'displayId' : forms.TextInput(attrs={'size':5}),
+
+        'concentration' : forms.TextInput(attrs={'size':5}),
+        'concentrationUnit':sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
+                                allow_new=False,
+                                attrs={'size':5}),        
+
+        'amount' : forms.TextInput(attrs={'size':5}),
+        'amountUnit':sforms.AutoComboboxSelectWidget(lookup_class=AmountUnitLookup,
+                                allow_new=False,
+                                attrs={'size':5}),        
+
+        'aliquotNr' : forms.TextInput(attrs={'size':2}),
+        'comment': forms.Textarea(attrs={'cols': 100, 'rows': 5,
+                                         'style':'font-family:monospace'}) }
+    r.update( extra )
+    return r
+
 class SampleForm(forms.ModelForm):
     """Customized Form for Sample add / change"""
     
     class Meta:
         model = Sample
-        widgets = { ## customize widget dimensions and include dynamic select widgets
-            'displayId' : forms.TextInput(attrs={'size':5}),
-            'concentration' : forms.TextInput(attrs={'size':5}),
-            'amount' : forms.TextInput(attrs={'size':5}),
-            'aliquotNr' : forms.TextInput(attrs={'size':2}),
-            'comment': forms.Textarea(attrs={'cols': 100, 'rows': 5,
-                                              'style':'font-family:monospace'}),
-            }
+        widgets = getSampleWidgets()
             
+class DnaSampleForm( SampleForm ):
+    """Customized Form for DnaSample add / change"""
+    
+    class Meta:
+        model = DnaSample
+        widgets = getSampleWidgets( \
+            {'dna': sforms.AutoComboboxSelectWidget(lookup_class=PlasmidLookup,
+                                                    allow_new=False)})
 
+        
 class AttachmentForm(forms.ModelForm):
     """
     Catch missing files which can happen if object is resurrected by 

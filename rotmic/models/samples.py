@@ -21,6 +21,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 
 from rotmic.models.components import UserMixin
+import rotmic.initialTypes as T
 
 class Sample( UserMixin ):
     """Base class for DNA, cell and protein samples."""
@@ -89,3 +90,13 @@ class Sample( UserMixin ):
     def get_absolute_url_edit(self):
         return reverse('admin:rotmic_sample_change', args=(self.id,))
    
+
+class DnaSample( Sample ):
+    """Samples linked to DnaComponent"""
+    
+    dna = models.ForeignKey('DnaComponent',
+                            verbose_name = 'DNA construct',
+                            related_name = 'dna_samples',
+##                            limit_choices_to = ~Q(componentType__subTypeOf__in=[
+##                                None, T.dcMarker, T.dcVectorBB])
+                            )

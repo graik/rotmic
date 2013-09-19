@@ -25,7 +25,7 @@ import datetime
 
 from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
      CellComponent, CellComponentType, Unit, Sample, SampleAttachment, \
-     Location, Rack, Container
+     Location, Rack, Container, DnaSample
 
 from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentModelAdmin
 
@@ -34,7 +34,7 @@ from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter,\
      RackListFilter
 
 from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm,\
-     SampleForm, LocationForm, RackForm, ContainerForm
+     SampleForm, LocationForm, RackForm, ContainerForm, DnaSampleForm
 
 import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
@@ -373,9 +373,12 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
         (None, {
             'fields' : ((('displayId', 'status'),
                          ('preparedAt',),
-                         ('concentration','concentrationUnit','amount','amountUnit',),
-                         ('solvent','aliquotNr',),
                          ('comment'),
+                    ))
+            } ),
+         ('Content', {
+             'fields' : ((('concentration','concentrationUnit','amount','amountUnit',),
+                         ('solvent','aliquotNr',),
                          )
                         )
         }
@@ -429,6 +432,27 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
 
 admin.site.register( Sample, SampleAdmin )
 
+class DnaSampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
+    form = DnaSampleForm
+    
+    fieldsets = [
+        (None, {
+            'fields' : ((('displayId', 'status'),
+                         ('preparedAt',),
+                         ('comment'),
+                    ))
+            } ),
+         ('Content', {
+             'fields' : ((('dna',),
+                          ('concentration','concentrationUnit','amount','amountUnit',),
+                          ('solvent','aliquotNr',),
+                         )
+                        )
+        }
+        ), 
+    ]
+
+admin.site.register( DnaSample, DnaSampleAdmin )
 
 class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin):
     form = LocationForm
