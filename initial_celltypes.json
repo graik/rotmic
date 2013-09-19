@@ -6,7 +6,6 @@
         "subTypeOf": null, 
         "uri": "", 
         "name": "E. coli", 
-        "hasPlasmids": false, 
         "description": "Escherichia coli (all strains)"
     }
 },
@@ -17,7 +16,6 @@
         "subTypeOf": null, 
         "uri": "", 
         "name": "S. cerevisiae", 
-        "hasPlasmids": false, 
         "description": "S. cerevisiae (all strains)"
     }
 },
@@ -28,7 +26,6 @@
         "subTypeOf": null, 
         "uri": "", 
         "name": "H. sapiens", 
-        "hasPlasmids": false, 
         "description": "human cell culture"
     }
 },
@@ -39,7 +36,6 @@
         "subTypeOf": 1, 
         "uri": "", 
         "name": "Mach 1", 
-        "hasPlasmids": true, 
         "description": "fast growing E. coli for cloning purposes"
     }
 },
@@ -50,7 +46,6 @@
         "subTypeOf": 1, 
         "uri": "", 
         "name": "Top10", 
-        "hasPlasmids": true, 
         "description": "standard E. coli cloning strain"
     }
 },
@@ -61,7 +56,6 @@
         "subTypeOf": 1, 
         "uri": "", 
         "name": "BL21", 
-        "hasPlasmids": true, 
         "description": "protein expression strain for E. coli"
     }
 },
@@ -72,7 +66,6 @@
         "subTypeOf": 3, 
         "uri": "", 
         "name": "HeLa", 
-        "hasPlasmids": true, 
         "description": "most classic human cancer cell culture"
     }
 },
@@ -83,7 +76,6 @@
         "subTypeOf": 3, 
         "uri": "", 
         "name": "HEK293", 
-        "hasPlasmids": true, 
         "description": "Human embryonic kidney cells"
     }
 }
