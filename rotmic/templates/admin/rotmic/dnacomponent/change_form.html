@@ -27,7 +27,8 @@
 {% endif %}
 
 {% block after_field_sets %}
-
+    {{ block.super }}
+    
     {% block extrahead %} {{ block.super }}
         {% load selectable_tags %}
         {% include_ui_theme %}
