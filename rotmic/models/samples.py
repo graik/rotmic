@@ -85,10 +85,12 @@ class Sample( UserMixin ):
         Define standard URL for object views
         see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
         """
-        return reverse('admin:rotmic_sample_readonly', args=(self.id,))
+        classname = self.__class__.__name__.lower()
+        return reverse('admin:rotmic_%s_readonly' % classname, args=(self.id,))
     
     def get_absolute_url_edit(self):
-        return reverse('admin:rotmic_sample_change', args=(self.id,))
+        classname = self.__class__.__name__.lower()
+        return reverse('admin:rotmic_%s_change' % classname, args=(self.id,))
    
 
 class DnaSample( Sample ):
@@ -97,6 +99,7 @@ class DnaSample( Sample ):
     dna = models.ForeignKey('DnaComponent',
                             verbose_name = 'DNA construct',
                             related_name = 'dna_samples',
-##                            limit_choices_to = ~Q(componentType__subTypeOf__in=[
-##                                None, T.dcMarker, T.dcVectorBB])
+                            limit_choices_to = ~Q(componentType__subTypeOf__in=[
+                                None, T.dcMarker, T.dcVectorBB])
                             )
+

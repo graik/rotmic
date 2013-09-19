@@ -19,6 +19,7 @@ import re
 
 from django.db import models
 from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
 
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -100,6 +101,18 @@ class Component(UserMixin):
         name = self.name or ''
         return u'%s - %s' % (self.displayId, name)
 
+    def get_absolute_url(self):
+        """
+        Define standard URL for object views
+        see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
+        """
+        classname = self.__class__.__name__.lower()
+        return reverse('admin:rotmic_%s_readonly' % classname, args=(self.id,))
+    
+    def get_absolute_url_edit(self):
+        classname = self.__class__.__name__.lower()
+        return reverse('admin:rotmic_%s_change' % classname, args=(self.id,))
+   
     def commentText(self):
         """remove some formatting characters from text"""
         r = re.sub('--','', self.comment)
@@ -156,23 +169,7 @@ class DnaComponent(Component):
 ##        """
 ##        return 'dnacomponent/%i/' % self.id
 ##    
-    def get_absolute_url(self):
-        """
-        Define standard URL for object views
-        see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
-        """
-        from django.core.urlresolvers import reverse
-        return reverse('admin:rotmic_dnacomponent_readonly', args=(self.id,))
-    
-    def get_absolute_url_edit(self):
-        from django.core.urlresolvers import reverse
-        return reverse('admin:rotmic_dnacomponent_change', args=(self.id,))
-   
 
-    def __unicode__(self):
-        name = unicode(self.displayId + ' - ' + self.name)
-        return name
-          
     def save(self, *args, **kwargs):
         """
         Enforce optional fields depending on category.
@@ -242,23 +239,7 @@ class CellComponent(Component):
 ##        """
 ##        return 'dnacomponent/%i/' % self.id
 ##    
-    def get_absolute_url(self):
-        """
-        Define standard URL for object views
-        see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
-        """
-        from django.core.urlresolvers import reverse
-        return reverse('admin:rotmic_cellcomponent_readonly', args=(self.id,))
-    
-    def get_absolute_url_edit(self):
-        from django.core.urlresolvers import reverse
-        return reverse('admin:rotmic_cellcomponent_change', args=(self.id,))
-   
 
-    def __unicode__(self):
-        name = unicode(self.displayId + ' - ' + self.name)
-        return name
-          
     def save(self, *args, **kwargs):
         """
         Enforce optional fields depending on category.

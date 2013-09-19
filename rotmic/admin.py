@@ -432,7 +432,8 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
 
 admin.site.register( Sample, SampleAdmin )
 
-class DnaSampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
+
+class DnaSampleAdmin( SampleAdmin ):
     form = DnaSampleForm
     
     fieldsets = [
@@ -451,6 +452,24 @@ class DnaSampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmi
         }
         ), 
     ]
+
+    list_display = ('displayId', 'preparedAt', 'registeredBy',
+                    'showDnaUrl',
+                    'showConcentration', 'showAmount',
+                    'showComment','status','showSampleEdit')
+    
+    def showDnaUrl(self, obj):
+        """Table display of linked insert or ''"""
+        assert isinstance(obj, DnaSample), 'object missmatch'
+        x = obj.dna
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
+                              % (url, x.comment, x.displayId, x.name))
+    showDnaUrl.allow_tags = True
+    showDnaUrl.short_description = 'DNA construct'
+    
 
 admin.site.register( DnaSample, DnaSampleAdmin )
 
