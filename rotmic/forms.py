@@ -17,7 +17,7 @@ import os
 
 import django.forms as forms
 import django.db.models as models
-from django.db.models import Q
+from django.db.models.query import QuerySet
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
@@ -160,7 +160,7 @@ class DnaComponentForm(forms.ModelForm):
             data['vectorBackbone'] = None
         
         if category not in [T.dcVectorBB, T.dcFragment] and 'marker' in data:
-            data['marker'] = Q()
+            data['marker'] = QuerySet()
             
         ## validate that a vector backbone is given if category == Plasmid
         if category == T.dcPlasmid and not data.get('vectorBackbone',None):
