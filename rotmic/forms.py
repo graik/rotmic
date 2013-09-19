@@ -107,6 +107,17 @@ class MarkerLookup(ModelLookup):
 
 registry.register(MarkerLookup)
 
+class SampleDnaLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = DnaComponent
+    search_fields = ('displayId__startswith', 'name__icontains')
+    filters = {'componentType__subTypeOf__in': [T.dcPlasmid, T.dcFragment] }
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(SampleDnaLookup)
+
 
 class DnaComponentForm(forms.ModelForm):
     """Customized Form for DnaComponent (DNA construct) add / change"""
@@ -294,13 +305,15 @@ class SampleForm(forms.ModelForm):
         model = Sample
         widgets = getSampleWidgets()
             
+
+
 class DnaSampleForm( SampleForm ):
     """Customized Form for DnaSample add / change"""
     
     class Meta:
         model = DnaSample
         widgets = getSampleWidgets( \
-            {'dna': sforms.AutoComboboxSelectWidget(lookup_class=PlasmidLookup,
+            {'dna': sforms.AutoComboboxSelectWidget(lookup_class=SampleDnaLookup,
                                                     allow_new=False)})
 
         

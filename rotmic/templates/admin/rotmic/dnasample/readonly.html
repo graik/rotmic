@@ -1,0 +1,17 @@
+{% extends "admin/rotmic/sample/readonly.html" %}
+{% load admin_urls %}
+{% load rotmicfilters %}
+
+{% block super-title %}<h3>DNA Sample</h3>{% endblock %}
+
+{% block sample-content %}
+        <div class='module'>
+            <h2>Content</h2>
+            <div>
+                <h4>DNA construct <a href="{{o.dna.get_absolute_url}}">{{o.dna}}</a></h4>
+                <p class='description'>
+                    {{o.dna.comment|markdown}}
+                </p>
+            </div>
+        </div>
+{% endblock %}

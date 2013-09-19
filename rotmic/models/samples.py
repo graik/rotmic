@@ -72,6 +72,10 @@ class Sample( UserMixin ):
                                    )
     
 
+    def __unicode__(self):
+        return u'%s' % self.displayId
+
+
     def commentText(self):
         """remove some formatting characters from text"""
         r = re.sub('--','', self.comment)
@@ -99,7 +103,7 @@ class DnaSample( Sample ):
     dna = models.ForeignKey('DnaComponent',
                             verbose_name = 'DNA construct',
                             related_name = 'dna_samples',
-                            limit_choices_to = ~Q(componentType__subTypeOf__in=[
-                                None, T.dcMarker, T.dcVectorBB])
+##                            limit_choices_to = ~Q(componentType__subTypeOf__in=[
+##                                None, T.dcMarker, T.dcVectorBB])
                             )
 
