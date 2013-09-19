@@ -5,8 +5,8 @@
 
 <!-- django-guardian admin modification -->
 {% block object-tools-items %}
-<li><a href="permissions/" class="permissionslink">{% trans "Object permissions" %}</a></li>
-{{ block.super }}
+    <li><a href="permissions/" class="permissionslink">{% trans "Object permissions" %}</a></li>
+    {{ block.super }}
 {% endblock %}
 
 {% if not is_popup %}
@@ -29,219 +29,219 @@
 
 {% block after_field_sets %}
 
-{% block extrahead %} {{ block.super }}
-    {% load selectable_tags %}
-    {% include_ui_theme %}
-    {% include_jquery_libs %}
-{% endblock %}
-
-<!--Now Imported by statement in DnaComponentAdmin.Media class-->
-<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>-->
-
-<script language=javascript type='text/javascript'>
-
- 
-    // Assign IDs to vector, marker fields (complete <div> with Label and help text)
-    // By default, input elements themselves are accessible by, for example:
-    // "id_marker" and "add_id_marker" (the Plus symbol for sub-forms). 
-    function initIdDiv(){
-        try{
-            var scr = "";
-            var divs = document.getElementsByTagName("div");
-            for(var i = 0; i < divs.length; i++){
-                if (divs[i].className=='field-box field-plasmid') {
-                    divs[i].id = 'id_field_plasmid';
-                }
-                if (divs[i].className=='field-box field-marker') {
-                    divs[i].id = 'id_field_marker';
-                }
-            }    
-        } catch (e) {
-            log(e.message);
-        }
-    }
-
-    // get (name of) currently selected Category
-    function getCurrentCategory(){
-        var categoryElement = document.getElementById('id_componentCategory');
-        var category = categoryElement.options[categoryElement.selectedIndex].label;
-        return category;
-    }
+    {% block extrahead %} {{ block.super }}
+        {% load selectable_tags %}
+        {% include_ui_theme %}
+        {% include_jquery_libs %}
+    {% endblock %}
     
-    // get (name of) currently selected componentType
-    function getCurrentType(){
-        var index = document.getElementById('id_componentType').selectedIndex;
-        if ( index != -1 ){
-            return document.getElementById('id_componentType').options[index].label;
-        }
-        return "";
-    }
+    <!--Now Imported by statement in DnaComponentAdmin.Media class-->
+    <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>-->
     
-    // returns 1 if all items are sucessfully removed
-    // otherwise returns zero.
-    function clearTypeBox(){
-        var box = document.getElementById('id_componentType');
-        if(box == null)
-            return 0;        
-        while(box.length > 0){
-            box.remove(0);
-        }
-        return 1;
-    }
+    <script language=javascript type='text/javascript'>
     
-    // update content of Type ChoiceField depending on Category selection
-    // this could propably be replaced by a django template fill-in
-    function updateListBox(selectedCategory){
-        clearTypeBox();
-        var elementId = 'id_componentType'
-        var cachedTypeIndex = lastTypeSelection(selectedCategory);
-
-        $.ajax({
-                async: false,
-                type: 'GET',
-                url: "/getCellTypes/"+selectedCategory+"/",
-                success: function(data){
-                    var p = django.jQuery.parseJSON(data);
-                    var listbox = document.getElementById(elementId);
-                    for (var key in p) {
-                        var i = parseInt(key)
-                        if (p.hasOwnProperty(key)) {
-                            listbox.options[i] = new Option(p[key].fields.name, p[key].pk);
-                            //... but select previously assigned dc.componentType if object already exists with this category
-                            {% if original %}
-                                if (({{original.componentType.pk}} == p[key].pk)){
-                                    listbox.options[i].selected = true;
-                                    cachedTypeIndex = 0;  // reset to prevent selection of type from previous form
-                                }
-                            {% endif %}
-                            // go back to previously selected type for this category
-                            if ( cachedTypeIndex == i ){
-                                listbox.options[i].selected = true;
-                            }
-                        }
-                    }                            
-                }
-            }                
-        );	
-    }
-
-    // copy plasmid visibility flags from all registered CellComponentTypes
-    function typeAllowsPlasmid(name) {
-        var map = {
-            {% for t in cellTypes %}"{{t.name}}" : {% if t.allowPlasmids %} true {% else %} false {%endif%},
-            {% endfor %}};
-
-        if ( !(name in map) ){ return false; };
-        return map[ name ];
-    }
-
-    // copy marker visibility flags from all registered CellComponentTypes
-    function typeAllowsMarkers(name) {
-        var map = {
-            {% for t in cellTypes %}"{{t.name}}" : {% if t.allowMarkers %} true {% else %} false {%endif%},
-            {% endfor %}};
-    
-        if ( !(name in map) ){ return false; };
-        return map[ name ];
-    }
-
-    // hide or show input elements depending on chosen category or sub-type
-    function hideShow() {
-        var current_type = getCurrentType();
-        
-        if (typeAllowsPlasmid(current_type)){
-            document.getElementById('id_field_plasmid').style.visibility = 'visible';
-        } else {
-            document.getElementById('id_field_plasmid').style.visibility = 'hidden';
-        }
-
-        if (typeAllowsMarkers(current_type)){
-            document.getElementById('id_field_marker').style.visibility = 'visible';
-        } else {
-            document.getElementById('id_field_marker').style.visibility = 'hidden';
-        }
-    }   
-    
-    // cache last position in componentType listbox for each category selection
-    // Memorize the last selected componentType so that it can be re-instantiated
-    // after the listbox is wiped
-    // see: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Storage?redirectlocale=en-US&redirectslug=DOM%2FStorage
-    function cacheTypeSelection() {
-        var category = getCurrentCategory();
-        sessionStorage.setItem( category, document.getElementById( 'id_componentType' ).selectedIndex);
-    }
-    
-    // update content of Species listbox depending on selected category
-    function updateSubtypes(){
-        cacheTypeSelection();
-        var category = getCurrentCategory();        
-        updateListBox(category);
-        hideShow();
-    }
-
-    // return a dictionary of Category names mapping to their position in listbox 
-    function captureCategories() {
-        var listbox = document.getElementById('id_componentCategory')
-        var table = {};
-        for (var i=0; i < listbox.options.length; i++){
-            table[ listbox.options[i].text ] = i;
-        }
-        return table;
-    }
-
-    function lastTypeSelection(category) {
-        var r = sessionStorage.getItem( category );
-        if (! r){ return 0; }
-        return r; 
-    }
-
-    //pre-select category if given in URL; requires context_processors.request
-    //requires context_processors.request in settings.py
-    function preselectCategory() {
-        if ("{{request.GET.category}}" != ""){
-            var i = parseInt("{{request.GET.category}}");
-            document.getElementById('id_componentCategory').options[i].selected = true;
-        }
-    }
-    
-    // override the link for "+" Buttons so that the correct category is pre-selected    
-    function setPlusLinks() {
-        var urladd = "/rotmic/dnacomponent/add/?category="
-        {% with marker="Marker" plasmid="Plasmid" %}
-            document.getElementById("add_id_marker").href = urladd + "{{marker|dnaCategoryToId}}";
-            document.getElementById("add_id_plasmid").href = urladd + "{{plasmid|dnaCategoryToId}}";
-        {% endwith %}
-    }
-
-    function resetStorageBetweenForms() {
-        {% if original %} var objectId = {{original.pk}}; {% else %} var objectId = -1; {% endif %}
-        if (sessionStorage.getItem( 'CellComponent_lastvisited' )){
-            if (sessionStorage.getItem( 'CellComponent_lastvisited' ) != objectId){
-                if (objectId != -1){
-                    sessionStorage.clear();
-                    // Note: insert more specific code here to only delete entry generated by this form
-                }
+     
+        // Assign IDs to vector, marker fields (complete <div> with Label and help text)
+        // By default, input elements themselves are accessible by, for example:
+        // "id_marker" and "add_id_marker" (the Plus symbol for sub-forms). 
+        function initIdDiv(){
+            try{
+                var scr = "";
+                var divs = document.getElementsByTagName("div");
+                for(var i = 0; i < divs.length; i++){
+                    if (divs[i].className=='field-box field-plasmid') {
+                        divs[i].id = 'id_field_plasmid';
+                    }
+                    if (divs[i].className=='field-box field-marker') {
+                        divs[i].id = 'id_field_marker';
+                    }
+                }    
+            } catch (e) {
+                log(e.message);
             }
         }
-        sessionStorage.setItem( 'CellComponent_lastvisited', objectId );
-    }
-
-    // "Main" function
-    window.onload = function() {
-        
-        resetStorageBetweenForms();
-        initIdDiv();
-        setPlusLinks();
-        
-        preselectCategory();
-        
-        document.getElementById( 'id_componentCategory' ).onchange = updateSubtypes;
-        document.getElementById( 'id_componentType' ).onchange = hideShow;
-        updateSubtypes();        
-        hideShow();
-    };
     
-</script>
-
+        // get (name of) currently selected Category
+        function getCurrentCategory(){
+            var categoryElement = document.getElementById('id_componentCategory');
+            var category = categoryElement.options[categoryElement.selectedIndex].label;
+            return category;
+        }
+        
+        // get (name of) currently selected componentType
+        function getCurrentType(){
+            var index = document.getElementById('id_componentType').selectedIndex;
+            if ( index != -1 ){
+                return document.getElementById('id_componentType').options[index].label;
+            }
+            return "";
+        }
+        
+        // returns 1 if all items are sucessfully removed
+        // otherwise returns zero.
+        function clearTypeBox(){
+            var box = document.getElementById('id_componentType');
+            if(box == null)
+                return 0;        
+            while(box.length > 0){
+                box.remove(0);
+            }
+            return 1;
+        }
+        
+        // update content of Type ChoiceField depending on Category selection
+        // this could propably be replaced by a django template fill-in
+        function updateListBox(selectedCategory){
+            clearTypeBox();
+            var elementId = 'id_componentType'
+            var cachedTypeIndex = lastTypeSelection(selectedCategory);
+    
+            $.ajax({
+                    async: false,
+                    type: 'GET',
+                    url: "/getCellTypes/"+selectedCategory+"/",
+                    success: function(data){
+                        var p = django.jQuery.parseJSON(data);
+                        var listbox = document.getElementById(elementId);
+                        for (var key in p) {
+                            var i = parseInt(key)
+                            if (p.hasOwnProperty(key)) {
+                                listbox.options[i] = new Option(p[key].fields.name, p[key].pk);
+                                //... but select previously assigned dc.componentType if object already exists with this category
+                                {% if original %}
+                                    if (({{original.componentType.pk}} == p[key].pk)){
+                                        listbox.options[i].selected = true;
+                                        cachedTypeIndex = 0;  // reset to prevent selection of type from previous form
+                                    }
+                                {% endif %}
+                                // go back to previously selected type for this category
+                                if ( cachedTypeIndex == i ){
+                                    listbox.options[i].selected = true;
+                                }
+                            }
+                        }                            
+                    }
+                }                
+            );	
+        }
+    
+        // copy plasmid visibility flags from all registered CellComponentTypes
+        function typeAllowsPlasmid(name) {
+            var map = {
+                {% for t in cellTypes %}"{{t.name}}" : {% if t.allowPlasmids %} true {% else %} false {%endif%},
+                {% endfor %}};
+    
+            if ( !(name in map) ){ return false; };
+            return map[ name ];
+        }
+    
+        // copy marker visibility flags from all registered CellComponentTypes
+        function typeAllowsMarkers(name) {
+            var map = {
+                {% for t in cellTypes %}"{{t.name}}" : {% if t.allowMarkers %} true {% else %} false {%endif%},
+                {% endfor %}};
+        
+            if ( !(name in map) ){ return false; };
+            return map[ name ];
+        }
+    
+        // hide or show input elements depending on chosen category or sub-type
+        function hideShow() {
+            var current_type = getCurrentType();
+            
+            if (typeAllowsPlasmid(current_type)){
+                document.getElementById('id_field_plasmid').style.visibility = 'visible';
+            } else {
+                document.getElementById('id_field_plasmid').style.visibility = 'hidden';
+            }
+    
+            if (typeAllowsMarkers(current_type)){
+                document.getElementById('id_field_marker').style.visibility = 'visible';
+            } else {
+                document.getElementById('id_field_marker').style.visibility = 'hidden';
+            }
+        }   
+        
+        // cache last position in componentType listbox for each category selection
+        // Memorize the last selected componentType so that it can be re-instantiated
+        // after the listbox is wiped
+        // see: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Storage?redirectlocale=en-US&redirectslug=DOM%2FStorage
+        function cacheTypeSelection() {
+            var category = getCurrentCategory();
+            sessionStorage.setItem( category, document.getElementById( 'id_componentType' ).selectedIndex);
+        }
+        
+        // update content of Species listbox depending on selected category
+        function updateSubtypes(){
+            cacheTypeSelection();
+            var category = getCurrentCategory();        
+            updateListBox(category);
+            hideShow();
+        }
+    
+        // return a dictionary of Category names mapping to their position in listbox 
+        function captureCategories() {
+            var listbox = document.getElementById('id_componentCategory')
+            var table = {};
+            for (var i=0; i < listbox.options.length; i++){
+                table[ listbox.options[i].text ] = i;
+            }
+            return table;
+        }
+    
+        function lastTypeSelection(category) {
+            var r = sessionStorage.getItem( category );
+            if (! r){ return 0; }
+            return r; 
+        }
+    
+        //pre-select category if given in URL; requires context_processors.request
+        //requires context_processors.request in settings.py
+        function preselectCategory() {
+            if ("{{request.GET.category}}" != ""){
+                var i = parseInt("{{request.GET.category}}");
+                document.getElementById('id_componentCategory').options[i].selected = true;
+            }
+        }
+        
+        // override the link for "+" Buttons so that the correct category is pre-selected    
+        function setPlusLinks() {
+            var urladd = "/rotmic/dnacomponent/add/?category="
+            {% with marker="Marker" plasmid="Plasmid" %}
+                document.getElementById("add_id_marker").href = urladd + "{{marker|dnaCategoryToId}}";
+                document.getElementById("add_id_plasmid").href = urladd + "{{plasmid|dnaCategoryToId}}";
+            {% endwith %}
+        }
+    
+        function resetStorageBetweenForms() {
+            {% if original %} var objectId = {{original.pk}}; {% else %} var objectId = -1; {% endif %}
+            if (sessionStorage.getItem( 'CellComponent_lastvisited' )){
+                if (sessionStorage.getItem( 'CellComponent_lastvisited' ) != objectId){
+                    if (objectId != -1){
+                        sessionStorage.clear();
+                        // Note: insert more specific code here to only delete entry generated by this form
+                    }
+                }
+            }
+            sessionStorage.setItem( 'CellComponent_lastvisited', objectId );
+        }
+    
+        // "Main" function
+        window.onload = function() {
+            
+            resetStorageBetweenForms();
+            initIdDiv();
+            setPlusLinks();
+            
+            preselectCategory();
+            
+            document.getElementById( 'id_componentCategory' ).onchange = updateSubtypes;
+            document.getElementById( 'id_componentType' ).onchange = hideShow;
+            updateSubtypes();        
+            hideShow();
+        };
+        
+    </script>
+    
 
 {% endblock %}
