@@ -103,7 +103,8 @@ class DnaSample( Sample ):
     dna = models.ForeignKey('DnaComponent',
                             verbose_name = 'DNA construct',
                             related_name = 'dna_samples',
-##                            limit_choices_to = ~Q(componentType__subTypeOf__in=[
-##                                None, T.dcMarker, T.dcVectorBB])
                             )
 
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'DNA sample'
