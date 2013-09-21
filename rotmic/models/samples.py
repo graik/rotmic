@@ -95,6 +95,10 @@ class Sample( UserMixin ):
     def get_absolute_url_edit(self):
         classname = self.__class__.__name__.lower()
         return reverse('admin:rotmic_%s_change' % classname, args=(self.id,))
+    
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name  = 'Sample'
    
 
 class DnaSample( Sample ):

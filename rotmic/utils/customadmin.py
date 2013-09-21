@@ -137,6 +137,8 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
             'media': self.media,
 ##            'errors': helpers.AdminErrorList(form, formsets),
             'app_label': opts.app_label,
+            ## provide class name for titles and bread crums
+            'class_label': obj._meta.verbose_name or obj.__class__.__name__
         }
         context.update({
             'has_add_permission': self.has_add_permission(request),
