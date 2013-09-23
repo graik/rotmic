@@ -22,16 +22,17 @@ from django.db.models import Q
 
 from rotmic.models.components import UserMixin
 import rotmic.initialTypes as T
+from rotmic.models.storage import Container
 
 class Sample( UserMixin ):
     """Base class for DNA, cell and protein samples."""
 
-    displayId = models.CharField('ID/Position', max_length=20,
-                                 help_text='Label or well position.')
+    displayId = models.CharField('Position', max_length=20,
+                                 help_text='ID / Label or well position.')
 
     
     #: link to a single container
-##    container = models.ForeignKey(Container, related_name='samples')
+    container = models.ForeignKey(Container, related_name='samples')
 
     aliquotNr = models.PositiveIntegerField('Number of aliquots', 
                                             null=True, blank=True)
@@ -99,6 +100,7 @@ class Sample( UserMixin ):
     class Meta:
         app_label = 'rotmic'
         verbose_name  = 'Sample'
+        ordering = ['container', 'displayId']
    
 
 class DnaSample( Sample ):

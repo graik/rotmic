@@ -371,7 +371,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     
     fieldsets = [
         (None, {
-            'fields' : ((('displayId', 'status'),
+            'fields' : ((('container', 'displayId', 'status'),
                          ('preparedAt',),
                          ('comment'),
                     ))
@@ -385,11 +385,11 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
         ), 
           
     ]
-    list_display = ('displayId', 'preparedAt', 'registeredBy',
+    list_display = ('displayId', 'container', 'preparedAt', 'registeredBy',
                     'showConcentration', 'showAmount',
                     'showComment','status','showSampleEdit')
     
-    ordering = ('displayId',)
+    ordering = ('container', 'displayId')
 
     save_as = True
     save_on_top = True
@@ -438,7 +438,7 @@ class DnaSampleAdmin( SampleAdmin ):
     
     fieldsets = [
         (None, {
-            'fields' : ((('displayId', 'status'),
+            'fields' : ((('container', 'displayId', 'status'),
                          ('preparedAt',),
                          ('comment'),
                     ))
@@ -453,7 +453,7 @@ class DnaSampleAdmin( SampleAdmin ):
         ), 
     ]
 
-    list_display = ('displayId', 'preparedAt', 'registeredBy',
+    list_display = ('displayId', 'container', 'preparedAt', 'registeredBy',
                     'showDnaUrl',
                     'showConcentration', 'showAmount',
                     'showComment','status','showSampleEdit')
