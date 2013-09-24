@@ -81,7 +81,8 @@ class Rack(UserMixin):
     name = models.CharField('Name', max_length=100, blank=True, 
                             help_text='Informative name or label')
 
-    location = models.ForeignKey( 'Location', blank=True, null=True )
+    location = models.ForeignKey( 'Location', blank=True, null=True,
+                                  related_name='racks')
         
     def __unicode__(self):
         r = unicode(self.displayId)

@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.db.models.query import QuerySet as Q
 
-from rotmic.models import DnaComponentType, CellComponentType, Rack, Location
+import rotmic.models as M
+
 
 
 class CategoryListFilter( admin.SimpleListFilter):
@@ -96,17 +97,17 @@ class TypeListFilter( admin.SimpleListFilter):
 
 
 class DnaCategoryListFilter( CategoryListFilter ):
-    _class = DnaComponentType
+    _class = M.DnaComponentType
 
 
 class DnaTypeListFilter( TypeListFilter ):
-    _class = DnaComponentType
+    _class = M.DnaComponentType
 
 class CellCategoryListFilter( CategoryListFilter ):
-    _class = CellComponentType
+    _class = M.CellComponentType
     
 class CellTypeListFilter( TypeListFilter ):
-    _class = CellComponentType
+    _class = M.CellComponentType
     
     
 class RackListFilter( admin.SimpleListFilter):
@@ -128,7 +129,7 @@ class RackListFilter( admin.SimpleListFilter):
             return ()
         
         location_id = request.GET[u'rack__location__id__exact']
-        racks = Rack.objects.filter(location=location_id)
+        racks = M.Rack.objects.filter(location=location_id)
         return ( (r.id, r.__unicode__()) for r in racks )
     
     def queryset(self, request, queryset):
@@ -141,7 +142,7 @@ class RackListFilter( admin.SimpleListFilter):
             return queryset
         
         location_id = request.GET[u'rack__location__id__exact']
-        racks = Rack.objects.filter(location=location_id)
+        racks = M.Rack.objects.filter(location=location_id)
         
         r = queryset.filter(rack__location=location_id)
         
@@ -155,3 +156,125 @@ class RackListFilter( admin.SimpleListFilter):
         
         return r.filter(rack=self.value())
 
+
+class SampleLocationListFilter( admin.SimpleListFilter ):
+    """Modified Filter for Sample locations"""
+    title = 'Location'
+    parameter_name = 'location'
+    
+    _sampleClass = M.DnaSample
+    
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        locations = M.Location.objects.filter()
+        return ( (o.displayId, o.__unicode__()) for o in locations )
+    
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        q = queryset
+        if not self.value():
+            return q
+        return q.filter(container__rack__location__displayId=self.value())
+
+
+class SampleRackListFilter( admin.SimpleListFilter ):
+    """Modified Filter for Sample locations"""
+    title = 'Rack'
+    parameter_name = 'rack'
+    
+    _sampleClass = M.DnaSample
+    
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        if not u'location' in request.GET:
+            return ()
+        
+        location_id = request.GET[u'location']
+        racks = M.Rack.objects.filter(location__displayId=location_id)
+        return ( (r.displayId, r.__unicode__()) for r in racks )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if not u'location' in request.GET:
+            return queryset
+        
+        location_id = request.GET[u'location']
+        racks = M.Rack.objects.filter(location__displayId=location_id)
+        
+        r = queryset.filter(container__rack__location__displayId=location_id)
+        
+        if not self.value():
+            return r
+        
+        ## special case: missmatch between current rack and location
+        ## which happens after switching the location
+        if len(racks.filter(displayId=self.value())) == 0:
+            return r
+        
+        return r.filter(container__rack__displayId=self.value())
+    
+class SampleContainerListFilter( admin.SimpleListFilter ):
+    """Modified Filter for Sample locations"""
+    title = 'Container'
+    parameter_name = 'container'
+    
+    _sampleClass = M.DnaSample
+    
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        if not u'rack' in request.GET:
+            return ()
+        
+        rack_id = request.GET[u'rack']
+        containers = M.Container.objects.filter(rack__displayId=rack_id)
+        return ( (r.displayId, r.__unicode__()) for r in containers )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if not u'rack' in request.GET:
+            return queryset
+        
+        rack_id = request.GET[u'rack']
+        containers = M.Container.objects.filter(rack__displayId=rack_id)
+        
+        r = queryset.filter(container__rack__displayId=rack_id)
+        
+        if not self.value():
+            return r
+        
+        ## special case: missmatch between current rack and location
+        ## which happens after switching the location
+        if len(containers.filter(displayId=self.value())) == 0:
+            return r
+        
+        return r.filter(container__displayId=self.value())    

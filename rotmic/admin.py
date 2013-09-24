@@ -29,9 +29,7 @@ from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
 
 from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentModelAdmin
 
-from rotmic.utils.adminFilters import DnaCategoryListFilter, DnaTypeListFilter,\
-     CellCategoryListFilter, CellTypeListFilter, \
-     RackListFilter
+import rotmic.utils.adminFilters as filters
 
 from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm,\
      SampleForm, LocationForm, RackForm, ContainerForm, DnaSampleForm
@@ -94,7 +92,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelA
                     'showInsertUrl', 'showVectorUrl', 'showMarkerUrls', 
                     'showComment','status', 'showEdit')
     
-    list_filter = ( DnaCategoryListFilter, DnaTypeListFilter, 'status','registeredBy')
+    list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 'status','registeredBy')
     
     search_fields = ('displayId', 'name', 'comment', 
                      'insert__name', 'insert__displayId',
@@ -193,7 +191,8 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
                     'showPlasmidUrl', 'showMarkerUrls', 'showComment','status',
                     'showEdit')
     
-    list_filter = ( CellCategoryListFilter, CellTypeListFilter, 'status','registeredBy')
+    list_filter = ( filters.CellCategoryListFilter, filters.CellTypeListFilter, 
+                    'status','registeredBy')
     
     search_fields = ('displayId', 'name', 'comment')
     
@@ -418,6 +417,9 @@ class DnaSampleAdmin( SampleAdmin ):
                     'showConcentration', 'showAmount',
                     'showComment','status','showEdit')
     
+    list_filter = ('status', filters.SampleLocationListFilter, 
+                   filters.SampleRackListFilter, filters.SampleContainerListFilter )
+    
     def showDnaUrl(self, obj):
         """Table display of linked insert or ''"""
         assert isinstance(obj, DnaSample), 'object missmatch'
@@ -490,7 +492,7 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin):
         ]
 
     list_display = ('__unicode__', 'showRackUrl', 'showLocationUrl', 'containerType')
-    list_filter =  ('containerType', 'rack__location', RackListFilter)
+    list_filter =  ('containerType', 'rack__location', filters.RackListFilter)
     search_fields = ('displayId', 'name','comment')
 
     save_as = True
