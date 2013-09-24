@@ -113,6 +113,7 @@ class CellTypeListFilter( TypeListFilter ):
 class RackListFilter( admin.SimpleListFilter):
     """
     Provide filter for Racks responding to currently selected Location.
+    This filter inter-operates with the un-modified Location filter.
     """
     title = 'Rack'
     parameter_name = 'rack'
@@ -162,8 +163,6 @@ class SampleLocationListFilter( admin.SimpleListFilter ):
     title = 'Location'
     parameter_name = 'location'
     
-    _sampleClass = M.DnaSample
-    
     def lookups(self, request, model_admin):
         """
         Returns a list of tuples. The first element in each
@@ -188,11 +187,9 @@ class SampleLocationListFilter( admin.SimpleListFilter ):
 
 
 class SampleRackListFilter( admin.SimpleListFilter ):
-    """Modified Filter for Sample locations"""
+    """Modified Filter for Sample Racks,  responds to SampleLocationListFilter"""
     title = 'Rack'
     parameter_name = 'rack'
-    
-    _sampleClass = M.DnaSample
     
     def lookups(self, request, model_admin):
         """
@@ -234,11 +231,9 @@ class SampleRackListFilter( admin.SimpleListFilter ):
         return r.filter(container__rack__displayId=self.value())
     
 class SampleContainerListFilter( admin.SimpleListFilter ):
-    """Modified Filter for Sample locations"""
+    """Modified Filter for Sample Containers, responds to SampleRackListFilter"""
     title = 'Container'
     parameter_name = 'container'
-    
-    _sampleClass = M.DnaSample
     
     def lookups(self, request, model_admin):
         """
