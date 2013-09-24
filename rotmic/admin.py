@@ -413,7 +413,7 @@ class DnaSampleAdmin( SampleAdmin ):
         ), 
     ]
 
-    list_display = ('displayId', 'container', 'preparedAt', 'registeredBy',
+    list_display = ('__unicode__', 'preparedAt', 'registeredBy',
                     'showDnaUrl',
                     'showConcentration', 'showAmount',
                     'showComment','status','showEdit')

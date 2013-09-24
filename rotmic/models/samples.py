@@ -19,6 +19,7 @@ import re
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+import django.utils.html as html
 
 from rotmic.models.components import UserMixin
 import rotmic.initialTypes as T
@@ -97,6 +98,21 @@ class Sample( UserMixin ):
         classname = self.__class__.__name__.lower()
         return reverse('admin:rotmic_%s_change' % classname, args=(self.id,))
     
+    def showVerbose(self):
+        r = u''
+        r += self.container.showVerbose() + ' / '
+        
+        title = 'Sample\n%s' % self.displayId
+        if self.comment:
+            title += '\n' + self.comment
+
+        url = self.get_absolute_url()
+        r += '<a href="%s" title="%s">%s</a>' % (url, title, self.displayId) 
+        return html.mark_safe(r)
+    
+    showVerbose.allow_tags = True
+    showVerbose.short_description = 'Sample'
+
     class Meta:
         app_label = 'rotmic'
         verbose_name  = 'Sample'

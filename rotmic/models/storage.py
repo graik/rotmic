@@ -19,6 +19,7 @@ import re
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+import django.utils.html as html
 
 from rotmic.models.components import UserMixin
 
@@ -52,6 +53,16 @@ class Location(UserMixin):
 
     def get_absolute_url(self):
         return reverse('admin:rotmic_location_change', args=(self.id,))
+    
+    def showVerbose(self):
+        url = self.get_absolute_url()
+        title = 'Location\n%s (%s)' % (self.displayId, self.name)
+        if self.room:
+            title += '\nin room %s' % self.room
+        return html.mark_safe('<a href="%s" title="%s">%s</a>' \
+                              % (url, title, self.displayId) )
+    showVerbose.allow_tags = True
+    showVerbose.short_description = 'Location'
 
     class Meta:
         app_label = 'rotmic'
@@ -84,6 +95,20 @@ class Rack(UserMixin):
     def child_containers( self ):
         r = Container.objects.filter( rack=self.id )
         return r    
+
+    def showVerbose(self):
+        r = u''
+        if self.location:
+            r += self.location.showVerbose() + ' / '
+        
+        title = 'Rack\n%s (%s)' % (self.displayId, self.name)
+
+        url = self.get_absolute_url()
+        r += '<a href="%s" title="%s">%s</a>' % (url, title, self.displayId) 
+        return html.mark_safe(r)
+    
+    showVerbose.allow_tags = True
+    showVerbose.short_description = 'Rack'
 
     class Meta:
         app_label = 'rotmic'   
@@ -127,6 +152,22 @@ class Container( UserMixin ):
     def get_absolute_url(self):
         return reverse('admin:rotmic_container_change', args=(self.id,))
 
+
+    def showVerbose(self):
+        r = u''
+        if self.rack:
+            r += self.rack.showVerbose() + ' / '
+        
+        title = 'Container\n%s (%s)' % (self.displayId, self.name)
+        if self.comment:
+            title += '\n' + self.comment
+
+        url = self.get_absolute_url()
+        r += '<a href="%s" title="%s">%s</a>' % (url, title, self.displayId) 
+        return html.mark_safe(r)
+    
+    showVerbose.allow_tags = True
+    showVerbose.short_description = 'Container'
 
     class Meta:
         app_label = 'rotmic'   
