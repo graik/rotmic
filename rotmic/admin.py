@@ -417,8 +417,8 @@ class DnaSampleAdmin( SampleAdmin ):
                     'showConcentration', 'showAmount',
                     'showComment','status','showEdit')
     
-    list_filter = ('status', filters.SampleLocationListFilter, 
-                   filters.SampleRackListFilter, filters.SampleContainerListFilter )
+    list_filter = ('status', filters.DnaSampleLocationFilter, 
+                   filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter )
     
     def showDnaUrl(self, obj):
         """Table display of linked insert or ''"""

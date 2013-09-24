@@ -158,7 +158,7 @@ class RackListFilter( admin.SimpleListFilter):
         return r.filter(rack=self.value())
 
 
-class SampleLocationListFilter( admin.SimpleListFilter ):
+class DnaSampleLocationFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample locations"""
     title = 'Location'
     parameter_name = 'location'
@@ -191,12 +191,11 @@ class SampleLocationListFilter( admin.SimpleListFilter ):
         return q.filter(container__rack__location__displayId=self.value())
 
 
-class SampleRackListFilter( admin.SimpleListFilter ):
+class DnaSampleRackFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Racks,  responds to SampleLocationListFilter"""
     title = 'Rack'
     parameter_name = 'rack'
     _sampleClass = M.DnaSample
-    
     
     def lookups(self, request, model_admin):
         """
@@ -242,7 +241,8 @@ class SampleRackListFilter( admin.SimpleListFilter ):
         
         return r.filter(container__rack__displayId=self.value())
     
-class SampleContainerListFilter( admin.SimpleListFilter ):
+
+class DnaSampleContainerFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Containers, responds to SampleRackListFilter"""
     title = 'Container'
     parameter_name = 'container'
@@ -290,4 +290,4 @@ class SampleContainerListFilter( admin.SimpleListFilter ):
         if len(containers.filter(displayId=self.value())) == 0:
             return r
         
-        return r.filter(container__displayId=self.value())    
+        return r.filter(container__displayId=self.value())
