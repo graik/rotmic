@@ -118,6 +118,18 @@ class SampleDnaLookup(ModelLookup):
 
 registry.register(SampleDnaLookup)
 
+class SampleContainerLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = Container
+    search_fields = ('rack__location__displayId__startswith',
+                     'rack__displayId__startswith',
+                     'displayId__startswith', 'name__icontains')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(SampleContainerLookup)
+
 
 class DnaComponentForm(forms.ModelForm):
     """Customized Form for DnaComponent (DNA construct) add / change"""
@@ -314,7 +326,10 @@ class DnaSampleForm( SampleForm ):
         model = DnaSample
         widgets = getSampleWidgets( \
             {'dna': sforms.AutoComboboxSelectWidget(lookup_class=SampleDnaLookup,
-                                                    allow_new=False)})
+                                                    allow_new=False),
+             'container' : sforms.AutoComboboxSelectWidget(lookup_class=SampleContainerLookup,
+                                                          allow_new=False),
+             })
 
         
 class AttachmentForm(forms.ModelForm):
