@@ -121,8 +121,7 @@ registry.register(SampleDnaLookup)
 class SampleContainerLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
     model = Container
-    search_fields = ('rack__location__displayId__startswith',
-                     'rack__displayId__startswith',
+    search_fields = ('rack__displayId__startswith',
                      'displayId__startswith', 'name__icontains')
     
     def get_item_id(self,item):

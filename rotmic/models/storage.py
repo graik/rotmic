@@ -145,7 +145,8 @@ class Container( UserMixin ):
     comment = models.TextField( 'Detailed description', blank=True)
 
     def __unicode__(self):
-        r = unicode(self.displayId)
+        r = '%s / %s' % (self.rack.__unicode__(), unicode(self.displayId))
+
         if self.name:
             r += ' (%s)' % self.name
         return r
