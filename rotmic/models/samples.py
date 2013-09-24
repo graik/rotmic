@@ -74,7 +74,7 @@ class Sample( UserMixin ):
     
 
     def __unicode__(self):
-        return u'%s' % self.displayId
+        return u'%s \u2014 %s' % (self.container.displayId, self.displayId)
 
 
     def commentText(self):

@@ -12,6 +12,9 @@ from django.contrib.admin.util import unquote, flatten_fieldsets, get_deleted_ob
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 
+## imports for show / display links
+from django.utils.safestring import mark_safe
+
 from functools import update_wrapper, partial
 csrf_protect_m = method_decorator(csrf_protect)
 
@@ -25,6 +28,7 @@ from guardian.admin import GuardedModelAdmin
 from guardian.shortcuts import get_objects_for_user
 
 import rotmic.models as M
+import rotmic.templatetags.rotmicfilters as F
 
 
 class ViewFirstChangeList( ChangeList ):
@@ -212,15 +216,18 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
 
 class ComponentModelAdmin( ViewFirstModelAdmin ):
     """
-    Custom version of admin.ModelAdmin which shows a read-only
-    View for a given object instead of the normal ChangeForm. The changeForm
-    is accessed by admin/ModelName/id/edit. 
+    Derived from ViewFirstModelAdmin -- Custom version of admin.ModelAdmin
+    which shows a read-only View for a given object instead of the normal
+    ChangeForm. The changeForm is accessed by admin/ModelName/id/edit.
     
     In addition, there is extra_context provided to the change_view:
     * dnaTypes -- all registered instances of DnaComponentType
     * cellTypes -- all CellComponentTypes
     * dnaCategories -- all "super" or base-level DnaComponentTypes
     * cellCategories -- all "super" or base-level CellComponentTypes
+    
+    Component-specific methods:
+    * showComment -- truncated comment with html mouse-over full text for tables
     """
     
     def change_view(self, request, object_id, form_url='', extra_context=None):
@@ -248,3 +255,23 @@ class ComponentModelAdmin( ViewFirstModelAdmin ):
         return super(ComponentModelAdmin, self).add_view(\
             request, form_url, extra_context=extra_context)
 
+    def showComment(self, obj):
+        """
+        @return: str; truncated comment with full comment mouse-over
+        """
+        if not obj.comment: 
+            return u''
+        if len(obj.comment) < 40:
+            return unicode(obj.comment)
+        r = unicode(obj.comment[:38])
+        r = '<a title="%s">%s</a>' % (obj.comment, F.truncate(obj.commentText(), 40))
+        return r
+    showComment.allow_tags = True
+    showComment.short_description = 'Description'
+    
+    def showEdit(self, obj):
+        """Small Edit Button for a direct link to Change dialog"""
+        return mark_safe('<a href="%s"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a>'\
+                         % (obj.get_absolute_url_edit() ) )
+    showEdit.allow_tags = True    
+    showEdit.short_description = 'Edit'     

@@ -366,6 +366,6 @@ class ContainerForm(forms.ModelForm):
         model = Container
         widgets = { ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
-            'name' : forms.TextInput(attrs={'size':25}),
+            'name' : forms.TextInput(attrs={'size':20}),
             }
     

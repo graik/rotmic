@@ -69,7 +69,7 @@ class ComponentAttachmentInline(admin.TabularInline):
     max_num = 5
 
 
-class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
+class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelAdmin ):
     """Admin interface description for DNA constructs."""
     inlines = [ ComponentAttachmentInline ]
     form = DnaComponentForm
@@ -91,7 +91,8 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelA
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showInsertUrl', 'showVectorUrl', 'showMarkerUrls', 'showComment','status')
+                    'showInsertUrl', 'showVectorUrl', 'showMarkerUrls', 
+                    'showComment','status', 'showEdit')
     
     list_filter = ( DnaCategoryListFilter, DnaTypeListFilter, 'status','registeredBy')
     
@@ -165,33 +166,6 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelA
     showMarkerUrls.allow_tags = True
     showMarkerUrls.short_description = 'Markers'
 
-##
-##
-##        category = obj.componentType.category()
-##        v = obj if category == T.dcVectorBB else obj.vectorBackbone
-##        r = u''
-##        if v:
-##            markers = [ m.name for m in v.marker.all() ]
-##            r += ', '.join(markers)
-##        return r
-    showMarkerUrls.allow_tags = True
-    showMarkerUrls.short_description = 'Markers'
-    
-    def showComment(self, obj):
-        """
-        @return: str; truncated comment with full comment mouse-over
-        """
-        if not obj.comment: 
-            return u''
-        if len(obj.comment) < 40:
-            return unicode(obj.comment)
-        r = unicode(obj.comment[:38])
-        r = '<a title="%s">%s</a>' % (obj.comment, F.truncate(obj.commentText(), 40))
-        return r
-    showComment.allow_tags = True
-    showComment.short_description = 'Description'
-    
-
 admin.site.register(DnaComponent, DnaComponentAdmin)
 
 
@@ -216,7 +190,8 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showPlasmidUrl', 'showMarkerUrls', 'showComment','status')
+                    'showPlasmidUrl', 'showMarkerUrls', 'showComment','status',
+                    'showEdit')
     
     list_filter = ( CellCategoryListFilter, CellTypeListFilter, 'status','registeredBy')
     
@@ -238,22 +213,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
         field = form.base_fields['marker']
         field.queryset = field.queryset.filter(componentType__subTypeOf=T.dcMarker)
         field.help_text = ''
-    
         return form
-    
-    def showComment(self, obj):
-        """
-        @return: str; truncated comment with full comment mouse-over
-        """
-        if not obj.comment: 
-            return u''
-        if len(obj.comment) < 40:
-            return unicode(obj.comment)
-        r = unicode(obj.comment[:38])
-        r = '<a title="%s">%s</a>' % (obj.comment, F.truncate(obj.commentText(), 40))
-        return r
-    showComment.allow_tags = True
-    showComment.short_description = 'Description'
     
     def showPlasmidUrl(self, obj):
         """Table display of linked insert or ''"""
@@ -275,8 +235,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
             u = m.get_absolute_url()
             urls += [ html.mark_safe('<a href="%s" title="%s">%s</a>' \
                                 % (u, m.comment, m.name))]
-        return ', '.join(urls)
-    
+        return ', '.join(urls)    
     showMarkerUrls.allow_tags = True
     showMarkerUrls.short_description = 'Markers'
 
@@ -318,7 +277,8 @@ class CellComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
          ),
         )
     
-    list_display = ('__unicode__','subTypeOf', 'description', 'allowPlasmids', 'allowMarkers')
+    list_display = ('__unicode__','subTypeOf', 'description', 'allowPlasmids', 
+                    'allowMarkers')
     list_display_links = ('__unicode__',)
     list_editable = ('allowPlasmids','allowMarkers')
     
@@ -387,7 +347,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     ]
     list_display = ('displayId', 'container', 'preparedAt', 'registeredBy',
                     'showConcentration', 'showAmount',
-                    'showComment','status','showSampleEdit')
+                    'showComment','status','showEdit')
     
     ordering = ('container', 'displayId')
 
@@ -424,11 +384,11 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     showComment.allow_tags = True
     showComment.short_description = 'Description'
 
-    def showSampleEdit(self, obj):
+    def showEdit(self, obj):
         return mark_safe('<a href="%s"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a>'\
                          % (obj.get_absolute_url_edit() ) )
-    showSampleEdit.allow_tags = True    
-    showSampleEdit.short_description = 'Edit'     
+    showEdit.allow_tags = True    
+    showEdit.short_description = 'Edit'     
 
 admin.site.register( Sample, SampleAdmin )
 
@@ -456,7 +416,7 @@ class DnaSampleAdmin( SampleAdmin ):
     list_display = ('displayId', 'container', 'preparedAt', 'registeredBy',
                     'showDnaUrl',
                     'showConcentration', 'showAmount',
-                    'showComment','status','showSampleEdit')
+                    'showComment','status','showEdit')
     
     def showDnaUrl(self, obj):
         """Table display of linked insert or ''"""
@@ -524,7 +484,7 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin):
                          ('containerType',),
                          ('comment',),
                         )),
-            'description' : 'Describe a freezer rack, single shelve or similar holder of containers.'
+            'description' : 'Describe a sample container or box.'
             }
          )
         ]
