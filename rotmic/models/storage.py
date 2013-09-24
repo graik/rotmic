@@ -139,7 +139,7 @@ class Container( UserMixin ):
                                      default='box',
                                      choices=STORAGE_CONTAINER_TYPES )
 
-    rack = models.ForeignKey(Rack)
+    rack = models.ForeignKey(Rack, related_name='containers')
        
     #: optional long description
     comment = models.TextField( 'Detailed description', blank=True)

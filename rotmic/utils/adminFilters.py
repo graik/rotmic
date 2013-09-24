@@ -162,6 +162,8 @@ class SampleLocationListFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample locations"""
     title = 'Location'
     parameter_name = 'location'
+    _sampleClass = M.DnaSample
+    
     
     def lookups(self, request, model_admin):
         """
@@ -171,7 +173,10 @@ class SampleLocationListFilter( admin.SimpleListFilter ):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        locations = M.Location.objects.filter()
+        ## filter for only those locations that contain the correct type of samples
+        samples = self._sampleClass.objects.all()
+        locations = M.Location.objects.filter(racks__containers__samples__in=samples).distinct()
+
         return ( (o.displayId, o.__unicode__()) for o in locations )
     
     def queryset(self, request, queryset):
@@ -190,6 +195,8 @@ class SampleRackListFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Racks,  responds to SampleLocationListFilter"""
     title = 'Rack'
     parameter_name = 'rack'
+    _sampleClass = M.DnaSample
+    
     
     def lookups(self, request, model_admin):
         """
@@ -204,6 +211,11 @@ class SampleRackListFilter( admin.SimpleListFilter ):
         
         location_id = request.GET[u'location']
         racks = M.Rack.objects.filter(location__displayId=location_id)
+ 
+        ## filter for only those racks that contain the correct type of samples
+        samples = self._sampleClass.objects.filter(container__rack__location__displayId=location_id)
+        racks = racks.filter(containers__samples__in=samples).distinct()  
+ 
         return ( (r.displayId, r.__unicode__()) for r in racks )
 
     def queryset(self, request, queryset):
@@ -234,6 +246,7 @@ class SampleContainerListFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Containers, responds to SampleRackListFilter"""
     title = 'Container'
     parameter_name = 'container'
+    _sampleClass = M.DnaSample
     
     def lookups(self, request, model_admin):
         """
@@ -248,6 +261,11 @@ class SampleContainerListFilter( admin.SimpleListFilter ):
         
         rack_id = request.GET[u'rack']
         containers = M.Container.objects.filter(rack__displayId=rack_id)
+
+        ## filter for only those containers that contain the correct type of samples
+        samples = self._sampleClass.objects.filter(container__rack__displayId=rack_id)
+        containers = containers.filter(samples__in=samples).distinct()
+        
         return ( (r.displayId, r.__unicode__()) for r in containers )
 
     def queryset(self, request, queryset):
