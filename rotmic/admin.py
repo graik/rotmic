@@ -344,9 +344,9 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
         ), 
           
     ]
-    list_display = ('displayId', 'container', 'preparedAt', 'registeredBy',
+    list_display = ('showExtendedId', 'preparedAt', 'registeredBy',
                     'showConcentration', 'showAmount',
-                    'showComment','status','showEdit')
+                    'status','showEdit')
     
     ordering = ('container', 'displayId')
 
@@ -357,6 +357,11 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     
     list_filter = ('status',)
     
+    def __init__(self, *args, **kwargs):
+        """Disable automatic link generation"""
+        super(SampleAdmin, self).__init__(*args, **kwargs)
+        self.list_display_links = []
+        
     def showConcentration(self, o):
         conc = unicode(o.concentration or '')
         unit = unicode(o.concentrationUnit or '')
@@ -412,14 +417,14 @@ class DnaSampleAdmin( SampleAdmin ):
         ), 
     ]
 
-    list_display = ('__unicode__', 'preparedAt', 'registeredBy',
+    list_display = ('showExtendedId', 'preparedAt', 'registeredBy',
                     'showDnaUrl',
                     'showConcentration', 'showAmount',
-                    'showComment','status','showEdit')
+                    'status','showEdit')
     
     list_filter = ('status', filters.DnaSampleLocationFilter, 
                    filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter )
-    
+        
     def showDnaUrl(self, obj):
         """Table display of linked insert or ''"""
         assert isinstance(obj, DnaSample), 'object missmatch'
