@@ -256,7 +256,7 @@ class SampleContainerListFilter( admin.SimpleListFilter ):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        if not u'rack' in request.GET:
+        if not (u'rack' in request.GET and u'location' in request.GET):
             return ()
         
         rack_id = request.GET[u'rack']
