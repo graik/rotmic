@@ -13,14 +13,14 @@
         {% if original %}
             <a href="../../../../">Home</a> &rsaquo;
             <a href="../../../">Rotmic</a> &rsaquo;
-            <a href="../../">Samples</a> &rsaquo;
+            <a href="../../">{% block object-class1 %}Samples{% endblock %}</a> &rsaquo;
             <a href="../">{{original.displayId}}</a> &rsaquo;
             Edit
         {% else %}
             <a href="../../../">Home</a> &rsaquo;
             <a href="../../">Rotmic</a> &rsaquo;
-            <a href="../">Samples</a> &rsaquo;
-            New
+            <a href="../">{% block object-class2%}Samples{% endblock%}</a> &rsaquo;
+            Add Sample
         {% endif %}
     </div>
     {% endblock %}

@@ -138,4 +138,4 @@ class DnaSample( Sample ):
 
     class Meta:
         app_label = 'rotmic'
-        verbose_name = 'DNA sample'
+        verbose_name = 'DNA Sample'
