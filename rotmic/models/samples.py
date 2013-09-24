@@ -31,8 +31,6 @@ class Sample( UserMixin ):
     displayId = models.CharField('Position', max_length=20,
                                  help_text='ID / Label or well position.')
 
-    
-    #: link to a single container
     container = models.ForeignKey(Container, related_name='samples')
 
     aliquotNr = models.PositiveIntegerField('Number of aliquots', 
