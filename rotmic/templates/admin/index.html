@@ -10,14 +10,14 @@
 
 {% block breadcrumbs %}{% endblock %}
 
-{% block content_title %}{% if title %}<h1>Samples & Content</h1>{% endif %}{% endblock %}
+{% block content_title %}{% if title %}<h1>RotMic Home</h1>{% endif %}{% endblock %}
 
 {% block content %}
 <div id="content-main">
 
     <div class="module">
         <table summary="Content Models">
-        <caption><a href="" class="section">Sequences and Constructs</a></caption>
+        <caption><a href="/rotmic" class="section">Sequences and Constructs</a></caption>
            <tr>
                         
                 <th scope="row"><a href="{% url 'admin:rotmic_dnacomponent_changelist' %}">DNA constructs</a></th>
@@ -34,7 +34,7 @@
 
     <div class="module">
         <table summary="Samples">
-        <caption><a href="" class="section">Actual Samples</a></caption>
+        <caption><a href="/rotmic" class="section">Actual Samples</a></caption>
            <tr>
                         
                 <th scope="row"><a href="{% url 'admin:rotmic_dnasample_changelist' %}">(pure) DNA Samples</a></th>
@@ -50,7 +50,7 @@
     
     <div class="module">
         <table summary="Storage">
-        <caption><a href="" class="section">Storage Locations & Containers</a></caption>
+        <caption><a href="/rotmic" class="section">Storage Locations & Containers</a></caption>
            <tr>
                 <th scope="row"><a href="{% url 'admin:rotmic_location_changelist' %}">Locations (freezers or rows)</a></th>
                 <td><a href="{% url 'admin:rotmic_location_add' %}" class="addlink">Add</a></td>
