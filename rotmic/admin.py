@@ -424,10 +424,11 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     showComment.short_description = 'Description'
     
     def showStatus(self, obj):
-        color = {u'ok': '088A08',
-                 u'bad': 'B40404',
-                 u'empty' : 'B40404',
-                 u'preparing': '666600'}
+        color = {u'ok': '088A08', # green
+                 u'bad': 'B40404', # red
+                 u'empty' : 'B40404', # red
+                 u'preparing':  '0000FF', # blue
+                 }
         return '<span style="color: #%s;">%s</span>' %\
                (color.get(obj.status, '000000'), obj.status)
     showStatus.allow_tags = True
@@ -465,7 +466,8 @@ class DnaSampleAdmin( SampleAdmin ):
     ]
 
     list_filter = ('status', filters.DnaSampleLocationFilter, 
-                   filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter )
+                   filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter,
+                   'registeredBy')
         
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
