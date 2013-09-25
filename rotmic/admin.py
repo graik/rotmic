@@ -90,7 +90,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelA
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
                     'showInsertUrl', 'showVectorUrl', 'showMarkerUrls', 
-                    'showComment','status', 'showEdit')
+                    'showComment','showStatus', 'showEdit')
     
     list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 'status','registeredBy')
     
@@ -188,7 +188,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showPlasmidUrl', 'showMarkerUrls', 'showComment','status',
+                    'showPlasmidUrl', 'showMarkerUrls', 'showComment','showStatus',
                     'showEdit')
     
     list_filter = ( filters.CellCategoryListFilter, filters.CellTypeListFilter, 

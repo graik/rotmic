@@ -275,3 +275,14 @@ class ComponentModelAdmin( ViewFirstModelAdmin ):
                          % (obj.get_absolute_url_edit() ) )
     showEdit.allow_tags = True    
     showEdit.short_description = 'Edit'     
+
+    def showStatus(self, obj):
+        color = {u'available': '088A08', # green
+                 u'planning': '808080', # grey
+                 u'construction' : '0000FF', # blue
+                 u'abandoned': 'B40404', # red
+                 }
+        return '<span style="color: #%s;">%s</span>' %\
+               (color.get(obj.status, '000000'), obj.status)
+    showStatus.allow_tags = True
+    showStatus.short_description = 'Status'
