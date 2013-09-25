@@ -324,6 +324,8 @@ class SampleAttachmentInline(admin.TabularInline):
 
 class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
     form = SampleForm     
+    
+    change_list_template = 'admin/rotmic/sample/change_list.html'  ## for some reason this is needed.
 
     inlines = [ SampleAttachmentInline ]
     date_hierarchy = 'preparedAt'
@@ -344,7 +346,8 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
         ), 
           
     ]
-    list_display = ('showExtendedId', 'preparedAt', 'registeredBy',
+    list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'preparedAt', 'registeredBy',
                     'showContent', 'showConcentration', 'showAmount',
                     'status','showEdit')
     
@@ -355,7 +358,8 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
 
     search_fields = ('diplayId', 'name','comment')
     
-    list_filter = ('status',)
+    list_filter = ('status', filters.SampleLocationFilter, 
+                   filters.SampleRackFilter, filters.SampleContainerFilter)
     
     def __init__(self, *args, **kwargs):
         """Disable automatic link generation"""
@@ -364,10 +368,35 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
         
     def queryset(self, request):
         """
-        Return actual sub-class instances instead of Sample super-class
+        Return actual sub-class instances instead of generic Sample super-class
+        This method builds on the custom InheritanceManager replacing Sample.objects
         """
         return super(SampleAdmin,self).queryset(request).select_subclasses()
         
+    def showRack(self, o):
+        if not o.container.rack:
+            return u''
+        x = o.container.rack
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s" title="%s">%s</a>' \
+                              % (url, x.name, x.displayId) )
+    showRack.allow_tags = True
+    showRack.short_description = 'Rack'
+        
+    def showLocation(self, o):
+        if not o.container.rack.location:
+            return u''
+        x = o.container.rack.location
+        url = x.get_absolute_url()
+        room = 'room %s' % x.room if x.room else ''
+        temp = '%s C' % x.temperature if x.temperature else ''
+        title = x.name
+        title += ' (%s %s)' % (room, temp) if (room or temp) else ''
+        return html.mark_safe('<a href="%s" title="%s">%s</a>' \
+                              % (url, title, x.displayId) )
+    showLocation.allow_tags = True
+    showLocation.short_description = 'Location'
+
     def showConcentration(self, o):
         conc = unicode(o.concentration or '')
         unit = unicode(o.concentrationUnit or '')
@@ -405,6 +434,7 @@ admin.site.register( Sample, SampleAdmin )
 
 class DnaSampleAdmin( SampleAdmin ):
     form = DnaSampleForm
+    change_list_template = None
     
     fieldsets = [
         (None, {
@@ -423,28 +453,16 @@ class DnaSampleAdmin( SampleAdmin ):
         ), 
     ]
 
-    list_display = ('showExtendedId', 'preparedAt', 'registeredBy',
-                    'showDnaUrl',
-                    'showConcentration', 'showAmount',
-                    'status','showEdit')
-    
     list_filter = ('status', filters.DnaSampleLocationFilter, 
                    filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter )
         
-    def showDnaUrl(self, obj):
-        """Table display of linked insert or ''"""
-        assert isinstance(obj, DnaSample), 'object missmatch'
-        x = obj.dna
-        if not x:
-            return u''
-        url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
-    showDnaUrl.allow_tags = True
-    showDnaUrl.short_description = 'DNA construct'
+    def queryset(self, request):
+        """Revert modification made by SampleAdmin"""
+        return super(SampleAdmin,self).queryset(request)
     
-
 admin.site.register( DnaSample, DnaSampleAdmin )
+
+
 
 class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin):
     form = LocationForm

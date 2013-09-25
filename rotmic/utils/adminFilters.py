@@ -158,11 +158,11 @@ class RackListFilter( admin.SimpleListFilter):
         return r.filter(rack=self.value())
 
 
-class DnaSampleLocationFilter( admin.SimpleListFilter ):
+class SampleLocationFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample locations"""
     title = 'Location'
     parameter_name = 'location'
-    _sampleClass = M.DnaSample
+    _sampleClass = M.Sample
     
     
     def lookups(self, request, model_admin):
@@ -190,12 +190,15 @@ class DnaSampleLocationFilter( admin.SimpleListFilter ):
             return q
         return q.filter(container__rack__location__displayId=self.value())
 
+class DnaSampleLocationFilter( SampleLocationFilter ):
+    _sampleClass = M.DnaSample
+    
 
-class DnaSampleRackFilter( admin.SimpleListFilter ):
+class SampleRackFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Racks,  responds to SampleLocationListFilter"""
     title = 'Rack'
     parameter_name = 'rack'
-    _sampleClass = M.DnaSample
+    _sampleClass = M.Sample
     
     def lookups(self, request, model_admin):
         """
@@ -241,12 +244,15 @@ class DnaSampleRackFilter( admin.SimpleListFilter ):
         
         return r.filter(container__rack__displayId=self.value())
     
+class DnaSampleRackFilter( SampleRackFilter ):
+    _sampleClass = M.DnaSample
+    
 
-class DnaSampleContainerFilter( admin.SimpleListFilter ):
+class SampleContainerFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Containers, responds to SampleRackListFilter"""
     title = 'Container'
     parameter_name = 'container'
-    _sampleClass = M.DnaSample
+    _sampleClass = M.Sample
     
     def lookups(self, request, model_admin):
         """
@@ -266,7 +272,7 @@ class DnaSampleContainerFilter( admin.SimpleListFilter ):
         samples = self._sampleClass.objects.filter(container__rack__displayId=rack_id)
         containers = containers.filter(samples__in=samples).distinct()
         
-        return ( (r.displayId, r.__unicode__()) for r in containers )
+        return ( (r.displayId, u'%s (%s)' % (r.displayId, r.name)) for r in containers )
 
     def queryset(self, request, queryset):
         """
@@ -291,3 +297,6 @@ class DnaSampleContainerFilter( admin.SimpleListFilter ):
             return r
         
         return r.filter(container__displayId=self.value())
+
+class DnaSampleContainerFilter( SampleContainerFilter ):
+    _sampleClass = M.DnaSample
