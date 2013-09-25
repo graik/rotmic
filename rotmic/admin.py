@@ -345,7 +345,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
           
     ]
     list_display = ('showExtendedId', 'preparedAt', 'registeredBy',
-                    'showConcentration', 'showAmount',
+                    'showContent', 'showConcentration', 'showAmount',
                     'status','showEdit')
     
     ordering = ('container', 'displayId')
@@ -361,6 +361,12 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
         """Disable automatic link generation"""
         super(SampleAdmin, self).__init__(*args, **kwargs)
         self.list_display_links = []
+        
+    def queryset(self, request):
+        """
+        Return actual sub-class instances instead of Sample super-class
+        """
+        return super(SampleAdmin,self).queryset(request).select_subclasses()
         
     def showConcentration(self, o):
         conc = unicode(o.concentration or '')

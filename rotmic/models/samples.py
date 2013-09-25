@@ -131,6 +131,12 @@ class Sample( UserMixin ):
         return html.mark_safe('<a href="%s" title="%s">%s</a>' % (url, title, r))
     showExtendedId.allow_tags = True
     showExtendedId.short_description = u'Box \u2014 ID'
+    
+    def showContent(self):
+        """Display sub-class-specific content for tables. Needs to be overridden"""
+        return ''
+    showContent.allow_tags = True
+    showContent.short_description = u'Content'
 
     class Meta:
         app_label = 'rotmic'
@@ -145,6 +151,18 @@ class DnaSample( Sample ):
                             verbose_name = 'DNA construct',
                             related_name = 'dna_samples',
                             )
+
+    def showContent(self):
+        """Table display of linked insert or ''"""
+        x = self.dna
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
+                              % (url, x.comment, x.displayId, x.name))
+    showContent.allow_tags = True
+    showContent.short_description = 'DNA construct'
+    
 
     class Meta:
         app_label = 'rotmic'
