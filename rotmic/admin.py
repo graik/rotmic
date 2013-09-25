@@ -349,7 +349,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     list_display = ('showExtendedId', 'showRack', 'showLocation',
                     'preparedAt', 'registeredBy',
                     'showContent', 'showConcentration', 'showAmount',
-                    'status','showEdit')
+                    'showStatus','showEdit')
     
     ordering = ('container', 'displayId')
 
@@ -422,6 +422,17 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
         return r
     showComment.allow_tags = True
     showComment.short_description = 'Description'
+    
+    def showStatus(self, obj):
+        color = {u'ok': '088A08',
+                 u'bad': 'B40404',
+                 u'empty' : 'B40404',
+                 u'preparing': '666600'}
+        return '<span style="color: #%s;">%s</span>' %\
+               (color.get(obj.status, '000000'), obj.status)
+    showStatus.allow_tags = True
+    showStatus.short_description = 'Status'
+        
 
     def showEdit(self, obj):
         return mark_safe('<a href="%s"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a>'\
@@ -434,7 +445,7 @@ admin.site.register( Sample, SampleAdmin )
 
 class DnaSampleAdmin( SampleAdmin ):
     form = DnaSampleForm
-    change_list_template = None
+    change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
     
     fieldsets = [
         (None, {

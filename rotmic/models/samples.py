@@ -45,7 +45,7 @@ class Sample( UserMixin ):
                                             null=True, blank=True)
 
     STATUS_CHOICES = (('ok', 'ok'),
-                      ('preparation', 'in preparation'),
+                      ('preparing', 'preparing'),
                       ('empty', 'empty'),
                       ('bad', 'bad'),
                       )
