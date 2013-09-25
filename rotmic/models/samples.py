@@ -24,6 +24,14 @@ import django.utils.html as html
 from rotmic.models.components import UserMixin
 import rotmic.initialTypes as T
 from rotmic.models.storage import Container
+import rotmic.utils.inheritance as I
+
+class SampleManager( models.Manager ):
+
+    ## DJANGO 1.6: renamed to get_queryset
+    def get_query_set(self):
+        dna = DnaSample.objects.get_query_set()
+        return dna
 
 class Sample( UserMixin ):
     """Base class for DNA, cell and protein samples."""
@@ -70,7 +78,9 @@ class Sample( UserMixin ):
                                    null=True, blank=True, 
                                    limit_choices_to = Q(unitType__in=['volume','number', 'mass'])
                                    )
-    
+
+    ## return child classes in queries using select_subclasses()
+    objects = I.InheritanceManager()  
 
     def __unicode__(self):
         return u'%s \u2014 %s' % (self.container.displayId, self.displayId)
