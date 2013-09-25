@@ -1,0 +1,168 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+{% load i18n admin_modify  %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+    <div class="module">
+        <table summary="Content Models">
+        <caption><a href="" class="section">Sequences and Constructs</a></caption>
+           <tr>
+                        
+                <th scope="row"><a href="{% url 'admin:rotmic_dnacomponent_changelist' %}">DNA constructs</a></th>
+                <td><a href="{% url 'admin:rotmic_dnacomponent_add' %}" class="addlink">Add</a></td>
+            </tr>
+            <tr>
+                <th scope="row"><a href="{% url 'admin:rotmic_cellcomponent_changelist' %}">Modified Cells</a></th>
+                <td><a href="{% url 'admin:rotmic_cellcomponent_add' %}" class="addlink">Add</a></td>
+            
+            </tr>
+        </table>
+    </div>
+    <p></p>
+
+    <div class="module">
+        <table summary="Samples">
+        <caption><a href="" class="section">Actual Samples</a></caption>
+           <tr>
+                        
+                <th scope="row"><a href="{% url 'admin:rotmic_dnasample_changelist' %}">(pure) DNA Samples</a></th>
+                <td><a href="{% url 'admin:rotmic_dnasample_add' %}" class="addlink">Add</a></td>
+            </tr>
+            <tr>
+                <th scope="row"><a href="{% url 'admin:rotmic_sample_changelist' %}">All Samples</a></th>
+            
+            </tr>
+        </table>
+    </div>
+    <p></p>
+    
+    <div class="module">
+        <table summary="Storage">
+        <caption><a href="" class="section">Storage Locations & Containers</a></caption>
+           <tr>
+                <th scope="row"><a href="{% url 'admin:rotmic_location_changelist' %}">Locations (freezers or rows)</a></th>
+                <td><a href="{% url 'admin:rotmic_location_add' %}" class="addlink">Add</a></td>
+            </tr>
+
+           <tr>
+                <th scope="row"><a href="{% url 'admin:rotmic_rack_changelist' %}">Racks (or shelves)</a></th>
+                <td><a href="{% url 'admin:rotmic_rack_add' %}" class="addlink">Add</a></td>
+            </tr>
+
+           <tr>
+                <th scope="row"><a href="{% url 'admin:rotmic_container_changelist' %}">Containers (boxes)</a></th>
+                <td><a href="{% url 'admin:rotmic_container_add' %}" class="addlink">Add</a></td>
+            </tr>
+
+        </table>
+    </div>
+
+    {% if request.user.is_superuser %}
+    
+        <h3>Restricted tables (superuser only)</h3>
+        
+        <div class="module">
+            <table summary="Classification">
+            <caption><a href="" class="section">Classification and Units</a></caption>
+               <tr>
+                    <th scope="row"><a href="{% url 'admin:rotmic_dnacomponenttype_changelist' %}">DNA Categories</a></th>
+                    <td><a href="{% url 'admin:rotmic_dnacomponenttype_add' %}" class="addlink">Add</a></td>
+                </tr>
+    
+               <tr>
+                    <th scope="row"><a href="{% url 'admin:rotmic_cellcomponenttype_changelist' %}">Cell Categories</a></th>
+                    <td><a href="{% url 'admin:rotmic_cellcomponenttype_add' %}" class="addlink">Add</a></td>
+                </tr>
+    
+               <tr>
+                    <th scope="row"><a href="{% url 'admin:rotmic_unit_changelist' %}">Units (for concentrations and volumes)</a></th>
+                    <td><a href="{% url 'admin:rotmic_unit_add' %}" class="addlink">Add</a></td>
+                </tr>
+    
+            </table>
+        </div>
+    {% endif %}
+
+{% if app_list %}
+    {% for app in app_list %}
+        {% if app.name != "Rotmic" %}
+            <div class="module">
+            <table>
+            <caption>
+                <a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">
+                    {% blocktrans with name=app.name %}{{ name }}{% endblocktrans %}
+                </a>
+            </caption>
+            {% for model in app.models %}
+                <tr>
+                {% if model.admin_url %}
+                    <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+                {% else %}
+                    <th scope="row">{{ model.name }}</th>
+                {% endif %}
+    
+                {% if model.add_url %}
+                    <td><a href="{{ model.add_url }}" class="addlink">{% trans 'Add' %}</a></td>
+                {% else %}
+                    <td>&nbsp;</td>
+                {% endif %}
+    
+                {% if model.admin_url %}
+                    <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
+                {% else %}
+                    <td>&nbsp;</td>
+                {% endif %}
+                </tr>
+            {% endfor %}
+            </table>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    <p>{% trans "You don't have permission to edit anything." %}</p>
+{% endif %}
+
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div id="content-related">
+    <div class="module" id="recent-actions-module">
+        <h2>{% trans 'Recent Actions' %}</h2>
+        <h3>{% trans 'My Actions' %}</h3>
+            {% load log %}
+            {% get_admin_log 5 as admin_log for_user user %}
+            {% if not admin_log %}
+            <p>{% trans 'None available' %}</p>
+            {% else %}
+            <ul class="actionlist">
+            {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                {% if entry.is_deletion or not entry.get_admin_url %}
+                    {{ entry.object_repr }}
+                {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                {% endif %}
+                <br/>
+                {% if entry.content_type %}
+                    <span class="mini quiet">{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}</span>
+                {% else %}
+                    <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+    </div>
+</div>
+{% endblock %}
