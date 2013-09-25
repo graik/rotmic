@@ -10,6 +10,8 @@
 
 {% block breadcrumbs %}{% endblock %}
 
+{% block content_title %}{% if title %}<h1>Samples & Content</h1>{% endif %}{% endblock %}
+
 {% block content %}
 <div id="content-main">
 
@@ -28,7 +30,7 @@
             </tr>
         </table>
     </div>
-    <p></p>
+    <br>
 
     <div class="module">
         <table summary="Samples">
@@ -44,7 +46,7 @@
             </tr>
         </table>
     </div>
-    <p></p>
+    <br>
     
     <div class="module">
         <table summary="Storage">
@@ -66,7 +68,8 @@
 
         </table>
     </div>
-
+    <br><br>
+    
     {% if request.user.is_superuser %}
     
         <h3>Restricted tables (superuser only)</h3>
