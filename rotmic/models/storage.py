@@ -48,7 +48,7 @@ class Location(UserMixin):
         return r
 
     def get_absolute_url(self):
-        return reverse('admin:rotmic_location_change', args=(self.id,))
+        return reverse('admin:rotmic_location_readonly', args=(self.id,))
     
     def containerCount(self):
         r = Container.objects.filter(rack__location=self).count()
@@ -96,7 +96,7 @@ class Rack(UserMixin):
         return r
 
     def get_absolute_url(self):
-        return reverse('admin:rotmic_rack_change', args=(self.id,))
+        return reverse('admin:rotmic_rack_readonly', args=(self.id,))
 
     def sampleCount(self):
         from rotmic.models import Sample
@@ -121,6 +121,7 @@ class Rack(UserMixin):
         app_label = 'rotmic'   
         ordering = ('location__displayId', 'displayId',)
         unique_together = ('displayId', 'location')
+        verbose_name = 'Rack'
 
 
 class Container( UserMixin ):
@@ -181,5 +182,6 @@ class Container( UserMixin ):
         app_label = 'rotmic'   
         ordering = ('displayId',)
         unique_together = ('displayId', 'rack')
+        verbose_name = 'Container'
 
 

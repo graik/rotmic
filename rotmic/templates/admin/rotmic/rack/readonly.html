@@ -1,0 +1,66 @@
+{% extends "admin/rotmic/readonly.html" %}
+{% load i18n admin_static admin_list admin_modify admin_urls %}
+{% load rotmicfilters %}
+
+{% block side-rating %}{% endblock %}
+
+{% block content-bottom %}    
+    <h2>Containers</h2>
+    
+    <p> This Rack contains <b>{{o.containers.count}} containers</b> comprising 
+        <b>{{o.sampleCount}}&nbsp;samples</b>.</p>
+    
+    <div style="margin: 10px">
+        <table cellspacing="0">
+
+            <thead>
+            <tr>
+                <th>Container ID</th><th>Name</th><th>Type</th><th>Description</th><th>Samples</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for x in o.containers.all %}
+            
+              <tr class="{% cycle 'row1' 'row2' %}">
+      
+                <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
+                   
+                <td>{{x.name}}</td>
+                
+                <td>{{x.containerType}}</td>
+                
+                <td>{{x.comment | truncateHTML:50}}</td>
+                
+                <td align="center"><a href="{%url 'admin:rotmic_sample_changelist'%}?location={{o.location.displayId}}&rack={{o.displayId}}&container={{x.displayId}}" title="jump to samples">
+                    {{x.samples.count}}</a></th>
+              </tr>
+
+          {% endfor %}
+          </tbody>
+        </table>
+        <p></p>
+        <small>
+            Help: Click on sample count to jump to pre-filtered Sample table.
+            Move mouse over comment to see full description.
+        </small>
+    </div>
+    
+{% endblock %} 
+
+{% block side-top %}
+    <div class="module" id="location-module">
+        <h2>Location {{o.location}}</h2>
+        <ul>
+            <li><b>Room:</b> 
+                {% if o.location.room %}{{o.location.room}}{% endif %}
+            </li>
+            <li><b>Temperature:</b> 
+                {% if o.location.temperature %}
+                    {{o.location.temperature}} C
+                {%endif%}
+            </li>
+        </ul>
+    </div>
+
+{% endblock %}

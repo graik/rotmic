@@ -78,11 +78,33 @@ register.filter('markcode', markcode )
 @stringfilter
 def truncate( s, size ):
     """truncate given string to specified length"""
+    if not s:
+        return u''
+    s = s.strip()
     if len( s ) <= size:
         return s
-    return s[:size-3] + '...'
+
+    ## truncate to first line break
+    pos = s.find('\n')
+    if pos != -1 and pos > 3:
+        s = s[:pos]
+
+    if len(s) > size:
+        return s[:size-3] + '...'
+    return s
 
 register.filter('truncate', truncate )
+
+@register.filter(is_safe=True)
+@stringfilter
+def truncateHTML(s, size):
+    """truncate given string but display full string as a mouse-over text"""
+    if not s:
+        return u''
+    r = truncate(s, size)
+    return mark_safe('<a title="%s">%s</a>' % (s, r))
+
+register.filter('truncateHTML', truncateHTML)
 
 @register.filter
 def dnaCategoryToId(catName):

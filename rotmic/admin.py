@@ -498,7 +498,7 @@ class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin)
 
 admin.site.register( Location, LocationAdmin )
 
-class RackAdmin(BaseAdminMixin, reversion.VersionAdmin):
+class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = RackForm
 
     fieldsets = [
