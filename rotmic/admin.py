@@ -397,18 +397,6 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     showLocation.allow_tags = True
     showLocation.short_description = 'Location'
 
-    def showConcentration(self, o):
-        conc = unicode(o.concentration or '')
-        unit = unicode(o.concentrationUnit or '')
-        return conc + ' '+ unit
-    showConcentration.short_description = 'Concentration' 
-    
-    def showAmount(self, o):
-        amount = unicode( o.amount or '' )
-        unit   = unicode( o.amountUnit or '' )
-        return amount + ' '+ unit
-    showAmount.short_description = 'Amount' 
-    
     def showComment(self, obj):
         """
         @return: str; truncated comment with full comment mouse-over
@@ -519,7 +507,7 @@ class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
 admin.site.register( Rack, RackAdmin )
 
 
-class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin):
+class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = ContainerForm
 
     fieldsets = [

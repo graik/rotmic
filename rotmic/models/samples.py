@@ -137,7 +137,26 @@ class Sample( UserMixin ):
         return ''
     showContent.allow_tags = True
     showContent.short_description = u'Content'
+    
+    def showType(self):
+        """Return type of sample (DNA, Cells, ...)"""
+        r = getattr(self._meta, 'verbose_name', 'unknown type')
+        r = r.split()[0]
+        return r
+    showType.short_description = 'Type'
 
+    def showConcentration(self):
+        conc = unicode(self.concentration or '')
+        unit = unicode(self.concentrationUnit or '')
+        return conc + ' '+ unit
+    showConcentration.short_description = 'Concentration' 
+    
+    def showAmount(self):
+        amount = unicode( self.amount or '' )
+        unit   = unicode( self.amountUnit or '' )
+        return amount + ' '+ unit
+    showAmount.short_description = 'Amount' 
+    
     class Meta:
         app_label = 'rotmic'
         verbose_name  = 'Sample'

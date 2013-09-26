@@ -1,0 +1,113 @@
+{% extends "admin/rotmic/readonly.html" %}
+{% load i18n admin_static admin_list admin_modify admin_urls %}
+{% load rotmicfilters %}
+
+{% block side-rating %}{% endblock %}
+
+{% block page-title %}<h1>{{o.showVerbose}} ({{o.name}})</h1>{% endblock %}
+
+{% block content-top %} {# override #}
+    <h2>Description</h2>
+    <div>
+        <p class='description'>
+            {% if o.comment %}
+                {{o.comment|markdown}}
+            {% else %}
+                No description found.
+            {% endif %}
+        </p>
+    </div>
+{% endblock %}        
+
+
+{% block content-bottom %}    
+    <h2>Samples</h2>
+    <p>
+        This Container contains <b>{{o.samples.count}} samples</b>.<br>
+        <a href="{% url 'admin:rotmic_sample_changelist'%}?location={{o.rack.location.displayId}}&rack={{o.rack.displayId}}&container={{o.displayId}}">
+            Jump to sample table</a>
+    </p>
+    
+    <ul class="object-tools">
+        <li><a href="{% url 'admin:rotmic_dnasample_add'%}?container={{o.pk}}">Add DNA Sample</a></li>
+        <li><a href="{% url 'admin:rotmic_dnasample_add'%}">Add Cell Sample</a></li>
+    </ul>
+
+    <br>
+
+    <div style="margin: 10px">
+        <table cellspacing="0">
+
+            <thead>
+            <tr>
+                <th>ID /<br> Position</th><th>prepared</th><th>by</th>
+                <th>Type</th><th>Content</th>
+                <th>Conc.</th><th>Amount</th>
+                <th>Description</th><th>Status</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for x in o.samples.all.select_subclasses %}
+            
+              <tr class="{% cycle 'row1' 'row2' %}">
+      
+                <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
+                
+                <td>{{x.preparedAt}}</td>
+                
+                <td>{{x.registeredBy}}</td>
+                
+                <td>{{x.showType}}</td>
+                
+                <td>{{x.showContent}}</td>
+                
+                <td>{{x.showConcentration}}</td>
+                
+                <td>{{x.showAmount}}</td>
+                   
+                <td>{{x.comment | truncateHTML:30}}</td>
+                
+                <td>{{x.status}}</td>
+                
+              </tr>
+
+          {% endfor %}
+          </tbody>
+        </table>
+        <p></p>
+        <small>
+            Help: Move mouse over content link to see content description. 
+            Move mouse over sample description to see full length description.
+        </small>
+    </div>
+    
+{% endblock %} 
+
+{% block side-top %}
+    {% with location=o.rack.location %}
+        <div class="module" id="location-module">
+            <h2>Location {{location}}</h2>
+            <ul>
+                <li><b>Room:</b> 
+                    {% if location.room %}{{location.room}}{% endif %}
+                </li>
+                <li><b>Temperature:</b> 
+                    {% if location.temperature %}
+                        {{location.temperature}} C
+                    {%endif%}
+                </li>
+            </ul>
+        </div>
+    {% endwith %}
+    
+    <div class="module" id="container-module">
+        <h2>Container</h2>
+        <ul>
+            <li><b>Type: </b> {{o.containerType}}
+            </li>
+        </ul>
+    </div>
+    
+
+{% endblock %}

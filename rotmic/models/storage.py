@@ -159,7 +159,7 @@ class Container( UserMixin ):
         return r
 
     def get_absolute_url(self):
-        return reverse('admin:rotmic_container_change', args=(self.id,))
+        return reverse('admin:rotmic_container_readonly', args=(self.id,))
 
 
     def showVerbose(self):
