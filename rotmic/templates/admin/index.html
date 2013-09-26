@@ -19,7 +19,8 @@
         <table summary="Content Models">
         <caption><a href="/rotmic" class="section">Sequences and Constructs</a></caption>
            <tr>
-                        
+                <td rowspan="2"><img src="{% static "plasmid2.png" %}" height="80" width="80"></td>
+                
                 <th scope="row"><a href="{% url 'admin:rotmic_dnacomponent_changelist' %}">DNA constructs</a></th>
                 <td><a href="{% url 'admin:rotmic_dnacomponent_add' %}" class="addlink">Add</a></td>
             </tr>
@@ -36,7 +37,8 @@
         <table summary="Samples">
         <caption><a href="/rotmic" class="section">Actual Samples</a></caption>
            <tr>
-                        
+                <td rowspan="2"><img src="{% static "eppendorf.png" %}" height="80" width="80"></td>
+
                 <th scope="row"><a href="{% url 'admin:rotmic_dnasample_changelist' %}">(pure) DNA Samples</a></th>
                 <td><a href="{% url 'admin:rotmic_dnasample_add' %}" class="addlink">Add</a></td>
             </tr>
@@ -52,6 +54,8 @@
         <table summary="Storage">
         <caption><a href="/rotmic" class="section">Storage Locations & Containers</a></caption>
            <tr>
+                <td rowspan="3"><img src="{% static "freezer_shaking.gif" %}" height="80" width="80"></td>
+
                 <th scope="row"><a href="{% url 'admin:rotmic_location_changelist' %}">Locations (freezers or rows)</a></th>
                 <td><a href="{% url 'admin:rotmic_location_add' %}" class="addlink">Add</a></td>
             </tr>
