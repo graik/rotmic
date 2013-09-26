@@ -41,19 +41,24 @@ class Location(UserMixin):
                             help_text='room # if applicable')
 
 
-    def child_racks( self ):
-        r = Rack.objects.filter( location=self.id )
-        return r    
-
     def __unicode__(self):
         r = unicode(self.displayId)
-        if self.room:
-            r += ' (R. %s)' % self.room
+        if self.name:
+            r += ' (%s)' % self.name
         return r
 
     def get_absolute_url(self):
         return reverse('admin:rotmic_location_change', args=(self.id,))
     
+    def containerCount(self):
+        r = Container.objects.filter(rack__location=self).count()
+        return r
+    
+    def sampleCount(self):
+        from rotmic.models import Sample
+        r = Sample.objects.filter(container__rack__location=self).count()
+        return r
+
     def showVerbose(self):
         url = self.get_absolute_url()
         title = 'Location\n%s (%s)' % (self.displayId, self.name)
@@ -93,9 +98,10 @@ class Rack(UserMixin):
     def get_absolute_url(self):
         return reverse('admin:rotmic_rack_change', args=(self.id,))
 
-    def child_containers( self ):
-        r = Container.objects.filter( rack=self.id )
-        return r    
+    def sampleCount(self):
+        from rotmic.models import Sample
+        r = Sample.objects.filter(container__rack=self).count()
+        return r
 
     def showVerbose(self):
         r = u''

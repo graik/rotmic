@@ -477,7 +477,7 @@ admin.site.register( DnaSample, DnaSampleAdmin )
 
 
 
-class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin):
+class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = LocationForm
 
     fieldsets = [
