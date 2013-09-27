@@ -291,8 +291,11 @@ registry.register(AmountUnitLookup)
 def getSampleWidgets( extra={} ):
     """widgets shared between different types of Sample forms."""
     r = {
-        'displayId' : forms.TextInput(attrs={'size':5}),
+        'container' : sforms.AutoComboboxSelectWidget(lookup_class=SampleContainerLookup,
+                                                     allow_new=False),
 
+        'displayId' : forms.TextInput(attrs={'size':5}),
+        
         'concentration' : forms.TextInput(attrs={'size':5}),
         'concentrationUnit':sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
                                 allow_new=False,
@@ -326,8 +329,6 @@ class DnaSampleForm( SampleForm ):
         widgets = getSampleWidgets( \
             {'dna': sforms.AutoComboboxSelectWidget(lookup_class=SampleDnaLookup,
                                                     allow_new=False),
-             'container' : sforms.AutoComboboxSelectWidget(lookup_class=SampleContainerLookup,
-                                                          allow_new=False),
              })
 
         

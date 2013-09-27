@@ -10,7 +10,13 @@
     <h2>Containers</h2>
     
     <p> This Rack contains <b>{{o.containers.count}} containers</b> comprising 
-        <b>{{o.sampleCount}}&nbsp;samples</b>.</p>
+        <b>{{o.sampleCount}}&nbsp;samples</b>.
+    </p>
+
+    <ul class="object-tools">
+        <li><a href="{% url 'admin:rotmic_container_add'%}?rack={{o.pk}}">Add Container</a></li>
+    </ul>
+
     
     <div style="margin: 10px">
         <table cellspacing="0">
