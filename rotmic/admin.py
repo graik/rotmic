@@ -522,7 +522,7 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin
         ]
 
     list_display = ('__unicode__', 'showRackUrl', 'showLocationUrl', 'containerType')
-    list_filter =  ('containerType', 'rack__location', filters.RackListFilter)
+    list_filter =  ('containerType', filters.ContainerLocationFilter, filters.ContainerRackFilter)
     search_fields = ('displayId', 'name','comment')
 
     save_as = True
