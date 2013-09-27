@@ -99,7 +99,7 @@ class Component(UserMixin):
     
     def __unicode__(self):
         name = self.name or ''
-        return u'%s - %s' % (self.displayId, name)
+        return u'%s (%s)' % (self.displayId, name)
 
     def get_absolute_url(self):
         """
