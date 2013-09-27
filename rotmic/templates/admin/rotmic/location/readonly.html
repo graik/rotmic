@@ -28,17 +28,18 @@
                    
                 <td>{{r.name}}</td>
                 
-                <td align="center">{{r.containers.count}}</td>
+                <td align="center"><a href="{%url 'admin:rotmic_container_changelist'%}?location={{o.pk}}&rack={{r.pk}}" title="jump to containers">
+                    {{r.containers.count}}</a></td>
                 
                 <td align="center"><a href="{%url 'admin:rotmic_sample_changelist'%}?location={{o.displayId}}&rack={{r.displayId}}" title="jump to samples">
-                    {{r.sampleCount}}</a></th>
+                    {{r.sampleCount}}</a></td>
               </tr>
 
           {% endfor %}
           </tbody>
         </table>
         <p></p>
-        <small>Note: click on sample count to jump to pre-filtered Sample table.</small>
+        <small>Note: click on container or sample count to jump to pre-filtered Container or Sample table.</small>
     </div>
     
 {% endblock %} 
