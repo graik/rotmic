@@ -11,6 +11,8 @@
     
     <p> This Rack contains <b>{{o.containers.count}} containers</b> comprising 
         <b>{{o.sampleCount}}&nbsp;samples</b>.
+        <a href="{% url 'admin:rotmic_container_changelist'%}?location={{o.location.id}}&rack={{o.id}}">
+            <br>Jump to container table</a>
     </p>
 
     <ul class="object-tools">
@@ -40,8 +42,7 @@
                 
                 <td>{{x.comment | truncateHTML:50}}</td>
                 
-                <td align="center"><a href="{%url 'admin:rotmic_sample_changelist'%}?location={{o.location.displayId}}&rack={{o.displayId}}&container={{x.displayId}}" title="jump to samples">
-                    {{x.samples.count}}</a></th>
+                <td align="center">{{x.showSampleCount}}</td>
               </tr>
 
           {% endfor %}

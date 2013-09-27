@@ -8,7 +8,10 @@
     
     <p> This location contains <b>{{o.racks.count}} racks</b> comprising 
         <b>{{o.containerCount}}&nbsp;containers</b> with a total of 
-        <b>{{o.sampleCount}}&nbsp;samples</b>.</p>
+        <b>{{o.sampleCount}}&nbsp;samples</b>.<br>
+        <a href="{% url 'admin:rotmic_rack_changelist'%}?location={{o.id}}">
+            Jump to rack table</a>
+    </p>
     
     <ul class="object-tools">
         <li><a href="{% url 'admin:rotmic_rack_add'%}?location={{o.pk}}">Add Rack</a></li>
@@ -32,11 +35,9 @@
                    
                 <td>{{r.name}}</td>
                 
-                <td align="center"><a href="{%url 'admin:rotmic_container_changelist'%}?location={{o.pk}}&rack={{r.pk}}" title="jump to containers">
-                    {{r.containers.count}}</a></td>
+                <td align="center">{{r.showContainerCount}}</td>
                 
-                <td align="center"><a href="{%url 'admin:rotmic_sample_changelist'%}?location={{o.displayId}}&rack={{r.displayId}}" title="jump to samples">
-                    {{r.sampleCount}}</a></td>
+                <td align="center">{{r.showSampleCount}}</td>
               </tr>
 
           {% endfor %}

@@ -478,13 +478,15 @@ class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin)
          )
         ]
 
-    list_display = ('displayId', 'name', 'temperature', 'room')
+    list_display = ('displayId', 'name', 'temperature', 'room',
+                    'showRackCount', 'showContainerCount', 'showSampleCount')
     list_filter = ('room', 'temperature')
     search_fields = ('displayId', 'name',)
 
     save_as = True
 
 admin.site.register( Location, LocationAdmin )
+
 
 class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = RackForm
@@ -498,11 +500,25 @@ class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
          )
         ]
 
-    list_display = ('displayId', 'location', 'name',)
-    list_filter = ('location',)
+    list_display = ('displayId', 'showLocationUrl', 'name',
+                    'showContainerCount', 'showSampleCount')
+    list_filter = (filters.RackLocationFilter,)
     search_fields = ('displayId', 'name',)
 
     save_as = True
+
+    def showLocationUrl(self, obj):
+        """Table display of linked insert or ''"""
+        assert isinstance(obj, Rack), 'object missmatch'
+        x = obj.location
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s" title="">%s</a>' \
+                              % (url, unicode(x)) )
+    showLocationUrl.allow_tags = True
+    showLocationUrl.short_description = 'Location'
+    
 
 admin.site.register( Rack, RackAdmin )
 
@@ -521,7 +537,7 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin
          )
         ]
 
-    list_display = ('__unicode__', 'showRackUrl', 'showLocationUrl', 'containerType')
+    list_display = ('__unicode__', 'showRackUrl', 'showLocationUrl', 'containerType', 'showSampleCount')
     list_filter =  ('containerType', filters.ContainerLocationFilter, filters.ContainerRackFilter)
     search_fields = ('displayId', 'name','comment')
 

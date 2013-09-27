@@ -121,7 +121,28 @@ class CellCategoryListFilter( CategoryListFilter ):
 class CellTypeListFilter( TypeListFilter ):
     _class = M.CellComponentType
     
-
+class RackLocationFilter( admin.SimpleListFilter ):
+    """
+    Custom Admin Filter for locations in Rack ChangeList.
+    The 'parameter_name' is shortened to 'location' rather than the default
+    'location__id__exact' and only those locations are displayed that actually
+    have any containers in them.
+    Entries are selected by pk (ID).
+    """
+    title = 'Location'
+    parameter_name = 'location'
+    
+    def lookups(self, request, model_admin):
+        ## filter for only those locations that contain containers
+        locations = M.Location.objects.exclude(racks__isnull=True)
+        return ( (o.pk, o.__unicode__()) for o in locations )
+    
+    def queryset(self, request, queryset):
+        q = queryset
+        if not self.value():
+            return q
+        return q.filter(location__id=self.value())
+    
 
 class ContainerLocationFilter( admin.SimpleListFilter ):
     """

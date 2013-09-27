@@ -50,14 +50,47 @@ class Location(UserMixin):
     def get_absolute_url(self):
         return reverse('admin:rotmic_location_readonly', args=(self.id,))
     
+    def rackCount(self):
+        return self.racks.count()
+    
+    def showRackCount(self):
+        """Show number of Racks linked to pre-filtered Rack table"""
+        url = reverse('admin:rotmic_rack_changelist')
+        url += '?location=%s' % (self.id)
+        r = '<a href="%s" title="jump to racks">%s</a>' % (url, self.rackCount())
+        return html.mark_safe(r)
+    showRackCount.allow_tags = True
+    showRackCount.short_description = 'Racks'
+        
+
     def containerCount(self):
         r = Container.objects.filter(rack__location=self).count()
         return r
+    
+    def showContainerCount(self):
+        """Show number of containers linked to pre-filtered Container table"""
+        url = reverse('admin:rotmic_container_changelist')
+        url += '?location=%s' % (self.id)
+        r = '<a href="%s" title="jump to containers">%s</a>' % (url, self.containerCount())
+        return html.mark_safe(r)
+    showContainerCount.allow_tags = True
+    showContainerCount.short_description = 'Boxes'
+       
     
     def sampleCount(self):
         from rotmic.models import Sample
         r = Sample.objects.filter(container__rack__location=self).count()
         return r
+
+    def showSampleCount(self):
+        """Show number of samples linked to pre-filtered Sample table"""
+        url = reverse('admin:rotmic_sample_changelist')
+        url += '?location=%s' % (self.displayId)
+        r = '<a href="%s" title="jump to samples">%s</a>' % (url, self.sampleCount())
+        return html.mark_safe(r)
+    showSampleCount.allow_tags = True
+    showSampleCount.short_description = 'Samples'
+
 
     def showVerbose(self):
         url = self.get_absolute_url()
@@ -102,6 +135,28 @@ class Rack(UserMixin):
         from rotmic.models import Sample
         r = Sample.objects.filter(container__rack=self).count()
         return r
+    
+    def showSampleCount(self):
+        """Show number of samples linked to pre-filtered Sample table"""
+        url = reverse('admin:rotmic_sample_changelist')
+        url += '?location=%s&rack=%s' % (self.location.displayId, self.displayId)
+        r = '<a href="%s" title="jump to samples">%s</a>' % (url, self.sampleCount())
+        return html.mark_safe(r)
+    showSampleCount.allow_tags = True
+    showSampleCount.short_description = 'Samples'
+    
+    def containerCount(self):
+        return self.containers.count()
+    
+    def showContainerCount(self):
+        """Show number of containers linked to pre-filtered Container table"""
+        url = reverse('admin:rotmic_container_changelist')
+        url += '?location=%s&rack=%s' % (self.location.id, self.id)
+        r = '<a href="%s" title="jump to containers">%s</a>' % (url, self.containerCount())
+        return html.mark_safe(r)
+    showContainerCount.allow_tags = True
+    showContainerCount.short_description = 'Boxes'
+
 
     def showVerbose(self):
         r = u''
@@ -161,8 +216,8 @@ class Container( UserMixin ):
     def get_absolute_url(self):
         return reverse('admin:rotmic_container_readonly', args=(self.id,))
 
-
     def showVerbose(self):
+        """show full chain Location / Rack / Container with URL links"""
         r = u''
         if self.rack:
             r += self.rack.showVerbose() + ' / '
@@ -173,10 +228,19 @@ class Container( UserMixin ):
 
         url = self.get_absolute_url()
         r += '<a href="%s" title="%s">%s</a>' % (url, title, self.displayId) 
-        return html.mark_safe(r)
-    
+        return html.mark_safe(r) 
     showVerbose.allow_tags = True
     showVerbose.short_description = 'Container'
+
+    def showSampleCount(self):
+        """Show number of samples linked to pre-filtered Sample table"""
+        url = reverse('admin:rotmic_sample_changelist')
+        url += '?location=%s&rack=%s&container=%s' % \
+            (self.rack.location.displayId, self.rack.displayId, self.displayId)
+        r = '<a href="%s" title="jump to samples">%s</a>' % (url, self.samples.count())
+        return html.mark_safe(r)
+    showSampleCount.allow_tags = True
+    showSampleCount.short_description = 'Samples'
 
     class Meta:
         app_label = 'rotmic'   
