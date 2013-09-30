@@ -26,6 +26,7 @@ from rotmic.models import DnaComponent, DnaComponentType, \
      Location, Rack, Container, Unit
 
 import rotmic.initialTypes as T
+import rotmic.initialUnits as U
 import rotmic.utils.sequtils as sequtils
 from rotmic.utils.filefields import DocumentFormField
 
@@ -117,6 +118,7 @@ class SampleDnaLookup(ModelLookup):
         return item.pk
 
 registry.register(SampleDnaLookup)
+
 
 class SampleContainerLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
@@ -308,9 +310,9 @@ def getSampleWidgets( extra={} ):
         'displayId' : forms.TextInput(attrs={'size':5}),
         
         'concentration' : forms.TextInput(attrs={'size':5}),
-        'concentrationUnit':sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
-                                allow_new=False,
-                                attrs={'size':5}),        
+##        'concentrationUnit':sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
+##                                allow_new=False,
+##                                attrs={'size':5}),        
 
         'amount' : forms.TextInput(attrs={'size':5}),
         'amountUnit':sforms.AutoComboboxSelectWidget(lookup_class=AmountUnitLookup,
@@ -326,6 +328,15 @@ def getSampleWidgets( extra={} ):
 class SampleForm(forms.ModelForm):
     """Customized Form for Sample add / change"""
     
+    ## defining a form field seems to be the only way for providing an intial value
+    concentrationUnit = forms.ModelChoiceField(label='... unit',
+                                               queryset=Unit.objects.filter(unitType=['concentration']),
+                                               required=False,
+                                               widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
+                                                                                      allow_new=False,
+                                                                                      attrs={'size':5}),        
+                                               initial=U.uM.id)
+
     class Meta:
         model = Sample
         widgets = getSampleWidgets()
@@ -335,6 +346,23 @@ class SampleForm(forms.ModelForm):
 class DnaSampleForm( SampleForm ):
     """Customized Form for DnaSample add / change"""
     
+    ## modify initial (default) value
+    concentrationUnit = forms.ModelChoiceField(label='... unit',
+                                               queryset=Unit.objects.filter(unitType=['concentration']),
+                                               required=False,
+                                               widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
+                                                                                      allow_new=False,
+                                                                                      attrs={'size':5}),        
+                                               initial=U.ngul.id)
+    
+    ## modify initial (default) value
+    amountUnit = forms.ModelChoiceField(label='... unit',
+                                               queryset=Unit.objects.filter(unitType=['volume']),
+                                               required=False,
+                                               widget=sforms.AutoComboboxSelectWidget(lookup_class=AmountUnitLookup,
+                                                                                      allow_new=False,
+                                                                                      attrs={'size':5}),        
+                                               initial=U.ul.id)
     class Meta:
         model = DnaSample
         widgets = getSampleWidgets( \
