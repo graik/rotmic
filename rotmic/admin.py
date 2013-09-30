@@ -438,7 +438,7 @@ class DnaSampleAdmin( SampleAdmin ):
     
     fieldsets = [
         (None, {
-            'fields' : ((('container', 'displayId', 'status'),
+            'fields' : ((('displayId', 'container', 'status'),
                          ('preparedAt',),
                          ('comment'),
                     ))
