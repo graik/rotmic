@@ -130,6 +130,17 @@ class SampleContainerLookup(ModelLookup):
 registry.register(SampleContainerLookup)
 
 
+class ContainerRackLookup(ModelLookup):
+    """for selectable auto-completion field in Container form"""
+    model = Rack
+    search_fields = ('displayId__startswith', 'name__icontains')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register( ContainerRackLookup )
+
+
 class DnaComponentForm(forms.ModelForm):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
@@ -381,6 +392,8 @@ class ContainerForm(forms.ModelForm):
         model = Container
         widgets = { ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
+            'rack' : sforms.AutoComboboxSelectWidget(
+                lookup_class=ContainerRackLookup, allow_new=False),
             'name' : forms.TextInput(attrs={'size':20}),
             }
     

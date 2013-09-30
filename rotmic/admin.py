@@ -493,7 +493,7 @@ class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
 
     fieldsets = [
         (None, {
-            'fields' : ((('location', 'displayId', 'name'),
+            'fields' : ((('displayId', 'location', 'name'),
                         )),
             'description' : 'Describe a freezer rack, single shelve or similar holder of containers.'
             }
@@ -528,7 +528,7 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin
 
     fieldsets = [
         (None, {
-            'fields' : ((('rack', 'displayId', 'name'),
+            'fields' : ((('displayId', 'rack', 'name'),
                          ('containerType',),
                          ('comment',),
                         )),
