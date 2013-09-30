@@ -288,7 +288,7 @@ class ConcentrationUnitLookup(UnitLookup):
     def get_query(self, request, term):
         r = super(ConcentrationUnitLookup, self).get_query(request, term)
         return r.filter(unitType='concentration')
-
+    
 registry.register(ConcentrationUnitLookup)
 
 class AmountUnitLookup(UnitLookup):
@@ -315,9 +315,9 @@ def getSampleWidgets( extra={} ):
 ##                                attrs={'size':5}),        
 
         'amount' : forms.TextInput(attrs={'size':5}),
-        'amountUnit':sforms.AutoComboboxSelectWidget(lookup_class=AmountUnitLookup,
-                                allow_new=False,
-                                attrs={'size':5}),        
+##        'amountUnit':sforms.AutoComboboxSelectWidget(lookup_class=AmountUnitLookup,
+##                                allow_new=False,
+##                                attrs={'size':5}),        
 
         'aliquotNr' : forms.TextInput(attrs={'size':2}),
         'comment': forms.Textarea(attrs={'cols': 100, 'rows': 5,
@@ -329,13 +329,51 @@ class SampleForm(forms.ModelForm):
     """Customized Form for Sample add / change"""
     
     ## defining a form field seems to be the only way for providing an intial value
-    concentrationUnit = forms.ModelChoiceField(label='... unit',
-                                               queryset=Unit.objects.filter(unitType=['concentration']),
-                                               required=False,
-                                               widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
-                                                                                      allow_new=False,
-                                                                                      attrs={'size':5}),        
-                                               initial=U.uM.id)
+    concentrationUnit = sforms.AutoCompleteSelectField(
+        label='... unit',
+        required=False,
+        lookup_class=ConcentrationUnitLookup,
+        allow_new=False,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
+                                               allow_new=False,attrs={'size':5}),
+        initial=U.uM)
+
+    ## defining a form field seems to be the only way for providing an intial value
+    amountUnit = sforms.AutoCompleteSelectField(
+        label='... unit',
+        required=False,
+        lookup_class=AmountUnitLookup,
+        allow_new=False,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=AmountUnitLookup,
+                                               allow_new=False,attrs={'size':5}),
+        initial=U.ul)
+
+##    def clean(self):
+##        """
+##        Verify that units are given if concentration and/or amount is given.
+##        """
+##        data = super(SampleForm, self).clean()
+##        conc = data.get('concentration', None)
+##        concUnit = data.get('concentrationUnit', None)
+##        amount = data.get('amount', None)
+##        amountUnit = data.get('amountUnit', None)
+##    
+##        ## reset units to None if no concentration and / or amount is given
+##        if not conc and concUnit:
+##            del data['concentrationUnit']
+##        if not amount and amountUnit:
+##            del data['amountUnit']
+##        
+##        ## validate that units are given if conc. and / or amount is given
+##        if conc and not concUnit:
+##            msg = u'please specify concentration unit'
+##            self._errors['concentrationUnit'] = self.error_class([msg])
+##    
+##        if amount and not amountUnit:
+##            msg = u'please specify amount unit'
+##            self._errors['amountUnit'] = self.error_class([msg])
+##        
+##        return data
 
     class Meta:
         model = Sample
@@ -347,22 +385,15 @@ class DnaSampleForm( SampleForm ):
     """Customized Form for DnaSample add / change"""
     
     ## modify initial (default) value
-    concentrationUnit = forms.ModelChoiceField(label='... unit',
-                                               queryset=Unit.objects.filter(unitType=['concentration']),
-                                               required=False,
-                                               widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
-                                                                                      allow_new=False,
-                                                                                      attrs={'size':5}),        
-                                               initial=U.ngul.id)
+    concentrationUnit = sforms.AutoCompleteSelectField(
+        label='... unit',
+        required=False,
+        lookup_class=ConcentrationUnitLookup,
+        allow_new=False,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
+                                               allow_new=False,attrs={'size':5}),
+        initial=U.ngul)
     
-    ## modify initial (default) value
-    amountUnit = forms.ModelChoiceField(label='... unit',
-                                               queryset=Unit.objects.filter(unitType=['volume']),
-                                               required=False,
-                                               widget=sforms.AutoComboboxSelectWidget(lookup_class=AmountUnitLookup,
-                                                                                      allow_new=False,
-                                                                                      attrs={'size':5}),        
-                                               initial=U.ul.id)
     class Meta:
         model = DnaSample
         widgets = getSampleWidgets( \
