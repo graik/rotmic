@@ -10,3 +10,5 @@ from rotmic.models.units import Unit
 from rotmic.models.samples import Sample, DnaSample
 
 from rotmic.models.storage import Location, Rack, Container
+
+from rotmic.models.userprofile import UserProfile

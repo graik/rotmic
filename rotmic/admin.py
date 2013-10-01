@@ -14,14 +14,14 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
+
 from django.contrib import admin
 import django.contrib.admin.widgets as widgets
 import django.utils.html as html
 from django.utils.safestring import mark_safe
 
 import reversion
-
-import datetime
 
 from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
      CellComponent, CellComponentType, Unit, Sample, SampleAttachment, \
@@ -37,6 +37,7 @@ from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm,\
 import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
 
+import adminUser  ## trigger extension of User 
 
 class BaseAdminMixin:
     """
