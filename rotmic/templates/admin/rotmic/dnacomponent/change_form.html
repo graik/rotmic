@@ -206,14 +206,79 @@
         function resetStorageBetweenForms() {
             {% if original %} var objectId = {{original.pk}}; {% else %} var objectId = -1; {% endif %}
             if (sessionStorage.getItem( 'DnaComponent_lastvisited' )){
-                if (sessionStorage.getItem( 'DnaComponent_lastvisited' ) != objectId){
-                    if (objectId != -1){
-                        sessionStorage.clear();
+                //if (sessionStorage.getItem( 'DnaComponent_lastvisited' ) != objectId){
+                //    if (objectId != -1){
+                sessionStorage.clear();
                         // Note: insert more specific code here to only delete entry for each category name
-                    }
-                }
+                //    }
+                //}
             }
             sessionStorage.setItem( 'DnaComponent_lastvisited', objectId );
+        }
+        
+        // extract "name" from "displayId (name)"
+        function _extractName( s ) {
+            var r = '';
+            if (s){
+                r = s.match( /\(.+\)/ );
+                if (r){
+                    r = r[0].slice(1,-1); // remove "(" and ")"
+                } else {
+                    r = s.split(' ')[0]; // use displayId and strip after first ' '
+                }
+            }
+            return r;
+        }
+        
+        // clear name field or restore previously edited manual content
+        function clearAutoName() {
+            if (sessionStorage.getItem('DnaComponent_manualName') ){
+                oldname = sessionStorage.getItem('DnaComponent_manualName');
+                document.getElementById('id_name').value = oldname;
+            } else {
+                document.getElementById('id_name').value = '';
+            }
+        }
+        
+        // compose new Name from plasmid and cell name
+        function suggestName() {
+            var vector = document.getElementById('id_vectorBackbone_0').value
+            if (document.getElementById('id_field_insert').style.visibility == 'hidden'){
+                vector = '';
+            }
+            
+            var insert = document.getElementById('id_insert_0').value;
+            if (document.getElementById('id_field_insert').style.visibility == 'hidden'){ 
+                insert = ''; 
+            }
+            
+            var r = _extractName(insert) + '_' + _extractName(vector);
+            if (insert || vector){
+                document.getElementById('id_name').value = r;
+            } else {
+                document.getElementById('id_name').value = '';
+            }
+        }
+    
+        // method called if componentCategory select element is changed
+        function categoryAction(){
+            hideShow();
+            if ( getCurrentCategory() == 'Plasmid' ){
+                suggestName();
+            } else {
+                clearAutoName();
+            }
+        }
+
+        // method called if componentType (Species) select element is changed
+        function typeAction() {
+            cacheTypeSelection();
+        }
+        
+        // cache manually edited name
+        function nameAction() {
+            current = document.getElementById('id_name').value;
+            sessionStorage.setItem( 'DnaComponent_manualName', current );
         }
     
         // "Main" function
@@ -225,9 +290,17 @@
             
             preselectCategory();
             
-            document.getElementById( 'id_componentCategory' ).onchange = hideShow;
-            document.getElementById( 'id_componentType' ).onchange = cacheTypeSelection;
+            document.getElementById( 'id_componentCategory' ).onchange = categoryAction;
+            document.getElementById( 'id_componentType' ).onchange = typeAction;
             hideShow();
+        
+            // see https://django-selectable.readthedocs.org/en/version-0.7.0/advanced.html
+            // for all available events
+            document.getElementById( 'id_insert_0' ).djselectableselect = suggestName;
+            document.getElementById( 'id_vectorBackbone_0' ).djselectableselect = suggestName;
+            
+            document.getElementById('id_name').onchange = nameAction;            
+
         };
         
     </script>
