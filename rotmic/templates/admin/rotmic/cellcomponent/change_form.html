@@ -225,18 +225,58 @@
             }
             sessionStorage.setItem( 'CellComponent_lastvisited', objectId );
         }
+        
+        // compose new Name from plasmid and cell name
+        function suggestName() {
+            if (document.getElementById('id_field_plasmid').style.visibility == 'visible'){
+                var f_cell = document.getElementById('id_componentType')
+                var cell = f_cell.options[f_cell.selectedIndex].label;
+    
+                var plasmid = document.getElementById('id_plasmid_0').value;
+                var pname = '';
+                // extract "name" from "displayId (name)"
+                if (plasmid){
+                    pname = plasmid.match( /\(.+\)/ );
+                    if (pname){
+                        pname = pname[0].slice(1,-1); // remove "(" and ")"
+                    } else {
+                        pname = plasmid.split(' ')[0]; // use displayId and strip after first ' '
+                    }
+                }
+                
+                var r = pname + '@' + cell;
+                document.getElementById( 'id_name').value = r;
+            }
+        }
+    
+        // method called if componentCategory select element is changed
+        function categoryAction(){
+            updateSubtypes();
+            suggestName();
+        }
+
+        // method called if componentType (Species) select element is changed
+        function typeAction() {
+            hideShow();
+            suggestName();
+        }
     
         // "Main" function
         window.onload = function() {
-            
+        
             resetStorageBetweenForms();
             initIdDiv();
             setPlusLinks();
             
             preselectCategory();
             
-            document.getElementById( 'id_componentCategory' ).onchange = updateSubtypes;
-            document.getElementById( 'id_componentType' ).onchange = hideShow;
+            document.getElementById( 'id_componentCategory' ).onchange = categoryAction;
+            document.getElementById( 'id_componentType' ).onchange = typeAction;
+
+            // see https://django-selectable.readthedocs.org/en/version-0.7.0/advanced.html
+            // for all available events
+            document.getElementById( 'id_plasmid_0' ).djselectableselect = suggestName;
+
             updateSubtypes();        
             hideShow();
         };
