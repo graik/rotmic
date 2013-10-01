@@ -300,6 +300,14 @@ class AmountUnitLookup(UnitLookup):
 
 registry.register(AmountUnitLookup)
 
+class VolumeAmountUnitLookup(UnitLookup):
+    """Limit choices to Volume units"""
+    def get_query(self, request, term):
+        r = super(VolumeAmountUnitLookup, self).get_query(request, term)
+        r = r.filter(unitType='volume')
+        return r
+
+registry.register(VolumeAmountUnitLookup)
 
 def getSampleWidgets( extra={} ):
     """widgets shared between different types of Sample forms."""
@@ -348,32 +356,32 @@ class SampleForm(forms.ModelForm):
                                                allow_new=False,attrs={'size':5}),
         initial=U.ul)
 
-##    def clean(self):
-##        """
-##        Verify that units are given if concentration and/or amount is given.
-##        """
-##        data = super(SampleForm, self).clean()
-##        conc = data.get('concentration', None)
-##        concUnit = data.get('concentrationUnit', None)
-##        amount = data.get('amount', None)
-##        amountUnit = data.get('amountUnit', None)
-##    
-##        ## reset units to None if no concentration and / or amount is given
-##        if not conc and concUnit:
-##            del data['concentrationUnit']
-##        if not amount and amountUnit:
-##            del data['amountUnit']
-##        
-##        ## validate that units are given if conc. and / or amount is given
-##        if conc and not concUnit:
-##            msg = u'please specify concentration unit'
-##            self._errors['concentrationUnit'] = self.error_class([msg])
-##    
-##        if amount and not amountUnit:
-##            msg = u'please specify amount unit'
-##            self._errors['amountUnit'] = self.error_class([msg])
-##        
-##        return data
+    def clean(self):
+        """
+        Verify that units are given if concentration and/or amount is given.
+        """
+        data = super(SampleForm, self).clean()
+        conc = data.get('concentration', None)
+        concUnit = data.get('concentrationUnit', None)
+        amount = data.get('amount', None)
+        amountUnit = data.get('amountUnit', None)
+    
+        ## reset units to None if no concentration and / or amount is given
+        if not conc and concUnit:
+            del data['concentrationUnit']
+        if not amount and amountUnit:
+            del data['amountUnit']
+        
+        ## validate that units are given if conc. and / or amount is given
+        if conc and not concUnit:
+            msg = u'please specify concentration unit'
+            self._errors['concentrationUnit'] = self.error_class([msg])
+    
+        if amount and not amountUnit:
+            msg = u'please specify amount unit'
+            self._errors['amountUnit'] = self.error_class([msg])
+        
+        return data
 
     class Meta:
         model = Sample
@@ -394,6 +402,16 @@ class DnaSampleForm( SampleForm ):
                                                allow_new=False,attrs={'size':5}),
         initial=U.ngul)
     
+    ## restrict available choices to volume units only
+    amountUnit = sforms.AutoCompleteSelectField(
+        label='... unit',
+        required=False,
+        lookup_class=VolumeAmountUnitLookup,
+        allow_new=False,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=VolumeAmountUnitLookup,
+                                               allow_new=False,attrs={'size':5}),
+        initial=U.ul)
+
     class Meta:
         model = DnaSample
         widgets = getSampleWidgets( \
