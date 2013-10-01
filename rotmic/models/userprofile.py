@@ -31,10 +31,12 @@ class UserProfile(models.Model):
     
     user = models.OneToOneField(User)
     
-    dcPrefix = models.CharField('DNA Prefix', max_length=5, 
+    dcPrefix = models.CharField('DNA Prefix', max_length=5,
+                                default='mt',
                                 help_text='default ID prefix for DNA constructs')
     
-    ccPrefix = models.CharField('Cell Prefix', max_length=5, 
+    ccPrefix = models.CharField('Cell Prefix', max_length=5,
+                                default='mt',
                                 help_text='default ID prefix for Cells')
     
     class Meta:
@@ -44,8 +46,7 @@ class UserProfile(models.Model):
 def create_profile(sender, **kw):
     user = kw["instance"]
     if kw["created"]:
-        profile = users.models.UserProfile()
-        profile.setUser(sender)
+        profile = UserProfile(user=user)
         profile.save()
 
 post_save.connect(create_profile, sender=User)
