@@ -37,7 +37,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     readonly_fields = ('user',)
 
     fieldsets = (
-        (None, {'fields':('user', 'dcPrefix', 'ccPrefix'),
+        (None, {'fields':('user', 'prefix', ('dcPrefix', 'ccPrefix')),
                 'description':'Adjust user-specific settings',
                 }
          ),
@@ -45,7 +45,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     
     ordering = ('user',)
     
-    list_display = ('user', 'dcPrefix', 'ccPrefix')
+    list_display = ('user', 'prefix', 'dcPrefix', 'ccPrefix')
     search_fields = ('user__username', 'user__first_name', 'user__last_name')
     
     actions = None ## disable delete action
