@@ -151,7 +151,7 @@ class DnaComponentForm(forms.ModelForm):
                             queryset=DnaComponentType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,
-                            initial=DnaComponentType.objects.get(name='Plasmid').id)
+                            initial=T.dcPlasmid)
     
     ## genbankFile upload into textfield 'genbank' is handled by ModelAdmin.save_model
     genbankFile = DocumentFormField(label='GenBank file', required=False,
@@ -227,7 +227,7 @@ class CellComponentForm(forms.ModelForm):
                             queryset=CellComponentType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,
-                            initial=CellComponentType.objects.get(name='E. coli').id)
+                            initial=T.ccEcoli)
     
 
     def __init__(self, *args, **kwargs):

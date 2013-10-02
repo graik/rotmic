@@ -22,7 +22,6 @@ from django.db.models import Q
 import django.utils.html as html
 
 from rotmic.models.components import UserMixin
-import rotmic.initialTypes as T
 from rotmic.models.storage import Container
 import rotmic.utils.inheritance as I
 

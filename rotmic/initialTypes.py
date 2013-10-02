@@ -2,7 +2,7 @@
 Pre-populate database with componentType instances that are needed for templates
 and pre-defined actions.
 """
-from rotmic.models import DnaComponentType
+from rotmic.models import DnaComponentType, CellComponentType
 import logging
 
 def getcreate(typeClass=DnaComponentType, name='', uri=None, subTypeOf=None,
@@ -12,8 +12,8 @@ def getcreate(typeClass=DnaComponentType, name='', uri=None, subTypeOf=None,
     """
     try:
         r = typeClass.objects.get(name=name, subTypeOf=subTypeOf)
-    except DnaComponentType.DoesNotExist:
-        r = DnaComponentType( name=name, uri=uri, subTypeOf=subTypeOf,
+    except typeClass.DoesNotExist:
+        r = typeClass( name=name, uri=uri, subTypeOf=subTypeOf,
                               **kwargs)
         r.save()
         logging.warning('Created missing type: %s %s.' \
@@ -74,3 +74,32 @@ dcMarkerMammalian = getcreate(DnaComponentType, subTypeOf=dcMarker,
 
 dcMarkerYeastAuxo = getcreate(DnaComponentType, subTypeOf=dcMarker,
                               name='yeast auxotrophic')
+
+
+## Basic CellComponentTypes
+
+ccEcoli = getcreate(CellComponentType, name='E. coli', 
+                    description='Escherichia coli (all strains)')
+
+ccYeast = getcreate(CellComponentType, name='S. cerevisiae',
+                    description='S. cerevisiae (all strains)')
+
+ccHuman = getcreate(CellComponentType, name='H. sapiens',
+                    description='human cell culture')
+
+
+## common cell types
+ccTop10 = getcreate(CellComponentType, name='Top10',
+                    description='standard E. coli cloning strain')
+
+ccMach1 = getcreate(CellComponentType, name='Mach1',
+                    description='fast growing E. coli for cloning purposes')
+
+ccBL21 = getcreate(CellComponentType, name='BL21',
+                   description='E. coli protein expression strain')
+
+ccHeLa = getcreate(CellComponentType, name='HeLa',
+                   description='most classic human cancer cell culture')
+
+ccHek = getcreate(CellComponentType, name='HEK293',
+                  description='Human embryonic kidney cells')

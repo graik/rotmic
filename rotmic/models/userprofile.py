@@ -17,7 +17,6 @@
 
 from django.contrib.auth.models import User
 import django.db.models as models
-from django.db.models.signals import post_save
 
 def userInitials(request):
     user = request.user
@@ -29,7 +28,7 @@ def userInitials(request):
 class UserProfile(models.Model):
     """User profile to attach extra user settings to the built-in User model"""
     
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, related_name='profile')
     
     dcPrefix = models.CharField('DNA Prefix', max_length=5,
                                 default='mt',
@@ -43,13 +42,13 @@ class UserProfile(models.Model):
         app_label = 'rotmic'
         
 
-def create_profile(sender, **kw):
-    user = kw["instance"]
-    if kw["created"]:
-        profile = UserProfile(user=user)
-        profile.save()
+##def create_profile(sender, **kw):
+##    user = kw["instance"]
+##    if kw["created"]:
+##        profile = UserProfile(user=user)
+##        profile.save()
 
-post_save.connect(create_profile, sender=User)
+##post_save.connect(create_profile, sender=User)
 
 ## see http://stackoverflow.com/questions/9046533/creating-user-profile-pages-in-django?lq=1
 ## for an example of generic views-based User settings forms
