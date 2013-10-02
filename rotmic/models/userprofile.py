@@ -35,12 +35,10 @@ class UserProfile(models.Model):
                               help_text='default ID prefix')
     
     dcPrefix = models.CharField('DNA Prefix', max_length=5,
-                                default='mt',
                                 help_text='default ID prefix for DNA constructs',
                                 blank=True)
     
     ccPrefix = models.CharField('Cell Prefix', max_length=5,
-                                default='mt',
                                 help_text='default ID prefix for Cells',
                                 blank=True)
     
