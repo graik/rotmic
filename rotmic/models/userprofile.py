@@ -30,13 +30,19 @@ class UserProfile(models.Model):
     
     user = models.OneToOneField(User, related_name='profile')
     
+    prefix = models.CharField('default Prefix', max_length=5,
+                              default='mt',
+                              help_text='default ID prefix')
+    
     dcPrefix = models.CharField('DNA Prefix', max_length=5,
                                 default='mt',
-                                help_text='default ID prefix for DNA constructs')
+                                help_text='default ID prefix for DNA constructs',
+                                blank=True)
     
     ccPrefix = models.CharField('Cell Prefix', max_length=5,
                                 default='mt',
-                                help_text='default ID prefix for Cells')
+                                help_text='default ID prefix for Cells',
+                                blank=True)
     
     def __unicode__(self):
         return unicode(self.user)
@@ -44,15 +50,3 @@ class UserProfile(models.Model):
     class Meta:
         app_label = 'rotmic'
         ordering = ('user',)
-        
-
-##def create_profile(sender, **kw):
-##    user = kw["instance"]
-##    if kw["created"]:
-##        profile = UserProfile(user=user)
-##        profile.save()
-
-##post_save.connect(create_profile, sender=User)
-
-## see http://stackoverflow.com/questions/9046533/creating-user-profile-pages-in-django?lq=1
-## for an example of generic views-based User settings forms
