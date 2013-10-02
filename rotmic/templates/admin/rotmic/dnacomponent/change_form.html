@@ -260,6 +260,25 @@
             }
         }
     
+        function suggestId() {
+            var category = getCurrentCategory();
+            var id_field = document.getElementById('id_displayId');
+            var index = 'DnaComponent_manualId_'+category
+
+            if (sessionStorage.getItem( index )){
+                id_field.value = sessionStorage.getItem( index );
+            } else {
+                $.ajax({
+                    async: false,
+                    type: 'GET',
+                    url: "/rotmic/ajax/nextDnaId/"+category+"/",
+                    success: function(data){                    
+                        id_field.value = data['id'];
+                    }
+                });
+            }
+        }
+    
         // method called if componentCategory select element is changed
         function categoryAction(){
             hideShow();
@@ -268,6 +287,7 @@
             } else {
                 clearAutoName();
             }
+            suggestId();
         }
 
         // method called if componentType (Species) select element is changed
@@ -277,8 +297,16 @@
         
         // cache manually edited name
         function nameAction() {
-            current = document.getElementById('id_name').value;
+            var current = document.getElementById('id_name').value;
             sessionStorage.setItem( 'DnaComponent_manualName', current );
+        }
+        
+        // cache manually edited IDs
+        function displayIdAction() {
+            var current = document.getElementById('id_displayId').value;
+            var category = getCurrentCategory();
+            var index = 'DnaComponent_manualId_'+category
+            sessionStorage.setItem( index, current );
         }
     
         // "Main" function
@@ -290,6 +318,8 @@
             
             preselectCategory();
             
+            {% if not original %}suggestId();{% else %}displayIdAction();{% endif %}
+            
             document.getElementById( 'id_componentCategory' ).onchange = categoryAction;
             document.getElementById( 'id_componentType' ).onchange = typeAction;
             hideShow();
@@ -299,8 +329,8 @@
             document.getElementById( 'id_insert_0' ).djselectableselect = suggestName;
             document.getElementById( 'id_vectorBackbone_0' ).djselectableselect = suggestName;
             
-            document.getElementById('id_name').onchange = nameAction;            
-
+            document.getElementById('id_name').onchange = nameAction;
+            document.getElementById('id_displayId').onchange = displayIdAction;
         };
         
     </script>

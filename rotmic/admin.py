@@ -36,6 +36,8 @@ from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm,\
 
 import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
+import rotmic.utils.ids as I
+
 
 import adminUser  ## trigger extension of User 
 
@@ -125,6 +127,15 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelA
         
         field = form.base_fields['vectorBackbone']
         field.empty_label = '---specifiy vector---'
+        
+        ## suggest ID
+        category = form.base_fields['componentCategory'].initial
+        category = category.name[0].lower()
+        prefix = request.user.profile.dcPrefix or request.user.profile.prefix
+        prefix += category
+        
+        field = form.base_fields['displayId']
+        field.initial = I.suggestDnaId(request.user.id, prefix=prefix)
             
         return form
 
