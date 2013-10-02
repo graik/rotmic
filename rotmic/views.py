@@ -20,3 +20,4 @@ def view_genbankfile(request, pk):
     response['Content-Disposition'] = 'attachment; filename="%s.gbk"' % o.displayId
     
     return response
+    

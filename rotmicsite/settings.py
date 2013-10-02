@@ -135,6 +135,8 @@ AUTHENTICATION_BACKENDS = (
 )
 ANONYMOUS_USER_ID = -1
 
+AUTH_PROFILE_MODULE = "rotmic.UserProfile"
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',

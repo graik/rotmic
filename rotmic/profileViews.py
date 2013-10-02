@@ -48,7 +48,7 @@ class ProfileUpdateView(ProfileObjectMixin, UpdateView):
     """
     A view that displays a form for editing a user's profile.
 
-    Uses a form dynamically created for the `Profile` model and
+    Uses a form dynamically created for the `UserProfile` model and
     the default model's update template.
     """
     pass  # That's All Folks!

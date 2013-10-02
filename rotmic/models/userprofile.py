@@ -38,8 +38,12 @@ class UserProfile(models.Model):
                                 default='mt',
                                 help_text='default ID prefix for Cells')
     
+    def __unicode__(self):
+        return unicode(self.user)
+    
     class Meta:
         app_label = 'rotmic'
+        ordering = ('user',)
         
 
 ##def create_profile(sender, **kw):

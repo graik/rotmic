@@ -72,8 +72,20 @@
 
         </table>
     </div>
-    <br><br>
+    <br>
     
+    <div class="module">
+        <table summary="User Settings">
+        <caption><a href="/rotmic" class="section">User settings</a></caption>
+           <tr>
+                <th scope="row"><a href="{% url 'admin:rotmic_userprofile_change' request.user.profile.id%}">My personal settings</a></th>
+                <td></td>
+            </tr>
+
+        </table>
+    </div>
+    <br><br>
+
     {% if request.user.is_superuser %}
     
         <h3>Restricted tables (superuser only)</h3>
@@ -98,6 +110,17 @@
     
             </table>
         </div>
+        
+        <div class="module">
+            <table summary="User & Team Settings">
+            <caption><a href="" class="section">Settings</a></caption>
+               <tr>
+                    <th scope="row"><a href="{% url 'admin:rotmic_userprofile_changelist' %}">User settings</a></th>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+
     {% endif %}
 
 {% if app_list %}
@@ -135,8 +158,6 @@
             </div>
         {% endif %}
     {% endfor %}
-{% else %}
-    <p>{% trans "You don't have permission to edit anything." %}</p>
 {% endif %}
 
 </div>

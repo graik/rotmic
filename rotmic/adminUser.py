@@ -30,3 +30,29 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
+
+class UserProfileAdmin(admin.ModelAdmin):
+    model = UserProfile
+    
+    readonly_fields = ('user',)
+
+    fieldsets = (
+        (None, {'fields':('user', 'dcPrefix', 'ccPrefix'),
+                'description':'Adjust user-specific settings',
+                }
+         ),
+        )
+    
+    ordering = ('user',)
+    
+    list_display = ('user', 'dcPrefix', 'ccPrefix')
+    search_fields = ('user__username', 'user__first_name', 'user__last_name')
+    
+    actions = None ## disable delete action
+    
+    def has_delete_permission(self, request, obj=None):
+        """Disable deletion of profile (only deleted with user)"""
+        return False    
+    
+    
+admin.site.register(UserProfile, UserProfileAdmin)
