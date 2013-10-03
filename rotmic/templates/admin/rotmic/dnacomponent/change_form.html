@@ -167,14 +167,12 @@
         // cache last position in componentType listbox for each category selection
         // Memorize the last selected componentType so that it can be re-instantiated
         // after the listbox is wiped
-        // see: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Storage?redirectlocale=en-US&redirectslug=DOM%2FStorage
         function cacheTypeSelection() {
-            var category = getCurrentCategory();
-            sessionStorage.setItem( category, document.getElementById( 'id_componentType' ).selectedIndex);
+            setCategoryCache('lastType', document.getElementById( 'id_componentType' ).selectedIndex );
         }
         
         function lastTypeSelection(category) {
-            var r = sessionStorage.getItem( category );
+            var r = getCategoryCache('lastType');
             if (! r){ return 0; }
             return r; 
         }
@@ -286,6 +284,7 @@
         }
         
         // put value into form-specific session storage
+        // see: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Storage?redirectlocale=en-US&redirectslug=DOM%2FStorage
         function setCache(key, value){
             sessionStorage.setItem( cacheKey(key), value );
         }
