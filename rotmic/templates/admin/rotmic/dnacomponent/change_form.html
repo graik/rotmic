@@ -57,7 +57,6 @@
                     if (divs[i].className=='field-box field-vectorBackbone') {
                         divs[i].id = 'id_field_vectorBackbone';
                     }
-                    
                 }    
             } catch (e) {
                 log(e.message);
@@ -67,8 +66,7 @@
         // get (name of) currently selected Category
         function getCurrentCategory(){
             var categoryElement = document.getElementById('id_componentCategory');
-            var category = categoryElement.options[categoryElement.selectedIndex].label
-            return category
+            return categoryElement.options[categoryElement.selectedIndex].label
         }
         
         // returns 1 if all items are sucessfully removed
@@ -205,15 +203,10 @@
     
         function resetStorageBetweenForms() {
             {% if original %} var objectId = {{original.pk}}; {% else %} var objectId = -1; {% endif %}
-            if (sessionStorage.getItem( 'DnaComponent_lastvisited' )){
-                //if (sessionStorage.getItem( 'DnaComponent_lastvisited' ) != objectId){
-                //    if (objectId != -1){
+            if ( getCache('lastvisited') ){
                 sessionStorage.clear();
-                        // Note: insert more specific code here to only delete entry for each category name
-                //    }
-                //}
             }
-            sessionStorage.setItem( 'DnaComponent_lastvisited', objectId );
+            setCache('lastvisited', objectId );
         }
         
         // extract "name" from "displayId (name)"
@@ -230,43 +223,46 @@
             return r;
         }
         
-        // clear name field or restore previously edited manual content
-        function clearAutoName() {
-            if (sessionStorage.getItem('DnaComponent_manualName') ){
-                oldname = sessionStorage.getItem('DnaComponent_manualName');
-                document.getElementById('id_name').value = oldname;
-            } else {
-                document.getElementById('id_name').value = '';
-            }
-        }
-        
         // compose new Name from plasmid and cell name
         function suggestName() {
-            var vector = document.getElementById('id_vectorBackbone_0').value
-            if (document.getElementById('id_field_insert').style.visibility == 'hidden'){
-                vector = '';
-            }
+            var category = getCurrentCategory();
+            var name_field = document.getElementById('id_name');
             
-            var insert = document.getElementById('id_insert_0').value;
-            if (document.getElementById('id_field_insert').style.visibility == 'hidden'){ 
-                insert = ''; 
-            }
+            if (category == 'Plasmid'){
+                if (getCache('manualName_Plasmid')){
+                    name_field.value = getCache('manualName_Plasmid');
+                } else {
             
-            var r = _extractName(insert) + '_' + _extractName(vector);
-            if (insert || vector){
-                document.getElementById('id_name').value = r;
+                    var vector = document.getElementById('id_vectorBackbone_0').value
+                    if (document.getElementById('id_field_insert').style.visibility == 'hidden'){
+                        vector = '';
+                    }
+                    
+                    var insert = document.getElementById('id_insert_0').value;
+                    if (document.getElementById('id_field_insert').style.visibility == 'hidden'){ 
+                        insert = ''; 
+                    }
+                    
+                    var r = _extractName(insert) + '_' + _extractName(vector);
+                    if (insert || vector){
+                        document.getElementById('id_name').value = r;
+                    } else {
+                        document.getElementById('id_name').value = '';
+                    }
+                }
             } else {
-                document.getElementById('id_name').value = '';
+                if (getCache('manualName')){
+                    name_field.value = getCache('manualName');
+                }
             }
         }
     
         function suggestId() {
             var category = getCurrentCategory();
             var id_field = document.getElementById('id_displayId');
-            var index = 'DnaComponent_manualId_'+category
-
-            if (sessionStorage.getItem( index )){
-                id_field.value = sessionStorage.getItem( index );
+            
+            if ( getCategoryCache( 'manualId' ) != '' ){
+                id_field.value = getCategoryCache('manualId');
             } else {
                 $.ajax({
                     async: false,
@@ -278,15 +274,51 @@
                 });
             }
         }
-    
+        
+        // helper function to generate form-specific key for sessionStorage
+        function cacheKey(key){
+            return 'DnaComponent_' + key;
+        }
+
+        // helper function for set/getCategoryCache; override for form-specific keys
+        function categoryCacheKey(key){
+            return cacheKey(key) + '_' + getCurrentCategory();
+        }
+        
+        // put value into form-specific session storage
+        function setCache(key, value){
+            sessionStorage.setItem( cacheKey(key), value );
+        }
+        
+        // retrieve value from form-specific session storage
+        function getCache(key) {
+            if (sessionStorage.getItem( cacheKey(key) ) ){
+                return sessionStorage.getItem( cacheKey(key) );
+            } else {
+                return '';
+            }
+        }
+        
+        // put given value into sessionStorage using a key specific to 
+        // currently selected category
+        function setCategoryCache(key, value) {
+            sessionStorage.setItem( categoryCacheKey(key), value );
+        }
+
+        // return last "entry" value stored for current Category selection
+        // example: getCategoryCache('name') -> sessionStorage['DnaComponent_name_Plasmid']
+        function getCategoryCache(key) {
+            if (sessionStorage.getItem( categoryCacheKey(key) ) ){
+                return sessionStorage.getItem( categoryCacheKey(key) );
+            } else {
+                return '';
+            }
+        }
+        
         // method called if componentCategory select element is changed
         function categoryAction(){
             hideShow();
-            if ( getCurrentCategory() == 'Plasmid' ){
-                suggestName();
-            } else {
-                clearAutoName();
-            }
+            suggestName();
             suggestId();
         }
 
@@ -295,18 +327,22 @@
             cacheTypeSelection();
         }
         
+        
         // cache manually edited name
         function nameAction() {
             var current = document.getElementById('id_name').value;
-            sessionStorage.setItem( 'DnaComponent_manualName', current );
+            //distinguish only between plasmid and any other category
+            if (getCurrentCategory() != 'Plasmid'){
+                setCache('manualName', current);
+            } else {
+                setCache('manualName_Plasmid', current);
+            }
         }
         
         // cache manually edited IDs
         function displayIdAction() {
             var current = document.getElementById('id_displayId').value;
-            var category = getCurrentCategory();
-            var index = 'DnaComponent_manualId_'+category
-            sessionStorage.setItem( index, current );
+            setCategoryCache('manualId', current);
         }
     
         // "Main" function
@@ -318,7 +354,13 @@
             
             preselectCategory();
             
-            {% if not original %}suggestId();{% else %}displayIdAction();{% endif %}
+            {% if not original %}
+                suggestId();
+                suggestName();
+            {% else %}
+                displayIdAction();  // cache current (original) displayId as manual
+                nameAction();       // cache current (original) name
+            {% endif %}
             
             document.getElementById( 'id_componentCategory' ).onchange = categoryAction;
             document.getElementById( 'id_componentType' ).onchange = typeAction;
