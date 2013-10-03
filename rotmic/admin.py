@@ -338,6 +338,8 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     form = SampleForm     
     
     change_list_template = 'admin/rotmic/sample/change_list.html'  ## for some reason this is needed.
+    
+    template = 'admin/rotmic/change_form_viewfirst.html'
 
     inlines = [ SampleAttachmentInline ]
     date_hierarchy = 'preparedAt'
@@ -446,6 +448,7 @@ admin.site.register( Sample, SampleAdmin )
 
 class DnaSampleAdmin( SampleAdmin ):
     form = DnaSampleForm
+    
     change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
     
     fieldsets = [
@@ -479,6 +482,8 @@ admin.site.register( DnaSample, DnaSampleAdmin )
 
 class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = LocationForm
+    
+    change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
 
     fieldsets = [
         (None, {
@@ -503,6 +508,8 @@ admin.site.register( Location, LocationAdmin )
 class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = RackForm
 
+    change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
+    
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'location', 'name'),
@@ -537,6 +544,8 @@ admin.site.register( Rack, RackAdmin )
 
 class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = ContainerForm
+
+    change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
 
     fieldsets = [
         (None, {

@@ -38,6 +38,7 @@
     <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>-->
     
     <script language=javascript type='text/javascript'>
+    {% block javascript %}
     
      
         // Assign IDs to vector, marker and insert fields (complete <div> with Label and help text)
@@ -356,19 +357,25 @@
                 nameAction();       // cache current (original) name
             {% endif %}
             
-            document.getElementById( 'id_componentCategory' ).onchange = categoryAction;
-            document.getElementById( 'id_componentType' ).onchange = typeAction;
-            hideShow();
-        
-            // see https://django-selectable.readthedocs.org/en/version-0.7.0/advanced.html
-            // for all available events
-            document.getElementById( 'id_insert_0' ).djselectableselect = suggestName;
-            document.getElementById( 'id_vectorBackbone_0' ).djselectableselect = suggestName;
+            {% block setEventsCommon %}
+                document.getElementById( 'id_componentCategory' ).onchange = categoryAction;
+                document.getElementById( 'id_componentType' ).onchange = typeAction;
+                hideShow();
             
-            document.getElementById('id_name').onchange = nameAction;
-            document.getElementById('id_displayId').onchange = displayIdAction;
+                document.getElementById('id_name').onchange = nameAction;
+                document.getElementById('id_displayId').onchange = displayIdAction;
+
+                {% block setEventsExtra %}
+                    // see https://django-selectable.readthedocs.org/en/version-0.7.0/advanced.html
+                    // for all available events
+                    document.getElementById( 'id_insert_0' ).djselectableselect = suggestName;
+                    document.getElementById( 'id_vectorBackbone_0' ).djselectableselect = suggestName;
+                {% endblock %}
+                
+            {% endblock %}
         };
-        
+    
+    {% endblock %}    
     </script>
 
 {% endblock %}
