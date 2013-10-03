@@ -120,7 +120,6 @@
         }
     
         function hideShow() {
-    <!--        alert( document.getElementById('id_field_insert') )-->
             var category = getCurrentCategory();
             
             updateListBox(category)
@@ -164,13 +163,7 @@
             return table;
         }
     
-        // cache last position in componentType listbox for each category selection
-        // Memorize the last selected componentType so that it can be re-instantiated
-        // after the listbox is wiped
-        function cacheTypeSelection() {
-            setCategoryCache('lastType', document.getElementById( 'id_componentType' ).selectedIndex );
-        }
-        
+        // previously selected type for this category or 0
         function lastTypeSelection(category) {
             var r = getCategoryCache('lastType');
             if (! r){ return 0; }
@@ -199,6 +192,7 @@
             document.getElementById("add_id_insert").href = urladd + cat_insert;
         }
     
+        // erase session storage
         function resetStorageBetweenForms() {
             {% if original %} var objectId = {{original.pk}}; {% else %} var objectId = -1; {% endif %}
             if ( getCache('lastvisited') ){
@@ -255,6 +249,7 @@
             }
         }
     
+        // request next available ID for currently selected category
         function suggestId() {
             var category = getCurrentCategory();
             var id_field = document.getElementById('id_displayId');
@@ -323,7 +318,7 @@
 
         // method called if componentType (Species) select element is changed
         function typeAction() {
-            cacheTypeSelection();
+            setCategoryCache('lastType', document.getElementById( 'id_componentType' ).selectedIndex );
         }
         
         
