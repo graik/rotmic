@@ -89,17 +89,22 @@ ccHuman = getcreate(CellComponentType, name='H. sapiens',
 
 
 ## common cell types
-ccTop10 = getcreate(CellComponentType, name='Top10',
+ccTop10 = getcreate(CellComponentType, name='Top10', subTypeOf=ccEcoli,
+                    allowMarkers=True,
                     description='standard E. coli cloning strain')
 
-ccMach1 = getcreate(CellComponentType, name='Mach1',
+ccMach1 = getcreate(CellComponentType, name='Mach1', subTypeOf=ccEcoli,
+                    allowMarkers=True,
                     description='fast growing E. coli for cloning purposes')
 
-ccBL21 = getcreate(CellComponentType, name='BL21',
+ccBL21 = getcreate(CellComponentType, name='BL21', subTypeOf=ccEcoli,
+                   allowMarkers=False,
                    description='E. coli protein expression strain')
 
-ccHeLa = getcreate(CellComponentType, name='HeLa',
+ccHeLa = getcreate(CellComponentType, name='HeLa', subTypeOf=ccHuman,
+                   allowMarkers=False,
                    description='most classic human cancer cell culture')
 
-ccHek = getcreate(CellComponentType, name='HEK293',
+ccHek = getcreate(CellComponentType, name='HEK293', subTypeOf=ccHuman,
+                  allowMarkers=False,
                   description='Human embryonic kidney cells')
