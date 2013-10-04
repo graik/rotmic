@@ -170,7 +170,11 @@
         // erase session storage
         function resetStorageBetweenForms() {
             {% if original %} var objectId = {{original.pk}}; {% else %} var objectId = -1; {% endif %}
-            if ( getCache('lastvisited') ){
+
+            // Note: this is also called if form comes back with validation errors
+            if ( getCache('lastvisited') && getCache('lastvisited') != objectId ){
+                // always clear complete session between forms
+                // future: treat objectId == -1 differently to modify behaviour of "Add New" forms
                 sessionStorage.clear();
             }
             setCache('lastvisited', objectId );
