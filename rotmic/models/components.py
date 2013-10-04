@@ -163,13 +163,6 @@ class DnaComponent(Component):
 ##        r = PlasmidSample.objects.filter(dnaComponent=self.id)
 ##        return r
     
-##    def get_relative_url(self):
-##        """
-##        Define standard relative URL for object access in templates
-##        """
-##        return 'dnacomponent/%i/' % self.id
-##    
-
     def save(self, *args, **kwargs):
         """
         Enforce optional fields depending on category.
@@ -193,7 +186,7 @@ class DnaComponent(Component):
         insert or vector backbone.
         """
         r = []
-        if self.marker:
+        if self.marker.count():
             r += self.marker.all()
         if self.vectorBackbone:
             r += [ m for m in self.vectorBackbone.allMarkers() if not m in r ]
@@ -259,7 +252,7 @@ class CellComponent(Component):
         plasmid.
         """
         r = []
-        if self.marker:
+        if self.marker.count():
             r += [ m for m in self.marker.all() if not m in r ]
         if self.plasmid:
             r += [ m for m in self.plasmid.allMarkers() if not m in r ]

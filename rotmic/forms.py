@@ -180,6 +180,74 @@ class DnaComponentForm(forms.ModelForm):
             raise ValidationError('This is not a DNA sequence.', code='invalid')        
         return r
     
+    def clean_componentCategory(self):
+        r = self.cleaned_data['componentCategory']
+
+        if self.instance and ('componentType' in self.changed_data):
+            assert( isinstance(r, DnaComponentType) )
+            msg = 'Cannot change category: '
+
+            if r.id != T.dcVectorBB and self.instance.as_vector_in_plasmid.count():
+                raise ValidationError(msg + 'This construct is in use as a vector backbone.')
+            
+            ##            if not r.id in [T.dcFragment.id, T.dcMarker.id] and \
+            ##               self.instance.as_insert_in_dna.count():
+            ##                raise ValidationError(msg + 'This construct in use as an insert.')
+                
+            if r.id != T.dcMarker and (self.instance.as_marker_in_cell.count() \
+                                       or self.instance.as_marker_in_dna.count() ):
+                raise ValidationError(msg + 'This construct is in use as a marker.')
+        
+            if r.id != T.dcPlasmid and self.instance.as_plasmid_in_cell.count():
+                raise ValidationError(msg + 'This construct is in use as a plasmid.')
+        return r
+    
+    
+    def clean_insert(self):
+        """
+        Enforce DC of type 'Fragment' or 'Marker'
+        This should not strictly be needed as the dialogue is only populated
+        with correct types of DnaComponents but the type of an existing
+        construct may later be change.
+        """
+        r = self.cleaned_data['insert']
+        if not r:
+            return r
+        
+        assert( isinstance(r, DnaComponent) )
+        if not r.componentType.category().id in [T.dcFragment.id, T.dcMarker.id]:
+            raise ValidationError('Constructs of category %s are not allowed as an insert.'\
+                                  % r.componentType.category().name )
+        return r
+
+    def clean_vectorBackbone(self):
+        """
+        Enforce DC of type 'VectorBackbone'. 
+        This should not strictly be needed as the dialogue is only populated
+        with correct types of DnaComponents but the type of an existing
+        construct may later be change.
+        """
+        r = self.cleaned_data['vectorBackbone']
+        if not r:
+            return r
+        
+        assert( isinstance(r, DnaComponent) )
+        if not r.componentType.category().id == T.dcVectorBB.id:  ## for some reason "is" doesn't work
+            raise ValidationError('Given construct is not a vector backbone.')
+        return r
+    
+    def clean_marker(self):
+        """Enforce all markers to be really classified as marker"""
+        r = self.cleaned_data['marker']
+        if not r.count():
+            return r
+        
+        for m in r:
+            assert( isinstance(m, DnaComponent))
+            if not m.componentType.category().id == T.dcMarker.id:
+                raise ValidationError('%s is not a marker.' % m.__unicode__() )
+        return r
+        
 
     def clean(self):
         """
@@ -188,13 +256,13 @@ class DnaComponentForm(forms.ModelForm):
         Note: this is also partly enforced by the DnaComponent.save method.
         """
         data = super(DnaComponentForm, self).clean()
-        category = data['componentCategory'] 
+        category = data.get('componentCategory', None) 
 
-        if category != T.dcPlasmid:
+        if category and (category != T.dcPlasmid):
             data['insert'] = None
             data['vectorBackbone'] = None
         
-        if category not in [T.dcVectorBB, T.dcFragment] and 'marker' in data:
+        if category and (category not in [T.dcVectorBB, T.dcFragment] and 'marker' in data):
             data['marker'] = QuerySet()
             
         ## validate that a vector backbone is given if category == Plasmid
@@ -238,6 +306,34 @@ class CellComponentForm(forms.ModelForm):
         if o:
             self.fields['componentCategory'].initial = o.componentType.subTypeOf
         
+
+    def clean_plasmid(self):
+        """
+        Enforce DC of type 'Plasmid'. 
+        This should not strictly be needed as the dialogue is only populated
+        with correct types of DnaComponents but the type of an existing
+        construct may later be change.
+        """
+        r = self.cleaned_data['plasmid']
+        if not r:
+            return r
+        
+        assert( isinstance(r, DnaComponent) )
+        if not r.componentType.category().id == T.dcPlasmid.id:  ## for some reason "is" doesn't work
+            raise ValidationError('Given construct is not a plasmid.')
+        return r
+    
+            
+    def clean_marker(self):
+        r = self.cleaned_data['marker']
+        if not r.count():
+            return r
+        
+        for m in r:
+            assert( isinstance(m, DnaComponent))
+            if not m.componentType.category().id == T.dcMarker.id:
+                raise ValidationError('%s is not a marker.' % m.__unicode__() )
+        return r
 
 
     def clean(self):
