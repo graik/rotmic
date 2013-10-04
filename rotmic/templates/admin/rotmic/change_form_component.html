@@ -20,7 +20,7 @@
                 log(e.message);
             }
         }
-        {% endblock %}
+        {% endblock func_initDiv%}
         
         // get (name of) currently selected Category
         function getCurrentCategory(){
@@ -50,12 +50,10 @@
             $.ajax({
                     async: false,
                     type: 'GET',
-                    url: {% block ajax-typeinfo %}"/getTypeInfo/"{% endblock %}+selectedCategory+"/",
+                    url: {% block ajax-typeinfo %}"/getTypeInfo/"{% endblock ajax-typeinfo%}+selectedCategory+"/",
                     success: function(data){
                         var p = django.jQuery.parseJSON(data);
                         var listbox = document.getElementById(elementId);
-                        //listbox.options[0] = new Option('---specifiy type---', "");
-                        //listbox.options[0].selected = true;
                         for (var key in p) {
                             var i = parseInt(key)
                             if (p.hasOwnProperty(key)) {
@@ -89,7 +87,7 @@
                     break;
             }
         }
-        {% endblock %}
+        {% endblock hideShow%}
 
         // return a dictionary of Category names mapping to their position in listbox 
         function captureCategories() {
@@ -107,7 +105,7 @@
             var categories = captureCategories();
             // !! needs to be overriden for category-dependent plus links !!
         }
-        {% endblock %}
+        {% endblock func_setPlusLinks %}
 
 
         // previously selected type for this category or 0
@@ -128,7 +126,7 @@
         
         // helper function to generate form-specific key for sessionStorage
         function cacheKey(key){
-            return {% block cacheKey %}'{{opts.module_name}}_'{% endblock %} + key;  // e.g. 'dnacomponent_key'
+            return {% block cacheKey %}'{{opts.module_name}}_'{% endblock cacheKey %} + key;  // e.g. 'dnacomponent_key'
         }
 
         // helper function for set/getCategoryCache; override for form-specific keys
@@ -194,7 +192,7 @@
             }
             return r;
         }
-        {% endblock %}
+        {% endblock func_extractName %}
         
         {% block func_suggestName %}
         // !! needs to be overridden !!
@@ -209,7 +207,7 @@
                 name_field.value = '';
             }
         }
-        {% endblock %}
+        {% endblock func_suggestName %}
 
         {% block func_suggestId %}
         // request next available ID for currently selected category
@@ -224,14 +222,14 @@
                     async: false,
                     type: 'GET',
                     // !! next block needs to be overridden with actual ajax address !!
-                    url: {% block ajax-nextId %}"/rotmic/ajax/nexId/"{% endblock %}+category+"/",
+                    url: {% block ajax-nextId %}"/rotmic/ajax/nexId/"{% endblock ajax-nextId %}+category+"/",
                     success: function(data){                    
                         id_field.value = data['id'];
                     }
                 });
             }
         }
-        {% endblock %}
+        {% endblock func_suggestId %}
         
         {% block func_categoryAction %}
         // method called if componentCategory select element is changed
@@ -240,14 +238,14 @@
             suggestName();
             suggestId();
         }
-        {% endblock %}
+        {% endblock func_categoryAction %}
 
         {% block func_typeAction %}
         // method called if componentType (Species) select element is changed
         function typeAction() {
             setCategoryCache('lastType', document.getElementById( 'id_componentType' ).selectedIndex );
         }
-        {% endblock %}
+        {% endblock func_typeAction %}
         
         {% block func_nameAction %} 
         // cache manually edited name
@@ -255,7 +253,7 @@
             var current = document.getElementById('id_name').value;
             setCategoryCache('manualName', current);
         }
-        {% endblock %}
+        {% endblock func_nameAction %}
         
         {% block func_displayIdAction %}
         // cache manually edited IDs
@@ -263,7 +261,7 @@
             var current = document.getElementById('id_displayId').value;
             setCategoryCache('manualId', current);
         }
-        {% endblock %}
+        {% endblock func_displayIdAction %}
     
         {% block func_main %}
         // "Main" function
@@ -271,7 +269,6 @@
             resetStorageBetweenForms();
             initIdDiv();
             setPlusLinks();
-            
             preselectCategory();
             
             {% if not original %}
@@ -291,13 +288,13 @@
                 document.getElementById('id_displayId').onchange = displayIdAction;
 
                 {% block setEventsExtra %}
-                {% endblock %}
+                {% endblock setEventsExtra%}
                 
-            {% endblock %}
+            {% endblock setEventsCommon %}
         };
-        {% endblock %}
+        {% endblock func_main %}
 
-    {% endblock %}    
+    {% endblock javascript %}    
     </script>
 
-{% endblock %}
+{% endblock after_field_sets %}

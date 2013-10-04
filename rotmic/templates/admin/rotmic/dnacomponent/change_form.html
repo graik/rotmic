@@ -2,14 +2,8 @@
 
 {% load i18n admin_modify %}
 
-{% block after_field_sets %}
-
-    {{ block.super }}
     
-    <script language=javascript type='text/javascript'>
-    {% block javascript %}
-    
-        {{ block.super }}
+<!--    <script language=javascript type='text/javascript'>-->
     
         {% block ajax-typeinfo %}"/getTypeDnaInfo/"{% endblock %}   
             
@@ -147,8 +141,5 @@
             document.getElementById( 'id_insert_0' ).djselectableselect = suggestName;
             document.getElementById( 'id_vectorBackbone_0' ).djselectableselect = suggestName;
         {% endblock %}
-    
-    {% endblock %}    
-    </script>
+      
 
-{% endblock %}
