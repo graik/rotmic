@@ -282,7 +282,9 @@ class DnaComponentForm(forms.ModelForm):
                                                'style':'font-family:monospace'}), 
             'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
-            'insert' : sforms.AutoComboboxSelectWidget(lookup_class=InsertLookup, allow_new=False),
+            'insert' : sforms.AutoComboboxSelectWidget(lookup_class=InsertLookup, 
+                                                       allow_new=False,
+                                                       attrs={'size':35}),
             'vectorBackbone' : sforms.AutoComboboxSelectWidget(lookup_class=VectorLookup, allow_new=False)
         }
 
@@ -356,7 +358,8 @@ class CellComponentForm(forms.ModelForm):
             'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
             'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=PlasmidLookup, 
-                                                       allow_new=False),
+                                                       allow_new=False,
+                                                       attrs={'size':35}),
             'marker' : FixedSelectMultipleWidget(lookup_class=MarkerLookup)
         }
 
@@ -512,7 +515,8 @@ class DnaSampleForm( SampleForm ):
         model = DnaSample
         widgets = getSampleWidgets( \
             {'dna': sforms.AutoComboboxSelectWidget(lookup_class=SampleDnaLookup,
-                                                    allow_new=False),
+                                                    allow_new=False,
+                                                    attrs={'size':35}),
              })
 
         
