@@ -3,19 +3,11 @@
 {% load i18n admin_modify  %}
 {% load rotmicfilters %}
 
-{% block after_field_sets %}
-
-    {{ block.super }}
     
-    <script language=javascript type='text/javascript'>
-    {% block javascript %}
-     
-        {{ block.super }}
+<!--    <script language=javascript type='text/javascript'>-->
         
         {% block ajax-typeinfo %}"/getCellTypes/"{% endblock %}   
             
-        {% block ajax-nextId %}"/rotmic/ajax/nextDnaId/"{% endblock %}
-        
         
         // Assign IDs to vector, marker fields (complete <div> with Label and help text)
         // By default, input elements themselves are accessible by, for example:
@@ -39,38 +31,47 @@
         }
         {% endblock %}
     
-        // get (name of) currently selected componentType
-        function getCurrentType(){
-            var index = document.getElementById('id_componentType').selectedIndex;
-            if ( index != -1 ){
-                return document.getElementById('id_componentType').options[index].label;
+        {% block extra_methods %}
+
+            // get (name of) currently selected componentType
+            function getCurrentType(){
+                var index = document.getElementById('id_componentType').selectedIndex;
+                if ( index != -1 ){
+                    return document.getElementById('id_componentType').options[index].label;
+                }
+                return "";
             }
-            return "";
-        }
+            
+           // copy plasmid visibility flags from all registered CellComponentTypes
+            function typeAllowsPlasmid(name) {
+                var map = {
+                    {% for t in cellTypes %}"{{t.name}}" : {% if t.allowPlasmids %} true {% else %} false {%endif%},
+                    {% endfor %}};
         
-       // copy plasmid visibility flags from all registered CellComponentTypes
-        function typeAllowsPlasmid(name) {
-            var map = {
-                {% for t in cellTypes %}"{{t.name}}" : {% if t.allowPlasmids %} true {% else %} false {%endif%},
-                {% endfor %}};
-    
-            if ( !(name in map) ){ return false; };
-            return map[ name ];
-        }
-    
-        // copy marker visibility flags from all registered CellComponentTypes
-        function typeAllowsMarkers(name) {
-            var map = {
-                {% for t in cellTypes %}"{{t.name}}" : {% if t.allowMarkers %} true {% else %} false {%endif%},
-                {% endfor %}};
+                if ( !(name in map) ){ return false; };
+                return map[ name ];
+            }
         
-            if ( !(name in map) ){ return false; };
-            return map[ name ];
-        }
+            // copy marker visibility flags from all registered CellComponentTypes
+            function typeAllowsMarkers(name) {
+                var map = {
+                    {% for t in cellTypes %}"{{t.name}}" : {% if t.allowMarkers %} true {% else %} false {%endif%},
+                    {% endfor %}};
+            
+                if ( !(name in map) ){ return false; };
+                return map[ name ];
+            }
+        
+        {% endblock extra_methods %}
+    
     
         // hide or show input elements depending on chosen category or sub-type
+        {% block hideShow %}
         function hideShow() {
             var current_type = getCurrentType();
+            var category = getCurrentCategory();
+            
+            updateListBox(category);
             
             if (typeAllowsPlasmid(current_type)){
                 document.getElementById('id_field_plasmid').style.visibility = 'visible';
@@ -84,49 +85,9 @@
                 document.getElementById('id_field_marker').style.visibility = 'hidden';
             }
         }   
+        {% endblock %}
         
-        // cache last position in componentType listbox for each category selection
-        // Memorize the last selected componentType so that it can be re-instantiated
-        // after the listbox is wiped
-        // see: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Storage?redirectlocale=en-US&redirectslug=DOM%2FStorage
-        function cacheTypeSelection() {
-            var category = getCurrentCategory();
-            sessionStorage.setItem( category, document.getElementById( 'id_componentType' ).selectedIndex);
-        }
-        
-        // update content of Species listbox depending on selected category
-        function updateSubtypes(){
-            cacheTypeSelection();
-            var category = getCurrentCategory();        
-            updateListBox(category);
-            hideShow();
-        }
-    
-        // return a dictionary of Category names mapping to their position in listbox 
-        function captureCategories() {
-            var listbox = document.getElementById('id_componentCategory')
-            var table = {};
-            for (var i=0; i < listbox.options.length; i++){
-                table[ listbox.options[i].text ] = i;
-            }
-            return table;
-        }
-    
-        function lastTypeSelection(category) {
-            var r = sessionStorage.getItem( category );
-            if (! r){ return 0; }
-            return r; 
-        }
-    
-        //pre-select category if given in URL; requires context_processors.request
-        //requires context_processors.request in settings.py
-        function preselectCategory() {
-            if ("{{request.GET.category}}" != ""){
-                var i = parseInt("{{request.GET.category}}");
-                document.getElementById('id_componentCategory').options[i].selected = true;
-            }
-        }
-        
+        {% block func_setPlusLinks %}
         // override the link for "+" Buttons so that the correct category is pre-selected    
         function setPlusLinks() {
             var urladd = "/rotmic/dnacomponent/add/?category="
@@ -135,20 +96,9 @@
                 document.getElementById("add_id_plasmid").href = urladd + "{{plasmid|dnaCategoryToId}}";
             {% endwith %}
         }
+        {% endblock %}
     
-        function resetStorageBetweenForms() {
-            {% if original %} var objectId = {{original.pk}}; {% else %} var objectId = -1; {% endif %}
-            if (sessionStorage.getItem( 'CellComponent_lastvisited' )){
-                //if (sessionStorage.getItem( 'CellComponent_lastvisited' ) != objectId){
-                //    if (objectId != -1){
-                sessionStorage.clear();
-                        // Note: insert more specific code here to only delete entry generated by this form
-                //    }
-                //}
-            }
-            sessionStorage.setItem( 'CellComponent_lastvisited', objectId );
-        }
-        
+        {% block func_suggestName %}
         // compose new Name from plasmid and cell name
         function suggestName() {
             if (document.getElementById('id_field_plasmid').style.visibility == 'visible'){
@@ -171,48 +121,27 @@
                 document.getElementById( 'id_name').value = r;
             }
         }
-    
-        // method called if componentCategory select element is changed
-        function categoryAction(){
-            updateSubtypes();
-            suggestName();
+        {% endblock %}
+        
+        {% block func_suggestId %}
+        function suggestId() {
+            ;
         }
-
+        {% endblock %}
+    
+        {% block func_typeAction %}
         // method called if componentType (Species) select element is changed
         function typeAction() {
+            setCategoryCache('lastType', document.getElementById( 'id_componentType' ).selectedIndex );
             hideShow();
             suggestName();
         }
+        {% endblock %}
     
-        // cache manually edited name (not currently used)
-        function nameAction() {
-            current = document.getElementById('id_name').value;
-            sessionStorage.setItem( 'CellComponent_manualName', current );
-        }
-
-        // "Main" function
-        window.onload = function() {
-        
-            resetStorageBetweenForms();
-            initIdDiv();
-            setPlusLinks();
-            
-            preselectCategory();
-            
-            document.getElementById( 'id_componentCategory' ).onchange = categoryAction;
-            document.getElementById( 'id_componentType' ).onchange = typeAction;
-
-            // see https://django-selectable.readthedocs.org/en/version-0.7.0/advanced.html
-            // for all available events
+        // Append events to Main function
+        {% block setEventsExtra %}
             document.getElementById( 'id_plasmid_0' ).djselectableselect = suggestName;
-            
-            document.getElementById('id_name').onchange = nameAction;            
+        {% endblock %}
 
-            updateSubtypes();        
-            hideShow();
-        };
-
-    {% endblock %}    
-    </script>
+<!--    </script>-->
     
-{% endblock %}
