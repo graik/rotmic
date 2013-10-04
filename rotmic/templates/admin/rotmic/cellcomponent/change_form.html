@@ -1,49 +1,26 @@
-{% extends "admin/rotmic/change_form_viewfirst.html" %}
+{% extends "admin/rotmic/change_form_component.html" %}
 
 {% load i18n admin_modify  %}
 {% load rotmicfilters %}
 
-<!-- django-guardian admin modification -->
-{% block object-tools-items %}
-    <li><a href="permissions/" class="permissionslink">{% trans "Object permissions" %}</a></li>
-    {{ block.super }}
-{% endblock %}
-
-{% if not is_popup %}
-    {% block breadcrumbs%}<div class="breadcrumbs">
-        {% if original %}
-            <a href="../../../../">Home</a> &rsaquo;
-            <a href="../../../">Rotmic</a> &rsaquo;
-            <a href="../../">Cells</a> &rsaquo;
-            <a href="../">{{original.displayId}}</a> &rsaquo;
-            Edit
-        {% else %}
-            <a href="../../../">Home</a> &rsaquo;
-            <a href="../../">Rotmic</a> &rsaquo;
-            <a href="../">Cells</a> &rsaquo;
-            Add Cell
-        {% endif %}
-    </div>
-    {% endblock %}
-{% endif %}
-
 {% block after_field_sets %}
 
-    {% block extrahead %} {{ block.super }}
-        {% load selectable_tags %}
-        {% include_ui_theme %}
-        {% include_jquery_libs %}
-    {% endblock %}
-    
-    <!--Now Imported by statement in DnaComponentAdmin.Media class-->
-    <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>-->
+    {{ block.super }}
     
     <script language=javascript type='text/javascript'>
-    
+    {% block javascript %}
      
+        {{ block.super }}
+        
+        {% block ajax-typeinfo %}"/getCellTypes/"{% endblock %}   
+            
+        {% block ajax-nextId %}"/rotmic/ajax/nextDnaId/"{% endblock %}
+        
+        
         // Assign IDs to vector, marker fields (complete <div> with Label and help text)
         // By default, input elements themselves are accessible by, for example:
         // "id_marker" and "add_id_marker" (the Plus symbol for sub-forms). 
+        {% block func_initDiv %}
         function initIdDiv(){
             try{
                 var scr = "";
@@ -60,14 +37,8 @@
                 log(e.message);
             }
         }
+        {% endblock %}
     
-        // get (name of) currently selected Category
-        function getCurrentCategory(){
-            var categoryElement = document.getElementById('id_componentCategory');
-            var category = categoryElement.options[categoryElement.selectedIndex].label;
-            return category;
-        }
-        
         // get (name of) currently selected componentType
         function getCurrentType(){
             var index = document.getElementById('id_componentType').selectedIndex;
@@ -77,55 +48,7 @@
             return "";
         }
         
-        // returns 1 if all items are sucessfully removed
-        // otherwise returns zero.
-        function clearTypeBox(){
-            var box = document.getElementById('id_componentType');
-            if(box == null)
-                return 0;        
-            while(box.length > 0){
-                box.remove(0);
-            }
-            return 1;
-        }
-        
-        // update content of Type ChoiceField depending on Category selection
-        // this could propably be replaced by a django template fill-in
-        function updateListBox(selectedCategory){
-            clearTypeBox();
-            var elementId = 'id_componentType'
-            var cachedTypeIndex = lastTypeSelection(selectedCategory);
-    
-            $.ajax({
-                    async: false,
-                    type: 'GET',
-                    url: "/getCellTypes/"+selectedCategory+"/",
-                    success: function(data){
-                        var p = django.jQuery.parseJSON(data);
-                        var listbox = document.getElementById(elementId);
-                        for (var key in p) {
-                            var i = parseInt(key)
-                            if (p.hasOwnProperty(key)) {
-                                listbox.options[i] = new Option(p[key].fields.name, p[key].pk);
-                                //... but select previously assigned dc.componentType if object already exists with this category
-                                {% if original %}
-                                    if (({{original.componentType.pk}} == p[key].pk)){
-                                        listbox.options[i].selected = true;
-                                        cachedTypeIndex = 0;  // reset to prevent selection of type from previous form
-                                    }
-                                {% endif %}
-                                // go back to previously selected type for this category
-                                if ( cachedTypeIndex == i ){
-                                    listbox.options[i].selected = true;
-                                }
-                            }
-                        }                            
-                    }
-                }                
-            );	
-        }
-    
-        // copy plasmid visibility flags from all registered CellComponentTypes
+       // copy plasmid visibility flags from all registered CellComponentTypes
         function typeAllowsPlasmid(name) {
             var map = {
                 {% for t in cellTypes %}"{{t.name}}" : {% if t.allowPlasmids %} true {% else %} false {%endif%},
@@ -288,8 +211,8 @@
             updateSubtypes();        
             hideShow();
         };
-        
+
+    {% endblock %}    
     </script>
     
-
 {% endblock %}
