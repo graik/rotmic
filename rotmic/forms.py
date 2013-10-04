@@ -190,9 +190,9 @@ class DnaComponentForm(forms.ModelForm):
             if r.id != T.dcVectorBB and self.instance.as_vector_in_plasmid.count():
                 raise ValidationError(msg + 'This construct is in use as a vector backbone.')
             
-            ##            if not r.id in [T.dcFragment.id, T.dcMarker.id] and \
-            ##               self.instance.as_insert_in_dna.count():
-            ##                raise ValidationError(msg + 'This construct in use as an insert.')
+            if not r.id in [T.dcFragment.id, T.dcMarker.id] and \
+               self.instance.as_insert_in_dna.count():
+                raise ValidationError(msg + 'This construct in use as an insert.')
                 
             if r.id != T.dcMarker and (self.instance.as_marker_in_cell.count() \
                                        or self.instance.as_marker_in_dna.count() ):
