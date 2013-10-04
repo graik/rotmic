@@ -54,22 +54,22 @@
                     success: function(data){
                         var p = django.jQuery.parseJSON(data);
                         var listbox = document.getElementById(elementId);
-                        listbox.options[0] = new Option('---specifiy type---', "");
-                        listbox.options[0].selected = true;
+                        //listbox.options[0] = new Option('---specifiy type---', "");
+                        //listbox.options[0].selected = true;
                         for (var key in p) {
                             var i = parseInt(key)
                             if (p.hasOwnProperty(key)) {
-                                listbox.options[i+1] = new Option(p[key].fields.name, p[key].pk);
+                                listbox.options[i] = new Option(p[key].fields.name, p[key].pk);
                                 //... but select previously assigned dc.componentType if object already exists with this category
                                 {% if original %}
                                     if (({{original.componentType.pk}} == p[key].pk)){
-                                        listbox.options[i+1].selected = true;
+                                        listbox.options[i].selected = true;
                                         cachedTypeIndex = 0;  // reset to prevent selection of type from previous form
                                     }
                                 {% endif %}
                                 // go back to previously selected type for this category
-                                if ( cachedTypeIndex == i+1 ){
-                                    listbox.options[i+1].selected = true;
+                                if ( cachedTypeIndex == i ){
+                                    listbox.options[i].selected = true;
                                 }
                             }
                         }                            
