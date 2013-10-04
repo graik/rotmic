@@ -183,7 +183,7 @@ class DnaComponentForm(forms.ModelForm):
     def clean_componentCategory(self):
         r = self.cleaned_data['componentCategory']
 
-        if self.instance and ('componentType' in self.changed_data):
+        if self.instance and self.instance.id and ('componentType' in self.changed_data):
             assert( isinstance(r, DnaComponentType) )
             msg = 'Cannot change category: '
 
