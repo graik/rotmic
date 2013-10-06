@@ -17,6 +17,7 @@
 
 from django.contrib.auth.models import User
 import django.db.models as models
+from django.db.models.signals import post_save
 
 def userInitials(request):
     user = request.user
@@ -48,3 +49,12 @@ class UserProfile(models.Model):
     class Meta:
         app_label = 'rotmic'
         ordering = ('user',)
+
+def create_profile(sender, **kw):
+    user = kw["instance"]
+    if kw["created"]:
+        profile = UserProfile(user=user, prefix='mt')
+        profile.save()
+
+post_save.connect(create_profile, sender=User)
+
