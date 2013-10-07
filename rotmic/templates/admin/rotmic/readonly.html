@@ -24,8 +24,11 @@
 
 {% block content %}
 
-    {% block super-title %}<h3>{{class_label}}</h3>{% endblock %}
-    {% block page-title %}<h1>{{o}}</h1>{% endblock %}
+    {% block headline %}
+        {% block title-image%}{% endblock %}
+        {% block super-title %}<h3>{{class_label}}</h3>{% endblock %}
+        {% block page-title %}<h1>{{o}}</h1>{% endblock %}
+    {% endblock headline %}
 
     {% block object-tools %}
         {% if not is_popup %}

@@ -3,10 +3,16 @@
 
 {% block side-rating %}{% endblock %}
 
+{%block title-image%}
+    <img src="{% static "img/freezer.jpg" %}" align="left" height="60" width="60" 
+    style="padding-left:0px; padding-right:10px; padding-top:0px"> 
+{%endblock%}
+
 {% block content-bottom %}    
     <h2>Racks</h2>
     
-    <p> This location contains <b>{{o.racks.count}} racks</b> comprising 
+    <p> 
+        This location contains <b>{{o.racks.count}} racks</b> comprising 
         <b>{{o.containerCount}}&nbsp;containers</b> with a total of 
         <b>{{o.sampleCount}}&nbsp;samples</b>.<br>
         <a href="{% url 'admin:rotmic_rack_changelist'%}?location={{o.id}}">
