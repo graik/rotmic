@@ -25,6 +25,11 @@
 
 {% block content %}
 
+    {%block title-image%}
+        <img src="{% static "img/cells.jpg" %}" align="left" height="45" 
+        style="padding-left:0px; padding-right:10px; padding-top:0px; padding-bottom:5px"> 
+    {%endblock%}
+
     <h3>modified Cell or Strain</h3><h1>{{o}}</h1>
 
     {% block object-tools %}

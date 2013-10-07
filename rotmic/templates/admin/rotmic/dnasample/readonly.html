@@ -1,10 +1,15 @@
 {% extends "admin/rotmic/sample/readonly.html" %}
-{% load admin_urls %}
+{% load admin_urls admin_static %}
 {% load rotmicfilters %}
 
 {% block title %}DNA Sample {{o.displayId}}{% endblock %} {# window title #}
 
 {% block super-title %}<h3>DNA Sample</h3>{% endblock %}
+
+{%block title-image%}
+    <img src="{% static "img/dnasample.jpg" %}" align="left" height="55" 
+    style="padding-left:0px; padding-right:10px; padding-top:0px"> 
+{%endblock%}
 
 {% block sample-content %}
         <div class='module'>

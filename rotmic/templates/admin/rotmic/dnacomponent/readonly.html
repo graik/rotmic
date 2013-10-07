@@ -23,7 +23,14 @@
 
 {% block title %}DNA construct {{o.displayId}}{% endblock %} {# window title #}
 
+
 {% block content %}
+
+    {%block title-image%}
+        <img src="{% static "img/dnaconstruct.png" %}" align="left" height="45" 
+        style="padding-left:0px; padding-right:10px; padding-top:0px; padding-bottom:5px"> 
+    {%endblock%}
+
     <h3>DNA construct</h3><h1>{{o}}</h1>
 
     {% block object-tools %}

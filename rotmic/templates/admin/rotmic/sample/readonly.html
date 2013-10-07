@@ -25,6 +25,10 @@
 
 {% block content %}
 
+    {%block title-image%}
+        <img src="{% static "img/dnasample.jpg" %}" align="left" height="55" 
+        style="padding-left:0px; padding-right:10px; padding-top:0px"> 
+    {%endblock%}
     {% block super-title %}<h3>Sample</h3>{% endblock %}<h1>{{o.showVerbose}}</h1>
 
     {% block object-tools %}
