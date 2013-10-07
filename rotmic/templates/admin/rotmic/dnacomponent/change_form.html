@@ -3,7 +3,8 @@
 {% load i18n admin_modify %}
 
     
-<!--    <script language=javascript type='text/javascript'>-->
+    {# duplicating a line from parent template but activates syntax highlighting #}
+    <script language=javascript type='text/javascript'>
     
         {% block ajax-typeinfo %}"/getTypeDnaInfo/"{% endblock %}   
             
@@ -38,8 +39,6 @@
         function hideShow() {
             var category = getCurrentCategory();
             
-            updateListBox(category)
-    
             switch ( category ) {
                 case 'Vector Backbone':
                     document.getElementById('id_field_insert').style.visibility = 'hidden';

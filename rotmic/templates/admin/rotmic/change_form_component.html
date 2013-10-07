@@ -42,8 +42,9 @@
         
         // update content of Type ChoiceField depending on Category selection
         // this could propably be replaced by a django template fill-in
-        function updateListBox(selectedCategory){
+        function updateListBox(){            
             clearTypeBox();
+            var selectedCategory = getCurrentCategory();
             var elementId = 'id_componentType'
             var cachedTypeIndex = lastTypeSelection(selectedCategory);
     
@@ -79,7 +80,6 @@
         {% block hideShow %}
         function hideShow() {
             var category = getCurrentCategory();
-            updateListBox(category)
     
             switch ( category ) {
                 // !! needs to be overriden for specific fields to hide / show !!
@@ -234,6 +234,7 @@
         {% block func_categoryAction %}
         // method called if componentCategory select element is changed
         function categoryAction(){
+            updateListBox();
             hideShow();
             suggestName();
             suggestId();
@@ -294,6 +295,11 @@
                 {% endblock setEventsExtra%}
                 
             {% endblock setEventsCommon %}
+
+            {% block main_finish %}
+                updateListBox();
+                hideShow();
+            {% endblock main_finish %}
         };
         {% endblock func_main %}
 

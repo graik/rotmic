@@ -3,11 +3,12 @@
 {% load i18n admin_modify  %}
 {% load rotmicfilters %}
 
-    
-<!--    <script language=javascript type='text/javascript'>-->
+    {# duplicating a line from parent template but activates syntax highlighting #}
+    <script language=javascript type='text/javascript'>
         
         {% block ajax-typeinfo %}"/getCellTypes/"{% endblock %}   
             
+        {% block ajax-nextId %}"/rotmic/ajax/nextCellId/"{% endblock %}
         
         // Assign IDs to vector, marker fields (complete <div> with Label and help text)
         // By default, input elements themselves are accessible by, for example:
@@ -47,7 +48,7 @@
                 var map = {
                     {% for t in cellTypes %}"{{t.name}}" : {% if t.allowPlasmids %} true {% else %} false {%endif%},
                     {% endfor %}};
-        
+                
                 if ( !(name in map) ){ return false; };
                 return map[ name ];
             }
@@ -69,9 +70,6 @@
         {% block hideShow %}
         function hideShow() {
             var current_type = getCurrentType();
-            var category = getCurrentCategory();
-            
-            updateListBox(category);
             
             if (typeAllowsPlasmid(current_type)){
                 document.getElementById('id_field_plasmid').style.visibility = 'visible';
@@ -123,12 +121,6 @@
         }
         {% endblock %}
         
-        {% block func_suggestId %}
-        function suggestId() {
-            ;
-        }
-        {% endblock %}
-    
         {% block func_typeAction %}
         // method called if componentType (Species) select element is changed
         function typeAction() {
