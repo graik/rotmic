@@ -43,3 +43,16 @@ def suggestDnaId(user_id, prefix='', middle=''):
     prefix += middle
 
     return suggestId( M.DnaComponent, prefix )
+
+def suggestCellId(user_id, prefix='', middle=''):
+    """
+    user_id - int, pk of User object
+    prefix  - str, first characters of desired DNA ID (default: from user.profile)
+    middle  - str, additional prefix characters (e.g. "p" for plasmid, default: '')
+    """
+    user = User.objects.get( id=user_id )
+    prefix = prefix or user.profile.ccPrefix or user.profile.prefix
+    prefix += middle
+
+    return suggestId( M.CellComponent, prefix )
+    

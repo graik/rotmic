@@ -36,10 +36,20 @@ def nextDnaId(request, category):
     """
     request - request object
     category - parent ComponentType
-    prefix - str, ID typed so far
     """
     middle = category[0].lower()
     r = {'id': I.suggestDnaId( request.user.id, middle=middle )}
+    
+    json_models = json.dumps(r)
+    return HttpResponse(json_models, mimetype="application/json") 
+
+def nextCellId(request, category):
+    """
+    request - request object
+    category - parent ComponentType
+    """
+    middle = category[0].lower()
+    r = {'id': I.suggestCellId( request.user.id, middle=middle )}
     
     json_models = json.dumps(r)
     return HttpResponse(json_models, mimetype="application/json") 

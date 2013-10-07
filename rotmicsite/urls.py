@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 
 from rotmic.views import view_genbankfile
-from rotmic.jsviews import getTypeDnaInfo, getCellTypes, nextDnaId
+from rotmic.jsviews import getTypeDnaInfo, getCellTypes, nextDnaId, nextCellId
 import rotmicsite.settings as settings
 
 # Uncomment the next two lines to enable the admin:
@@ -24,6 +24,9 @@ urlpatterns = patterns('',
 
     url(r'^rotmic/ajax/nextDnaId/(?P<category>.+)/$', 
         nextDnaId, name='nextDnaId' ),
+
+    url(r'^rotmic/ajax/nextCellId/(?P<category>.+)/$', 
+        nextCellId, name='nextCellId' ),
 
     url(r'^selectable/', include('selectable.urls')),
     url(r'^rotmic/dnacomponent/(?P<pk>.*)/genbank/$',view_genbankfile,name='genbankfile'),
