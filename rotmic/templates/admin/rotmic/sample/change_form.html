@@ -2,8 +2,9 @@
 
 {% load i18n admin_modify %}
 
-
 {% block after_field_sets %}
+
+    {# note: javascript import statements are somehow repeated twice #}
 
     {{ block.super }}
 
@@ -16,7 +17,7 @@
             $.ajax({
                 async: false,
                 type: 'GET',
-                // !! next block needs to be overridden with actual ajax address !!
+                // override if needed:
                 url: {% block ajax-nextId %}"/rotmic/ajax/nextSampleId/"{% endblock ajax-nextId %}+container_id+"/",
                 success: function(data){                    
                     id_field.value = data['id'];
