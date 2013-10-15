@@ -18,17 +18,28 @@
 import rotmic.models as M
 from django.contrib.auth.models import User
 
-import re
+import re, string
 
-def suggestId(componentClass, prefix):
+ex_sampleId = re.compile('([A-Za-z]{0,1})([0-9]+)')
+ex_number = re.compile('([0-9]+)')
+
+def _extractNumbers( queryset, pattern ):
+    matches = [ pattern.match( o.displayId ) for o in queryset ]
+    numbers = [ int(x.groups()[0]) for x in matches if x is not None ]
+    numbers.sort()
+    return numbers    
+
+def suggestComponentId(componentClass, prefix):
+    """
+    Extract running number from mixed displayId like "prefix0001" and suggest next
+    ID like "prefix0002"
+    """
     objects = componentClass.objects.filter( displayId__startswith=prefix )
 
     if objects.count() == 0:
         return '%s%04i' % (prefix, 1)
     pattern = re.compile(prefix+'([0-9]+)')
-    matches = [ pattern.match( o.displayId ) for o in objects ]
-    numbers = [ int(x.groups()[0]) for x in matches if x is not None ]
-    numbers.sort()
+    numbers = _extractNumbers( objects, pattern )
     
     return '%s%04i' % (prefix, numbers[-1]+1)
 
@@ -42,7 +53,7 @@ def suggestDnaId(user_id, prefix='', middle=''):
     prefix = prefix or user.profile.dcPrefix or user.profile.prefix
     prefix += middle
 
-    return suggestId( M.DnaComponent, prefix )
+    return suggestComponentId( M.DnaComponent, prefix )
 
 def suggestCellId(user_id, prefix='', middle=''):
     """
@@ -54,5 +65,72 @@ def suggestCellId(user_id, prefix='', middle=''):
     prefix = prefix or user.profile.ccPrefix or user.profile.prefix
     prefix += middle
 
-    return suggestId( M.CellComponent, prefix )
+    return suggestComponentId( M.CellComponent, prefix )
+
+
+def __nextSampleInBox( samples ):
+    """
+    """
+    try:
+        if not samples.count(): 
+            return '01'
+        
+        numbers = _extractNumbers( samples, ex_number )
+        return '%02i' % (numbers[-1] + 1)
+    except:
+        return ''    
+
+
+def splitSampleId( sampleId ):
+    """
+    sampleId - str, like 'A1' or '12'
+    @return (str, int) - letter, number
+    """
+    match = ex_sampleId.match(sampleId)
+    if not match:
+        return '', None
+    
+    letter, number = match.groups()
+    return letter.upper(), int(number)
+
+
+def __nextSampleInPlate( samples, columns=12, rows=8 ):
+    """
+    """
+    if not samples.count(): 
+        return 'A1'
+    assert rows < 26
+    
+    ids = [ o.displayId for o in samples ]
+    ids.sort()
+
+    id_tupples = [ splitSampleId( s ) for s in ids ]
+    
+    letter, number = id_tupples[-1]
+    if number >= columns:
+        letter = string.ascii_uppercase[ string.ascii_uppercase.find(letter)+1 ]
+        number = 0
+    return letter.upper() + '%02i' % (number + 1)
+    
+
+def suggestSampleId(container_id):
+    """
+    container_id - int, pk of parent container
+    """
+    try:
+        box = M.Container.objects.get(id=container_id)
+        samples = box.samples.all()
+        
+        try:
+            if box.containerType == '96-well-plate':
+                return __nextSampleInPlate( samples )
+            if box.containerType == '384-well-plate':
+                return __nextSampleInPlate( samples, columns=24, rows=16 )
+            else:
+                return __nextSampleInBox( samples )
+        except:
+            return ''
+        
+    except ValueError:
+        return ''
     

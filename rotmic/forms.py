@@ -13,7 +13,7 @@
 ## GNU Affero General Public License for more details.
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
-import os
+import os, re
 
 import django.forms as forms
 import django.db.models as models
@@ -29,6 +29,7 @@ import rotmic.initialTypes as T
 import rotmic.initialUnits as U
 import rotmic.utils.sequtils as sequtils
 from rotmic.utils.filefields import DocumentFormField
+import rotmic.utils.ids as ids
 
 ## third-party ForeignKey lookup field
 from selectable.base import ModelLookup
@@ -455,6 +456,20 @@ class SampleForm(forms.ModelForm):
                                                allow_new=False,attrs={'size':5}),
         initial=U.ul)
 
+    def clean_displayId(self):
+        r = self.cleaned_data['displayId']
+        r = r.strip()
+        
+        letter, number = ids.splitSampleId( r )
+        
+        if number is None:
+            raise ValidationError('Valid IDs must be of form "A01" or "01"')
+        
+        letter = letter.upper()
+        number = '%02i' % number
+        return letter + number
+    
+    
     def clean(self):
         """
         Verify that units are given if concentration and/or amount is given.

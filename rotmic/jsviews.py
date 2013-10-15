@@ -54,3 +54,11 @@ def nextCellId(request, category):
     json_models = json.dumps(r)
     return HttpResponse(json_models, mimetype="application/json") 
 
+def nextSampleId(request, container):
+    """
+    request - request object
+    container_id - int, pk of selected Container object
+    """
+    r = {'id': I.suggestSampleId( container ) }
+    json_models = json.dumps(r)
+    return HttpResponse(json_models, mimetype="application/json") 
