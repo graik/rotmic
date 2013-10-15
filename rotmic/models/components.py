@@ -157,12 +157,26 @@ class DnaComponent(Component):
                                      related_name='as_marker_in_dna',   ## end with + to suppress reverse relationship
                                      verbose_name='Selection markers')
     
-##    def related_dnaSamples(self):
-##        """
-##        """       
-##        r = PlasmidSample.objects.filter(dnaComponent=self.id)
-##        return r
     
+    def related_dnacomponents(self):
+        """
+        DNA components that (directly) contain this dna component.
+        """
+        r = []
+        if self.as_insert_in_dna.count():
+            r += self.as_insert_in_dna.all()
+        if self.as_vector_in_plasmid.count():
+            r += self.as_vector_in_plasmid.all()
+        if self.as_marker_in_dna.count():
+            r += self.as_marker_in_dna.all()
+        return r
+    
+    def related_samples(self):
+        """
+        
+        """
+        pass
+
     def save(self, *args, **kwargs):
         """
         Enforce optional fields depending on category.
@@ -220,19 +234,6 @@ class CellComponent(Component):
                                       help_text='start typing...')
     
         
-##    def related_dnaSamples(self):
-##        """
-##        """       
-##        r = PlasmidSample.objects.filter(dnaComponent=self.id)
-##        return r
-    
-##    def get_relative_url(self):
-##        """
-##        Define standard relative URL for object access in templates
-##        """
-##        return 'dnacomponent/%i/' % self.id
-##    
-
     def save(self, *args, **kwargs):
         """
         Enforce optional fields depending on category.
