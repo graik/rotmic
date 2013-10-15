@@ -1,0 +1,50 @@
+{% extends "admin/rotmic/change_form_viewfirst.html" %}
+
+{% load i18n admin_modify %}
+
+
+{% block after_field_sets %}
+
+    {{ block.super }}
+
+    <script language=javascript type='text/javascript'>
+    {% block javascript %}
+    
+        {% block func_suggestId %}
+        function suggestId( container_id ){
+            var id_field = document.getElementById('id_displayId');
+            $.ajax({
+                async: false,
+                type: 'GET',
+                // !! next block needs to be overridden with actual ajax address !!
+                url: {% block ajax-nextId %}"/rotmic/ajax/nextSampleId/"{% endblock ajax-nextId %}+container_id+"/",
+                success: function(data){                    
+                    id_field.value = data['id'];
+                }
+            });
+        }
+        {% endblock %}
+
+
+        $(document).ready(function(){
+        
+            {# pre-fill sample ID if NEW object form is called with pre-selected container #}
+            {% if not original and 'container' in request.REQUEST %}
+                suggestId( {{request.REQUEST.container}} );
+            {% endif %}
+        
+            {# bind container change to suggestion of ID #}
+            $('#id_container_0').bind('djselectableselect',  
+                function(event, ui) {
+                    var pk = ui.item && ui.item.id;
+                    suggestId( pk );
+                }
+            );
+
+        }); 
+
+
+    {% endblock javascript %}    
+    </script>
+
+{% endblock after_field_sets %}
