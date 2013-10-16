@@ -229,6 +229,11 @@
 
         <div class='module'>
             <h2>Samples</h2>
+                <p><br></p>
+                <ul class="object-tools">
+                    <li><a href="{% url 'admin:rotmic_dnasample_add'%}?dna={{o.pk}}">Add DNA Sample</a></li>
+                </ul>
+
                 {% with n_dna=o.dna_samples.count %}
                     {% if n_dna > 0 %}
                         <p>
