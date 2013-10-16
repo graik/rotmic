@@ -48,7 +48,8 @@ def nextCellId(request, category):
     request - request object
     category - parent ComponentType
     """
-    middle = category[0].lower()
+    ## middle = category[0].lower()
+    middle = 'c'
     r = {'id': I.suggestCellId( request.user.id, middle=middle )}
     
     json_models = json.dumps(r)
