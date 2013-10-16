@@ -6,8 +6,8 @@
 
     {# prepare for "select" autocomplete fields #}
     {% block extrahead %}
-        {# Note: the order of load and super is important -- jquery.ui libraries
-           need to be loaded before selectable scripts #}
+        {# Note: the order of load and super is important #}
+        {# jquery.ui libraries need to be loaded before selectable scripts #}
         {% load selectable_tags %}
         {% include_ui_theme %}
         {% include_jquery_libs %}
