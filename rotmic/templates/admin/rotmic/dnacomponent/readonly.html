@@ -79,67 +79,69 @@
                 {% endif %}
                 <p></p>
             </div>
-        </div>
         
-        <div class='module'>        
-            <h2>Features</h2>
-            
-            {% with o.componentType.category|upper as category %}
-                <table>
-                    <tr>
-                        {% if o.insert %} 
-                            <th style="text-align: center;">Insert</th> <th width="20"></th> 
-                        {% endif %}
-                        {% if o.vectorBackbone %} 
-                            <th style="text-align: center;">Vector Backbone</th> <th width="20"></th>
-                            <th style="text-align: center;">Vector Markers</th> <th></th>
-                        {% endif %}
-                        {% if o.marker.all %}
-                            <th style="text-align: center;">Own Markers</th> <th></th>
-                        {% endif %}
-                    </tr>
-                    <tr>
-                        {% if o.insert %} 
-                            <td style="text-align: center;">
-                                <a href="{{o.insert.get_absolute_url}}" title="{{o.insert.comment}}">{{o.insert.displayId}}</a>
-                                <p>
-                                    <em>{{o.insert.name}}</em>
-                                </p>
-                                [{{o.insert.componentType}}]
-                            </td> <td></td>
-                        {% endif %}
-                        {% if o.vectorBackbone %} 
-                            {% with o.vectorBackbone as vector %}
-                                <td style="text-align: center;">
-                                    <a href="{{vector.get_absolute_url}}" title="{{vector.comment}}">{{vector.displayId}}</a>
-                                    <p>
-                                        <em>{{vector.name}}</em>
-                                    </p>
-                                    [{{vector.componentType.name}}]
-                                </td> <td></td>
-                                <td style="text-align: center;">
-                                    {% if vector.marker.all %}
-                                        {% for m in vector.marker.all %}
-                                            <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
-                                        {% endfor %}
-                                    {% endif %}
-                                </td> <td></td>
-                            {% endwith %}
-                        {% endif %}
-                        {% if o.marker.all %}
-                            <td style="text-align: center;">
-                                {% for m in o.marker.all %}
-                                    <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
-                                {% endfor %}
-                            </td> <td></td>
-                        {% endif %}
-                    </tr>            
-                </table>
+            <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;"><h4>Features</h4></div>
+            <div>
+                <p><br></p>
                 
-                {% if not o.insert and not o.vectorBackbone and not o.marker.all %}
-                    <p>There are no sequence features described.</p>
-                {% endif %}
-            {% endwith %}
+                {% with o.componentType.category|upper as category %}
+                    <table>
+                        <tr>
+                            {% if o.insert %} 
+                                <th style="text-align: center;">Insert</th> <th width="20"></th> 
+                            {% endif %}
+                            {% if o.vectorBackbone %} 
+                                <th style="text-align: center;">Vector Backbone</th> <th width="20"></th>
+                                <th style="text-align: center;">Vector Markers</th> <th></th>
+                            {% endif %}
+                            {% if o.marker.all %}
+                                <th style="text-align: center;">Own Markers</th> <th></th>
+                            {% endif %}
+                        </tr>
+                        <tr>
+                            {% if o.insert %} 
+                                <td style="text-align: center;">
+                                    <a href="{{o.insert.get_absolute_url}}" title="{{o.insert.comment}}">{{o.insert.displayId}}</a>
+                                    <p>
+                                        <em>{{o.insert.name}}</em>
+                                    </p>
+                                    [{{o.insert.componentType}}]
+                                </td> <td></td>
+                            {% endif %}
+                            {% if o.vectorBackbone %} 
+                                {% with o.vectorBackbone as vector %}
+                                    <td style="text-align: center;">
+                                        <a href="{{vector.get_absolute_url}}" title="{{vector.comment}}">{{vector.displayId}}</a>
+                                        <p>
+                                            <em>{{vector.name}}</em>
+                                        </p>
+                                        [{{vector.componentType.name}}]
+                                    </td> <td></td>
+                                    <td style="text-align: center;">
+                                        {% if vector.marker.all %}
+                                            {% for m in vector.marker.all %}
+                                                <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td> <td></td>
+                                {% endwith %}
+                            {% endif %}
+                            {% if o.marker.all %}
+                                <td style="text-align: center;">
+                                    {% for m in o.marker.all %}
+                                        <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
+                                    {% endfor %}
+                                </td> <td></td>
+                            {% endif %}
+                        </tr>            
+                    </table>
+                    
+                    {% if not o.insert and not o.vectorBackbone and not o.marker.all %}
+                        <p>There are no sequence features described.</p>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        
         </div>
     
         <div class='module'>    
