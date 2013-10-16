@@ -92,6 +92,19 @@ class Sample( UserMixin ):
         r = re.sub('__','', r)
         return r
     commentText.short_description = 'description'
+    
+    def sameSamples(self):
+        """
+        Needs to be overriden!
+        @return samples that have exactly the same content
+        """
+        return []
+    
+    def relatedSamples(self):
+        """
+        Samples that are related but not identical
+        """
+        return []
 
     def get_absolute_url(self):
         """
@@ -169,6 +182,18 @@ class DnaSample( Sample ):
                             verbose_name = 'DNA construct',
                             related_name = 'dna_samples',
                             )
+
+    def sameSamples(self):
+        """
+        @return samples that have exactly the same content
+        """
+        return DnaSample.objects.filter(dna=self.dna).exclude(id=self.id)
+    
+    def relatedSamples(self):
+        """
+        Samples that are related but not identical
+        """
+        return []
 
     def showContent(self):
         """Table display of linked insert or ''"""
