@@ -19,11 +19,13 @@ import re
 
 from django.db import models
 from django.utils.safestring import mark_safe
+import django.utils.html as html
 from django.core.urlresolvers import reverse
 
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 
+import rotmic.templatetags.rotmicfilters as F
 
 class UserMixin(models.Model):
     """
@@ -121,6 +123,20 @@ class Component(UserMixin):
         return r
     commentText.short_description = 'description'
 
+    def showComment(self):
+        """
+        @return: str; truncated comment with full comment mouse-over
+        """
+        if not self.comment: 
+            return u''
+        if len(self.comment) < 40:
+            return unicode(self.comment)
+        r = unicode(self.comment[:38])
+        r = html.mark_safe('<a title="%s">%s</a>' \
+                           % (self.comment, F.truncate(self.commentText(), 40)))
+        return r
+    showComment.allow_tags = True
+    showComment.short_description = 'Description'
 
     class Meta:
         app_label = 'rotmic'
@@ -158,25 +174,24 @@ class DnaComponent(Component):
                                      verbose_name='Selection markers')
     
     
-    def related_dnacomponents(self):
+    def relatedDnaDict(self):
         """
         DNA components that (directly) contain this dna component.
+        @return (str, DnaComponent) -- (relationship, related component)
         """
-        r = []
+        r = {}
         if self.as_insert_in_dna.count():
-            r += self.as_insert_in_dna.all()
+            r['insert'] = self.as_insert_in_dna.all()
         if self.as_vector_in_plasmid.count():
-            r += self.as_vector_in_plasmid.all()
+            r['vectorbackbone'] = self.as_vector_in_plasmid.all()
         if self.as_marker_in_dna.count():
-            r += self.as_marker_in_dna.all()
+            r['marker'] = self.as_marker_in_dna.all()
         return r
     
-    def related_samples(self):
-        """
-        
-        """
-        pass
-
+    def relatedDnaCount(self):
+        """@return int -- number of related DnaComponent objects"""
+        return sum( map(len, self.relatedDnaDict().values()) )
+    
     def save(self, *args, **kwargs):
         """
         Enforce optional fields depending on category.

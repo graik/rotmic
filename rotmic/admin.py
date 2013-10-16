@@ -86,7 +86,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelA
         ('Details', {
             'fields' : (('comment',),
                         ('sequence', 'genbankFile'),
-                        )
+                        ),
         }
          ),            
     )
@@ -355,8 +355,8 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
              'fields' : ((('concentration','concentrationUnit','amount','amountUnit',),
                          ('solvent','aliquotNr',),
                          )
-                        )
-        }
+                        ),
+         }
         ), 
           
     ]
@@ -463,8 +463,8 @@ class DnaSampleAdmin( SampleAdmin ):
                           ('concentration','concentrationUnit','amount','amountUnit',),
                           ('solvent','aliquotNr',),
                          )
-                        )
-        }
+                        ),
+         }
         ), 
     ]
 
@@ -490,7 +490,7 @@ class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin)
             'fields' : ((('displayId', 'name'),
                          ('temperature','room'),
                         )),
-            'description' : 'Describe a freezer, row of shelves or similar storage location.'
+            'description' : 'Describe a freezer, row of shelves or similar storage location.',
             }
          )
         ]

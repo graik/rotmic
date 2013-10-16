@@ -23,7 +23,6 @@
 
 {% block title %}DNA construct {{o.displayId}}{% endblock %} {# window title #}
 
-
 {% block content %}
 
     {%block title-image%}
@@ -154,6 +153,78 @@
             {% endif %}
         </div>
         
+        <div class='module'>
+            <h2>Related Entries: {{o.relatedDnaCount|add:o.as_plasmid_in_cell.count}}</h2>
+            
+            {% if o.relatedDnaCount > 0 %}
+                <p>
+                    {{o.displayId}} is used within the following other DNA constructs:
+                </p>
+                <div style="margin: 10px">
+                    <table cellspacing="1">
+            
+                        <thead>
+                        <tr>
+                            <th>used as</th>
+                            <th>in</th><th>Description</th>
+                            <th>Samples</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for key, models in o.relatedDnaDict.items %}
+                                {% for x in models %}
+                                    <tr class="{% cycle 'row1' 'row2' %}">
+                                    
+                                    <td>{{key}}</td>
+                            
+                                    <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                                      
+                                    <td>{{x.showComment}}</td>
+                                      
+                                    <td style="text-align: center;">{{x.dna_samples.count}}</td>
+    
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+            
+            {% if o.as_plasmid_in_cell.count > 0 %}
+                <p>
+                    {{o.displayId}} is used within the following Cells:
+                </p>
+                <div style="margin: 10px">
+                    <table cellspacing="1">
+            
+                        <thead>
+                        <tr>
+                            <th>used as</th>
+                            <th>in</th><th>Description</th>
+<!--                            <th>Samples</th>-->
+                        </tr>
+                        </thead>
+                        <tbody>
+                                {% for x in o.as_plasmid_in_cell.all %}
+                                    <tr class="{% cycle 'row1' 'row2' %}">
+                                    
+                                    <td>plasmid</td>
+                            
+                                    <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                                      
+                                    <td>{{x.showComment}}</td>
+                                      
+<!--                                    <td style="text-align: center;">{{x.dna_samples.count}}</td>-->
+    
+                                    </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+
         <div class='module'>
             <h2>Samples</h2>
                 {% with n_dna=o.dna_samples.count %}
