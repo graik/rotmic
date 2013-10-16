@@ -85,6 +85,63 @@
             {% endblock %}
             
         </div>
+        
+        {% block related-samples %}
+        <div class='module'>
+            <h2>Related Samples: {{o.sameSamples.all.count}}</h2>
+            <div>
+                <p class='description'>
+                    {% if o.sameSamples.all.count %}
+                        The following samples have the same content as {{o}}:
+                        <div style="margin: 10px">
+                            <table cellspacing="1">
+                    
+                                <thead>
+                                <tr>
+                                    <th>location</th>
+                                    <th>ID/<br>Pos.</th><th>prepared</th><th>by</th>
+                                    <th>Type</th><th>Content</th>
+                                    <th>Description</th><th>Status</th>
+                                </tr>
+                                </thead>
+                    
+                                <tbody>
+                                {% for x in o.sameSamples.all %}
+                                
+                                  <tr class="{% cycle 'row1' 'row2' %}">
+                                  
+                                    <td>{{x.container.showVerbose}}</td>
+                                                         
+                                    <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
+                                    
+                                    <td>{{x.preparedAt}}</td>
+                                    
+                                    <td>{{x.registeredBy}}</td>
+                                    
+                                    <td>{{x.showType}}</td>
+                                    
+                                    <td>{{x.showContent}}</td>
+                                    
+                                    <td>{{x.comment | truncateHTML:30}}</td>
+                                    
+                                    <td>{{x.status}}</td>
+                                    
+                                  </tr>
+                    
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                            <p></p>
+                            <small>
+                                Help: Move mouse over content link to see content description. 
+                                Move mouse over sample description to see full length description.
+                            </small>
+                        </div>
+                    {% endif %}
+                </p>
+            </div>
+        </div>    
+        {% endblock %}
             
     </div>
 
