@@ -14,12 +14,14 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 
-import datetime
+import datetime, StringIO
+from Bio import SeqIO
 
 from django.contrib import admin
 import django.contrib.admin.widgets as widgets
 import django.utils.html as html
 from django.utils.safestring import mark_safe
+import django.contrib.messages as messages 
 
 import reversion
 
@@ -108,8 +110,24 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelA
  
     def save_model(self, request, obj, form, change):
         """Extract uploaded genbank file from request"""
+
+        ## copy genbank file content as string into DB field
         if request.FILES and 'genbankFile' in request.FILES:
-            obj.genbank = ''.join(request.FILES['genbankFile'].readlines())
+            try:
+                obj.genbank = ''.join(request.FILES['genbankFile'].readlines())
+
+                f = StringIO.StringIO( obj.genbank )
+                seqrecord = SeqIO.parse( f, 'gb' ).next()
+                obj.sequence = seqrecord.seq.tostring()
+                if not obj.name:
+                    obj.name = seqrecord.name
+                if not obj.comment:
+                    obj.comment = seqrecord.description
+            except StopIteration:
+                messages.error(request, 'Empty or corrupted genbank file')
+            except ValueError, why:
+                messages.error(request, 'Error reading genbank file: %r' % why)
+        
         super(DnaComponentAdmin, self).save_model( request, obj, form, change)
  
         

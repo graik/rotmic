@@ -156,7 +156,7 @@ class DnaComponentForm(forms.ModelForm):
     
     ## genbankFile upload into textfield 'genbank' is handled by ModelAdmin.save_model
     genbankFile = DocumentFormField(label='GenBank file', required=False,
-                                    help_text='upload genbank-formatted file',
+                                    help_text='This will replace the current sequence.',
                                      extensions=['gbk','gb','genebank'])
     
 
