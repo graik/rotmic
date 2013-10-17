@@ -234,10 +234,10 @@
                     <li><a href="{% url 'admin:rotmic_dnasample_add'%}?dna={{o.pk}}">Add DNA Sample</a></li>
                 </ul>
 
-                {% with n_dna=o.dna_samples.count %}
-                    {% if n_dna > 0 %}
+                {% with n=o.allSamplesCount %}
+                    {% if n > 0 %}
                         <p>
-                            There are <b>{{n_dna}} DNA samples</b> registered for this DNA construct.<br>
+                            There are <b>{{n}} samples</b> (DNA or cell stock) registered for this DNA construct.<br>
                         </p>
                         
                         <div style="margin: 10px">
@@ -253,7 +253,7 @@
                                 </thead>
                     
                                 <tbody>
-                                {% for x in o.dna_samples.all %}
+                                {% for x in o.allSamples %}
                                 
                                   <tr class="{% cycle 'row1' 'row2' %}">
                                   
@@ -286,7 +286,7 @@
                         </div>
                     
                     {% else %}
-                        <p>There are no DNA samples registered for this DNA construct.</p>
+                        <p>There are no samples registered for this DNA construct.</p>
                     {% endif %}
                 {% endwith %}
         </div>

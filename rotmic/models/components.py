@@ -22,8 +22,7 @@ from django.utils.safestring import mark_safe
 import django.utils.html as html
 from django.core.urlresolvers import reverse
 
-from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import User, Group
 
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
@@ -197,6 +196,27 @@ class DnaComponent(Component):
         """@return int -- number of related DnaComponent objects"""
         return sum( map(len, self.relatedDnaDict().values()) )
     
+    def allSamples(self):
+        """
+        DNA and cell samples for this construct.
+        """
+        from . import CellSample
+        dnasamples = self.dna_samples.all()
+
+        sample_ids = self.as_plasmid_in_cell.values_list('cell_samples', flat=True)
+        sample_ids = [ i for i in sample_ids if i ] ## filter out None
+        cellsamples = CellSample.objects.filter(id__in=sample_ids)
+
+        return list(dnasamples) + list(cellsamples)
+    
+    def allSamplesCount(self):
+        dna = self.dna_samples.count()
+        
+        sample_ids= self.as_plasmid_in_cell.values_list('cell_samples', flat=True)
+        sample_ids = [ i for i in sample_ids if i ] ## filter out None
+        
+        return dna + len(sample_ids)
+
     def save(self, *args, **kwargs):
         """
         Enforce optional fields depending on category.
