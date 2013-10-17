@@ -15,6 +15,8 @@
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 from django.contrib import admin
 from django.db.models.query import QuerySet as Q
+from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import User
 
 import rotmic.models as M
 
@@ -352,3 +354,37 @@ class SampleContainerFilter( admin.SimpleListFilter ):
 
 class DnaSampleContainerFilter( SampleContainerFilter ):
     _sampleClass = M.DnaSample
+    
+    
+class SortedUserFilter( admin.SimpleListFilter ):
+    """
+    User Admin Filter for Component tables (registeredBy field),
+    sorted by user name rather than id
+    
+    Hints taken from: 
+    http://stackoverflow.com/questions/16560055/django-admin-sorting-list-filter
+    """
+    title='Author'
+    parameter_name = 'user'
+    
+    user_field = 'registeredBy'  ## override if needed
+    
+    def lookups(self, request, model_admin):
+        qs = model_admin.queryset(request)
+        users = User.objects.filter(id__in=qs.values_list(self.user_field, flat=True))
+        current = request.user
+
+        ## all except current user
+        users = users.distinct().order_by('username').exclude(id=current.id)
+        r = [(u.username, u.username) for u in users]
+
+        ## put current user first
+        r = [(current.username, 'Me (%s)'%current.username)] + r
+        return r
+   
+   
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(registeredBy__username__exact=self.value())
+
+    

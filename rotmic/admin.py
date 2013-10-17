@@ -97,7 +97,8 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelA
                     'showInsertUrl', 'showVectorUrl', 'showMarkerUrls', 
                     'showComment','showStatus', 'showEdit')
     
-    list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 'status','registeredBy')
+    list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 
+                    'status',filters.SortedUserFilter)
     
     search_fields = ('displayId', 'name', 'comment', 
                      'insert__name', 'insert__displayId',
@@ -105,7 +106,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelA
     
     date_hierarchy = 'registeredAt'
     
-    ordering = ('displayId', 'name',)
+    ordering = ('displayId', 'name')
     
  
     def save_model(self, request, obj, form, change):
@@ -222,7 +223,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
                     'showEdit')
     
     list_filter = ( filters.CellCategoryListFilter, filters.CellTypeListFilter, 
-                    'status','registeredBy')
+                    'status', filters.SortedUserFilter)
     
     search_fields = ('displayId', 'name', 'comment')
     
@@ -391,7 +392,8 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     search_fields = ('diplayId', 'name','comment')
     
     list_filter = ('status', filters.SampleLocationFilter, 
-                   filters.SampleRackFilter, filters.SampleContainerFilter)
+                   filters.SampleRackFilter, filters.SampleContainerFilter,
+                   filters.SortedUserFilter)
     
     def __init__(self, *args, **kwargs):
         """Disable automatic link generation"""
@@ -488,7 +490,7 @@ class DnaSampleAdmin( SampleAdmin ):
 
     list_filter = ('status', filters.DnaSampleLocationFilter, 
                    filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter,
-                   'registeredBy')
+                   filters.SortedUserFilter)
         
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""

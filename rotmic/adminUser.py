@@ -46,3 +46,10 @@ class UserProfileAdmin(admin.ModelAdmin):
     
     
 admin.site.register(UserProfile, UserProfileAdmin)
+
+class CustomUserAdmin( UserAdmin ):
+    
+    ordering = ['username']
+
+admin.site.unregister( User )
+admin.site.register( User, CustomUserAdmin )
