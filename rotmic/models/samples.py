@@ -147,13 +147,13 @@ class Sample( UserMixin ):
     
     def showExtendedId(self):
         """Display Container -- Sample for table views"""
-        r = u'%s \u2014 %s' % (self.container.displayId, self.displayId)
+        r = u'%s : %s' % (self.container.displayId, self.displayId)
 
         title = self.comment
         url = self.get_absolute_url()
         return html.mark_safe('<a href="%s" title="%s">%s</a>' % (url, title, r))
     showExtendedId.allow_tags = True
-    showExtendedId.short_description = u'Box \u2014 ID'
+    showExtendedId.short_description = u'Box : ID'
     
     def showContent(self):
         """Display sub-class-specific content for tables. Needs to be overridden"""
