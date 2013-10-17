@@ -25,12 +25,6 @@ from rotmic.models.components import UserMixin
 from rotmic.models.storage import Container
 import rotmic.utils.inheritance as I
 
-class SampleManager( models.Manager ):
-
-    ## DJANGO 1.6: renamed to get_queryset
-    def get_query_set(self):
-        dna = DnaSample.objects.get_query_set()
-        return dna
 
 class Sample( UserMixin ):
     """Base class for DNA, cell and protein samples."""

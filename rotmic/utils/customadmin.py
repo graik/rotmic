@@ -214,7 +214,7 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
         
 
 
-class ComponentModelAdmin( ViewFirstModelAdmin ):
+class ComponentAdmin( ViewFirstModelAdmin ):
     """
     Derived from ViewFirstModelAdmin -- Custom version of admin.ModelAdmin
     which shows a read-only View for a given object instead of the normal
@@ -230,6 +230,13 @@ class ComponentModelAdmin( ViewFirstModelAdmin ):
     * showComment -- truncated comment with html mouse-over full text for tables
     """
     
+    def queryset(self, request):
+        """
+        Return actual sub-class instances instead of generic Component super-class
+        This method builds on the custom InheritanceManager replacing Component.objects
+        """
+        return super(ViewFirstModelAdmin,self).queryset(request).select_subclasses()
+
     def change_view(self, request, object_id, form_url='', extra_context=None):
         "The 'Edit' admin view for this model."
         extra_context = extra_context or {}
@@ -239,7 +246,7 @@ class ComponentModelAdmin( ViewFirstModelAdmin ):
         extra_context['cellTypes'] = M.CellComponentType.objects.all()
         extra_context['cellCategories'] = M.CellComponentType.objects.filter(subTypeOf=None)
         
-        return super(ComponentModelAdmin, self).change_view(\
+        return super(ComponentAdmin, self).change_view(\
             request, object_id, form_url, extra_context=extra_context)
 
 
@@ -252,7 +259,7 @@ class ComponentModelAdmin( ViewFirstModelAdmin ):
         extra_context['cellTypes'] = M.CellComponentType.objects.all()
         extra_context['cellCategories'] = M.CellComponentType.objects.filter(subTypeOf=None)
         
-        return super(ComponentModelAdmin, self).add_view(\
+        return super(ComponentAdmin, self).add_view(\
             request, form_url, extra_context=extra_context)
 
     def showComment(self, obj):

@@ -29,7 +29,7 @@ from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
      CellComponent, CellComponentType, Unit, Sample, SampleAttachment, \
      Location, Rack, Container, DnaSample
 
-from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentModelAdmin
+from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentAdmin
 
 import rotmic.utils.adminFilters as filters
 
@@ -72,7 +72,7 @@ class ComponentAttachmentInline(admin.TabularInline):
     max_num = 5
 
 
-class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelAdmin ):
+class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
     """Admin interface description for DNA constructs."""
     inlines = [ ComponentAttachmentInline ]
     form = DnaComponentForm
@@ -108,6 +108,9 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelA
     
     ordering = ('displayId', 'name')
     
+    def queryset(self, request):
+        """Revert modification made by ComponentModelAdmin"""
+        return super(ComponentAdmin,self).queryset(request)
  
     def save_model(self, request, obj, form, change):
         """Extract uploaded genbank file from request"""
@@ -198,7 +201,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelA
 admin.site.register(DnaComponent, DnaComponentAdmin)
 
 
-class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModelAdmin ):
+class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
     """Admin interface description for DNA constructs."""
     inlines = [ ComponentAttachmentInline ]
     form = CellComponentForm
@@ -231,6 +234,9 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentModel
     
     ordering = ('displayId', 'name',)
     
+    def queryset(self, request):
+        """Revert modification made by ComponentModelAdmin"""
+        return super(ComponentAdmin,self).queryset(request)
 
     def get_form(self, request, obj=None, **kwargs):
         """

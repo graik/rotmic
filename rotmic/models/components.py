@@ -26,6 +26,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 
 import rotmic.templatetags.rotmicfilters as F
+import rotmic.utils.inheritance as I
+
 
 class UserMixin(models.Model):
     """
@@ -99,6 +101,9 @@ class Component(UserMixin):
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='planning')
     
+    ## return child classes in queries using select_subclasses()
+    objects = I.InheritanceManager()  
+
     def __unicode__(self):
         name = self.name or ''
         return u'%s (%s)' % (self.displayId, name)
