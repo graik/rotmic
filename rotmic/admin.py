@@ -14,8 +14,7 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 
-import datetime, StringIO
-from Bio import SeqIO
+import datetime
 
 from django.contrib import admin
 import django.contrib.admin.widgets as widgets
@@ -25,13 +24,12 @@ import django.contrib.messages as messages
 
 import reversion
 
-from rotmic.models import DnaComponent, DnaComponentType, ComponentAttachment, \
-     CellComponent, CellComponentType, Unit, Sample, SampleAttachment, \
+from rotmic.models import DnaComponentType, CellComponentType, \
+     Unit, Sample, SampleAttachment, \
      Location, Rack, Container, DnaSample
 
-from rotmic.utils.customadmin import ViewFirstModelAdmin, ComponentAdmin
-
-import rotmic.utils.adminFilters as filters
+from .utils.customadmin import ViewFirstModelAdmin
+from .utils import adminFilters as filters
 
 from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm,\
      SampleForm, LocationForm, RackForm, ContainerForm, DnaSampleForm
@@ -40,242 +38,10 @@ import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.ids as I
 
+from . import adminBase
 
-import adminUser  ## trigger extension of User 
-
-class BaseAdminMixin:
-    """
-    Automatically save and assign house-keeping information like by whom and
-    when a record was saved.
-    """
-
-    def save_model(self, request, obj, form, change):
-        """Override to save user who created this record"""
-        ## do if new object or if object is being recovered by reversion
-        if not change or '/recover/' in request.META['HTTP_REFERER']:
-            obj.registeredBy = request.user
-            obj.registeredAt = datetime.datetime.now()
-            
-        if change and form.has_changed():
-            obj.modifiedBy = request.user
-            obj.modifiedAt = datetime.datetime.now()
-
-        obj.save()
-
-
-class ComponentAttachmentInline(admin.TabularInline):
-    model = ComponentAttachment
-    form = AttachmentForm
-    template = 'admin/rotmic/componentattachment/tabular.html'
-    can_delete=True
-    extra = 1
-    max_num = 5
-
-
-class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
-    """Admin interface description for DNA constructs."""
-    inlines = [ ComponentAttachmentInline ]
-    form = DnaComponentForm
-    
-    fieldsets = (
-        (None, {
-            'fields': (('displayId', 'name','status'),
-                       ('componentCategory', 'componentType'),
-                       ('insert', 'vectorBackbone','marker' ),
-                       )
-        }
-         ),
-        ('Details', {
-            'fields' : (('comment',),
-                        ('sequence', 'genbankFile'),
-                        ),
-        }
-         ),            
-    )
-
-    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showInsertUrl', 'showVectorUrl', 'showMarkerUrls', 
-                    'showComment','showStatus', 'showEdit')
-    
-    list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 
-                    'status',filters.SortedUserFilter)
-    
-    search_fields = ('displayId', 'name', 'comment', 
-                     'insert__name', 'insert__displayId',
-                     'vectorBackbone__name', 'vectorBackbone__displayId')
-    
-    date_hierarchy = 'registeredAt'
-    
-    ordering = ('displayId', 'name')
-    
-    def queryset(self, request):
-        """Revert modification made by ComponentModelAdmin"""
-        return super(ComponentAdmin,self).queryset(request)
- 
-    def save_model(self, request, obj, form, change):
-        """Extract uploaded genbank file from request"""
-
-        ## copy genbank file content as string into DB field
-        if request.FILES and 'genbankFile' in request.FILES:
-            try:
-                obj.genbank = ''.join(request.FILES['genbankFile'].readlines())
-
-                f = StringIO.StringIO( obj.genbank )
-                seqrecord = SeqIO.parse( f, 'gb' ).next()
-                obj.sequence = seqrecord.seq.tostring()
-                if not obj.name:
-                    obj.name = seqrecord.name
-                if not obj.comment:
-                    obj.comment = seqrecord.description
-            except StopIteration:
-                messages.error(request, 'Empty or corrupted genbank file')
-            except ValueError, why:
-                messages.error(request, 'Error reading genbank file: %r' % why)
-        
-        super(DnaComponentAdmin, self).save_model( request, obj, form, change)
- 
-        
-    def get_form(self, request, obj=None, **kwargs):
-        """
-        Override queryset of ForeignKey fields without overriding the field itself.
-        This preserves the "+" Button which is otherwise lost.
-        See http://djangosnippets.org/snippets/1558/#c4674
-        """
-        form = super(DnaComponentAdmin,self).get_form(request, obj,**kwargs)
-
-        field = form.base_fields['marker']
-        field.queryset = field.queryset.filter(componentType__subTypeOf=T.dcMarker)
-        field.help_text = 'select multiple with Control/Command key'
-        
-        field = form.base_fields['vectorBackbone']
-        field.empty_label = '---specifiy vector---'
-        
-        ## suggest ID
-        category = form.base_fields['componentCategory'].initial
-        category = category.name[0].lower()
-        prefix = request.user.profile.dcPrefix or request.user.profile.prefix
-        prefix += category
-        
-        field = form.base_fields['displayId']
-        field.initial = I.suggestDnaId(request.user.id, prefix=prefix)
-            
-        return form
-
-    def showInsertUrl(self, obj):
-        """Table display of linked insert or ''"""
-        assert isinstance(obj, DnaComponent), 'object missmatch'
-        x = obj.insert
-        if not x:
-            return u''
-        url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
-    showInsertUrl.allow_tags = True
-    showInsertUrl.short_description = 'Insert'
-        
-    def showVectorUrl(self, obj):
-        """Table display of linked insert or ''"""
-        assert isinstance(obj, DnaComponent), 'object missmatch'
-        x = obj.vectorBackbone
-        if not x:
-            return u''
-        url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
-    showVectorUrl.allow_tags = True
-    showVectorUrl.short_description = 'Vector'
-    
-    def showMarkerUrls(self, obj):
-        """Table display of Vector Backbone markers"""
-        assert isinstance(obj, DnaComponent), 'object missmatch'
-        urls = []
-        for m in obj.allMarkers():
-            u = m.get_absolute_url()
-            urls += [ html.mark_safe('<a href="%s" title="%s">%s</a>' \
-                                % (u, m.comment, m.name))]
-        return ', '.join(urls)
-    
-    showMarkerUrls.allow_tags = True
-    showMarkerUrls.short_description = 'Markers'
-
-admin.site.register(DnaComponent, DnaComponentAdmin)
-
-
-class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
-    """Admin interface description for DNA constructs."""
-    inlines = [ ComponentAttachmentInline ]
-    form = CellComponentForm
-    
-    fieldsets = (
-        (None, {
-            'fields': (('displayId', 'name','status'),
-                       ('componentCategory', 'componentType'),
-                       ('plasmid', 'marker'),
-                       )
-        }
-         ),
-        ('Details', {
-            'fields' : (('comment',),
-                        )
-        }
-         ),            
-    )
-
-    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showPlasmidUrl', 'showMarkerUrls', 'showComment','showStatus',
-                    'showEdit')
-    
-    list_filter = ( filters.CellCategoryListFilter, filters.CellTypeListFilter, 
-                    'status', filters.SortedUserFilter)
-    
-    search_fields = ('displayId', 'name', 'comment')
-    
-    date_hierarchy = 'registeredAt'
-    
-    ordering = ('displayId', 'name',)
-    
-    def queryset(self, request):
-        """Revert modification made by ComponentModelAdmin"""
-        return super(ComponentAdmin,self).queryset(request)
-
-    def get_form(self, request, obj=None, **kwargs):
-        """
-        Override queryset of ForeignKey fields without overriding the field itself.
-        This preserves the "+" Button which is otherwise lost.
-        See http://djangosnippets.org/snippets/1558/#c4674
-        """
-        form = super(CellComponentAdmin,self).get_form(request, obj,**kwargs)
-        
-        field = form.base_fields['marker']
-        field.queryset = field.queryset.filter(componentType__subTypeOf=T.dcMarker)
-        field.help_text = ''
-        return form
-    
-    def showPlasmidUrl(self, obj):
-        """Table display of linked insert or ''"""
-        assert isinstance(obj, CellComponent), 'object missmatch'
-        x = obj.plasmid
-        if not x:
-            return u''
-        url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
-    showPlasmidUrl.allow_tags = True
-    showPlasmidUrl.short_description = 'Plasmid'
-    
-    def showMarkerUrls(self, obj):
-        """Table display of Vector Backbone markers"""
-        assert isinstance(obj, CellComponent), 'object missmatch'
-        urls = []
-        for m in obj.allMarkers():
-            u = m.get_absolute_url()
-            urls += [ html.mark_safe('<a href="%s" title="%s">%s</a>' \
-                                % (u, m.comment, m.name))]
-        return ', '.join(urls)    
-    showMarkerUrls.allow_tags = True
-    showMarkerUrls.short_description = 'Markers'
-
-admin.site.register(CellComponent, CellComponentAdmin)
+from . import adminUser  ## trigger extension of User
+from . import adminComponents ## trigger registration of component admin interfaces
 
 
 class DnaComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
@@ -359,7 +125,7 @@ class SampleAttachmentInline(admin.TabularInline):
     )
     
 
-class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
+class SampleAdmin( adminBase.BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
     form = SampleForm     
     
     change_list_template = 'admin/rotmic/sample/change_list.html'  ## for some reason this is needed.
@@ -506,7 +272,7 @@ admin.site.register( DnaSample, DnaSampleAdmin )
 
 
 
-class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+class LocationAdmin(adminBase.BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = LocationForm
     
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
@@ -531,7 +297,7 @@ class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin)
 admin.site.register( Location, LocationAdmin )
 
 
-class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+class RackAdmin(adminBase.BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = RackForm
 
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
@@ -568,7 +334,7 @@ class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
 admin.site.register( Rack, RackAdmin )
 
 
-class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+class ContainerAdmin(adminBase.BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = ContainerForm
 
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
