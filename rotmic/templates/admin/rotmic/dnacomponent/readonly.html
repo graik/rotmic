@@ -204,23 +204,23 @@
                         <tr>
                             <th>used as</th>
                             <th>in</th><th>Description</th>
-<!--                            <th>Samples</th>-->
+                            <th>Samples</th>
                         </tr>
                         </thead>
                         <tbody>
-                                {% for x in o.as_plasmid_in_cell.all %}
-                                    <tr class="{% cycle 'row1' 'row2' %}">
-                                    
-                                    <td>plasmid</td>
-                            
-                                    <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
-                                      
-                                    <td>{{x.showComment}}</td>
-                                      
-<!--                                    <td style="text-align: center;">{{x.dna_samples.count}}</td>-->
-    
-                                    </tr>
-                                {% endfor %}
+                            {% for x in o.as_plasmid_in_cell.all %}
+                                <tr class="{% cycle 'row1' 'row2' %}">
+                                
+                                <td>plasmid</td>
+                        
+                                <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                                  
+                                <td>{{x.showComment}}</td>
+                                  
+                                <td style="text-align: center;">{{x.cell_samples.count}}</td>
+
+                                </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
