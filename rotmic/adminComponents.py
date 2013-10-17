@@ -30,7 +30,7 @@ from .templatetags import rotmicfilters as F
 from .utils import adminFilters as filters
 
 from .utils.customadmin import ViewFirstModelAdmin
-from . import adminBase
+from .adminBase import BaseAdminMixin
 from django.contrib import messages
 from .utils import ids
 
@@ -123,7 +123,7 @@ class ComponentAdmin( ViewFirstModelAdmin ):
     showStatus.short_description = 'Status'
 
 
-class DnaComponentAdmin( adminBase.BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin):
+class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin):
     """Admin interface description for DNA constructs."""
     inlines = [ ComponentAttachmentInline ]
     form = forms.DnaComponentForm
@@ -252,7 +252,7 @@ class DnaComponentAdmin( adminBase.BaseAdminMixin, reversion.VersionAdmin, Compo
 admin.site.register(M.DnaComponent, DnaComponentAdmin)
 
 
-class CellComponentAdmin( adminBase.BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
+class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
     """Admin interface description for DNA constructs."""
     inlines = [ ComponentAttachmentInline ]
     form = forms.CellComponentForm
