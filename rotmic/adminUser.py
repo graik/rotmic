@@ -16,8 +16,6 @@
 """Extension of default User admin"""
 
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import User
 
 from rotmic.models import UserProfile
 
@@ -46,10 +44,3 @@ class UserProfileAdmin(admin.ModelAdmin):
     
     
 admin.site.register(UserProfile, UserProfileAdmin)
-
-class CustomUserAdmin( UserAdmin ):
-    
-    ordering = ['username']
-
-admin.site.unregister( User )
-admin.site.register( User, CustomUserAdmin )
