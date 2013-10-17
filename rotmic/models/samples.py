@@ -83,8 +83,19 @@ class Sample( UserMixin ):
 
     def __unicode__(self):
         return u'%s \u2014 %s' % (self.container.displayId, self.displayId)
-
-
+    
+    def clean(self):
+        """Prevent that parent class Samples are ever saved through admin."""
+        from django.core.exceptions import ValidationError
+        if self.__class__ is Sample:
+            raise ValidationError('Cannot create generic samples without content.')        
+    
+    def save(self, *args, **kwargs):
+        """Prevent parent class Sample saving at the django core level."""
+        if self.__class__ is Sample:
+            raise NotImplementedError('Attempt to create generic Sample instance.')
+        super(Sample, self).save(*args, **kwargs)
+    
     def commentText(self):
         """remove some formatting characters from text"""
         r = re.sub('--','', self.comment)
