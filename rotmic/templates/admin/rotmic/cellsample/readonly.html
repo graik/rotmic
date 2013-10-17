@@ -1,0 +1,24 @@
+{% extends "admin/rotmic/sample/readonly.html" %}
+{% load admin_urls admin_static %}
+{% load rotmicfilters %}
+
+{% block title %}Cell Sample {{o.displayId}}{% endblock %} {# window title #}
+
+{% block super-title %}<h3>Cell Stock Sample</h3>{% endblock %}
+
+{%block title-image%}
+    <img src="{% static "img/dnasample.jpg" %}" align="left" height="55" 
+    style="padding-left:0px; padding-right:10px; padding-top:0px"> 
+{%endblock%}
+
+{% block sample-content %}
+        <div class='module'>
+            <h2>Content</h2>
+            <div style="margin: 10px">
+                <h4>modified Cell <a href="{{o.cell.get_absolute_url}}">{{o.cell}}</a></h4>
+                <p class='description'>
+                    {{o.cell.comment|markdown}}
+                </p>
+            </div>
+        </div>
+{% endblock %}

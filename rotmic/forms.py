@@ -22,7 +22,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 from rotmic.models import DnaComponent, DnaComponentType, \
-     CellComponent, CellComponentType, Sample, DnaSample,\
+     CellComponent, CellComponentType, Sample, DnaSample, CellSample,\
      Location, Rack, Container, Unit
 
 import rotmic.initialTypes as T
@@ -119,6 +119,17 @@ class SampleDnaLookup(ModelLookup):
         return item.pk
 
 registry.register(SampleDnaLookup)
+
+class SampleCellLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = CellComponent
+    search_fields = ('displayId__startswith', 'name__icontains')
+    ##filters = {'componentType__subTypeOf__in': [T.dcPlasmid, T.dcFragment] }
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(SampleCellLookup)
 
 
 class SampleContainerLookup(ModelLookup):
@@ -530,6 +541,27 @@ class DnaSampleForm( SampleForm ):
         model = DnaSample
         widgets = getSampleWidgets( \
             {'dna': sforms.AutoComboboxSelectWidget(lookup_class=SampleDnaLookup,
+                                                    allow_new=False,
+                                                    attrs={'size':35}),
+             })
+
+class CellSampleForm( SampleForm ):
+    """Customized Form for CellSample add / change"""
+    
+    ## restrict available choices to volume units only
+    amountUnit = sforms.AutoCompleteSelectField(
+        label='... unit',
+        required=False,
+        lookup_class=VolumeAmountUnitLookup,
+        allow_new=False,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=VolumeAmountUnitLookup,
+                                               allow_new=False,attrs={'size':5}),
+        initial=U.ul)
+
+    class Meta:
+        model = CellSample
+        widgets = getSampleWidgets( \
+            {'cell': sforms.AutoComboboxSelectWidget(lookup_class=SampleCellLookup,
                                                     allow_new=False,
                                                     attrs={'size':35}),
              })

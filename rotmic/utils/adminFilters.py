@@ -247,6 +247,9 @@ class SampleLocationFilter( admin.SimpleListFilter ):
 class DnaSampleLocationFilter( SampleLocationFilter ):
     _sampleClass = M.DnaSample
     
+class CellSampleLocationFilter( SampleLocationFilter ):
+    _sampleClass = M.CellSample
+
 
 class SampleRackFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Racks,  responds to SampleLocationListFilter"""
@@ -301,6 +304,9 @@ class SampleRackFilter( admin.SimpleListFilter ):
 class DnaSampleRackFilter( SampleRackFilter ):
     _sampleClass = M.DnaSample
     
+class CellSampleRackFilter( SampleRackFilter ):
+    _sampleClass = M.CellSample
+
 
 class SampleContainerFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Containers, responds to SampleRackListFilter"""
@@ -354,6 +360,9 @@ class SampleContainerFilter( admin.SimpleListFilter ):
 
 class DnaSampleContainerFilter( SampleContainerFilter ):
     _sampleClass = M.DnaSample
+    
+class CellSampleContainerFilter( SampleContainerFilter ):
+    _sampleClass = M.CellSample
     
     
 class SortedUserFilter( admin.SimpleListFilter ):

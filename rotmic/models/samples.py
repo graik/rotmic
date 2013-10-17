@@ -21,8 +21,8 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 import django.utils.html as html
 
-from rotmic.models.components import UserMixin
-from rotmic.models.storage import Container
+from .components import UserMixin
+from .storage import Container
 import rotmic.utils.inheritance as I
 
 
@@ -76,7 +76,7 @@ class Sample( UserMixin ):
     objects = I.InheritanceManager()  
 
     def __unicode__(self):
-        return u'%s \u2014 %s' % (self.container.displayId, self.displayId)
+        return u'%s : %s' % (self.container.displayId, self.displayId)
     
     def clean(self):
         """Prevent that parent class Samples are ever saved through admin."""
@@ -215,3 +215,39 @@ class DnaSample( Sample ):
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'DNA Sample'
+
+
+class CellSample( Sample ):
+    """Samples linked to CellComponent"""
+    
+    cell = models.ForeignKey('CellComponent',
+                            verbose_name = 'Cell',
+                            related_name = 'cell_samples',
+                            )
+
+    def sameSamples(self):
+        """
+        @return samples that have exactly the same content
+        """
+        return CellSample.objects.filter(cell=self.cell).exclude(id=self.id)
+    
+    def relatedSamples(self):
+        """
+        Samples that are related but not identical
+        """
+        return []
+
+    def showContent(self):
+        """Table display of linked insert or ''"""
+        x = self.cell
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
+                              % (url, x.comment, x.displayId, x.name))
+    showContent.allow_tags = True
+    showContent.short_description = 'Cell'
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'Cell Sample'

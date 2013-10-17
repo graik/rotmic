@@ -26,19 +26,18 @@ import reversion
 
 from rotmic.models import DnaComponentType, CellComponentType, \
      Unit, Sample, SampleAttachment, \
-     Location, Rack, Container, DnaSample
+     Location, Rack, Container, DnaSample, CellSample
 
 from .utils.customadmin import ViewFirstModelAdmin
 from .utils import adminFilters as filters
 
-from rotmic.forms import DnaComponentForm, CellComponentForm, AttachmentForm,\
-     SampleForm, LocationForm, RackForm, ContainerForm, DnaSampleForm
+from . import forms
 
 import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.ids as I
 
-from . import adminBase
+from .adminBase import BaseAdminMixin
 
 from . import adminUser  ## trigger extension of User
 from . import adminComponents ## trigger registration of component admin interfaces
@@ -108,7 +107,7 @@ admin.site.register( Unit, UnitAdmin )
 
 class SampleAttachmentInline(admin.TabularInline):
     model = SampleAttachment
-    form = AttachmentForm
+    form = forms.AttachmentForm
     template = 'admin/rotmic/componentattachment/tabular.html'
     can_delete=True
     extra = 1
@@ -125,8 +124,8 @@ class SampleAttachmentInline(admin.TabularInline):
     )
     
 
-class SampleAdmin( adminBase.BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
-    form = SampleForm     
+class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
+    form = forms.SampleForm     
     
     change_list_template = 'admin/rotmic/sample/change_list.html'  ## for some reason this is needed.
     
@@ -239,7 +238,7 @@ admin.site.register( Sample, SampleAdmin )
 
 
 class DnaSampleAdmin( SampleAdmin ):
-    form = DnaSampleForm
+    form = forms.DnaSampleForm
     
     change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
     
@@ -271,9 +270,46 @@ class DnaSampleAdmin( SampleAdmin ):
 admin.site.register( DnaSample, DnaSampleAdmin )
 
 
+class CellSampleAdmin( SampleAdmin ):
+    form = forms.CellSampleForm
+    
+    change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
+    
+    fieldsets = [
+        (None, {
+            'fields' : ((('displayId', 'container', 'status'),
+                         ('preparedAt',),
+                         ('comment'),
+                    ))
+            } ),
+         ('Content', {
+             'fields' : ((('cell',),
+                          ('amount','amountUnit',),
+                          ('solvent','aliquotNr',),
+                         )
+                        ),
+         }
+        ), 
+    ]
 
-class LocationAdmin(adminBase.BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
-    form = LocationForm
+    list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'preparedAt', 'registeredBy',
+                    'showContent', 'showAmount',
+                    'showStatus','showEdit')
+    
+    list_filter = ('status', filters.CellSampleLocationFilter, 
+                   filters.CellSampleRackFilter, filters.CellSampleContainerFilter,
+                   filters.SortedUserFilter)
+        
+    def queryset(self, request):
+        """Revert modification made by SampleAdmin"""
+        return super(SampleAdmin,self).queryset(request)
+    
+admin.site.register( CellSample, CellSampleAdmin )
+
+
+class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+    form = forms.LocationForm
     
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
 
@@ -297,8 +333,8 @@ class LocationAdmin(adminBase.BaseAdminMixin, reversion.VersionAdmin, ViewFirstM
 admin.site.register( Location, LocationAdmin )
 
 
-class RackAdmin(adminBase.BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
-    form = RackForm
+class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+    form = forms.RackForm
 
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
     
@@ -334,8 +370,8 @@ class RackAdmin(adminBase.BaseAdminMixin, reversion.VersionAdmin, ViewFirstModel
 admin.site.register( Rack, RackAdmin )
 
 
-class ContainerAdmin(adminBase.BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
-    form = ContainerForm
+class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+    form = forms.ContainerForm
 
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
 
