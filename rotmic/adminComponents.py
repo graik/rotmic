@@ -17,7 +17,7 @@
 
 import StringIO
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.utils import safestring, html
 
 import reversion
@@ -28,11 +28,10 @@ from . import forms
 from . import initialTypes as I
 from .templatetags import rotmicfilters as F
 from .utils import adminFilters as filters
-
-from .utils.customadmin import ViewFirstModelAdmin
-from .adminBase import BaseAdminMixin
-from django.contrib import messages
 from .utils import ids
+from .utils.customadmin import ViewFirstModelAdmin
+
+from .adminBase import BaseAdminMixin
 
 class ComponentAttachmentInline(admin.TabularInline):
     model = M.ComponentAttachment
