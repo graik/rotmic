@@ -30,9 +30,10 @@ class Sample( UserMixin ):
     """Base class for DNA, cell and protein samples."""
 
     displayId = models.CharField('Position', max_length=20,
-                                 help_text='Label or well position.')
+                                 help_text='Select container first.')
 
-    container = models.ForeignKey(Container, related_name='samples')
+    container = models.ForeignKey(Container, related_name='samples',
+                                  help_text='Start typing name or ID...')
 
     aliquotNr = models.PositiveIntegerField('Number of aliquots', 
                                             null=True, blank=True)
@@ -223,6 +224,7 @@ class CellSample( Sample ):
     cell = models.ForeignKey('CellComponent',
                             verbose_name = 'Cell',
                             related_name = 'cell_samples',
+                            help_text='start typing name or ID of existing cell record...',
                             )
 
     def sameSamples(self):
