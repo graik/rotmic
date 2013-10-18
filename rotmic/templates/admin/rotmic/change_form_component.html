@@ -47,11 +47,12 @@
             var selectedCategory = getCurrentCategory();
             var elementId = 'id_componentType'
             var cachedTypeIndex = lastTypeSelection(selectedCategory);
+            var url = {% block ajax-typeinfo %}"/getTypeInfo/"{% endblock ajax-typeinfo%}+selectedCategory+"/"
     
             $.ajax({
                     async: false,
                     type: 'GET',
-                    url: {% block ajax-typeinfo %}"/getTypeInfo/"{% endblock ajax-typeinfo%}+selectedCategory+"/",
+                    url: url,
                     success: function(data){
                         var p = django.jQuery.parseJSON(data);
                         var listbox = document.getElementById(elementId);

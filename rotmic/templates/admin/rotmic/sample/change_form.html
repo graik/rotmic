@@ -26,7 +26,10 @@
         }
         {% endblock %}
 
+        {% block func_extra %}
+        {% endblock func_extra %}
 
+        {% block func_main %}
         $(document).ready(function(){
         
             {# pre-fill sample ID if NEW object form is called with pre-selected container #}
@@ -41,11 +44,16 @@
                     suggestId( pk );
                 }
             );
-
+            
+            {% block bind_extra %}
+            {% endblock bind_extra %}
         }); 
+        {% endblock func_main %}
 
 
     {% endblock javascript %}    
     </script>
 
+    {% block after_script %}
+    {% endblock %}
 {% endblock after_field_sets %}

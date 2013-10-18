@@ -1,1 +1,30 @@
 {% extends "admin/rotmic/sample/change_form.html" %}
+
+
+{% block func_extra %}
+{# <!--<script charset="utf-8" type="text/javascript">--> #}
+
+    // fetch all sub-types of given Category (Species) and fill cellType listbox
+    // needs to be called as event from CategoryBox (assuming $(this) is sender
+    function updateTypeBox(){
+        categoryBox = $("select#id_cellCategory"); // note also available in $(this) when triggered as event
+        var url = "/getCellTypes/" + categoryBox.val().toString() + "/";
+        $.getJSON(url, {view: 'json'}, function(data) {
+            var options = '';
+            for (var i = 0; i < data.length; i++) {
+                options += '<option value="' + data[i].pk + '">' + data[i].fields.name + '</option>';
+            }
+            $("#id_cellType").html(options);
+            $("#id_cellType option:first").attr('selected', 'selected');
+        })
+        $("#id_cellCategory").attr('selected', 'selected');
+    }
+  
+{# <!--</script>--> #}
+{% endblock %}
+
+{% block bind_extra %}
+    $("select#id_cellCategory").change(updateTypeBox);
+    updateTypeBox();
+{% endblock %}
+

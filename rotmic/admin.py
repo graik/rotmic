@@ -284,10 +284,11 @@ class CellSampleAdmin( SampleAdmin ):
             } ),
          ('Content', {
              'fields' : ((('cell',),
+                          ('plasmid', 'cellCategory', 'cellType'),
                           ('amount','amountUnit',),
                           ('solvent','aliquotNr',),
-                         )
-                        ),
+                        )),
+             'description': 'Select an existing Cell record or create a new Cell record on the fly from plasmid + strain below.'
          }
         ), 
     ]

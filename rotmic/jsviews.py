@@ -20,9 +20,12 @@ def getTypeDnaInfo(request, maintype):
     return HttpResponse(json_models, mimetype="application/javascript") 
 
 def getCellTypes(request, maintype):
-    currentMainType = CellComponentType.objects.filter(subTypeOf__name=maintype)
+    if maintype.isdigit():  ## support identification by primary key
+        subtypes = CellComponentType.objects.filter(subTypeOf__id=int(maintype))
+    else:
+        subtypes = CellComponentType.objects.filter(subTypeOf__name=maintype)
     
-    json_models = serializers.serialize("json", currentMainType)
+    json_models = serializers.serialize("json", subtypes)
     return HttpResponse(json_models, mimetype="application/javascript") 
 
 def getParentTypeDnaInfo(request, subtype):

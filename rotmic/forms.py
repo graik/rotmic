@@ -545,8 +545,28 @@ class DnaSampleForm( SampleForm ):
                                                     attrs={'size':35}),
              })
 
+
 class CellSampleForm( SampleForm ):
     """Customized Form for CellSample add / change"""
+    
+    cellCategory = forms.ModelChoiceField(label='In Species',
+                            widget=SilentSelectWidget,
+                            queryset=CellComponentType.objects.filter(subTypeOf=None),
+                            required=False, 
+                            empty_label=None,
+                            initial=T.ccEcoli)
+    
+    cellType = forms.ModelChoiceField(label='Strain',
+                            queryset=CellComponentType.objects.exclude(subTypeOf=None),
+                            required=False,
+                            empty_label=None,
+                            initial=T.ccMach1)
+    
+    plasmid = sforms.AutoCompleteSelectField(label='Plasmid',
+                                             lookup_class=PlasmidLookup,
+                                             required=False,
+                                             help_text='Start typing name or ID...')
+
     
     ## restrict available choices to volume units only
     amountUnit = sforms.AutoCompleteSelectField(
@@ -558,6 +578,30 @@ class CellSampleForm( SampleForm ):
                                                allow_new=False,attrs={'size':5}),
         initial=U.ul)
 
+    def clean(self):
+        """
+        Verify that units are given if concentration and/or amount is given.
+        """
+        data = super(SampleForm, self).clean()
+        if ((not 'cell' in data) and (not 'plasmid' in data))\
+           or ('cell' in data and 'plasmid' in data):
+            msg = u'Please specify either an existing cell or a plasmid and strain.'
+            self._errors['plasmid'] = self.error_class([msg])
+            
+        if 'plasmid' in data:
+            existing = CellComponent.objects.filter(plasmid=data['plasmid'],
+                                                    componentType=data['cellType'])
+            if existing.count():
+                data['cell'] = existing.all()[0]
+            else:
+                data['cell'] = CellComponent(componentType=data['cellType'],
+                                             plasmid=data['plasmid'],
+                                             displayId=ids.suggestCellId(middle='c')
+                                             )
+        
+        return data
+    
+    
     class Meta:
         model = CellSample
         widgets = getSampleWidgets( \
