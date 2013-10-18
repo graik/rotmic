@@ -260,7 +260,7 @@ class CellComponent(Component):
     Description of a cell (modified or not)
     """
     componentType = models.ForeignKey('CellComponentType', 
-                                      verbose_name='Species',
+                                      verbose_name='Strain',
                                       blank=False )    
     
     plasmid = models.ForeignKey( 'DnaComponent', blank=True, null=True, 

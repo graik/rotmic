@@ -304,7 +304,7 @@ class DnaComponentForm(forms.ModelForm):
 class CellComponentForm(forms.ModelForm):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
-    componentCategory = forms.ModelChoiceField(label='Category',
+    componentCategory = forms.ModelChoiceField(label='Species',
                             widget=SilentSelectWidget,
                             queryset=CellComponentType.objects.filter(subTypeOf=None),
                             required=True, 
