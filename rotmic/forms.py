@@ -429,14 +429,8 @@ def getSampleWidgets( extra={} ):
         'displayId' : forms.TextInput(attrs={'size':5}),
         
         'concentration' : forms.TextInput(attrs={'size':5}),
-##        'concentrationUnit':sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
-##                                allow_new=False,
-##                                attrs={'size':5}),        
 
         'amount' : forms.TextInput(attrs={'size':5}),
-##        'amountUnit':sforms.AutoComboboxSelectWidget(lookup_class=AmountUnitLookup,
-##                                allow_new=False,
-##                                attrs={'size':5}),        
 
         'aliquotNr' : forms.TextInput(attrs={'size':2}),
         'comment': forms.Textarea(attrs={'cols': 100, 'rows': 5,
@@ -445,27 +439,13 @@ def getSampleWidgets( extra={} ):
     return r
 
 class SampleForm(forms.ModelForm):
-    """Customized Form for Sample add / change"""
+    """Customized Form for Sample add / change. 
+    To be overridden rather than used directly."""
     
-    ## defining a form field seems to be the only way for providing an intial value
-    concentrationUnit = sforms.AutoCompleteSelectField(
-        label='... unit',
-        required=False,
-        lookup_class=ConcentrationUnitLookup,
-        allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
-                                               allow_new=False,attrs={'size':5}),
-        initial=U.uM)
-
-    ## defining a form field seems to be the only way for providing an intial value
-    amountUnit = sforms.AutoCompleteSelectField(
-        label='... unit',
-        required=False,
-        lookup_class=AmountUnitLookup,
-        allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=AmountUnitLookup,
-                                               allow_new=False,attrs={'size':5}),
-        initial=U.ul)
+    def __init__(self, *args, **kwargs):
+        """Rescue request object from kwargs pushed in from SampleAdmin"""
+        self.request = kwargs.pop('request', None)
+        super(SampleForm, self).__init__(*args, **kwargs)
 
     def clean_displayId(self):
         r = self.cleaned_data['displayId']
@@ -493,9 +473,9 @@ class SampleForm(forms.ModelForm):
     
         ## reset units to None if no concentration and / or amount is given
         if not conc and concUnit:
-            del data['concentrationUnit']
+            data['concentrationUnit'] = None
         if not amount and amountUnit:
-            del data['amountUnit']
+            data['amountUnit'] = None
         
         ## validate that units are given if conc. and / or amount is given
         if conc and not concUnit:
@@ -557,6 +537,7 @@ class CellSampleForm( SampleForm ):
                             initial=T.ccEcoli)
     
     cellType = forms.ModelChoiceField(label='Strain',
+                            widget=SilentSelectWidget,
                             queryset=CellComponentType.objects.exclude(subTypeOf=None),
                             required=False,
                             empty_label=None,
@@ -578,17 +559,29 @@ class CellSampleForm( SampleForm ):
                                                allow_new=False,attrs={'size':5}),
         initial=U.ul)
 
+    def __init__(self, *args, **kwargs):
+        super(CellSampleForm, self).__init__(*args, **kwargs)
+
+        ## keep constraint on DB level but allow user to specify via plasmid+type
+        self.fields['cell'].required = False
+
+        o = kwargs.get('instance', None)
+        if o:
+            self.fields['cellCategory'].initial = o.cell.componentType.category()
+            self.fields['cellType'].initial = o.cell.componentType
+            self.fields['plasmid'].initial = o.cell.plasmid
+
     def clean(self):
         """
         Verify that units are given if concentration and/or amount is given.
         """
-        data = super(SampleForm, self).clean()
-        if ((not 'cell' in data) and (not 'plasmid' in data))\
-           or ('cell' in data and 'plasmid' in data):
+        data = super(CellSampleForm, self).clean()
+        if (not 'cell' in data) and \
+           (not ('plasmid' in data and 'cellType' in data)):
             msg = u'Please specify either an existing cell or a plasmid and strain.'
             self._errors['plasmid'] = self.error_class([msg])
             
-        if 'plasmid' in data:
+        if not 'cell' in data and 'plasmid' in data:
             existing = CellComponent.objects.filter(plasmid=data['plasmid'],
                                                     componentType=data['cellType'])
             if existing.count():
@@ -596,9 +589,9 @@ class CellSampleForm( SampleForm ):
             else:
                 data['cell'] = CellComponent(componentType=data['cellType'],
                                              plasmid=data['plasmid'],
-                                             displayId=ids.suggestCellId(middle='c')
+                                             displayId=ids.suggestCellId(self.request.user.id)
                                              )
-        
+
         return data
     
     

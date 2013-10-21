@@ -171,6 +171,19 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
         super(SampleAdmin, self).__init__(*args, **kwargs)
         self.list_display_links = []
         
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Push request into the ModelForm. Requires the form to override __init__
+        and remove request from the kwargs.
+        See: http://stackoverflow.com/questions/1057252/how-do-i-access-the-request-object-or-any-other-variable-in-a-forms-clean-met
+        """
+        ModelForm = super(SampleAdmin, self).get_form(request, obj, **kwargs)
+        class ModelFormWithRequest(ModelForm):
+            def __new__(cls, *args, **kwargs):
+                kwargs['request'] = request
+                return ModelForm(*args, **kwargs)
+        return ModelFormWithRequest
+    
     def queryset(self, request):
         """
         Return actual sub-class instances instead of generic Sample super-class
@@ -288,7 +301,7 @@ class CellSampleAdmin( SampleAdmin ):
                           ('amount','amountUnit',),
                           ('solvent','aliquotNr',),
                         )),
-             'description': 'Select an existing Cell record or create a new Cell record on the fly from plasmid + strain below.'
+             'description': 'Select an <b>existing</b> Cell record <b>or</b> create a <b>new Cell</b> record on the fly from plasmid + strain below.'
          }
         ), 
     ]
