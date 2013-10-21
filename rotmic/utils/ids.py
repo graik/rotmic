@@ -39,7 +39,7 @@ def suggestComponentId(componentClass, prefix):
     if objects.count() == 0:
         return '%s%04i' % (prefix, 1)
     pattern = re.compile(prefix+'([0-9]+)')
-    numbers = _extractNumbers( objects, pattern )
+    numbers = _extractNumbers( objects, pattern ) or [0]
     
     return '%s%04i' % (prefix, numbers[-1]+1)
 
@@ -55,7 +55,7 @@ def suggestDnaId(user_id, prefix='', middle=''):
 
     return suggestComponentId( M.DnaComponent, prefix )
 
-def suggestCellId(user_id, prefix='', middle=''):
+def suggestCellId(user_id, prefix='', middle='c'):
     """
     user_id - int, pk of User object
     prefix  - str, first characters of desired DNA ID (default: from user.profile)
