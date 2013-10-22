@@ -13,13 +13,14 @@
 ## GNU Affero General Public License for more details.
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
-import os, re
+import os, re, datetime
 
 import django.forms as forms
 import django.db.models as models
 from django.db.models.query import QuerySet
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+import django.contrib.messages as messages
 
 from rotmic.models import DnaComponent, DnaComponentType, \
      CellComponent, CellComponentType, Sample, DnaSample, CellSample,\
@@ -578,22 +579,49 @@ class CellSampleForm( SampleForm ):
         """
         Verify that units are given if concentration and/or amount is given.
         """
-        data = super(CellSampleForm, self).clean()
-        if (not 'cell' in data) and \
-           (not ('plasmid' in data and 'cellType' in data)):
+        super(CellSampleForm, self).clean()
+        data = self.cleaned_data
+        cell = data.get('cell', None)
+        plasmid = data.get('plasmid', None)
+        ctype = data.get('componentType', None)
+        
+        if not cell and not (plasmid and ctype):
             msg = u'Please specify either an existing cell or a plasmid and strain.'
-            self._errors['plasmid'] = self.error_class([msg])
+            self._errors['cell'] = self.error_class([msg])
+            try: 
+                del data['cell'] ## needed to really stop form saving
+            except: 
+                pass
             
-        if not 'cell' in data and 'plasmid' in data:
-            existing = CellComponent.objects.filter(plasmid=data['plasmid'],
-                                                    componentType=data['cellType'])
+        elif plasmid and cell:
+            if not( plasmid == cell.plasmid and ctyper == cell.componentType):
+                msg = u'Given plasmid and strain do not match selected cell. Remove one or the other.'
+                self._errors['plasmid'] = self.error_class([msg])
+                del data['plasmid']
+            
+        if (not cell) and plasmid:
+            
+            existing = CellComponent.objects.filter(plasmid=plasmid,
+                                                    componentType=ctype)
             if existing.count():
                 data['cell'] = existing.all()[0]
+                messages.success(self.request, 
+                                 'Attached existing cell record %s (%s) to sample.'\
+                                 % (cell.displayId, cell.name))
+            
             else:
-                data['cell'] = CellComponent(componentType=data['cellType'],
-                                             plasmid=data['plasmid'],
-                                             displayId=ids.suggestCellId(self.request.user.id)
-                                             )
+                newcell = CellComponent(componentType=ctype,
+                                        plasmid=plasmid,
+                                        displayId=ids.suggestCellId(self.request.user.id)
+                                        )
+                newcell.registeredBy = self.request.user
+                newcell.registeredAt = datetime.datetime.now()
+                newcell.name = plasmid.name + '@' + ctype.name
+                newcell.save()
+                data['cell'] = newcell
+                messages.success(self.request,
+                                 'Created new cell record %s (%s)' %\
+                                 (newcell.displayId, newcell.name))
 
         return data
     
