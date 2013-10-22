@@ -577,7 +577,7 @@ class CellSampleForm( SampleForm ):
 
     def clean(self):
         """
-        Verify that units are given if concentration and/or amount is given.
+        Verify that cell or plasmid + strain are given, create new cell if needed.
         """
         super(CellSampleForm, self).clean()
         data = self.cleaned_data
