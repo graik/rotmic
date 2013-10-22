@@ -2,7 +2,7 @@
 
 
 {% block func_extra %}
-{# <!--<script charset="utf-8" type="text/javascript">--> #}
+{# <script charset="utf-8" type="text/javascript">  #}
 
     // fetch all sub-types of given Category (Species) and fill cellType listbox
     // needs to be called as event from CategoryBox (assuming $(this) is sender
@@ -15,12 +15,23 @@
                 options += '<option value="' + data[i].pk + '">' + data[i].fields.name + '</option>';
             }
             $("#id_cellType").html(options);
-            $("#id_cellType option:first").attr('selected', 'selected');
+            {% if original %}
+                {# select current object's subtype if category matches otherwise first in list #}
+                {% with type=original.cell.componentType %}
+                    if ({{type.category.id}} == categoryBox.val()){
+                        $("#id_cellType").val("{{type.id}}");
+                    } else {
+                        $("#id_cellType option:first").attr('selected', 'selected');
+                    }
+                {% endwith %}
+            {% else %}
+                $("#id_cellType option:first").attr('selected', 'selected');
+            {% endif %}
         })
         $("#id_cellCategory").attr('selected', 'selected');
     }
   
-{# <!--</script>--> #}
+{# </script> #}
 {% endblock %}
 
 {% block bind_extra %}
