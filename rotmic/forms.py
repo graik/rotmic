@@ -583,7 +583,7 @@ class CellSampleForm( SampleForm ):
         data = self.cleaned_data
         cell = data.get('cell', None)
         plasmid = data.get('plasmid', None)
-        ctype = data.get('componentType', None)
+        ctype = data.get('cellType', None)
         
         if not cell and not (plasmid and ctype):
             msg = u'Please specify either an existing cell or a plasmid and strain.'
@@ -594,10 +594,14 @@ class CellSampleForm( SampleForm ):
                 pass
             
         elif plasmid and cell:
-            if not( plasmid == cell.plasmid and ctyper == cell.componentType):
-                msg = u'Given plasmid and strain do not match selected cell. Remove one or the other.'
+            if plasmid != cell.plasmid:
+                msg = u'Given plasmid does not match selected cell record. Remove one or the other.'
                 self._errors['plasmid'] = self.error_class([msg])
                 del data['plasmid']
+            if ctype != cell.componentType:
+                msg = u'Given strain does not match selected cell record. Clear either plasmid or cell selection.'
+                self._errors['cellType'] = self.error_class([msg])
+                del data['cellType']
             
         if (not cell) and plasmid:
             
@@ -607,17 +611,16 @@ class CellSampleForm( SampleForm ):
                 data['cell'] = existing.all()[0]
                 messages.success(self.request, 
                                  'Attached existing cell record %s (%s) to sample.'\
-                                 % (cell.displayId, cell.name))
+                                 % (data['cell'].displayId, data['cell'].name))
             
             else:
                 newcell = CellComponent(componentType=ctype,
                                         plasmid=plasmid,
-                                        displayId=ids.suggestCellId(self.request.user.id)
+                                        displayId=ids.suggestCellId(self.request.user.id),
+                                        registeredBy = self.request.user,
+                                        registeredAt = datetime.datetime.now(),
+                                        name = plasmid.name + '@' + ctype.name,
                                         )
-                newcell.registeredBy = self.request.user
-                newcell.registeredAt = datetime.datetime.now()
-                newcell.componentType = ctype
-                newcell.name = plasmid.name + '@' + ctype.name
                 newcell.save()
                 data['cell'] = newcell
                 messages.success(self.request,
