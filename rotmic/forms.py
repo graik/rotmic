@@ -616,6 +616,7 @@ class CellSampleForm( SampleForm ):
                                         )
                 newcell.registeredBy = self.request.user
                 newcell.registeredAt = datetime.datetime.now()
+                newcell.componentType = ctype
                 newcell.name = plasmid.name + '@' + ctype.name
                 newcell.save()
                 data['cell'] = newcell
