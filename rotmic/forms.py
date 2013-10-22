@@ -544,9 +544,12 @@ class CellSampleForm( SampleForm ):
                             initial=T.ccMach1)
     
     plasmid = sforms.AutoCompleteSelectField(label='Plasmid',
-                                             lookup_class=PlasmidLookup,
-                                             required=False,
-                                             help_text='Start typing name or ID...')
+                            lookup_class=PlasmidLookup,
+                            required=False,
+                            help_text='Start typing name or ID...',
+                            widget=sforms.AutoCompleteSelectWidget(lookup_class=PlasmidLookup,
+                                                        allow_new=False,
+                                                        attrs={'size':35}),)
 
     
     ## restrict available choices to volume units only
