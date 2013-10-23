@@ -169,7 +169,7 @@
         // erase session storage
         function resetStorageBetweenForms() {
             {# GET indicates a freshly loaded form; POST means the form came back with errors #}
-            {% if request.method=='GET' %}
+            {% if request.method == "GET" %}
                 sessionStorage.clear();
             {% endif %}
         }
