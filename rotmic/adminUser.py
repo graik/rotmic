@@ -31,16 +31,16 @@ class UserProfileAdmin(admin.ModelAdmin):
          ),
         
         ('ID suggestion', 
-            {'fields': ('prefix', ('dcPrefix', 'ccPrefix')),
-             'description': 'Adjust prefix for autogeneration of DNA and Cell Ids. '\
-                          + '(Will be further modified according to the selected category.)'
+            {'fields': ('prefix', ('dcPrefix', 'ccPrefix', 'ocPrefix')),
+             'description': 'Adjust prefix for autogeneration of DNA, Cell and Oligo IDs. '\
+                          + '(For DNA, it will be further modified according to the selected category.)'
             }
         ),
     )
     
     ordering = ('user',)
     
-    list_display = ('user', 'prefix', 'dcPrefix', 'ccPrefix')
+    list_display = ('user', 'prefix', 'dcPrefix', 'ccPrefix', 'ocPrefix')
     search_fields = ('user__username', 'user__first_name', 'user__last_name')
     
     actions = None ## disable delete action

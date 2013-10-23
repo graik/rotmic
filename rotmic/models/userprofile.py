@@ -43,6 +43,10 @@ class UserProfile(models.Model):
                                 help_text='default ID prefix for Cells',
                                 blank=True)
     
+    ocPrefix = models.CharField('Oligo Prefix', max_length=5,
+                                help_text='default ID prefix for Oligos',
+                                blank=True)
+    
     def __unicode__(self):
         return unicode(self.user)
     

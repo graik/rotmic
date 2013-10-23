@@ -63,7 +63,7 @@ def suggestCellId(user_id, prefix='', middle='c'):
     """
     user = User.objects.get( id=user_id )
     prefix = prefix or user.profile.ccPrefix or user.profile.prefix
-    if not prefix == user.profile.ccPrefix:
+    if prefix == user.profile.prefix:
         prefix += middle
 
     return suggestComponentId( M.CellComponent, prefix )
@@ -76,8 +76,7 @@ def suggestOligoId(user_id, prefix='', middle='o'):
     middle  - str, additional prefix characters (e.g. "p" for plasmid, default: '')
     """
     user = User.objects.get( id=user_id )
-    prefix = prefix or user.profile.prefix
-    prefix += middle
+    prefix = prefix or user.profile.ocPrefix or user.profile.prefix + middle
 
     return suggestComponentId( M.OligoComponent, prefix )
 
