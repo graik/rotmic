@@ -95,6 +95,42 @@
 
         
         </div>
+    
+        <div class='module'>
+            <h2>Related Entries: {{o.templates.count}}</h2>
+            
+            {% if o.templates.count > 0 %}
+                <p>
+                    {{o.displayId}} is matched to the following DNA templates:
+                </p>
+                <div style="margin: 10px">
+                    <table cellspacing="1">
+            
+                        <thead>
+                        <tr>
+                            <th>construct</th><th>Description</th>
+                            <th>Samples</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for x in o.templates.all %}
+                                <tr class="{% cycle 'row1' 'row2' %}">
+                                
+                                <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                                  
+                                <td>{{x.showComment}}</td>
+                                  
+                                <td style="text-align: center;">{{x.dna_samples.count}}</td>
+
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        
+        </div>
+
         
 <!--        <div class='module'>-->
 <!--            <h2>Samples</h2>-->
