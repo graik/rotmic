@@ -60,6 +60,16 @@ class FixedSelectMultipleWidget( sforms.AutoComboboxSelectMultipleWidget ):
         return not set(new_values) == set(old_values)
 
 
+class DnaLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = DnaComponent
+    search_fields = ('displayId__startswith', 'name__icontains')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(DnaLookup)
+
 class InsertLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
     model = DnaComponent
@@ -393,10 +403,12 @@ class OligoComponentForm(forms.ModelForm):
             'displayId' : forms.TextInput(attrs={'size':10}),
             'name' : forms.TextInput(attrs={'size':25}),
             'sequence' : forms.TextInput(attrs={'size':88}),
+            'meltingTemp' : forms.TextInput(attrs={'size':4}),
+            'templates' : FixedSelectMultipleWidget(lookup_class=DnaLookup),
+            
             'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 5,
                                               'style':'font-family:monospace'}),
         }
-
     
 
 class UnitLookup(ModelLookup):

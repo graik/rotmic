@@ -341,7 +341,7 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
         }
          ),
         ('Details', {
-            'fields' : (('sequence',),('meltingTemp'),('comment',),
+            'fields' : (('sequence',),('meltingTemp', 'templates'),('comment',),
                         )
         }
          ),            
