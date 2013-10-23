@@ -58,6 +58,18 @@ def nextCellId(request, category):
     json_models = json.dumps(r)
     return HttpResponse(json_models, mimetype="application/json") 
 
+def nextOligoId(request):
+    """
+    request - request object
+    """
+    ## middle = category[0].lower()
+    middle = 'o'
+    r = {'id': I.suggestOligoId( request.user.id, middle=middle )}
+    
+    json_models = json.dumps(r)
+    return HttpResponse(json_models, mimetype="application/json") 
+
+
 def nextSampleId(request, container):
     """
     request - request object

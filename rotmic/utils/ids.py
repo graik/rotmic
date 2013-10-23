@@ -63,9 +63,23 @@ def suggestCellId(user_id, prefix='', middle='c'):
     """
     user = User.objects.get( id=user_id )
     prefix = prefix or user.profile.ccPrefix or user.profile.prefix
-    prefix += middle
+    if not prefix == user.profile.ccPrefix:
+        prefix += middle
 
     return suggestComponentId( M.CellComponent, prefix )
+
+
+def suggestOligoId(user_id, prefix='', middle='o'):
+    """
+    user_id - int, pk of User object
+    prefix  - str, first characters of desired DNA ID (default: from user.profile)
+    middle  - str, additional prefix characters (e.g. "p" for plasmid, default: '')
+    """
+    user = User.objects.get( id=user_id )
+    prefix = prefix or user.profile.prefix
+    prefix += middle
+
+    return suggestComponentId( M.OligoComponent, prefix )
 
 
 def __nextSampleInBox( samples ):
@@ -134,3 +148,4 @@ def suggestSampleId(container_id):
     except ValueError:
         return ''
     
+
