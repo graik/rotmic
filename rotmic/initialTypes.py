@@ -2,22 +2,19 @@
 Pre-populate database with componentType instances that are needed for templates
 and pre-defined actions.
 """
-from rotmic.models import DnaComponentType, CellComponentType
+from rotmic.models import DnaComponentType, CellComponentType, OligoComponentType
 import logging
 
-def getcreate(typeClass=DnaComponentType, name='', uri=None, subTypeOf=None,
-              **kwargs):
+def getcreate(typeClass=DnaComponentType, name='', **kwargs):
     """
     Look up type of given name or create a new one and save it to the DB.
     """
     try:
-        r = typeClass.objects.get(name=name, subTypeOf=subTypeOf)
+        r = typeClass.objects.get(name=name)
     except typeClass.DoesNotExist:
-        r = typeClass( name=name, uri=uri, subTypeOf=subTypeOf,
-                              **kwargs)
+        r = typeClass( name=name, **kwargs)
         r.save()
-        logging.warning('Created missing type: %s %s.' \
-                         % (typeClass.__name__, name) )
+        logging.warning('Created missing type: %s %s.' % (typeClass.__name__, name) )
 
     return r
 
@@ -108,3 +105,12 @@ ccHeLa = getcreate(CellComponentType, name='HeLa', subTypeOf=ccHuman,
 ccHek = getcreate(CellComponentType, name='HEK293', subTypeOf=ccHuman,
                   allowMarkers=False,
                   description='Human embryonic kidney cells')
+
+
+## Oligo types
+
+ocStandard = getcreate(OligoComponentType, name='standard',
+                       description='standard oligonucleotide for PCR reactions')
+
+ocSequencing = getcreate(OligoComponentType, name='sequencing',
+                       description='Primer for sequencing reactions')

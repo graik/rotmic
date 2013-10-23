@@ -23,7 +23,7 @@ from django.utils.translation import ugettext as _
 import django.contrib.messages as messages
 
 from rotmic.models import DnaComponent, DnaComponentType, \
-     CellComponent, CellComponentType, Sample, DnaSample, CellSample,\
+     CellComponent, OligoComponent, CellComponentType, Sample, DnaSample, CellSample,\
      Location, Rack, Container, Unit
 
 import rotmic.initialTypes as T
@@ -376,6 +376,28 @@ class CellComponentForm(forms.ModelForm):
             'marker' : FixedSelectMultipleWidget(lookup_class=MarkerLookup)
         }
 
+
+class OligoComponentForm(forms.ModelForm):
+    """Custom form for OligoComponent Add / Change"""
+
+    def __init__(self, *args, **kwargs):
+        super(OligoComponentForm, self).__init__(*args, **kwargs)
+        self.request = kwargs.pop('request', None)
+        
+        self.fields['componentType'].initial = T.ocStandard
+        self.fields['status'].initial = 'available'
+    
+    class Meta:
+        model = OligoComponent
+        widgets = {  ## customize widget dimensions and include dynamic select widgets
+            'displayId' : forms.TextInput(attrs={'size':10}),
+            'name' : forms.TextInput(attrs={'size':25}),
+            'sequence' : forms.TextInput(attrs={'size':88}),
+            'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 5,
+                                              'style':'font-family:monospace'}),
+        }
+
+    
 
 class UnitLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""

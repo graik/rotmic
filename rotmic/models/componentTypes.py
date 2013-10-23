@@ -30,7 +30,7 @@ class ComponentType( models.Model ):
         """Enforce single level of type inheritance."""
         assert not type(self) is ComponentType, 'abstract method ComponentType.clean'
 
-        if self.subTypeOf and self.subTypeOf.subTypeOf:
+        if getattr(self, 'subTypeOf', None) and self.subTypeOf.subTypeOf:
             raise ValidationError('Currently, SubTypeOf only support one level of inheritance')
         
         return super(ComponentType, self).clean()
@@ -102,3 +102,16 @@ class CellComponentType( ComponentType ):
         abstract = False
         ordering = ['subTypeOf__name', 'name']
 
+
+class OligoComponentType( ComponentType ):
+    """Classification of OligoComponents"""
+    
+    def category(self):
+        """Override because OligoType doesn't know categories"""
+        return self
+    
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'Oligo Type'
+        abstract = False
+        ordering = ['name']

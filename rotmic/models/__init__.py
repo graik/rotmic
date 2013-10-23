@@ -23,9 +23,10 @@ from rotmic.models.attachments import ComponentAttachment, SampleAttachment
 from rotmic.models.units import Unit
 
 from rotmic.models.componentTypes import ComponentType, DnaComponentType, \
-     CellComponentType
+     CellComponentType, OligoComponentType
 
-from rotmic.models.components import Component, DnaComponent, CellComponent
+from rotmic.models.components import Component, DnaComponent, CellComponent, \
+     OligoComponent
 
 from rotmic.models.samples import Sample, DnaSample, CellSample
 

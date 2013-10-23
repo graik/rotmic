@@ -327,3 +327,48 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
 
 admin.site.register(M.CellComponent, CellComponentAdmin)
 
+
+class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
+    """Admin interface description for DNA constructs."""
+    inlines = [ ComponentAttachmentInline ]
+    form = forms.OligoComponentForm
+    
+    fieldsets = (
+        (None, {
+            'fields': (('displayId', 'name','status'),
+                       ('componentType',),
+                       )
+        }
+         ),
+        ('Details', {
+            'fields' : (('sequence',),('meltingTemp'),('comment',),
+                        )
+        }
+         ),            
+    )
+
+    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
+                    'componentType', 'showTm', 'showComment','showStatus','showEdit')
+    
+    list_filter = ( 'componentType', 'status', filters.SortedUserFilter)
+    
+    search_fields = ('displayId', 'name', 'comment')
+    
+    date_hierarchy = 'registeredAt'
+    
+    ordering = ('displayId', 'name',)
+    
+    def queryset(self, request):
+        """Revert modification made by ComponentModelAdmin"""
+        return super(ComponentAdmin,self).queryset(request)
+
+    def showTm(self, obj):
+        if obj.meltingTemp:
+            return u'%02i\u00B0C' % obj.meltingTemp
+        return ''
+    showTm.allow_tags = True
+    showTm.short_description = 'Tm'
+    
+    
+admin.site.register(M.OligoComponent, OligoComponentAdmin)
+

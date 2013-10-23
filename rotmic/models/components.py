@@ -304,3 +304,28 @@ class CellComponent(Component):
         verbose_name = 'Cell'
         ordering = ['displayId']
 
+
+class OligoComponent(Component):
+    """
+    Description of DNA primer / oligo
+    """
+    sequence = models.CharField( max_length=300,
+                                 help_text="5' -> 3' nucleotide sequence", blank=True, 
+                                 null=True )
+    
+    componentType = models.ForeignKey('OligoComponentType',
+                                      verbose_name='Oligo Type',
+                                      blank=False)
+    
+    templates = models.ManyToManyField('DnaComponent', blank=True, null=True,
+                                       related_name='template_for_oligos',
+                                       verbose_name='for DNA templates',
+                                       help_text='start typing...')
+    
+    meltingTemp = models.IntegerField(u'Tm in \u00B0C', blank=True, null=True,
+                                      help_text='melting temperature')
+    
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'Oligo'
+        ordering = ['displayId']
