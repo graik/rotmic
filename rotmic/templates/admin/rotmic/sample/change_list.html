@@ -8,4 +8,9 @@
                 Add DNA Sample
               </a>
             </li>
+            <li>
+              <a href="{% url 'admin:rotmic_cellsample_add' %}{% if is_popup %}?_popup=1{% endif %}" class="addlink">
+                Add Cell Sample
+              </a>
+            </li>
           {% endblock %}
