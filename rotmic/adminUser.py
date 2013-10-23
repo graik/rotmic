@@ -25,11 +25,18 @@ class UserProfileAdmin(admin.ModelAdmin):
     readonly_fields = ('user',)
 
     fieldsets = (
-        (None, {'fields':('user', 'prefix', ('dcPrefix', 'ccPrefix')),
-                'description':'Adjust user-specific settings',
+        (None, {'fields':('user',),
+                'description':'Adjust user-specific settings for:',
                 }
          ),
-        )
+        
+        ('ID suggestion', 
+            {'fields': ('prefix', ('dcPrefix', 'ccPrefix')),
+             'description': 'Adjust prefix for autogeneration of DNA and Cell Ids. '\
+                          + '(Will be further modified according to the selected category.)'
+            }
+        ),
+    )
     
     ordering = ('user',)
     
