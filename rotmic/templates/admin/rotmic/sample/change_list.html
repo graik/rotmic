@@ -13,4 +13,9 @@
                 Add Cell Sample
               </a>
             </li>
+            <li>
+              <a href="{% url 'admin:rotmic_oligosample_add' %}{% if is_popup %}?_popup=1{% endif %}" class="addlink">
+                Add Oligo Sample
+              </a>
+            </li>
           {% endblock %}
