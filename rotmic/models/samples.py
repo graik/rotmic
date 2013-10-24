@@ -253,3 +253,40 @@ class CellSample( Sample ):
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'Cell Sample'
+
+
+class OligoSample( Sample ):
+    """Samples linked to CellComponent"""
+    
+    oligo = models.ForeignKey('OligoComponent',
+                              verbose_name = 'Oligo',
+                              related_name = 'oligo_samples',
+                              help_text='start typing name or ID of existing cell record...',
+                              )
+
+    def sameSamples(self):
+        """
+        @return samples that have exactly the same content
+        """
+        return OligoSample.objects.filter(oligo=self.oligo).exclude(id=self.id)
+    
+    def relatedSamples(self):
+        """
+        Samples that are related but not identical
+        """
+        return []
+
+    def showContent(self):
+        """Table display of linked insert or ''"""
+        x = self.oligo
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
+                              % (url, x.comment, x.displayId, x.name))
+    showContent.allow_tags = True
+    showContent.short_description = 'Oligo'
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'Oligo Sample'

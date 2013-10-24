@@ -1,0 +1,33 @@
+{% extends "admin/rotmic/sample/readonly.html" %}
+{% load admin_urls admin_static %}
+{% load rotmicfilters %}
+
+{% block title %}Oligo Sample {{o.displayId}}{% endblock %} {# window title #}
+
+{% block super-title %}<h3>Oligonucleotide Sample</h3>{% endblock %}
+
+{%block title-image%}
+    <img src="{% static "img/oligosample.jpg" %}" align="left" height="55" 
+    style="padding-left:0px; padding-right:10px; padding-top:0px"> 
+{%endblock%}
+
+{% block sample-content %}
+        <div class='module'>
+            <h2>Content</h2>
+            <div style="margin: 10px">
+                <h4>Oligonucleotide <a href="{{o.oligo.get_absolute_url}}">{{o.oligo}}</a></h4>
+
+                {% with p=o.oligo %}
+                    <p><ul>
+                        <li><b>Length:</b> {% if p.sequence %}{{p.sequence|length}}{%else%} 0{%endif%} bp</li>
+                        <li><b>Tm:</b> {% if p.meltingTemp %}{{p.meltingTemp}} C{%else%}{%endif%}</li>
+                        <li><b>Sequence:</b> {% if p.sequence %}{{p.sequence}}{%else%}{%endif%}</li>
+                    </ul><p>
+
+                    <p class='description'>
+                        {{p.comment|markdown}}
+                    </p>
+                {% endwith %}
+            </div>
+        </div>
+{% endblock %}

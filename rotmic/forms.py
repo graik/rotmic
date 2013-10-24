@@ -22,9 +22,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 import django.contrib.messages as messages
 
-from rotmic.models import DnaComponent, DnaComponentType, \
-     CellComponent, OligoComponent, CellComponentType, Sample, DnaSample, CellSample,\
-     Location, Rack, Container, Unit
+import rotmic.models as M
 
 import rotmic.initialTypes as T
 import rotmic.initialUnits as U
@@ -62,7 +60,7 @@ class FixedSelectMultipleWidget( sforms.AutoComboboxSelectMultipleWidget ):
 
 class DnaLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
-    model = DnaComponent
+    model = M.DnaComponent
     search_fields = ('displayId__startswith', 'name__icontains')
     
     def get_item_id(self,item):
@@ -70,9 +68,19 @@ class DnaLookup(ModelLookup):
 
 registry.register(DnaLookup)
 
+class OligoLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = M.OligoComponent
+    search_fields = ('displayId__startswith', 'name__icontains')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(OligoLookup)
+
 class InsertLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
-    model = DnaComponent
+    model = M.DnaComponent
     search_fields = ('displayId__startswith', 'name__icontains')
     
     filters = {'componentType__subTypeOf': T.dcFragment,
@@ -86,7 +94,7 @@ registry.register(InsertLookup)
 
 class VectorLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
-    model = DnaComponent
+    model = M.DnaComponent
     search_fields = ('displayId__startswith', 'name__icontains')
     
     filters = {'componentType__subTypeOf': T.dcVectorBB }
@@ -99,7 +107,7 @@ registry.register(VectorLookup)
 
 class PlasmidLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
-    model = DnaComponent
+    model = M.DnaComponent
     search_fields = ('displayId__startswith', 'name__icontains')
     filters = {'componentType__subTypeOf': T.dcPlasmid }
     
@@ -111,7 +119,7 @@ registry.register(PlasmidLookup)
 
 class MarkerLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
-    model = DnaComponent
+    model = M.DnaComponent
     search_fields = ('displayId__startswith', 'name__icontains')
     filters = {'componentType__subTypeOf': T.dcMarker }
     
@@ -122,7 +130,7 @@ registry.register(MarkerLookup)
 
 class SampleDnaLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
-    model = DnaComponent
+    model = M.DnaComponent
     search_fields = ('displayId__startswith', 'name__icontains')
     filters = {'componentType__subTypeOf__in': [T.dcPlasmid, T.dcFragment] }
     
@@ -133,7 +141,7 @@ registry.register(SampleDnaLookup)
 
 class SampleCellLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
-    model = CellComponent
+    model = M.CellComponent
     search_fields = ('displayId__startswith', 'name__icontains')
     ##filters = {'componentType__subTypeOf__in': [T.dcPlasmid, T.dcFragment] }
     
@@ -145,7 +153,7 @@ registry.register(SampleCellLookup)
 
 class SampleContainerLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
-    model = Container
+    model = M.Container
     search_fields = ('rack__displayId__startswith',
                      'displayId__startswith', 'name__icontains')
     
@@ -157,7 +165,7 @@ registry.register(SampleContainerLookup)
 
 class ContainerRackLookup(ModelLookup):
     """for selectable auto-completion field in Container form"""
-    model = Rack
+    model = M.Rack
     search_fields = ('displayId__startswith', 'name__icontains')
     
     def get_item_id(self,item):
@@ -171,7 +179,7 @@ class DnaComponentForm(forms.ModelForm):
     
     componentCategory = forms.ModelChoiceField(label='Category',
                             widget=SilentSelectWidget,
-                            queryset=DnaComponentType.objects.filter(subTypeOf=None),
+                            queryset=M.DnaComponentType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,
                             initial=T.dcPlasmid)
@@ -207,7 +215,7 @@ class DnaComponentForm(forms.ModelForm):
         r = self.cleaned_data['componentCategory']
 
         if self.instance and self.instance.id and ('componentType' in self.changed_data):
-            assert( isinstance(r, DnaComponentType) )
+            assert( isinstance(r, M.DnaComponentType) )
             msg = 'Cannot change category: '
 
             if r.id != T.dcVectorBB and self.instance.as_vector_in_plasmid.count():
@@ -237,7 +245,7 @@ class DnaComponentForm(forms.ModelForm):
         if not r:
             return r
         
-        assert( isinstance(r, DnaComponent) )
+        assert( isinstance(r, M.DnaComponent) )
         if not r.componentType.category().id in [T.dcFragment.id, T.dcMarker.id]:
             raise ValidationError('Constructs of category %s are not allowed as an insert.'\
                                   % r.componentType.category().name )
@@ -254,7 +262,7 @@ class DnaComponentForm(forms.ModelForm):
         if not r:
             return r
         
-        assert( isinstance(r, DnaComponent) )
+        assert( isinstance(r, M.DnaComponent) )
         if not r.componentType.category().id == T.dcVectorBB.id:  ## for some reason "is" doesn't work
             raise ValidationError('Given construct is not a vector backbone.')
         return r
@@ -266,7 +274,7 @@ class DnaComponentForm(forms.ModelForm):
             return r
         
         for m in r:
-            assert( isinstance(m, DnaComponent))
+            assert( isinstance(m, M.DnaComponent))
             if not m.componentType.category().id == T.dcMarker.id:
                 raise ValidationError('%s is not a marker.' % m.__unicode__() )
         return r
@@ -297,7 +305,7 @@ class DnaComponentForm(forms.ModelForm):
       
                 
     class Meta:
-        model = DnaComponent
+        model = M.DnaComponent
         widgets = {  ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
             'name' : forms.TextInput(attrs={'size':25}),
@@ -317,7 +325,7 @@ class CellComponentForm(forms.ModelForm):
     
     componentCategory = forms.ModelChoiceField(label='Species',
                             widget=SilentSelectWidget,
-                            queryset=CellComponentType.objects.filter(subTypeOf=None),
+                            queryset=M.CellComponentType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,
                             initial=T.ccEcoli)
@@ -343,7 +351,7 @@ class CellComponentForm(forms.ModelForm):
         if not r:
             return r
         
-        assert( isinstance(r, DnaComponent) )
+        assert( isinstance(r, M.DnaComponent) )
         if not r.componentType.category().id == T.dcPlasmid.id:  ## for some reason "is" doesn't work
             raise ValidationError('Given construct is not a plasmid.')
         return r
@@ -355,7 +363,7 @@ class CellComponentForm(forms.ModelForm):
             return r
         
         for m in r:
-            assert( isinstance(m, DnaComponent))
+            assert( isinstance(m, M.DnaComponent))
             if not m.componentType.category().id == T.dcMarker.id:
                 raise ValidationError('%s is not a marker.' % m.__unicode__() )
         return r
@@ -374,7 +382,7 @@ class CellComponentForm(forms.ModelForm):
       
                 
     class Meta:
-        model = CellComponent
+        model = M.CellComponent
         widgets = {  ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
             'name' : forms.TextInput(attrs={'size':25}),
@@ -398,7 +406,7 @@ class OligoComponentForm(forms.ModelForm):
         self.fields['status'].initial = 'available'
     
     class Meta:
-        model = OligoComponent
+        model = M.OligoComponent
         widgets = {  ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
             'name' : forms.TextInput(attrs={'size':25}),
@@ -413,7 +421,7 @@ class OligoComponentForm(forms.ModelForm):
 
 class UnitLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
-    model = Unit
+    model = M.Unit
     search_fields = ('name__startswith', )
     
     def get_query(self, request, term):
@@ -524,7 +532,7 @@ class SampleForm(forms.ModelForm):
         return data
 
     class Meta:
-        model = Sample
+        model = M.Sample
         widgets = getSampleWidgets()
             
 
@@ -553,7 +561,7 @@ class DnaSampleForm( SampleForm ):
         initial=U.ul)
 
     class Meta:
-        model = DnaSample
+        model = M.DnaSample
         widgets = getSampleWidgets( \
             {'dna': sforms.AutoComboboxSelectWidget(lookup_class=SampleDnaLookup,
                                                     allow_new=False,
@@ -566,14 +574,14 @@ class CellSampleForm( SampleForm ):
     
     cellCategory = forms.ModelChoiceField(label='In Species',
                             widget=SilentSelectWidget,
-                            queryset=CellComponentType.objects.filter(subTypeOf=None),
+                            queryset=M.CellComponentType.objects.filter(subTypeOf=None),
                             required=False, 
                             empty_label=None,
                             initial=T.ccEcoli)
     
     cellType = forms.ModelChoiceField(label='Strain',
                             widget=SilentSelectWidget,
-                            queryset=CellComponentType.objects.exclude(subTypeOf=None),
+                            queryset=M.CellComponentType.objects.exclude(subTypeOf=None),
                             required=False,
                             empty_label=None,
                             initial=T.ccMach1)
@@ -639,7 +647,7 @@ class CellSampleForm( SampleForm ):
             
         if (not cell) and plasmid:
             
-            existing = CellComponent.objects.filter(plasmid=plasmid,
+            existing = M.CellComponent.objects.filter(plasmid=plasmid,
                                                     componentType=ctype)
             if existing.count():
                 data['cell'] = existing.all()[0]
@@ -648,7 +656,7 @@ class CellSampleForm( SampleForm ):
                                  % (data['cell'].displayId, data['cell'].name))
             
             else:
-                newcell = CellComponent(componentType=ctype,
+                newcell = M.CellComponent(componentType=ctype,
                                         plasmid=plasmid,
                                         displayId=ids.suggestCellId(self.request.user.id),
                                         registeredBy = self.request.user,
@@ -665,7 +673,7 @@ class CellSampleForm( SampleForm ):
     
     
     class Meta:
-        model = CellSample
+        model = M.CellSample
         widgets = getSampleWidgets( \
             {'cell': sforms.AutoComboboxSelectWidget(lookup_class=SampleCellLookup,
                                                     allow_new=False,
@@ -673,6 +681,38 @@ class CellSampleForm( SampleForm ):
              })
 
         
+class OligoSampleForm( SampleForm ):
+    """Customized Form for DnaSample add / change"""
+    
+    ## modify initial (default) value
+    concentrationUnit = sforms.AutoCompleteSelectField(
+        label='... unit',
+        required=False,
+        lookup_class=ConcentrationUnitLookup,
+        allow_new=False,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
+                                               allow_new=False,attrs={'size':5}),
+        initial=U.uM)
+    
+    ## restrict available choices to volume units only
+    amountUnit = sforms.AutoCompleteSelectField(
+        label='... unit',
+        required=False,
+        lookup_class=VolumeAmountUnitLookup,
+        allow_new=False,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=VolumeAmountUnitLookup,
+                                               allow_new=False,attrs={'size':5}),
+        initial=U.ul)
+
+    class Meta:
+        model = M.OligoSample
+        widgets = getSampleWidgets( \
+            {'oligo': sforms.AutoComboboxSelectWidget(lookup_class=OligoLookup,
+                                                      allow_new=False,
+                                                      attrs={'size':35}),
+             })
+
+
 class AttachmentForm(forms.ModelForm):
     """
     Catch missing files which can happen if object is resurrected by 
@@ -695,7 +735,7 @@ class LocationForm(forms.ModelForm):
     """Customized Form for Location add / change"""
     
     class Meta:
-        model = Location
+        model = M.Location
         widgets = { ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
             'name' : forms.TextInput(attrs={'size':25}),
@@ -708,7 +748,7 @@ class RackForm(forms.ModelForm):
     """Customized Form for Location add / change"""
     
     class Meta:
-        model = Rack
+        model = M.Rack
         widgets = { ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
             'name' : forms.TextInput(attrs={'size':25}),
@@ -719,7 +759,7 @@ class ContainerForm(forms.ModelForm):
     """Customized Form for Location add / change"""
     
     class Meta:
-        model = Container
+        model = M.Container
         widgets = { ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
             'rack' : sforms.AutoComboboxSelectWidget(

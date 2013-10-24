@@ -113,7 +113,6 @@ class TypeListFilter( admin.SimpleListFilter):
 class DnaCategoryListFilter( CategoryListFilter ):
     _class = M.DnaComponentType
 
-
 class DnaTypeListFilter( TypeListFilter ):
     _class = M.DnaComponentType
 
@@ -123,6 +122,7 @@ class CellCategoryListFilter( CategoryListFilter ):
 class CellTypeListFilter( TypeListFilter ):
     _class = M.CellComponentType
     
+
 class RackLocationFilter( admin.SimpleListFilter ):
     """
     Custom Admin Filter for locations in Rack ChangeList.
@@ -250,6 +250,9 @@ class DnaSampleLocationFilter( SampleLocationFilter ):
 class CellSampleLocationFilter( SampleLocationFilter ):
     _sampleClass = M.CellSample
 
+class OligoSampleLocationFilter( SampleLocationFilter ):
+    _sampleClass = M.OligoSample
+
 
 class SampleRackFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Racks,  responds to SampleLocationListFilter"""
@@ -306,6 +309,9 @@ class DnaSampleRackFilter( SampleRackFilter ):
     
 class CellSampleRackFilter( SampleRackFilter ):
     _sampleClass = M.CellSample
+
+class OligoSampleRackFilter( SampleRackFilter ):
+    _sampleClass = M.OligoSample
 
 
 class SampleContainerFilter( admin.SimpleListFilter ):
@@ -364,6 +370,9 @@ class DnaSampleContainerFilter( SampleContainerFilter ):
 class CellSampleContainerFilter( SampleContainerFilter ):
     _sampleClass = M.CellSample
     
+class OligoSampleContainerFilter( SampleContainerFilter ):
+    _sampleClass = M.OligoSample
+
     
 class SortedUserFilter( admin.SimpleListFilter ):
     """

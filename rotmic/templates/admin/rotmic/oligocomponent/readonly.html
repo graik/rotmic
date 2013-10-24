@@ -132,69 +132,69 @@
         </div>
 
         
-<!--        <div class='module'>-->
-<!--            <h2>Samples</h2>-->
-<!--                <p><br></p>-->
-<!--                <ul class="object-tools">-->
-<!--                    <li><a href="{% url 'admin:rotmic_cellsample_add'%}?cell={{o.pk}}">Add Cell Sample</a></li>-->
-<!--                </ul>-->
-<!---->
-<!--                {% with n=o.cell_samples.count %}-->
-<!--                    {% if n > 0 %}-->
-<!--                        <p>-->
-<!--                            There are <b>{{n}} Cell samples</b> registered for this Cell or Strain.<br>-->
-<!--                        </p>-->
-<!--                        -->
-<!--                        <div style="margin: 10px">-->
-<!--                            <table cellspacing="1">-->
-<!--                    -->
-<!--                                <thead>-->
-<!--                                <tr>-->
-<!--                                    <th>location</th>-->
-<!--                                    <th>ID/<br>Pos.</th><th>prepared</th><th>by</th>-->
-<!--                                    <th>Type</th><th>Content</th>-->
-<!--                                    <th>Description</th><th>Status</th>-->
-<!--                                </tr>-->
-<!--                                </thead>-->
-<!--                    -->
-<!--                                <tbody>-->
-<!--                                {% for x in o.cell_samples.all %}-->
-<!--                                -->
-<!--                                  <tr class="{% cycle 'row1' 'row2' %}">-->
-<!--                                  -->
-<!--                                    <td>{{x.container.showVerbose}}</td>-->
-<!--                                                         -->
-<!--                                    <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>-->
-<!--                                    -->
-<!--                                    <td>{{x.preparedAt}}</td>-->
-<!--                                    -->
-<!--                                    <td>{{x.registeredBy}}</td>-->
-<!--                                    -->
-<!--                                    <td>{{x.showType}}</td>-->
-<!--                                    -->
-<!--                                    <td>{{x.showContent}}</td>-->
-<!--                                    -->
-<!--                                    <td>{{x.comment | truncateHTML:30}}</td>-->
-<!--                                    -->
-<!--                                    <td>{{x.status}}</td>-->
-<!--                                    -->
-<!--                                  </tr>-->
-<!--                    -->
-<!--                              {% endfor %}-->
-<!--                              </tbody>-->
-<!--                            </table>-->
-<!--                            <p></p>-->
-<!--                            <small>-->
-<!--                                Help: Move mouse over content link to see content description. -->
-<!--                                Move mouse over sample description to see full length description.-->
-<!--                            </small>-->
-<!--                        </div>-->
-<!--                    -->
-<!--                    {% else %}-->
-<!--                        <p>There are no cell samples registered for this cell or strain.</p>-->
-<!--                    {% endif %}-->
-<!--                {% endwith %}-->
-<!--        </div>-->
+        <div class='module'>
+            <h2>Samples</h2>
+                <p><br></p>
+                <ul class="object-tools">
+                    <li><a href="{% url 'admin:rotmic_oligosample_add'%}?oligo={{o.pk}}">Add Oligo Sample</a></li>
+                </ul>
+
+                {% with n=o.oligo_samples.count %}
+                    {% if n > 0 %}
+                        <p>
+                            There are <b>{{n}} samples</b> registered for this Oligo.<br>
+                        </p>
+                        
+                        <div style="margin: 10px">
+                            <table cellspacing="1">
+                    
+                                <thead>
+                                <tr>
+                                    <th>location</th>
+                                    <th>ID/<br>Pos.</th><th>prepared</th><th>by</th>
+                                    <th>Type</th><th>Content</th>
+                                    <th>Description</th><th>Status</th>
+                                </tr>
+                                </thead>
+                    
+                                <tbody>
+                                {% for x in o.oligo_samples.all %}
+                                
+                                  <tr class="{% cycle 'row1' 'row2' %}">
+                                  
+                                    <td>{{x.container.showVerbose}}</td>
+                                                         
+                                    <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
+                                    
+                                    <td>{{x.preparedAt}}</td>
+                                    
+                                    <td>{{x.registeredBy}}</td>
+                                    
+                                    <td>{{x.showType}}</td>
+                                    
+                                    <td>{{x.showContent}}</td>
+                                    
+                                    <td>{{x.comment | truncateHTML:30}}</td>
+                                    
+                                    <td>{{x.status}}</td>
+                                    
+                                  </tr>
+                    
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                            <p></p>
+                            <small>
+                                Help: Move mouse over content link to see content description. 
+                                Move mouse over sample description to see full length description.
+                            </small>
+                        </div>
+                    
+                    {% else %}
+                        <p>There are no samples registered for this oligo.</p>
+                    {% endif %}
+                {% endwith %}
+        </div>
 
     </div>
 

@@ -26,7 +26,7 @@ import reversion
 
 from rotmic.models import DnaComponentType, CellComponentType, OligoComponentType, \
      Unit, Sample, SampleAttachment, \
-     Location, Rack, Container, DnaSample, CellSample
+     Location, Rack, Container, DnaSample, CellSample, OligoSample
 
 from .utils.customadmin import ViewFirstModelAdmin
 from .utils import adminFilters as filters
@@ -337,6 +337,39 @@ class CellSampleAdmin( SampleAdmin ):
         return super(SampleAdmin,self).queryset(request)
     
 admin.site.register( CellSample, CellSampleAdmin )
+
+
+class OligoSampleAdmin( SampleAdmin ):
+    form = forms.OligoSampleForm
+    
+    change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
+    
+    fieldsets = [
+        (None, {
+            'fields' : ((('displayId', 'container', 'status'),
+                         ('preparedAt',),
+                         ('comment'),
+                    ))
+            } ),
+         ('Content', {
+             'fields' : ((('oligo',),
+                          ('concentration','concentrationUnit','amount','amountUnit',),
+                          ('solvent','aliquotNr',),
+                         )
+                        ),
+         }
+        ), 
+    ]
+
+    list_filter = ('status', filters.DnaSampleLocationFilter, 
+                   filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter,
+                   filters.SortedUserFilter)
+        
+    def queryset(self, request):
+        """Revert modification made by SampleAdmin"""
+        return super(SampleAdmin,self).queryset(request)
+    
+admin.site.register( OligoSample, OligoSampleAdmin )
 
 
 class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
