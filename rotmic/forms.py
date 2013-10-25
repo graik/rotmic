@@ -369,18 +369,6 @@ class CellComponentForm(forms.ModelForm):
         return r
 
 
-    def clean(self):
-        """
-        Remove values for hidden fields, which might have been set before final
-        category was selected.
-        Note: this is also partly enforced by the DnaComponent.save method.
-        """
-        data = super(CellComponentForm, self).clean()
-        category = data['componentCategory'] 
-
-        return data
-      
-                
     class Meta:
         model = M.CellComponent
         widgets = {  ## customize widget dimensions and include dynamic select widgets
@@ -418,6 +406,38 @@ class OligoComponentForm(forms.ModelForm):
                                               'style':'font-family:monospace'}),
         }
     
+
+class ChemicalComponentForm(forms.ModelForm):
+    """Customized Form for ChemicalComponent add / change"""
+    
+    componentCategory = forms.ModelChoiceField(label='Category',
+                            widget=SilentSelectWidget,
+                            queryset=M.ChemicalType.objects.filter(subTypeOf=None),
+                            required=True, 
+                            empty_label=None,
+                            initial=T.chemOther)
+    
+
+    def __init__(self, *args, **kwargs):
+        super(ChemicalComponentForm, self).__init__(*args, **kwargs)
+        self.request = kwargs.pop('request', None)
+
+        self.fields['status'].initial = 'available'
+
+        o = kwargs.get('instance', None)
+        if o:
+            self.fields['componentCategory'].initial = o.componentType.subTypeOf
+        
+
+    class Meta:
+        model = M.ChemicalComponent
+        widgets = {  ## customize widget dimensions and include dynamic select widgets
+            'displayId' : forms.TextInput(attrs={'size':10}),
+            'name' : forms.TextInput(attrs={'size':25}),
+            'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
+                                              'style':'font-family:monospace'}),
+        }
+
 
 class UnitLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""

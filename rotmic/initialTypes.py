@@ -2,7 +2,8 @@
 Pre-populate database with componentType instances that are needed for templates
 and pre-defined actions.
 """
-from rotmic.models import DnaComponentType, CellComponentType, OligoComponentType
+from rotmic.models import DnaComponentType, CellComponentType, \
+     OligoComponentType, ChemicalType
 import logging
 
 def getcreate(typeClass=DnaComponentType, name='', **kwargs):
@@ -114,3 +115,19 @@ ocStandard = getcreate(OligoComponentType, name='standard',
 
 ocSequencing = getcreate(OligoComponentType, name='sequencing',
                        description='Primer for sequencing reactions')
+
+## Chemical types
+
+chemOther  = getcreate(ChemicalType, name='other', subTypeOf=None)
+
+chemGeneric= getcreate(ChemicalType, name='other chemical', subTypeOf=chemOther,
+                       description='any chemical not classified elsewhere')
+
+chemSolvent= getcreate(ChemicalType, name='solvent', subTypeOf=None,
+                        description='Solvents and similar liquid chemicals')
+
+chemBuffer = getcreate(ChemicalType, name='buffer', subTypeOf=None)
+
+chemEnzyme = getcreate(ChemicalType, name='enzyme', subTypeOf=None)
+
+

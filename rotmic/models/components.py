@@ -332,3 +332,23 @@ class OligoComponent(Component):
         app_label = 'rotmic'
         verbose_name = 'Oligo'
         ordering = ['displayId']
+
+
+class ChemicalComponent(Component):
+    """
+    Description of a Chemical
+    """
+    
+    componentType = models.ForeignKey('ChemicalType',
+                                      verbose_name='Chemical Type',
+                                      blank=False)
+
+    cas = models.CharField( 'C.A.S.', max_length=20,
+                            help_text="C.A.S. number", blank=True, 
+                            null=True )
+    
+    
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'Chemical'
+        ordering = ['displayId']

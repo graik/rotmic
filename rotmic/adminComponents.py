@@ -372,3 +372,44 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
     
 admin.site.register(M.OligoComponent, OligoComponentAdmin)
 
+
+class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
+    """Admin interface description for DNA constructs."""
+    inlines = [ ComponentAttachmentInline ]
+    form = forms.ChemicalComponentForm
+    
+    fieldsets = (
+        (None, {
+            'fields': (('displayId', 'name','status'),
+                       ('componentCategory', 'componentType'),
+                       )
+        }
+         ),
+        ('Details', {
+            'fields' : (('cas','comment',),
+                        )
+        }
+         ),            
+    )
+
+    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
+                    'cas', 'showComment','showStatus',
+                    'showEdit')
+    
+    list_filter = ( filters.ChemicalCategoryListFilter, filters.ChemicalTypeListFilter, 
+                    'status', filters.SortedUserFilter)
+    
+    search_fields = ('displayId', 'name', 'comment', 'cas')
+    
+    date_hierarchy = 'registeredAt'
+    
+    ordering = ('displayId', 'name',)
+    
+    def queryset(self, request):
+        """Revert modification made by ComponentModelAdmin"""
+        return super(ComponentAdmin,self).queryset(request)
+
+
+admin.site.register(M.ChemicalComponent, ChemicalComponentAdmin)
+
+

@@ -24,7 +24,8 @@ import django.contrib.messages as messages
 
 import reversion
 
-from rotmic.models import DnaComponentType, CellComponentType, OligoComponentType, \
+from rotmic.models import DnaComponentType, CellComponentType, \
+     OligoComponentType, ChemicalType, \
      Unit, Sample, SampleAttachment, \
      Location, Rack, Container, DnaSample, CellSample, OligoSample
 
@@ -104,6 +105,24 @@ class OligoComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
     list_display_links = ('__unicode__',)
 
 admin.site.register(OligoComponentType, OligoComponentTypeAdmin)
+
+class ChemicalTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
+    
+    fieldsets = (
+        (None, {
+            'fields': (('name', ),
+                       ('description',),
+                       ('uri',),
+                       )
+            }
+         ),
+        )
+    
+    list_display = ('__unicode__', 'description')
+    list_display_links = ('__unicode__',)
+
+admin.site.register(ChemicalType, ChemicalTypeAdmin)
+
 
 class UnitAdmin( admin.ModelAdmin ):
     
