@@ -172,6 +172,7 @@ class DnaComponent(Component):
                                         related_name='as_vector_in_plasmid',
                                         help_text='start typing for auto-completion')
     
+    # rename to markers
     marker = models.ManyToManyField( 'self', blank=True, null=True, 
                                      symmetrical=False,
                                      related_name='as_marker_in_dna',   ## end with + to suppress reverse relationship
@@ -263,11 +264,13 @@ class CellComponent(Component):
                                       verbose_name='Strain',
                                       blank=False )    
     
+    # convert to many2many ?
     plasmid = models.ForeignKey( 'DnaComponent', blank=True, null=True, 
                                  verbose_name='Plasmid',
                                  related_name='as_plasmid_in_cell',
                                  help_text='start typing for auto-completion')
     
+    # rename to markers
     marker = models.ManyToManyField( 'DnaComponent', blank=True, null=True, 
                                       related_name='as_marker_in_cell',
                                       verbose_name='genomic markers',
