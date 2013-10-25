@@ -122,6 +122,12 @@ class CellCategoryListFilter( CategoryListFilter ):
 class CellTypeListFilter( TypeListFilter ):
     _class = M.CellComponentType
     
+class ChemicalCategoryListFilter( CategoryListFilter ):
+    _class = M.ChemicalType
+    
+class ChemicalTypeListFilter( TypeListFilter ):
+    _class = M.ChemicalType
+
 
 class RackLocationFilter( admin.SimpleListFilter ):
     """
