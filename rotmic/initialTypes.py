@@ -116,18 +116,17 @@ ocStandard = getcreate(OligoComponentType, name='standard',
 ocSequencing = getcreate(OligoComponentType, name='sequencing',
                        description='Primer for sequencing reactions')
 
+
 ## Chemical types
 
-chemOther  = getcreate(ChemicalType, name='other', subTypeOf=None)
+chemReagents = getcreate(ChemicalType, name='reagent', subTypeOf=None)
 
-chemGeneric= getcreate(ChemicalType, name='other chemical', subTypeOf=chemOther,
-                       description='any chemical not classified elsewhere')
+chemOther = getcreate(ChemicalType, name='other reagent', subTypeOf=chemReagent)
 
-chemSolvent= getcreate(ChemicalType, name='solvent', subTypeOf=None,
-                        description='Solvents and similar liquid chemicals')
 
-chemBuffer = getcreate(ChemicalType, name='buffer', subTypeOf=None)
+chemBio = getcreate(ChemicalType, name='biological', subTypeOf=None)
 
-chemEnzyme = getcreate(ChemicalType, name='enzyme', subTypeOf=None)
+chemAB = getcreate(ChemicalType, name='antibody', subTypeOf=chemBio)
 
+chemEnzyme = getcreate(ChemicalType, name='enzyme', subTypeOf=chemBio)
 
