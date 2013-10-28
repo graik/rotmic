@@ -1,0 +1,21 @@
+{% extends "admin/rotmic/change_form_component.html" %}
+
+{% load i18n admin_modify  %}
+{% load rotmicfilters %}
+
+    {# duplicating a line from parent template but activates syntax highlighting #}
+<!--    <script language=javascript type='text/javascript'>-->
+        
+        {% block ajax-typeinfo %}"/getChemicalTypes/"{% endblock %}   
+            
+        {% block ajax-nextId %}"/rotmic/ajax/nextChemicalId/"{% endblock %}
+        
+    
+        {% block func_suggestName %}
+        // de-activate name-suggestion
+        function suggestName() {
+        }
+        {% endblock %}
+        
+<!--    </script>-->
+    

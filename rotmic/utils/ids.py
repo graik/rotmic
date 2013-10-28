@@ -29,6 +29,7 @@ def _extractNumbers( queryset, pattern ):
     numbers.sort()
     return numbers    
 
+
 def suggestComponentId(componentClass, prefix):
     """
     Extract running number from mixed displayId like "prefix0001" and suggest next
@@ -43,6 +44,7 @@ def suggestComponentId(componentClass, prefix):
     
     return '%s%04i' % (prefix, numbers[-1]+1)
 
+
 def suggestDnaId(user_id, prefix='', middle=''):
     """
     user_id - int, pk of User object
@@ -54,6 +56,7 @@ def suggestDnaId(user_id, prefix='', middle=''):
     prefix += middle
 
     return suggestComponentId( M.DnaComponent, prefix )
+
 
 def suggestCellId(user_id, prefix='', middle='c'):
     """
@@ -79,6 +82,18 @@ def suggestOligoId(user_id, prefix='', middle='o'):
     prefix = prefix or user.profile.ocPrefix or user.profile.prefix + middle
 
     return suggestComponentId( M.OligoComponent, prefix )
+
+
+def suggestChemicalId(user_id, prefix='', middle='chem'):
+    """
+    user_id - int, pk of User object
+    prefix  - str, first characters of desired DNA ID (default: from user.profile)
+    middle  - str, additional prefix characters (e.g. "E" for enzyme, default: 'chem')
+    """
+    user = User.objects.get( id=user_id )
+    prefix = prefix or user.profile.ocPrefix or user.profile.prefix + middle
+
+    return suggestComponentId( M.ChemicalComponent, prefix )
 
 
 def __nextSampleInBox( samples ):

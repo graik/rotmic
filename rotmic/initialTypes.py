@@ -119,7 +119,7 @@ ocSequencing = getcreate(OligoComponentType, name='sequencing',
 
 ## Chemical types
 
-chemReagents = getcreate(ChemicalType, name='reagent', subTypeOf=None)
+chemReagent = getcreate(ChemicalType, name='reagent', subTypeOf=None)
 
 chemOther = getcreate(ChemicalType, name='other reagent', subTypeOf=chemReagent)
 

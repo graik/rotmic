@@ -2,8 +2,7 @@ from django.core import serializers
 import json
 from django.http import HttpResponse
 
-from rotmic.models import DnaComponent, DnaComponentType, \
-     CellComponent, CellComponentType
+import rotmic.models as M
 
 import rotmic.utils.ids as I
 
@@ -12,25 +11,35 @@ import rotmic.utils.ids as I
 
 def getTypeDnaInfo(request, maintype):
     if maintype == -1:
-        subtypes = DnaComponentType.objects.all()
+        subtypes = M.DnaComponentType.objects.all()
     else:    
-        subtypes = DnaComponentType.objects.filter(subTypeOf__name=maintype)
+        subtypes = M.DnaComponentType.objects.filter(subTypeOf__name=maintype)
     
     json_models = serializers.serialize("json", subtypes)
     return HttpResponse(json_models, mimetype="application/javascript") 
 
 def getCellTypes(request, maintype):
     if maintype.isdigit():  ## support identification by primary key
-        subtypes = CellComponentType.objects.filter(subTypeOf__id=int(maintype))
+        subtypes = M.CellComponentType.objects.filter(subTypeOf__id=int(maintype))
     else:
-        subtypes = CellComponentType.objects.filter(subTypeOf__name=maintype)
+        subtypes = M.CellComponentType.objects.filter(subTypeOf__name=maintype)
     
     json_models = serializers.serialize("json", subtypes)
     return HttpResponse(json_models, mimetype="application/javascript") 
 
+def getChemicalTypes(request, maintype):
+    if maintype.isdigit():  ## support identification by primary key
+        subtypes = M.ChemicalComponentType.objects.filter(subTypeOf__id=int(maintype))
+    else:
+        subtypes = M.ChemicalType.objects.filter(subTypeOf__name=maintype)
+    
+    json_models = serializers.serialize("json", subtypes)
+    return HttpResponse(json_models, mimetype="application/javascript") 
+
+
 def getParentTypeDnaInfo(request, subtype):
-    currentSubType = DnaComponentType.objects.get(id=subtype)
-    currentMainType = DnaComponentType.objects.filter(id = currentSubType.subTypeOf.id)
+    currentSubType = M.DnaComponentType.objects.get(id=subtype)
+    currentMainType = M.DnaComponentType.objects.filter(id = currentSubType.subTypeOf.id)
     
     json_models = serializers.serialize("json", currentMainType)
     return HttpResponse(json_models, mimetype="application/javascript") 
@@ -65,6 +74,17 @@ def nextOligoId(request):
     ## middle = category[0].lower()
     middle = 'o'
     r = {'id': I.suggestOligoId( request.user.id, middle=middle )}
+    
+    json_models = json.dumps(r)
+    return HttpResponse(json_models, mimetype="application/json") 
+
+
+def nextChemicalId(request, category):
+    """
+    request - request object
+    category - ignored for now
+    """
+    r = {'id': I.suggestChemicalId( request.user.id )}
     
     json_models = json.dumps(r)
     return HttpResponse(json_models, mimetype="application/json") 
