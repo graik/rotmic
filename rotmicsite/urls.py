@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 
 from rotmic.views import view_genbankfile
 from rotmic.jsviews import getTypeDnaInfo, getCellTypes, nextDnaId, \
-     nextCellId, nextSampleId, nextOligoId
+     nextCellId, nextSampleId, nextOligoId, getChemicalTypes, nextChemicalId
 import rotmicsite.settings as settings
 
 # Uncomment the next two lines to enable the admin:
@@ -12,6 +12,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^getTypeDnaInfo/(?P<maintype>.*)/$',getTypeDnaInfo,name='getTypeDnaInfo'),
     url(r'^getCellTypes/(?P<maintype>.*)/$',getCellTypes,name='getCellTypes'),
+    url(r'^getChemicalTypes/(?P<maintype>.*)/$',getChemicalTypes,name='getChemicalTypes'),
 
     url(r'^rotmic/ajax/nextDnaId/(?P<category>.+)/$', 
         nextDnaId, name='nextDnaId' ),
@@ -21,6 +22,9 @@ urlpatterns = patterns('',
 
     url(r'^rotmic/ajax/nextOligoId/$', 
         nextOligoId, name='nextOligoId' ),
+
+    url(r'^rotmic/ajax/nextChemicalId/(?P<category>.+)/$', 
+        nextChemicalId, name='nextChemicalId' ),
 
     url(r'^rotmic/ajax/nextSampleId/(?P<container>.+)/$', 
         nextSampleId, name='nextSampleId' ),
