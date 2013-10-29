@@ -290,3 +290,40 @@ class OligoSample( Sample ):
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'Oligo Sample'
+
+
+class ChemicalSample( Sample ):
+    """Samples linked to CellComponent"""
+    
+    chemical = models.ForeignKey('ChemicalComponent',
+                              verbose_name = 'Chemical',
+                              related_name = 'chemical_samples',
+                              help_text='start typing name or ID of existing chemical record...',
+                              )
+
+    def sameSamples(self):
+        """
+        @return samples that have exactly the same content
+        """
+        return ChemicalSample.objects.filter(chemical=self.chemical).exclude(id=self.id)
+    
+    def relatedSamples(self):
+        """
+        Samples that are related but not identical
+        """
+        return []
+
+    def showContent(self):
+        """Table display of linked insert or ''"""
+        x = self.chemical
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
+                              % (url, x.comment, x.displayId, x.name))
+    showContent.allow_tags = True
+    showContent.short_description = 'Chemical'
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'Chemical Sample'

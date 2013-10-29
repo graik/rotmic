@@ -28,6 +28,7 @@ from rotmic.models.componentTypes import ComponentType, DnaComponentType, \
 from rotmic.models.components import Component, DnaComponent, CellComponent, \
      OligoComponent, ChemicalComponent
 
-from rotmic.models.samples import Sample, DnaSample, CellSample, OligoSample
+from rotmic.models.samples import Sample, DnaSample, CellSample, OligoSample,\
+     ChemicalSample
 
 from rotmic.models.storage import Location, Rack, Container

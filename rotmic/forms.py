@@ -78,6 +78,17 @@ class OligoLookup(ModelLookup):
 
 registry.register(OligoLookup)
 
+class ChemicalLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = M.ChemicalComponent
+    search_fields = ('displayId__startswith', 'name__icontains')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(ChemicalLookup)
+
+
 class InsertLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
     model = M.DnaComponent
@@ -731,6 +742,38 @@ class OligoSampleForm( SampleForm ):
                                                       allow_new=False,
                                                       attrs={'size':35}),
              })
+
+class ChemicalSampleForm( SampleForm ):
+    """Customized Form for ChemicalSample add / change"""
+    
+    ## modify initial (default) value
+    concentrationUnit = sforms.AutoCompleteSelectField(
+        label='... unit',
+        required=False,
+        lookup_class=ConcentrationUnitLookup,
+        allow_new=False,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
+                                               allow_new=False,attrs={'size':5}),
+        initial=U.M)
+    
+    ## restrict available choices to volume units only
+    amountUnit = sforms.AutoCompleteSelectField(
+        label='... unit',
+        required=False,
+        lookup_class=VolumeAmountUnitLookup,
+        allow_new=False,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=AmountUnitLookup,
+                                               allow_new=False,attrs={'size':5}),
+        initial=U.g)
+
+    class Meta:
+        model = M.ChemicalSample
+        widgets = getSampleWidgets( \
+            {'chemical': sforms.AutoComboboxSelectWidget(lookup_class=ChemicalLookup,
+                                                      allow_new=False,
+                                                      attrs={'size':35}),
+             })
+
 
 
 class AttachmentForm(forms.ModelForm):

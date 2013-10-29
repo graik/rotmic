@@ -259,6 +259,9 @@ class CellSampleLocationFilter( SampleLocationFilter ):
 class OligoSampleLocationFilter( SampleLocationFilter ):
     _sampleClass = M.OligoSample
 
+class ChemicalSampleLocationFilter( SampleLocationFilter ):
+    _sampleClass = M.ChemicalSample
+
 
 class SampleRackFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Racks,  responds to SampleLocationListFilter"""
@@ -319,6 +322,9 @@ class CellSampleRackFilter( SampleRackFilter ):
 class OligoSampleRackFilter( SampleRackFilter ):
     _sampleClass = M.OligoSample
 
+class ChemicalSampleRackFilter( SampleRackFilter ):
+    _sampleClass = M.ChemicalSample
+
 
 class SampleContainerFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Containers, responds to SampleRackListFilter"""
@@ -378,6 +384,9 @@ class CellSampleContainerFilter( SampleContainerFilter ):
     
 class OligoSampleContainerFilter( SampleContainerFilter ):
     _sampleClass = M.OligoSample
+
+class ChemicalSampleContainerFilter( SampleContainerFilter ):
+    _sampleClass = M.ChemicalSample
 
     
 class SortedUserFilter( admin.SimpleListFilter ):

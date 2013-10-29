@@ -44,7 +44,7 @@
         <table summary="Samples">
         <caption><a href="/rotmic" class="section">Actual Samples</a></caption>
            <tr>
-                <td rowspan="4"><img src="{% static "img/eppendorf.png" %}" width="80"></td>
+                <td rowspan="5"><img src="{% static "img/eppendorf.png" %}" width="80"></td>
 
                 <th scope="row"><a href="{% url 'admin:rotmic_dnasample_changelist' %}">DNA Samples</a></th>
                 <td><a href="{% url 'admin:rotmic_dnasample_add' %}" class="addlink">Add</a></td>
@@ -56,6 +56,10 @@
             <tr>
                 <th scope="row"><a href="{% url 'admin:rotmic_oligosample_changelist' %}">Oligonucleotide Samples</a></th>
                 <td><a href="{% url 'admin:rotmic_oligosample_add' %}" class="addlink">Add</a></td>
+            </tr>
+            <tr>
+                <th scope="row"><a href="{% url 'admin:rotmic_chemicalsample_changelist' %}">Chemical Samples</a></th>
+                <td><a href="{% url 'admin:rotmic_chemicalsample_add' %}" class="addlink">Add</a></td>
             </tr>
             <tr>
                 <th scope="row"><a href="{% url 'admin:rotmic_sample_changelist' %}">All Samples</a></th>

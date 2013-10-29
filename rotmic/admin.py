@@ -24,10 +24,7 @@ import django.contrib.messages as messages
 
 import reversion
 
-from rotmic.models import DnaComponentType, CellComponentType, \
-     OligoComponentType, ChemicalType, \
-     Unit, Sample, SampleAttachment, \
-     Location, Rack, Container, DnaSample, CellSample, OligoSample
+import rotmic.models as M
 
 from .utils.customadmin import ViewFirstModelAdmin
 from .utils import adminFilters as filters
@@ -63,7 +60,7 @@ class DnaComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
     list_filter = ('subTypeOf', 'isInsert')
                        
 
-admin.site.register(DnaComponentType, DnaComponentTypeAdmin)
+admin.site.register(M.DnaComponentType, DnaComponentTypeAdmin)
 
 
 class CellComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
@@ -86,7 +83,7 @@ class CellComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
     
     list_filter = ('subTypeOf', 'allowPlasmids', 'allowMarkers')
 
-admin.site.register(CellComponentType, CellComponentTypeAdmin)
+admin.site.register(M.CellComponentType, CellComponentTypeAdmin)
     
 
 class OligoComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
@@ -104,7 +101,7 @@ class OligoComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
     list_display = ('__unicode__', 'description')
     list_display_links = ('__unicode__',)
 
-admin.site.register(OligoComponentType, OligoComponentTypeAdmin)
+admin.site.register(M.OligoComponentType, OligoComponentTypeAdmin)
 
 class ChemicalTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
     
@@ -121,7 +118,7 @@ class ChemicalTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
     list_display = ('__unicode__', 'description')
     list_display_links = ('__unicode__',)
 
-admin.site.register(ChemicalType, ChemicalTypeAdmin)
+admin.site.register(M.ChemicalType, ChemicalTypeAdmin)
 
 
 class UnitAdmin( admin.ModelAdmin ):
@@ -138,11 +135,11 @@ class UnitAdmin( admin.ModelAdmin ):
     list_display = ('name','unitType', 'conversion')
     list_filter = ('unitType',)
     
-admin.site.register( Unit, UnitAdmin )
+admin.site.register( M.Unit, UnitAdmin )
 
 
 class SampleAttachmentInline(admin.TabularInline):
-    model = SampleAttachment
+    model = M.SampleAttachment
     form = forms.AttachmentForm
     template = 'admin/rotmic/componentattachment/tabular.html'
     can_delete=True
@@ -283,7 +280,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     showEdit.allow_tags = True    
     showEdit.short_description = 'Edit'     
 
-admin.site.register( Sample, SampleAdmin )
+admin.site.register( M.Sample, SampleAdmin )
 
 
 class DnaSampleAdmin( SampleAdmin ):
@@ -316,7 +313,7 @@ class DnaSampleAdmin( SampleAdmin ):
         """Revert modification made by SampleAdmin"""
         return super(SampleAdmin,self).queryset(request)
     
-admin.site.register( DnaSample, DnaSampleAdmin )
+admin.site.register( M.DnaSample, DnaSampleAdmin )
 
 
 class CellSampleAdmin( SampleAdmin ):
@@ -355,7 +352,7 @@ class CellSampleAdmin( SampleAdmin ):
         """Revert modification made by SampleAdmin"""
         return super(SampleAdmin,self).queryset(request)
     
-admin.site.register( CellSample, CellSampleAdmin )
+admin.site.register( M.CellSample, CellSampleAdmin )
 
 
 class OligoSampleAdmin( SampleAdmin ):
@@ -380,15 +377,49 @@ class OligoSampleAdmin( SampleAdmin ):
         ), 
     ]
 
-    list_filter = ('status', filters.DnaSampleLocationFilter, 
-                   filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter,
+    list_filter = ('status', filters.OligoSampleLocationFilter, 
+                   filters.OligoSampleRackFilter, filters.OligoSampleContainerFilter,
                    filters.SortedUserFilter)
         
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
         return super(SampleAdmin,self).queryset(request)
     
-admin.site.register( OligoSample, OligoSampleAdmin )
+admin.site.register( M.OligoSample, OligoSampleAdmin )
+
+
+class ChemicalSampleAdmin( SampleAdmin ):
+    form = forms.ChemicalSampleForm
+    
+    change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
+    
+    fieldsets = [
+        (None, {
+            'fields' : ((('displayId', 'container', 'status'),
+                         ('preparedAt',),
+                         ('comment'),
+                    ))
+            } ),
+         ('Content', {
+             'fields' : ((('chemical',),
+                          ('concentration','concentrationUnit','amount','amountUnit',),
+                          ('solvent','aliquotNr',),
+                         )
+                        ),
+         }
+        ), 
+    ]
+
+    list_filter = ('status', filters.ChemicalSampleLocationFilter, 
+                   filters.ChemicalSampleRackFilter, filters.ChemicalSampleContainerFilter,
+                   filters.SortedUserFilter)
+        
+    def queryset(self, request):
+        """Revert modification made by SampleAdmin"""
+        return super(SampleAdmin,self).queryset(request)
+    
+admin.site.register( M.ChemicalSample, ChemicalSampleAdmin )
+
 
 
 class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
@@ -413,7 +444,7 @@ class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin)
 
     save_as = True
 
-admin.site.register( Location, LocationAdmin )
+admin.site.register( M.Location, LocationAdmin )
 
 
 class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
@@ -439,7 +470,7 @@ class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
 
     def showLocationUrl(self, obj):
         """Table display of linked insert or ''"""
-        assert isinstance(obj, Rack), 'object missmatch'
+        assert isinstance(obj, M.Rack), 'object missmatch'
         x = obj.location
         if not x:
             return u''
@@ -450,7 +481,7 @@ class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     showLocationUrl.short_description = 'Location'
     
 
-admin.site.register( Rack, RackAdmin )
+admin.site.register( M.Rack, RackAdmin )
 
 
 class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
@@ -477,7 +508,7 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin
 
     def showLocationUrl(self, obj):
         """Table display of linked insert or ''"""
-        assert isinstance(obj, Container), 'object missmatch'
+        assert isinstance(obj, M.Container), 'object missmatch'
         x = obj.rack.location
         if not x:
             return u''
@@ -489,7 +520,7 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin
 
     def showRackUrl(self, obj):
         """Table display of linked insert or ''"""
-        assert isinstance(obj, Container), 'object missmatch'
+        assert isinstance(obj, M.Container), 'object missmatch'
         x = obj.rack
         if not x:
             return u''
@@ -499,5 +530,5 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin
     showRackUrl.allow_tags = True
     showRackUrl.short_description = 'Rack'
 
-admin.site.register( Container, ContainerAdmin )
+admin.site.register( M.Container, ContainerAdmin )
 
