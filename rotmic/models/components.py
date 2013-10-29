@@ -83,11 +83,6 @@ class Component(UserMixin):
     """
     upload_to = 'attachments/Component'
 
-    STATUS_CHOICES = ( ('available', 'available'),
-                       ('planning', 'planning'),
-                       ('construction', 'construction'),
-                       ('abandoned', 'abandoned'))
-
     displayId = models.CharField('ID', max_length=20, unique=True, 
         help_text='Unique identification')
 
@@ -96,9 +91,6 @@ class Component(UserMixin):
 
     comment = models.TextField('Description', blank=True,
                 help_text='You can format your text and include links. See: <a href="http://daringfireball.net/projects/markdown/basics">Markdown Quick Reference</a>')
-    
-    status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
-                               default='planning')
     
     ## return child classes in queries using select_subclasses()
     objects = I.InheritanceManager()  
@@ -147,8 +139,21 @@ class Component(UserMixin):
         abstract = False
 
 
+class StatusMixinDna(models.Model):
+    
+    STATUS_CHOICES = ( ('available', 'available'),
+                       ('planning', 'planning'),
+                       ('construction', 'construction'),
+                       ('abandoned', 'abandoned'))
 
-class DnaComponent(Component):
+    status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
+                               default='planning')
+    
+    class Meta:
+        abstract = True
+    
+
+class DnaComponent(Component, StatusMixinDna):
     """
     Description of a stretch of DNA.
     """
@@ -256,7 +261,7 @@ class DnaComponent(Component):
         ordering = ['displayId']
 
 
-class CellComponent(Component):
+class CellComponent(Component, StatusMixinDna):
     """
     Description of a cell (modified or not)
     """
@@ -308,7 +313,21 @@ class CellComponent(Component):
         ordering = ['displayId']
 
 
-class OligoComponent(Component):
+class StatusMixinCommercial(models.Model):
+    
+    STATUS_CHOICES = ( ('available', 'available'),
+                       ('planning', 'planning'),
+                       ('construction', 'ordered'),
+                       ('abandoned', 'abandoned'))
+
+    status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
+                               default='available')
+    
+    class Meta:
+        abstract = True
+    
+
+class OligoComponent(Component, StatusMixinCommercial):
     """
     Description of DNA primer / oligo
     """
@@ -334,7 +353,7 @@ class OligoComponent(Component):
         ordering = ['displayId']
 
 
-class ChemicalComponent(Component):
+class ChemicalComponent(Component, StatusMixinCommercial):
     """
     Description of a Chemical
     """

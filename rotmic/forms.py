@@ -396,13 +396,12 @@ class CellComponentForm(forms.ModelForm):
 
 class OligoComponentForm(forms.ModelForm):
     """Custom form for OligoComponent Add / Change"""
-
+    
     def __init__(self, *args, **kwargs):
         super(OligoComponentForm, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
         
         self.fields['componentType'].initial = T.ocStandard
-        self.fields['status'].initial = 'available'
     
     class Meta:
         model = M.OligoComponent
