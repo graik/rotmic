@@ -18,4 +18,9 @@
                 Add Oligo Sample
               </a>
             </li>
+            <li>
+              <a href="{% url 'admin:rotmic_chemicalsample_add' %}{% if is_popup %}?_popup=1{% endif %}" class="addlink">
+                Add Chemical Sample
+              </a>
+            </li>
           {% endblock %}
