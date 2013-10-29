@@ -41,7 +41,8 @@ class Sample( UserMixin ):
     STATUS_CHOICES = (('ok', 'ok'),
                       ('preparing', 'preparing'),
                       ('empty', 'empty'),
-                      ('bad', 'bad'),
+                      ('unknown', 'unknown'),
+                      ('bad', 'corrupted'),
                       )
     
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
