@@ -67,7 +67,7 @@
                                 <th style="text-align: center;">Vector Backbone</th> <th width="20"></th>
                                 <th style="text-align: center;">Vector Markers</th> <th></th>
                             {% endif %}
-                            {% if o.marker.all %}
+                            {% if o.markers.all %}
                                 <th style="text-align: center;">Own Markers</th> <th></th>
                             {% endif %}
                         </tr>
@@ -91,17 +91,17 @@
                                         [{{vector.componentType.name}}]
                                     </td> <td></td>
                                     <td style="text-align: center;">
-                                        {% if vector.marker.all %}
-                                            {% for m in vector.marker.all %}
+                                        {% if vector.markers.all %}
+                                            {% for m in vector.markers.all %}
                                                 <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
                                             {% endfor %}
                                         {% endif %}
                                     </td> <td></td>
                                 {% endwith %}
                             {% endif %}
-                            {% if o.marker.all %}
+                            {% if o.markers.all %}
                                 <td style="text-align: center;">
-                                    {% for m in o.marker.all %}
+                                    {% for m in o.markers.all %}
                                         <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
                                     {% endfor %}
                                 </td> <td></td>
@@ -109,7 +109,7 @@
                         </tr>            
                     </table>
                     
-                    {% if not o.insert and not o.vectorBackbone and not o.marker.all %}
+                    {% if not o.insert and not o.vectorBackbone and not o.markers.all %}
                         <p>There are no sequence features described.</p>
                     {% endif %}
                 {% endwith %}
@@ -131,8 +131,13 @@
                         </tr>
                         <tr>
                             {% for a in o.attachments.all %}
-                                <td style="text-align: center;">{{a.description}} ({{a.f.size|filesizeformat}})</td> 
-                                <td></td>
+                                {% if a.f.exists %}
+                                    <td style="text-align: center;">{{a.description}} ({{a.f.size|filesizeformat}})</td> 
+                                    <td></td>
+                                {% else %}
+                                    <td style="text-align: center;">{{a.description}} (FILE NOT FOUND)</td> 
+                                    <td></td>
+                                {% endif %}
                             {% endfor %}
                         </tr>
                     </table>

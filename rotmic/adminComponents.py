@@ -131,7 +131,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
         (None, {
             'fields': (('displayId', 'name','status'),
                        ('componentCategory', 'componentType'),
-                       ('insert', 'vectorBackbone','marker' ),
+                       ('insert', 'vectorBackbone','markers' ),
                        )
         }
          ),
@@ -193,7 +193,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
         """
         form = super(DnaComponentAdmin,self).get_form(request, obj,**kwargs)
 
-        field = form.base_fields['marker']
+        field = form.base_fields['markers']
         field.queryset = field.queryset.filter(componentType__subTypeOf=I.dcMarker)
         field.help_text = 'select multiple with Control/Command key'
         
@@ -260,7 +260,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
         (None, {
             'fields': (('displayId', 'name','status'),
                        ('componentCategory', 'componentType'),
-                       ('plasmid', 'marker'),
+                       ('plasmid', 'markers'),
                        )
         }
          ),
@@ -296,7 +296,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
         """
         form = super(CellComponentAdmin,self).get_form(request, obj,**kwargs)
         
-        field = form.base_fields['marker']
+        field = form.base_fields['markers']
         field.queryset = field.queryset.filter(componentType__subTypeOf=I.dcMarker)
         field.help_text = ''
         return form

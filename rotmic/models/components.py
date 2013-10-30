@@ -187,7 +187,7 @@ class DnaComponent(Component, StatusMixinDna):
                                         help_text='start typing for auto-completion')
     
     # rename to markers
-    marker = models.ManyToManyField( 'self', blank=True, null=True, 
+    markers = models.ManyToManyField( 'self', blank=True, null=True, 
                                      symmetrical=False,
                                      related_name='as_marker_in_dna',   ## end with + to suppress reverse relationship
                                      verbose_name='Selection markers')
@@ -204,7 +204,7 @@ class DnaComponent(Component, StatusMixinDna):
         if self.as_vector_in_plasmid.count():
             r['vectorbackbone'] = self.as_vector_in_plasmid.all()
         if self.as_marker_in_dna.count():
-            r['marker'] = self.as_marker_in_dna.all()
+            r['markers'] = self.as_marker_in_dna.all()
         return r
     
     def relatedDnaCount(self):
@@ -255,8 +255,8 @@ class DnaComponent(Component, StatusMixinDna):
         insert or vector backbone.
         """
         r = []
-        if self.marker.count():
-            r += self.marker.all()
+        if self.markers.count():
+            r += self.markers.all()
         if self.vectorBackbone:
             r += [ m for m in self.vectorBackbone.allMarkers() if not m in r ]
         if self.insert:
@@ -285,7 +285,7 @@ class CellComponent(Component, StatusMixinDna):
                                  help_text='start typing for auto-completion')
     
     # rename to markers
-    marker = models.ManyToManyField( 'DnaComponent', blank=True, null=True, 
+    markers = models.ManyToManyField( 'DnaComponent', blank=True, null=True, 
                                       related_name='as_marker_in_cell',
                                       verbose_name='genomic markers',
                                       help_text='start typing...')
@@ -310,8 +310,8 @@ class CellComponent(Component, StatusMixinDna):
         plasmid.
         """
         r = []
-        if self.marker.count():
-            r += [ m for m in self.marker.all() if not m in r ]
+        if self.markers.count():
+            r += [ m for m in self.markers.all() if not m in r ]
         if self.plasmid:
             r += [ m for m in self.plasmid.allMarkers() if not m in r ]
         return r

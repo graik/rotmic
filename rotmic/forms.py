@@ -278,9 +278,9 @@ class DnaComponentForm(forms.ModelForm):
             raise ValidationError('Given construct is not a vector backbone.')
         return r
     
-    def clean_marker(self):
+    def clean_markers(self):
         """Enforce all markers to be really classified as marker"""
-        r = self.cleaned_data['marker']
+        r = self.cleaned_data['markers']
         if not r.count():
             return r
         
@@ -304,8 +304,8 @@ class DnaComponentForm(forms.ModelForm):
             data['insert'] = None
             data['vectorBackbone'] = None
         
-        if category and (category not in [T.dcVectorBB, T.dcFragment] and 'marker' in data):
-            data['marker'] = QuerySet()
+        if category and (category not in [T.dcVectorBB, T.dcFragment] and 'markers' in data):
+            data['markers'] = QuerySet()
             
         ## validate that a vector backbone is given if category == Plasmid
         if category == T.dcPlasmid and not data.get('vectorBackbone',None):
@@ -368,8 +368,8 @@ class CellComponentForm(forms.ModelForm):
         return r
     
             
-    def clean_marker(self):
-        r = self.cleaned_data['marker']
+    def clean_markers(self):
+        r = self.cleaned_data['markers']
         if not r.count():
             return r
         
@@ -390,7 +390,7 @@ class CellComponentForm(forms.ModelForm):
             'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=PlasmidLookup, 
                                                        allow_new=False,
                                                        attrs={'size':35}),
-            'marker' : FixedSelectMultipleWidget(lookup_class=MarkerLookup)
+            'markers' : FixedSelectMultipleWidget(lookup_class=MarkerLookup)
         }
 
 

@@ -22,8 +22,8 @@
                     if (divs[i].className=='field-box field-insert') {
                         divs[i].id = 'id_field_insert';
                     }
-                    if (divs[i].className=='field-box field-marker') {
-                        divs[i].id = 'id_field_marker';
+                    if (divs[i].className=='field-box field-markers') {
+                        divs[i].id = 'id_field_markers';
                     }
                     if (divs[i].className=='field-box field-vectorBackbone') {
                         divs[i].id = 'id_field_vectorBackbone';
@@ -43,27 +43,27 @@
                 case 'Vector Backbone':
                     document.getElementById('id_field_insert').style.visibility = 'hidden';
                     document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
-                    document.getElementById('id_field_marker').style.visibility = 'visible';
+                    document.getElementById('id_field_markers').style.visibility = 'visible';
                     break;
                 case 'Plasmid':
                     document.getElementById('id_field_insert').style.visibility = 'visible';
                     document.getElementById('id_field_vectorBackbone').style.visibility = 'visible';
-                    document.getElementById('id_field_marker').style.visibility = 'hidden';
+                    document.getElementById('id_field_markers').style.visibility = 'hidden';
                     break;
                 case 'Fragment':
                     document.getElementById('id_field_insert').style.visibility = 'hidden';
                     document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
-                    document.getElementById('id_field_marker').style.visibility = 'visible';
+                    document.getElementById('id_field_markers').style.visibility = 'visible';
                     break;
                 case 'Marker':
                     document.getElementById('id_field_insert').style.visibility = 'hidden';
                     document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
-                    document.getElementById('id_field_marker').style.visibility = 'hidden';
+                    document.getElementById('id_field_markers').style.visibility = 'hidden';
                     break;
                 default:
                     document.getElementById('id_field_insert').style.visibility = 'hidden';
                     document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
-                    document.getElementById('id_field_marker').style.visibility = 'hidden';
+                    document.getElementById('id_field_markers').style.visibility = 'hidden';
                     break;
             }
         }
@@ -78,7 +78,7 @@
             var cat_insert = categories['Fragment'].toString();
             
             var urladd = "/rotmic/dnacomponent/add/?category="
-            document.getElementById("add_id_marker").href = urladd + cat_marker;
+            document.getElementById("add_id_markers").href = urladd + cat_marker;
             document.getElementById("add_id_vectorBackbone").href = urladd + cat_vector;
             document.getElementById("add_id_insert").href = urladd + cat_insert;
         }

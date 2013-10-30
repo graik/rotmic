@@ -22,8 +22,8 @@
                     if (divs[i].className=='field-box field-plasmid') {
                         divs[i].id = 'id_field_plasmid';
                     }
-                    if (divs[i].className=='field-box field-marker') {
-                        divs[i].id = 'id_field_marker';
+                    if (divs[i].className=='field-box field-markers') {
+                        divs[i].id = 'id_field_markers';
                     }
                 }    
             } catch (e) {
@@ -78,9 +78,9 @@
             }
     
             if (typeAllowsMarkers(current_type)){
-                document.getElementById('id_field_marker').style.visibility = 'visible';
+                document.getElementById('id_field_markers').style.visibility = 'visible';
             } else {
-                document.getElementById('id_field_marker').style.visibility = 'hidden';
+                document.getElementById('id_field_markers').style.visibility = 'hidden';
             }
         }   
         {% endblock %}
@@ -90,7 +90,7 @@
         function setPlusLinks() {
             var urladd = "/rotmic/dnacomponent/add/?category="
             {% with marker="Marker" plasmid="Plasmid" %}
-                document.getElementById("add_id_marker").href = urladd + "{{marker|dnaCategoryToId}}";
+                document.getElementById("add_id_markers").href = urladd + "{{marker|dnaCategoryToId}}";
                 document.getElementById("add_id_plasmid").href = urladd + "{{plasmid|dnaCategoryToId}}";
             {% endwith %}
         }
