@@ -87,7 +87,7 @@ class Component(UserMixin):
         help_text='Unique identification')
 
     name = models.CharField('Name', max_length=200, blank=True, 
-                            help_text='Descriptive name (e.g. "eGFP_pUC19")')
+                            help_text='short descriptive name')
 
     comment = models.TextField('Description', blank=True,
                 help_text='You can format your text and include links. See: <a href="http://daringfireball.net/projects/markdown/basics">Markdown Quick Reference</a>')
