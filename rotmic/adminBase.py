@@ -55,10 +55,11 @@ def export_csv(request, queryset, fields):
         for name,value in fields.items():
             try:
                 value = eval("o.%s"%value)
+                
                 if type(value) not in [str, unicode] \
                    and isinstance(value, collections.Iterable):
                     value = ', '.join( [str(v) for v in value ] )
-
+                
                 columns.append( value )
             except:
                 columns.append("")  ## capture 'None' fields
