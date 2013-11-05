@@ -107,7 +107,7 @@ class ChemicalTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
     
     fieldsets = (
         (None, {
-            'fields': (('name', ),
+            'fields': (('name', 'subTypeOf'),
                        ('description',),
                        ('uri',),
                        )
@@ -115,7 +115,9 @@ class ChemicalTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
          ),
         )
     
-    list_display = ('__unicode__', 'description')
+    list_display = ('__unicode__', 'subTypeOf', 'description')
+    list_filter = ('subTypeOf',)
+
     list_display_links = ('__unicode__',)
 
 admin.site.register(M.ChemicalType, ChemicalTypeAdmin)
