@@ -137,4 +137,4 @@ class ChemicalType( ComponentType ):
         app_label = 'rotmic'
         verbose_name = 'Chemical Type'
         abstract = False
-        ordering = ['name']
+        ordering = ['subTypeOf__name', 'name']
