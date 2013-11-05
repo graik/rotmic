@@ -31,7 +31,8 @@ class UserProfileAdmin(admin.ModelAdmin):
          ),
         
         ('ID suggestion', 
-            {'fields': ('prefix', ('dcPrefix', 'ccPrefix', 'ocPrefix')),
+            {'fields': ('prefix', ('dcPrefix', 'ccPrefix', 'ocPrefix', 
+                                   'chPrefix')),
              'description': 'Adjust prefix for autogeneration of DNA, Cell and Oligo IDs. '\
                           + '(For DNA, it will be further modified according to the selected category.)'
             }
@@ -40,7 +41,8 @@ class UserProfileAdmin(admin.ModelAdmin):
     
     ordering = ('user',)
     
-    list_display = ('user', 'prefix', 'dcPrefix', 'ccPrefix', 'ocPrefix')
+    list_display = ('user', 'prefix', 'dcPrefix', 'ccPrefix', 'ocPrefix', 
+                    'chPrefix')
     search_fields = ('user__username', 'user__first_name', 'user__last_name')
     
     actions = None ## disable delete action
