@@ -47,6 +47,10 @@ class UserProfile(models.Model):
                                 help_text='default ID prefix for Oligos',
                                 blank=True)
     
+    chPrefix = models.CharField('Chemical Prefix', max_length=5,
+                                help_text='default ID prefix for Chemicals',
+                                blank=True)
+    
     def __unicode__(self):
         return unicode(self.user)
     

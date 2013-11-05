@@ -91,7 +91,7 @@ def suggestChemicalId(user_id, prefix='', middle='chem'):
     middle  - str, additional prefix characters (e.g. "E" for enzyme, default: 'chem')
     """
     user = User.objects.get( id=user_id )
-    prefix = prefix or user.profile.ocPrefix or user.profile.prefix + middle
+    prefix = prefix or user.profile.chPrefix or user.profile.prefix + middle
 
     return suggestComponentId( M.ChemicalComponent, prefix )
 
