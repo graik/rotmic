@@ -16,6 +16,16 @@
         function suggestName() {
         }
         {% endblock %}
+
+        {% block func_categoryAction %}
+        // method called if componentCategory select element is changed
+        function categoryAction(){
+            updateListBox();
+            hideShow();
+            // suggestName(); // only suggest name on loading of the form
+            // suggestId(); // only suggest ID on loading of the form
+        }
+        {% endblock func_categoryAction %}
         
 <!--    </script>-->
     
