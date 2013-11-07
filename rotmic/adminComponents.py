@@ -165,28 +165,6 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
         """Revert modification made by ComponentModelAdmin"""
         return super(ComponentAdmin,self).queryset(request)
  
-    def save_model(self, request, obj, form, change):
-        """Extract uploaded genbank file from request"""
-
-##        ## copy genbank file content as string into DB field
-##        if request.FILES and 'genbankFile' in request.FILES:
-##            try:
-##                obj.genbank = ''.join(request.FILES['genbankFile'].readlines())
-##
-##                f = StringIO.StringIO( obj.genbank )
-##                seqrecord = SeqIO.parse( f, 'gb' ).next()
-##                obj.sequence = seqrecord.seq.tostring()
-##                if not obj.name:
-##                    obj.name = seqrecord.name
-##                if not obj.comment:
-##                    obj.comment = seqrecord.description
-##            except StopIteration:
-##                messages.error(request, 'Empty or corrupted genbank file')
-##            except ValueError, why:
-##                messages.error(request, 'Error reading genbank file: %r' % why)
-        
-        super(DnaComponentAdmin, self).save_model( request, obj, form, change)
- 
         
     def get_form(self, request, obj=None, **kwargs):
         """
