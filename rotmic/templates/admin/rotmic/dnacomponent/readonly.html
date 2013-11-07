@@ -162,7 +162,13 @@
         
         <div class='module'>
             <h2>Related Entries: {{o.relatedDnaCount|add:o.as_plasmid_in_cell.count}}</h2>
-            
+            {% if o.componentType.category.name == 'Plasmid' %}
+                <p><br></p>
+                <ul class="object-tools">
+                    <li><a href="{% url 'admin:rotmic_cellcomponent_add'%}?plasmid={{o.pk}}">Add Cell</a></li>
+                </ul>
+            {% endif %}
+           
             {% if o.relatedDnaCount > 0 %}
                 <p>
                     {{o.displayId}} is used within the following other DNA constructs:
