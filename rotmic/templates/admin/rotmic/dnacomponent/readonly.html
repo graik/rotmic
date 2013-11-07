@@ -135,7 +135,7 @@
                                     <td style="text-align: center;">{{a.description}} ({{a.f.size|filesizeformat}})</td> 
                                     <td></td>
                                 {% else %}
-                                    <td style="text-align: center;">{{a.description}} (FILE NOT FOUND)</td> 
+                                    <td style="text-align: center;">{{a.description}} (??)</td> {# Doesn't work on production server #}
                                     <td></td>
                                 {% endif %}
                             {% endfor %}
