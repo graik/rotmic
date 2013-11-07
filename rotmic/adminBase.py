@@ -15,7 +15,8 @@
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 """Base Admin extensions used by many ModelAdmins"""
 
-import datetime
+import datetime, csv, collections
+from django.http import HttpResponse
 
 class BaseAdminMixin:
     """
@@ -37,3 +38,36 @@ class BaseAdminMixin:
         obj.save()
 
 
+def export_csv(request, queryset, fields):
+    """
+    Helper method for Admin make_csv action. Exports selected objects as 
+    CSV file.
+    fields - OrderedDict of name / field pairs, see Item.make_csv for example
+    """
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=orders.csv'
+    
+    writer = csv.writer(response)
+    writer.writerow(fields.keys())
+
+    for o in queryset:
+        columns = []
+        for name,value in fields.items():
+            try:
+                value = eval("o.%s"%value)
+                
+                if type(value) not in [str, unicode] \
+                   and isinstance(value, collections.Iterable):
+                    value = ', '.join( [str(v) for v in value ] )
+                
+                columns.append( value )
+            except:
+                columns.append("")  ## capture 'None' fields
+
+        columns = [ c.encode('utf-8') if type(c) is unicode else c \
+                    for c in columns]
+            
+        writer.writerow( columns )
+
+    return response
+    

@@ -38,6 +38,7 @@
 
 <!-- django-guardian admin modification -->
 {% block object-tools-items %}
+<li><a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/{{opts.verbose_name|slugify}}" class="helplink">{% trans "Help!" %}</a></li>
 <li><a href="permissions/" class="permissionslink">{% trans "Object permissions" %}</a></li>
 {{ block.super }}
 {% endblock %}

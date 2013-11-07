@@ -35,7 +35,7 @@ import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.ids as I
 
-from .adminBase import BaseAdminMixin
+from .adminBase import BaseAdminMixin, export_csv
 
 from . import adminUser  ## trigger extension of User
 from . import adminComponents ## trigger registration of component admin interfaces
@@ -107,7 +107,7 @@ class ChemicalTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
     
     fieldsets = (
         (None, {
-            'fields': (('name', ),
+            'fields': (('name', 'subTypeOf'),
                        ('description',),
                        ('uri',),
                        )
@@ -115,7 +115,9 @@ class ChemicalTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
          ),
         )
     
-    list_display = ('__unicode__', 'description')
+    list_display = ('__unicode__', 'subTypeOf', 'description')
+    list_filter = ('subTypeOf',)
+
     list_display_links = ('__unicode__',)
 
 admin.site.register(M.ChemicalType, ChemicalTypeAdmin)
@@ -199,6 +201,8 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
                    filters.SampleRackFilter, filters.SampleContainerFilter,
                    filters.SortedUserFilter)
     
+    actions = ['make_csv']
+    
     def __init__(self, *args, **kwargs):
         """Disable automatic link generation"""
         super(SampleAdmin, self).__init__(*args, **kwargs)
@@ -279,6 +283,33 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
                          % (obj.get_absolute_url_edit() ) )
     showEdit.allow_tags = True    
     showEdit.short_description = 'Edit'     
+
+    def make_csv(self, request, queryset):
+        from collections import OrderedDict
+        
+        fields = OrderedDict( [('ID', 'displayId'),
+                               ('Status','status'),
+                               ('Container', 'container.displayId'),
+                               ('Rack', 'container.rack.displayId'),
+                               ('Location', 'container.rack.location.displayId'),
+                               ('Registered','registrationDate()'),
+                               ('Author','registeredBy.username'),
+                               ('Modified', 'modificationDate()'),
+                               ('Modified By','modifiedBy.username'),
+                               ('Type', '_meta.verbose_name.split()[0]'),
+                               ('Content_ID', 'content.displayId'),
+                               ('Content_Name', 'content.name'),
+                               ('Concentration', 'concentration'),
+                               ('Conc.Unit', 'concentrationUnit'),
+                               ('Amount', 'amount'),
+                               ('Amount Unit', 'amountUnit'),
+                               ('Solvent', 'solvent'),
+                               ('Source', 'source'),
+                               ('Description','comment')])
+        return export_csv( request, queryset, fields)
+    
+    make_csv.short_description = 'Export samples as CSV'
+
 
 admin.site.register( M.Sample, SampleAdmin )
 

@@ -92,6 +92,11 @@ class Sample( UserMixin ):
             raise NotImplementedError('Attempt to create generic Sample instance.')
         super(Sample, self).save(*args, **kwargs)
     
+    @property
+    def content(self):
+        """return subtype-specific content object. Needs to be overriden"""
+        raise NotImplemented, 'content method must be implemented by sub-classes.'
+
     def commentText(self):
         """remove some formatting characters from text"""
         r = re.sub('--','', self.comment)
@@ -152,8 +157,13 @@ class Sample( UserMixin ):
     showExtendedId.short_description = u'Box : ID'
     
     def showContent(self):
-        """Display sub-class-specific content for tables. Needs to be overridden"""
-        return ''
+        """Table display of linked insert or ''"""
+        x = self.content
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
+                              % (url, x.comment, x.displayId, x.name))
     showContent.allow_tags = True
     showContent.short_description = u'Content'
     
@@ -202,14 +212,12 @@ class DnaSample( Sample ):
         """
         return []
 
+    @property
+    def content(self):
+        return self.dna
+
     def showContent(self):
-        """Table display of linked insert or ''"""
-        x = self.dna
-        if not x:
-            return u''
-        url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
+        return super(DnaSample, self).showContent()
     showContent.allow_tags = True
     showContent.short_description = 'DNA construct'
     
@@ -240,15 +248,12 @@ class CellSample( Sample ):
         """
         return []
 
+    @property
+    def content(self):
+        return self.cell
+
     def showContent(self):
-        """Table display of linked insert or ''"""
-        x = self.cell
-        if not x:
-            return u''
-        url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
-    showContent.allow_tags = True
+        return super(CellSample, self).showContent()
     showContent.short_description = 'Cell'
 
     class Meta:
@@ -277,15 +282,12 @@ class OligoSample( Sample ):
         """
         return []
 
+    @property
+    def content(self):
+        return self.oligo
+
     def showContent(self):
-        """Table display of linked insert or ''"""
-        x = self.oligo
-        if not x:
-            return u''
-        url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
-    showContent.allow_tags = True
+        return super(OligoSample, self).showContent()
     showContent.short_description = 'Oligo'
 
     class Meta:
@@ -314,15 +316,12 @@ class ChemicalSample( Sample ):
         """
         return []
 
+    @property
+    def content(self):
+        return self.chemical
+
     def showContent(self):
-        """Table display of linked insert or ''"""
-        x = self.chemical
-        if not x:
-            return u''
-        url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
-    showContent.allow_tags = True
+        return super(ChemicalSample, self).showContent()
     showContent.short_description = 'Chemical'
 
     class Meta:
