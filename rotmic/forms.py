@@ -13,7 +13,9 @@
 ## GNU Affero General Public License for more details.
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
-import os, re, datetime
+import os, re, datetime, StringIO
+
+from Bio import SeqIO
 
 import django.forms as forms
 import django.db.models as models
@@ -208,8 +210,7 @@ class DnaComponentForm(forms.ModelForm):
         o = kwargs.get('instance', None)
         if o:
             self.fields['componentCategory'].initial = o.componentType.subTypeOf
-        
-
+    
     def clean_sequence(self):
         """Enforce DNA sequence."""
         r = self.cleaned_data['sequence']
@@ -312,6 +313,31 @@ class DnaComponentForm(forms.ModelForm):
             msg = u'Vector Backbone is required for Plasmids.'
             self._errors['vectorBackbone'] = self.error_class([msg])
         
+        ## extract genbank file from upload field
+        try:
+            if data.get('genbankFile', None):
+                if self.errors:
+                    msg = 'Please correct the other error(s) and upload the file again.'
+                    self._errors['genbankFile'] = self.error_class([msg])
+                else:
+                    o = self.instance
+                    upload = data['genbankFile']
+                    o.genbank = ''.join(upload.readlines())
+    
+                    f = StringIO.StringIO( o.genbank )
+                    seqrecord = SeqIO.parse( f, 'gb' ).next()
+                    data['sequence'] = seqrecord.seq.tostring()
+                    if not data.get('name', ''):
+                        data['name'] = seqrecord.name
+                    if not data.get('comment', ''):
+                        data['comment'] = seqrecord.description
+        except StopIteration:
+            msg = 'Empty or corrupted genbank file'
+            self._errors['genbankFile'] = self.error_class([msg])
+        except ValueError, why:
+            msg = 'Error reading genbank file: %r' % why
+            self._errors['genbankFile'] = self.error_class([msg])
+
         return data
       
                 
