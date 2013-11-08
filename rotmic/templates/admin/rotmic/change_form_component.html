@@ -271,14 +271,6 @@
             setPlusLinks();
             preselectCategory();
             
-            {% if not original %}
-                suggestId();
-                suggestName();
-            {% else %}
-                displayIdAction();  // cache current (original) displayId as manual
-                nameAction();       // cache current (original) name
-            {% endif %}
-            
             {% block setEventsCommon %}
                 document.getElementById( 'id_componentCategory' ).onchange = categoryAction;
                 document.getElementById( 'id_componentType' ).onchange = typeAction;
@@ -296,6 +288,15 @@
                 updateListBox();
                 hideShow();
             {% endblock main_finish %}
+
+            {% if not original %}
+                suggestId();
+                suggestName();
+            {% else %}
+                displayIdAction();  // cache current (original) displayId as manual
+                nameAction();       // cache current (original) name
+            {% endif %}
+            
         };
         {% endblock func_main %}
         
