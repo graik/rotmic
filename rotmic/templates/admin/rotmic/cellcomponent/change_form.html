@@ -134,6 +134,17 @@
         {% block setEventsExtra %}
             document.getElementById( 'id_plasmid_0' ).djselectableselect = suggestName;
         {% endblock %}
+        
+        {% block func_categoryAction %}
+        // method called if componentCategory select element is changed
+        function categoryAction(){
+            updateListBox();
+            hideShow();
+            suggestName();
+            // suggestId(); // only suggest ID on loading of the form
+        }
+        {% endblock func_categoryAction %}
+
 
 <!--    </script>-->
     
