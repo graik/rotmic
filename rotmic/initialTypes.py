@@ -19,17 +19,24 @@ def getcreate(typeClass=DnaComponentType, name='', **kwargs):
 
     return r
 
-## category "root" types
+## category "root" types (all required)
 dcPlasmid = getcreate(DnaComponentType, name='Plasmid')
 dcVectorBB = getcreate(DnaComponentType, name='Vector Backbone')
 dcFragment = getcreate(DnaComponentType, name='Fragment')
 dcMarker = getcreate(DnaComponentType, name='Marker')
 
-## Plasmid types
+## Plasmid types (optional)
 dcPlasmidGeneric = getcreate(DnaComponentType, subTypeOf=dcPlasmid,
                              name='generic plasmid')
 
 ## Vector Backbones
+
+## required:
+dcVectorUndefined = getcreate(DnaComponentType, subTypeOf=dcVectorBB,
+                              name='undefined vector')
+
+
+## all optional:
 dcVectorBacterialHigh = getcreate(DnaComponentType, subTypeOf=dcVectorBB, 
                                   name = 'bacterial expression')
 dcVectorBacterialMedium = getcreate(DnaComponentType, subTypeOf=dcVectorBB,
@@ -46,7 +53,8 @@ dcVectorYeastIntegrating = getcreate(DnaComponentType, subTypeOf=dcVectorBB,
                                   name = 'yeast integrating')
 
 
-## Fragments
+
+## Fragments (all optional)
 dcFragmentCDS = getcreate(DnaComponentType, subTypeOf=dcFragment, 
                           name = 'CDS', isInsert=True)
 
@@ -63,7 +71,7 @@ dcFragmentOther = getcreate(DnaComponentType, subTypeOf=dcFragment,
                                     name = 'other fragment')
 
 
-## Markers
+## Markers (all optional)
 dcMarkerBacterial = getcreate(DnaComponentType, subTypeOf=dcMarker,
                               name='bacterial resistance')
 
@@ -73,20 +81,21 @@ dcMarkerMammalian = getcreate(DnaComponentType, subTypeOf=dcMarker,
 dcMarkerYeastAuxo = getcreate(DnaComponentType, subTypeOf=dcMarker,
                               name='yeast auxotrophic')
 
-
+###########################
 ## Basic CellComponentTypes
 
+## required:
 ccEcoli = getcreate(CellComponentType, name='E. coli', 
                     description='Escherichia coli (all strains)')
 
+## optional:
 ccYeast = getcreate(CellComponentType, name='S. cerevisiae',
                     description='S. cerevisiae (all strains)')
 
 ccHuman = getcreate(CellComponentType, name='H. sapiens',
                     description='human cell culture')
 
-
-## common cell types
+## common cell types (all optional)
 ccTop10 = getcreate(CellComponentType, name='Top10', subTypeOf=ccEcoli,
                     allowMarkers=True,
                     description='standard E. coli cloning strain')
@@ -108,7 +117,8 @@ ccHek = getcreate(CellComponentType, name='HEK293', subTypeOf=ccHuman,
                   description='Human embryonic kidney cells')
 
 
-## Oligo types
+##############################
+## Oligo types (all required):
 
 ocStandard = getcreate(OligoComponentType, name='standard',
                        description='standard oligonucleotide for PCR reactions')
@@ -119,14 +129,15 @@ ocSequencing = getcreate(OligoComponentType, name='sequencing',
 
 ## Chemical types
 
+## required:
 chemReagent = getcreate(ChemicalType, name='reagent', subTypeOf=None)
 
 chemOther = getcreate(ChemicalType, name='other reagent', subTypeOf=chemReagent)
 
-
-chemBio = getcreate(ChemicalType, name='biological', subTypeOf=None)
-
-chemAB = getcreate(ChemicalType, name='antibody', subTypeOf=chemBio)
-
-chemEnzyme = getcreate(ChemicalType, name='enzyme', subTypeOf=chemBio)
+#### optional:
+##chemBio = getcreate(ChemicalType, name='biological', subTypeOf=None)
+##
+##chemAB = getcreate(ChemicalType, name='antibody', subTypeOf=chemBio)
+##
+##chemEnzyme = getcreate(ChemicalType, name='enzyme', subTypeOf=chemBio)
 

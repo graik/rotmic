@@ -14,6 +14,7 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 import os, re, datetime, StringIO
+import itertools
 
 from Bio import SeqIO
 
@@ -28,6 +29,8 @@ import rotmic.models as M
 
 import rotmic.initialTypes as T
 import rotmic.initialUnits as U
+import rotmic.initialComponents as IC
+
 import rotmic.utils.sequtils as sequtils
 from rotmic.utils.filefields import DocumentFormField
 import rotmic.utils.ids as ids
@@ -111,6 +114,19 @@ class VectorLookup(ModelLookup):
     search_fields = ('displayId__startswith', 'name__icontains')
     
     filters = {'componentType__subTypeOf': T.dcVectorBB }
+    
+    def get_query(self, request, term):
+        """
+        Special case: sort 'unknown vector' to top.
+        See: http://stackoverflow.com/questions/431628/how-to-combine-2-or-more-querysets-in-a-django-view
+        """
+        q = super(VectorLookup, self).get_query(request, term)
+
+        rest = q.exclude(id=IC.vectorUnknown.id)
+        unknown = q.filter(id=IC.vectorUnknown.id)
+        
+        r = list(itertools.chain(unknown, rest))
+        return r    
     
     def get_item_id(self,item):
         return item.pk
