@@ -206,6 +206,8 @@ class DnaComponentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
+        
+        self.fields['markers'].help_text = 'Start typing ID or name...'
 
         o = kwargs.get('instance', None)
         if o:
@@ -343,17 +345,22 @@ class DnaComponentForm(forms.ModelForm):
                 
     class Meta:
         model = M.DnaComponent
+
         widgets = {  ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
             'name' : forms.TextInput(attrs={'size':25}),
+
             'sequence': forms.Textarea(attrs={'cols': 100, 'rows': 4,
                                                'style':'font-family:monospace'}), 
             'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
+
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=InsertLookup, 
                                                        allow_new=False,
                                                        attrs={'size':35}),
-            'vectorBackbone' : sforms.AutoComboboxSelectWidget(lookup_class=VectorLookup, allow_new=False)
+            'vectorBackbone' : sforms.AutoComboboxSelectWidget(lookup_class=VectorLookup, allow_new=False),
+
+            'markers' : FixedSelectMultipleWidget(lookup_class=MarkerLookup)
         }
 
 

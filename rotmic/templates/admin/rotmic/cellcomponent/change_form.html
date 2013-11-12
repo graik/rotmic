@@ -88,9 +88,10 @@
         {% block func_setPlusLinks %}
         // override the link for "+" Buttons so that the correct category is pre-selected    
         function setPlusLinks() {
+            django.jQuery("#add_id_markers").hide(); // hide the Marker + field
+
             var urladd = "/rotmic/dnacomponent/add/?category="
-            {% with marker="Marker" plasmid="Plasmid" %}
-                document.getElementById("add_id_markers").href = urladd + "{{marker|dnaCategoryToId}}";
+            {% with plasmid="Plasmid" %}
                 document.getElementById("add_id_plasmid").href = urladd + "{{plasmid|dnaCategoryToId}}";
             {% endwith %}
         }

@@ -72,13 +72,14 @@
         {% block func_setPlusLinks %}    
         // override the link for "+" Buttons so that the correct category is pre-selected    
         function setPlusLinks() {
+            django.jQuery("#add_id_markers").hide(); // hide the Marker + field
+
             var categories = captureCategories();
-            var cat_marker = categories['Marker'].toString();
+            //var cat_marker = categories['Marker'].toString();
             var cat_vector = categories['Vector Backbone'].toString();
             var cat_insert = categories['Fragment'].toString();
             
             var urladd = "/rotmic/dnacomponent/add/?category="
-            document.getElementById("add_id_markers").href = urladd + cat_marker;
             document.getElementById("add_id_vectorBackbone").href = urladd + cat_vector;
             document.getElementById("add_id_insert").href = urladd + cat_insert;
         }

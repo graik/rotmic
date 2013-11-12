@@ -174,13 +174,6 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
         """
         form = super(DnaComponentAdmin,self).get_form(request, obj,**kwargs)
 
-        field = form.base_fields['markers']
-        field.queryset = field.queryset.filter(componentType__subTypeOf=I.dcMarker)
-        field.help_text = 'select multiple with Control/Command key'
-        
-        field = form.base_fields['vectorBackbone']
-        field.empty_label = '---specifiy vector---'
-        
         ## suggest ID
         category = form.base_fields['componentCategory'].initial
         category = category.name[0].lower()

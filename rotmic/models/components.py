@@ -190,7 +190,8 @@ class DnaComponent(Component, StatusMixinDna):
     markers = models.ManyToManyField( 'self', blank=True, null=True, 
                                      symmetrical=False,
                                      related_name='as_marker_in_dna',   ## end with + to suppress reverse relationship
-                                     verbose_name='Selection markers')
+                                     verbose_name='Selection markers',
+                                     help_text='start typing ID or name')
     
     
     def relatedDnaDict(self):
@@ -288,7 +289,7 @@ class CellComponent(Component, StatusMixinDna):
     markers = models.ManyToManyField( 'DnaComponent', blank=True, null=True, 
                                       related_name='as_marker_in_cell',
                                       verbose_name='genomic markers',
-                                      help_text='start typing...')
+                                      help_text='start typing ID or name ...')
     
         
     def save(self, *args, **kwargs):
