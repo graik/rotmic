@@ -190,6 +190,7 @@ class Sample( UserMixin ):
         app_label = 'rotmic'
         verbose_name  = 'Sample'
         ordering = ['container', 'displayId']
+        unique_together = ('displayId', 'container')
    
 
 class DnaSample( Sample ):

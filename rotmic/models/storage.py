@@ -175,7 +175,6 @@ class Rack(UserMixin):
     class Meta:
         app_label = 'rotmic'   
         ordering = ('location__displayId', 'displayId',)
-        unique_together = ('displayId', 'location')
         verbose_name = 'Rack'
 
 
@@ -191,8 +190,8 @@ class Container( UserMixin ):
         ('box', 'Freezer box'),
         ('other', 'other' ) )
 
-    displayId = models.CharField('Box ID', max_length=20, 
-                                 help_text='Unique within rack')
+    displayId = models.CharField('Box ID', max_length=20, unique=True,
+                                 help_text='Unique ID')
 
     name = models.CharField('Name', max_length=100, blank=True,
                             help_text='Informative name or actual label')
@@ -245,7 +244,6 @@ class Container( UserMixin ):
     class Meta:
         app_label = 'rotmic'   
         ordering = ('rack', 'displayId')
-        unique_together = ('displayId', 'rack')
         verbose_name = 'Container'
 
 
