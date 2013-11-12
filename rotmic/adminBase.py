@@ -37,6 +37,8 @@ class BaseAdminMixin:
 
         obj.save()
 
+    save_as = True  ## enable "Save as" button in all derrived classes.
+
 
 def export_csv(request, queryset, fields):
     """
