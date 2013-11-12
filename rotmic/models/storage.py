@@ -191,7 +191,7 @@ class Container( UserMixin ):
         ('other', 'other' ) )
 
     displayId = models.CharField('Box ID', max_length=20, unique=True,
-                                 help_text='Unique ID')
+                                 help_text='Unique identifier')
 
     name = models.CharField('Name', max_length=100, blank=True,
                             help_text='Informative name or actual label')
@@ -206,7 +206,7 @@ class Container( UserMixin ):
     comment = models.TextField( 'Detailed description', blank=True)
 
     def __unicode__(self):
-        r = '%s / %s' % (self.rack.__unicode__(), unicode(self.displayId))
+        r = unicode(self.displayId)
 
         if self.name:
             r += ' (%s)' % self.name
