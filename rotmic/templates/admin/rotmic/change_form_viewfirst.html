@@ -36,9 +36,13 @@
     {% endblock %}
 {% endif %}
 
-<!-- django-guardian admin modification -->
-{% block object-tools-items %}
-<li><a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/{{opts.verbose_name|slugify}}" class="helplink">{% trans "Help!" %}</a></li>
-{# <li><a href="permissions/" class="permissionslink">{% trans "Object permissions" %}</a></li> #}
-{{ block.super }}
+{% block object-tools %}
+    <ul class="object-tools">
+        <li><a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/{{opts.verbose_name|slugify}}" class="helplink">{% trans "Help!" %}</a></li>
+        {% if change %}{% if not is_popup %}
+            {% block object-tools-items %}
+                {{ block.super }}
+            {% endblock %}
+        {% endif %}{% endif %}
+    </ul>
 {% endblock %}
