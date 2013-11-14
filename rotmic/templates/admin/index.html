@@ -76,12 +76,16 @@
                 <td rowspan="3"><img src="{% static "img/freezer_shaking.gif" %}" height="80" width="80"></td>
 
                 <th scope="row"><a href="{% url 'admin:rotmic_location_changelist' %}">Locations (freezers or rows)</a></th>
-                <td><a href="{% url 'admin:rotmic_location_add' %}" class="addlink">Add</a></td>
+                {% if perms.rotmic.add_location %}
+                    <td><a href="{% url 'admin:rotmic_location_add' %}" class="addlink">Add</a></td>
+                {% endif %}
             </tr>
 
            <tr>
                 <th scope="row"><a href="{% url 'admin:rotmic_rack_changelist' %}">Racks (or shelves)</a></th>
-                <td><a href="{% url 'admin:rotmic_rack_add' %}" class="addlink">Add</a></td>
+                {% if perms.rotmic.add_rack %}
+                    <td><a href="{% url 'admin:rotmic_rack_add' %}" class="addlink">Add</a></td>
+                {% endif %}
             </tr>
 
            <tr>
@@ -105,40 +109,53 @@
     </div>
     <br><br>
 
-    {% if request.user.is_superuser %}
-    
-        <h3>Restricted tables (superuser only)</h3>
+    {% if perms.rotmic.change_dnacomponenttype or perms.rotmic.change_cellcomponenttype or perms.rotmic.change_chemicaltype or rotmic.change_oligocomponenttype %}
+
+        <h3>Restricted tables (Admins only)</h3>
         
         <div class="module">
             <table summary="Classification">
             <caption><a href="" class="section">Classification and Units</a></caption>
-               <tr>
-                    <th scope="row"><a href="{% url 'admin:rotmic_dnacomponenttype_changelist' %}">DNA Categories</a></th>
-                    <td><a href="{% url 'admin:rotmic_dnacomponenttype_add' %}" class="addlink">Add</a></td>
+                {% if perms.rotmic.change_dnacomponenttype %}
+                <tr>
+                     <th scope="row"><a href="{% url 'admin:rotmic_dnacomponenttype_changelist' %}">DNA Categories</a></th>
+                     <td><a href="{% url 'admin:rotmic_dnacomponenttype_add' %}" class="addlink">Add</a></td>
                 </tr>
+                {% endif %}
     
-               <tr>
-                    <th scope="row"><a href="{% url 'admin:rotmic_cellcomponenttype_changelist' %}">Cell Categories</a></th>
-                    <td><a href="{% url 'admin:rotmic_cellcomponenttype_add' %}" class="addlink">Add</a></td>
+                {% if perms.rotmic.change_cellcomponenttype %}
+                <tr>
+                     <th scope="row"><a href="{% url 'admin:rotmic_cellcomponenttype_changelist' %}">Cell Categories</a></th>
+                     <td><a href="{% url 'admin:rotmic_cellcomponenttype_add' %}" class="addlink">Add</a></td>
                 </tr>
+                {% endif %}
     
-               <tr>
-                    <th scope="row"><a href="{% url 'admin:rotmic_oligocomponenttype_changelist' %}">Oligo Categories</a></th>
-                    <td><a href="{% url 'admin:rotmic_oligocomponenttype_add' %}" class="addlink">Add</a></td>
+                {% if perms.rotmic.change_oligocomponenttype %}
+                <tr>
+                     <th scope="row"><a href="{% url 'admin:rotmic_oligocomponenttype_changelist' %}">Oligo Categories</a></th>
+                     <td><a href="{% url 'admin:rotmic_oligocomponenttype_add' %}" class="addlink">Add</a></td>
                 </tr>
+                {% endif %}
 
-               <tr>
-                    <th scope="row"><a href="{% url 'admin:rotmic_chemicaltype_changelist' %}">Chemical Categories</a></th>
-                    <td><a href="{% url 'admin:rotmic_chemicaltype_add' %}" class="addlink">Add</a></td>
+                {% if perms.rotmic.change_chemicaltype %}
+                <tr>
+                     <th scope="row"><a href="{% url 'admin:rotmic_chemicaltype_changelist' %}">Chemical Categories</a></th>
+                     <td><a href="{% url 'admin:rotmic_chemicaltype_add' %}" class="addlink">Add</a></td>
                 </tr>
+                {% endif %}
 
-               <tr>
+                {% if perms.rotmic.change_unit %}
+                <tr>
                     <th scope="row"><a href="{% url 'admin:rotmic_unit_changelist' %}">Units (for concentrations and volumes)</a></th>
                     <td><a href="{% url 'admin:rotmic_unit_add' %}" class="addlink">Add</a></td>
                 </tr>
+                {% endif %}
     
             </table>
         </div>
+    {% endif %}
+    
+    {% if request.user.is_superuser %}
         
         <div class="module">
             <table summary="User & Team Settings">

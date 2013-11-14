@@ -19,9 +19,11 @@
             Jump to rack table</a>
     </p>
     
-    <ul class="object-tools">
-        <li><a href="{% url 'admin:rotmic_rack_add'%}?location={{o.pk}}">Add Rack</a></li>
-    </ul>
+    {% if perms.rotmic.add_rack %}
+        <ul class="object-tools">
+            <li><a href="{% url 'admin:rotmic_rack_add'%}?location={{o.pk}}">Add Rack</a></li>
+        </ul>
+    {% endif %}
 
     <div style="margin: 10px">
         <table cellspacing="0">
