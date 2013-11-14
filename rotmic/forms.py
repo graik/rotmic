@@ -203,7 +203,23 @@ class ContainerRackLookup(ModelLookup):
 registry.register( ContainerRackLookup )
 
 
-class DnaComponentForm(forms.ModelForm):
+class CleaningMixIn:
+    """Mixin to enforce a certain displayID format"""
+    
+    ex_id = re.compile('[a-z]{1,6}[0-9]{4}[a-z]{0,1}')
+    msg_id = 'ID must have format a[bcdef]0123[a].'  ## for human-readable messages
+    
+    def clean_displayId(self):
+        """enforce letter-digit displayId: a(bcdef)0123(a)"""
+        r = self.cleaned_data['displayId']
+        r = r.strip()
+
+        if not self.ex_id.match(r):
+            raise ValidationError(self.msg_id)
+        return r
+        
+
+class DnaComponentForm(forms.ModelForm, CleaningMixIn):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
@@ -380,7 +396,7 @@ class DnaComponentForm(forms.ModelForm):
         }
 
 
-class CellComponentForm(forms.ModelForm):
+class CellComponentForm(forms.ModelForm, CleaningMixIn):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Species',
@@ -443,7 +459,7 @@ class CellComponentForm(forms.ModelForm):
         }
 
 
-class OligoComponentForm(forms.ModelForm):
+class OligoComponentForm(forms.ModelForm, CleaningMixIn):
     """Custom form for OligoComponent Add / Change"""
     
     def __init__(self, *args, **kwargs):
@@ -466,7 +482,7 @@ class OligoComponentForm(forms.ModelForm):
         }
     
 
-class ChemicalComponentForm(forms.ModelForm):
+class ChemicalComponentForm(forms.ModelForm, CleaningMixIn):
     """Customized Form for ChemicalComponent add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
@@ -866,8 +882,11 @@ class RackForm(forms.ModelForm):
             }
 
 
-class ContainerForm(forms.ModelForm):
+class ContainerForm(forms.ModelForm, CleaningMixIn):
     """Customized Form for Location add / change"""
+    
+    ex_id = re.compile('[a-zA-Z_\-0-9\.]{3,}')
+    msg_id = 'ID must be >= 3 characters and only contain: a..z, 0..9, ., _, -'
     
     class Meta:
         model = M.Container
