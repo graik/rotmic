@@ -89,7 +89,7 @@ class Component(UserMixin):
     name = models.CharField('Name', max_length=200, blank=True, 
                             help_text='short descriptive name')
 
-    comment = models.TextField('Description', blank=True,
+    description = models.TextField('Description', blank=True,
                 help_text='You can format your text and include links. See: <a href="http://daringfireball.net/projects/markdown/basics">Markdown Quick Reference</a>')
     
     ## return child classes in queries using select_subclasses()
@@ -111,28 +111,28 @@ class Component(UserMixin):
         classname = self.__class__.__name__.lower()
         return reverse('admin:rotmic_%s_change' % classname, args=(self.id,))
    
-    def commentText(self):
+    def descriptionText(self):
         """remove some formatting characters from text"""
-        r = re.sub('--','', self.comment)
+        r = re.sub('--','', self.description)
         r = re.sub('=','', r)
         r = re.sub('__','', r)
         return r
-    commentText.short_description = 'description'
+    descriptionText.short_description = 'description'
 
-    def showComment(self):
+    def showDescription(self):
         """
-        @return: str; truncated comment with full comment mouse-over
+        @return: str; truncated description with full description mouse-over
         """
-        if not self.comment: 
+        if not self.description: 
             return u''
-        if len(self.comment) < 40:
-            return unicode(self.comment)
-        r = unicode(self.comment[:38])
+        if len(self.description) < 40:
+            return unicode(self.description)
+        r = unicode(self.description[:38])
         r = html.mark_safe('<a title="%s">%s</a>' \
-                           % (self.comment, F.truncate(self.commentText(), 40)))
+                           % (self.description, F.truncate(self.descriptionText(), 40)))
         return r
-    showComment.allow_tags = True
-    showComment.short_description = 'Description'
+    showDescription.allow_tags = True
+    showDescription.short_description = 'Description'
 
     class Meta:
         app_label = 'rotmic'

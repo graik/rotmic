@@ -53,12 +53,12 @@
                 <li><b>Tm:</b> {% if o.meltingTemp %}{{o.meltingTemp}} C{%else%}{%endif%}</li>
             </ul><p>
 
-            {% if o.comment %}
+            {% if o.description %}
                 <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;"><h4>Description</h4></div>
                 <p></p>
                 <div>
                     <p class='description'>
-                        {{o.comment|markdown}}
+                        {{o.description|markdown}}
                     </p>
                 </div>
             {% endif %}
@@ -118,7 +118,7 @@
                                 
                                 <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
                                   
-                                <td>{{x.showComment}}</td>
+                                <td>{{x.showDescription}}</td>
                                   
                                 <td style="text-align: center;">{{x.dna_samples.count}}</td>
 
@@ -174,7 +174,7 @@
                                     
                                     <td>{{x.showContent}}</td>
                                     
-                                    <td>{{x.comment | truncateHTML:30}}</td>
+                                    <td>{{x.description | truncateHTML:30}}</td>
                                     
                                     <td>{{x.status}}</td>
                                     

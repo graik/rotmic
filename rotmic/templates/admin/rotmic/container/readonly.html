@@ -15,8 +15,8 @@
     <h2>Description</h2>
     <div>
         <p class='description'>
-            {% if o.comment %}
-                {{o.comment|markdown}}
+            {% if o.description %}
+                {{o.description|markdown}}
             {% else %}
                 No description found.
             {% endif %}
@@ -70,7 +70,7 @@
                 
                 <td>{{x.showAmount}}</td>
                    
-                <td>{{x.comment | truncateHTML:30}}</td>
+                <td>{{x.description | truncateHTML:30}}</td>
                 
                 <td>{{x.status}}</td>
                 

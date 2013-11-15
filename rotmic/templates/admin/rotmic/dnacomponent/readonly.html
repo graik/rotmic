@@ -49,7 +49,7 @@
             <h2>Description</h2>
             <div>
                 <p class='description'>
-                    {{o.comment|markdown}}
+                    {{o.description|markdown}}
                 </p>
             </div>
     
@@ -74,7 +74,7 @@
                         <tr>
                             {% if o.insert %} 
                                 <td style="text-align: center;">
-                                    <a href="{{o.insert.get_absolute_url}}" title="{{o.insert.comment}}">{{o.insert.displayId}}</a>
+                                    <a href="{{o.insert.get_absolute_url}}" title="{{o.insert.description}}">{{o.insert.displayId}}</a>
                                     <p>
                                         <em>{{o.insert.name}}</em>
                                     </p>
@@ -84,7 +84,7 @@
                             {% if o.vectorBackbone %} 
                                 {% with o.vectorBackbone as vector %}
                                     <td style="text-align: center;">
-                                        <a href="{{vector.get_absolute_url}}" title="{{vector.comment}}">{{vector.displayId}}</a>
+                                        <a href="{{vector.get_absolute_url}}" title="{{vector.description}}">{{vector.displayId}}</a>
                                         <p>
                                             <em>{{vector.name}}</em>
                                         </p>
@@ -93,7 +93,7 @@
                                     <td style="text-align: center;">
                                         {% if vector.markers.all %}
                                             {% for m in vector.markers.all %}
-                                                <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
+                                                <a href="{{m.get_absolute_url}}" title="{{m.description}}">{{m}}</a><br>
                                             {% endfor %}
                                         {% endif %}
                                     </td> <td></td>
@@ -102,7 +102,7 @@
                             {% if o.markers.all %}
                                 <td style="text-align: center;">
                                     {% for m in o.markers.all %}
-                                        <a href="{{m.get_absolute_url}}" title="{{m.comment}}">{{m}}</a><br>
+                                        <a href="{{m.get_absolute_url}}" title="{{m.description}}">{{m}}</a><br>
                                     {% endfor %}
                                 </td> <td></td>
                             {% endif %}
@@ -192,7 +192,7 @@
                             
                                     <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
                                       
-                                    <td>{{x.showComment}}</td>
+                                    <td>{{x.showDescription}}</td>
                                       
                                     <td style="text-align: center;">{{x.dna_samples.count}}</td>
     
@@ -226,7 +226,7 @@
                         
                                 <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
                                   
-                                <td>{{x.showComment}}</td>
+                                <td>{{x.showDescription}}</td>
                                   
                                 <td style="text-align: center;">{{x.cell_samples.count}}</td>
 
@@ -280,7 +280,7 @@
                                     
                                     <td>{{x.showContent}}</td>
                                     
-                                    <td>{{x.comment | truncateHTML:30}}</td>
+                                    <td>{{x.description | truncateHTML:30}}</td>
                                     
                                     <td>{{x.status}}</td>
                                     

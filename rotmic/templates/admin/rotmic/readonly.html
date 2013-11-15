@@ -46,11 +46,11 @@
         <div class='module'>
             
             {% block content-top %} {# override #}
-                {% if o.comment %}
-                    <h2>Comments</h2>
+                {% if o.description %}
+                    <h2>Description</h2>
                     <div>
                         <p class='description'>
-                            {{o.comment|markdown}}
+                            {{o.description|markdown}}
                         </p>
                     </div>
                 {% endif %}

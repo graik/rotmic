@@ -203,7 +203,7 @@ class Container( UserMixin ):
     rack = models.ForeignKey(Rack, related_name='containers')
        
     #: optional long description
-    comment = models.TextField( 'Detailed description', blank=True)
+    description = models.TextField( 'Detailed description', blank=True)
 
     def __unicode__(self):
         r = unicode(self.displayId)
@@ -222,8 +222,8 @@ class Container( UserMixin ):
             r += self.rack.showVerbose() + ' / '
         
         title = 'Container\n%s (%s)' % (self.displayId, self.name)
-        if self.comment:
-            title += '\n' + self.comment
+        if self.description:
+            title += '\n' + self.description
 
         url = self.get_absolute_url()
         r += '<a href="%s" title="%s">%s</a>' % (url, title, self.displayId) 

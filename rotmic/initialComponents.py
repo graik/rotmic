@@ -46,5 +46,5 @@ def getcreate(componentClass=DnaComponent, displayId='', **kwargs):
 
 vectorUnknown = getcreate(displayId='v0000', name='unknown vector',
                           componentType=IT.dcVectorUndefined, status='planning',
-                          comment='Default place holder for unknown vector backbones.'\
+                          description='Default place holder for unknown vector backbones.'\
                           +'\nDo not modify.')

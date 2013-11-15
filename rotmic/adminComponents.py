@@ -54,7 +54,7 @@ class ComponentAdmin( ViewFirstModelAdmin ):
     * cellCategories -- all "super" or base-level CellComponentTypes
     
     Component-specific methods:
-    * showComment -- truncated comment with html mouse-over full text for tables
+    * showDescription -- truncated description with html mouse-over full text for tables
     """
     
     def queryset(self, request):
@@ -89,19 +89,19 @@ class ComponentAdmin( ViewFirstModelAdmin ):
         return super(ComponentAdmin, self).add_view(\
             request, form_url, extra_context=extra_context)
 
-    def showComment(self, obj):
+    def showDescription(self, obj):
         """
-        @return: str; truncated comment with full comment mouse-over
+        @return: str; truncated description with full description mouse-over
         """
-        if not obj.comment: 
+        if not obj.description: 
             return u''
-        if len(obj.comment) < 40:
-            return unicode(obj.comment)
-        r = unicode(obj.comment[:38])
-        r = '<a title="%s">%s</a>' % (obj.comment, F.truncate(obj.commentText(), 40))
+        if len(obj.description) < 40:
+            return unicode(obj.description)
+        r = unicode(obj.description[:38])
+        r = '<a title="%s">%s</a>' % (obj.description, F.truncate(obj.descriptionText(), 40))
         return r
-    showComment.allow_tags = True
-    showComment.short_description = 'Description'
+    showDescription.allow_tags = True
+    showDescription.short_description = 'Description'
     
     def showEdit(self, obj):
         """Small Edit Button for a direct link to Change dialog"""
@@ -136,7 +136,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
         }
          ),
         ('Details', {
-            'fields' : (('comment',),
+            'fields' : (('description',),
                         ('sequence', 'genbankFile'),
                         ),
         }
@@ -145,12 +145,12 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
                     'showInsertUrl', 'showVectorUrl', 'showMarkerUrls', 
-                    'showComment','showStatus', 'showEdit')
+                    'showDescription','showStatus', 'showEdit')
     
     list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 
                     'status',filters.SortedUserFilter)
     
-    search_fields = ('displayId', 'name', 'comment', 
+    search_fields = ('displayId', 'name', 'description', 
                      'insert__name', 'insert__displayId',
                      'vectorBackbone__name', 'vectorBackbone__displayId')
     
@@ -193,7 +193,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
             return u''
         url = x.get_absolute_url()
         return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
+                              % (url, x.description, x.displayId, x.name))
     showInsertUrl.allow_tags = True
     showInsertUrl.short_description = 'Insert'
         
@@ -205,7 +205,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
             return u''
         url = x.get_absolute_url()
         return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
+                              % (url, x.description, x.displayId, x.name))
     showVectorUrl.allow_tags = True
     showVectorUrl.short_description = 'Vector'
     
@@ -216,7 +216,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
         for m in obj.allMarkers():
             u = m.get_absolute_url()
             urls += [ html.mark_safe('<a href="%s" title="%s">%s</a>' \
-                                % (u, m.comment, m.name))]
+                                % (u, m.description, m.name))]
         return ', '.join(urls)
     
     showMarkerUrls.allow_tags = True
@@ -238,7 +238,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
                                ('Vector','vectorBackbone.displayId'),
                                ('Markers',"markers.values_list('displayId', flat=True)"),
                                ('n Samples', 'allSamplesCount()'),
-                               ('Description','comment')])
+                               ('Description','description')])
         return export_csv( request, queryset, fields)
     
     make_csv.short_description = 'Export items as CSV'
@@ -260,20 +260,20 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
         }
          ),
         ('Details', {
-            'fields' : (('comment',),
+            'fields' : (('description',),
                         )
         }
          ),            
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showPlasmidUrl', 'showMarkerUrls', 'showComment','showStatus',
+                    'showPlasmidUrl', 'showMarkerUrls', 'showDescription','showStatus',
                     'showEdit')
     
     list_filter = ( filters.CellCategoryListFilter, filters.CellTypeListFilter, 
                     'status', filters.SortedUserFilter)
     
-    search_fields = ('displayId', 'name', 'comment')
+    search_fields = ('displayId', 'name', 'description')
     
     date_hierarchy = 'registeredAt'
     
@@ -306,7 +306,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
             return u''
         url = x.get_absolute_url()
         return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
+                              % (url, x.description, x.displayId, x.name))
     showPlasmidUrl.allow_tags = True
     showPlasmidUrl.short_description = 'Plasmid'
     
@@ -317,7 +317,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
         for m in obj.allMarkers():
             u = m.get_absolute_url()
             urls += [ html.mark_safe('<a href="%s" title="%s">%s</a>' \
-                                % (u, m.comment, m.name))]
+                                % (u, m.description, m.name))]
         return ', '.join(urls)    
     showMarkerUrls.allow_tags = True
     showMarkerUrls.short_description = 'Markers'
@@ -337,7 +337,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
                                ('Plasmid','plasmid.displayId'),
                                ('Markers',"markers.values_list('displayId', flat=True)"),
                                ('n Samples', 'allSamplesCount()'),
-                               ('Description','comment')])
+                               ('Description','description')])
         return export_csv( request, queryset, fields)
     
     make_csv.short_description = 'Export items as CSV'
@@ -359,18 +359,18 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
         }
          ),
         ('Details', {
-            'fields' : (('sequence',),('meltingTemp', 'templates'),('comment',),
+            'fields' : (('sequence',),('meltingTemp', 'templates'),('description',),
                         )
         }
          ),            
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'componentType', 'showTm', 'showComment','showStatus','showEdit')
+                    'componentType', 'showTm', 'showDescription','showStatus','showEdit')
     
     list_filter = ( 'componentType', 'status', filters.SortedUserFilter)
     
-    search_fields = ('displayId', 'name', 'comment')
+    search_fields = ('displayId', 'name', 'description')
     
     date_hierarchy = 'registeredAt'
     
@@ -403,7 +403,7 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
                                ('Tm', 'meltingTemp'),
                                ('Templates',"templates.values_list('displayId', flat=True)"),
                                ('n Samples', 'oligo_samples.count()'),
-                               ('Description','comment')])
+                               ('Description','description')])
         return export_csv( request, queryset, fields)
     
     make_csv.short_description = 'Export items as CSV'
@@ -425,20 +425,20 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
         }
          ),
         ('Details', {
-            'fields' : (('cas','comment',),
+            'fields' : (('cas','description',),
                         )
         }
          ),            
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'cas', 'showComment','showStatus',
+                    'cas', 'showDescription','showStatus',
                     'showEdit')
     
     list_filter = ( filters.ChemicalCategoryListFilter, filters.ChemicalTypeListFilter, 
                     'status', filters.SortedUserFilter)
     
-    search_fields = ('displayId', 'name', 'comment', 'cas')
+    search_fields = ('displayId', 'name', 'description', 'cas')
     
     date_hierarchy = 'registeredAt'
     
@@ -464,7 +464,7 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
                                ('Type', 'componentType.name'),
                                ('CAS', 'cas'),
                                ('n Samples', 'oligo_samples.count()'),
-                               ('Description','comment')])
+                               ('Description','description')])
         return export_csv( request, queryset, fields)
     
     make_csv.short_description = 'Export items as CSV'

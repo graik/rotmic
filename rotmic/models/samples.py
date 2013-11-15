@@ -48,7 +48,7 @@ class Sample( UserMixin ):
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='ok', verbose_name='Status')
     
-    comment = models.TextField('Comments', blank=True)
+    description = models.TextField('Description', blank=True)
 
     preparedAt = models.DateField(default=datetime.now(), verbose_name="Prepared")
     
@@ -97,13 +97,13 @@ class Sample( UserMixin ):
         """return subtype-specific content object. Needs to be overriden"""
         raise NotImplemented, 'content method must be implemented by sub-classes.'
 
-    def commentText(self):
+    def descriptionText(self):
         """remove some formatting characters from text"""
-        r = re.sub('--','', self.comment)
+        r = re.sub('--','', self.description)
         r = re.sub('=','', r)
         r = re.sub('__','', r)
         return r
-    commentText.short_description = 'description'
+    descriptionText.short_description = 'description'
     
     def sameSamples(self):
         """
@@ -136,8 +136,8 @@ class Sample( UserMixin ):
         r += self.container.showVerbose() + ' / '
         
         title = 'Sample\n%s' % self.displayId
-        if self.comment:
-            title += '\n' + self.comment
+        if self.description:
+            title += '\n' + self.description
 
         url = self.get_absolute_url()
         r += '<a href="%s" title="%s">%s</a>' % (url, title, self.displayId) 
@@ -150,7 +150,7 @@ class Sample( UserMixin ):
         """Display Container -- Sample for table views"""
         r = u'%s : %s' % (self.container.displayId, self.displayId)
 
-        title = self.comment
+        title = self.description
         url = self.get_absolute_url()
         return html.mark_safe('<a href="%s" title="%s">%s</a>' % (url, title, r))
     showExtendedId.allow_tags = True
@@ -163,7 +163,7 @@ class Sample( UserMixin ):
             return u''
         url = x.get_absolute_url()
         return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.comment, x.displayId, x.name))
+                              % (url, x.description, x.displayId, x.name))
     showContent.allow_tags = True
     showContent.short_description = u'Content'
     

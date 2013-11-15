@@ -363,8 +363,8 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
                     data['sequence'] = seqrecord.seq.tostring()
                     if not data.get('name', ''):
                         data['name'] = seqrecord.name
-                    if not data.get('comment', ''):
-                        data['comment'] = seqrecord.description
+                    if not data.get('description', ''):
+                        data['description'] = seqrecord.description
         except StopIteration:
             msg = 'Empty or corrupted genbank file'
             self._errors['genbankFile'] = self.error_class([msg])
@@ -384,7 +384,7 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
 
             'sequence': forms.Textarea(attrs={'cols': 100, 'rows': 4,
                                                'style':'font-family:monospace'}), 
-            'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
+            'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
 
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=InsertLookup, 
@@ -450,7 +450,7 @@ class CellComponentForm(forms.ModelForm, CleaningMixIn):
         widgets = {  ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
             'name' : forms.TextInput(attrs={'size':25}),
-            'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
+            'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
             'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=PlasmidLookup, 
                                                        allow_new=False,
@@ -477,7 +477,7 @@ class OligoComponentForm(forms.ModelForm, CleaningMixIn):
             'meltingTemp' : forms.TextInput(attrs={'size':4}),
             'templates' : FixedSelectMultipleWidget(lookup_class=DnaLookup),
             
-            'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 5,
+            'description' : forms.Textarea(attrs={'cols': 100, 'rows': 5,
                                               'style':'font-family:monospace'}),
         }
     
@@ -509,7 +509,7 @@ class ChemicalComponentForm(forms.ModelForm, CleaningMixIn):
         widgets = {  ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
             'name' : forms.TextInput(attrs={'size':25}),
-            'comment' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
+            'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
         }
 
@@ -571,7 +571,7 @@ def getSampleWidgets( extra={} ):
         'amount' : forms.TextInput(attrs={'size':5}),
 
         'aliquotNr' : forms.TextInput(attrs={'size':2}),
-        'comment': forms.Textarea(attrs={'cols': 100, 'rows': 5,
+        'description': forms.Textarea(attrs={'cols': 100, 'rows': 5,
                                          'style':'font-family:monospace'}) }
     r.update( extra )
     return r

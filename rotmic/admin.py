@@ -173,7 +173,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
         (None, {
             'fields' : ((('container', 'displayId', 'status'),
                          ('preparedAt',),
-                         ('comment'),
+                         ('description'),
                     ))
             } ),
          ('Content', {
@@ -195,7 +195,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     save_as = True
     save_on_top = True
 
-    search_fields = ('diplayId', 'name','comment')
+    search_fields = ('diplayId', 'name','description')
     
     list_filter = ('status', filters.SampleLocationFilter, 
                    filters.SampleRackFilter, filters.SampleContainerFilter,
@@ -252,19 +252,19 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     showLocation.allow_tags = True
     showLocation.short_description = 'Location'
 
-    def showComment(self, obj):
+    def showDescription(self, obj):
         """
-        @return: str; truncated comment with full comment mouse-over
+        @return: str; truncated description with full description mouse-over
         """
-        if not obj.comment: 
+        if not obj.description: 
             return u''
-        if len(obj.comment) < 40:
-            return unicode(obj.comment)
-        r = unicode(obj.comment[:38])
-        r = '<a title="%s">%s</a>' % (obj.comment, F.truncate(obj.commentText(), 40))
+        if len(obj.description) < 40:
+            return unicode(obj.description)
+        r = unicode(obj.description[:38])
+        r = '<a title="%s">%s</a>' % (obj.description, F.truncate(obj.descriptionText(), 40))
         return r
-    showComment.allow_tags = True
-    showComment.short_description = 'Description'
+    showDescription.allow_tags = True
+    showDescription.short_description = 'Description'
     
     def showStatus(self, obj):
         color = {u'ok': '088A08', # green
@@ -305,7 +305,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
                                ('Amount Unit', 'amountUnit'),
                                ('Solvent', 'solvent'),
                                ('Source', 'source'),
-                               ('Description','comment')])
+                               ('Description','description')])
         return export_csv( request, queryset, fields)
     
     make_csv.short_description = 'Export samples as CSV'
@@ -323,7 +323,7 @@ class DnaSampleAdmin( SampleAdmin ):
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
                          ('preparedAt',),
-                         ('comment'),
+                         ('description'),
                     ))
             } ),
          ('Content', {
@@ -356,7 +356,7 @@ class CellSampleAdmin( SampleAdmin ):
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
                          ('preparedAt',),
-                         ('comment'),
+                         ('description'),
                     ))
             } ),
          ('Content', {
@@ -395,7 +395,7 @@ class OligoSampleAdmin( SampleAdmin ):
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
                          ('preparedAt',),
-                         ('comment'),
+                         ('description'),
                     ))
             } ),
          ('Content', {
@@ -428,7 +428,7 @@ class ChemicalSampleAdmin( SampleAdmin ):
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
                          ('preparedAt',),
-                         ('comment'),
+                         ('description'),
                     ))
             } ),
          ('Content', {
@@ -524,7 +524,7 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin
         (None, {
             'fields' : ((('displayId', 'rack', 'name'),
                          ('containerType',),
-                         ('comment',),
+                         ('description',),
                         )),
             'description' : 'Describe a sample container or box.'
             }
@@ -533,7 +533,7 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin
 
     list_display = ('__unicode__', 'showRackUrl', 'showLocationUrl', 'containerType', 'showSampleCount')
     list_filter =  ('containerType', filters.ContainerLocationFilter, filters.ContainerRackFilter)
-    search_fields = ('displayId', 'name','comment')
+    search_fields = ('displayId', 'name','description')
 
     save_as = True
 
