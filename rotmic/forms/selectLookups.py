@@ -28,7 +28,6 @@ import rotmic.initialUnits as U
 import rotmic.initialComponents as IC
 
 
-
 class SilentSelectWidget( forms.Select ):
     """
     Custom Select Widget which is never reporting to have changed.
