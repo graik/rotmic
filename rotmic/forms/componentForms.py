@@ -13,7 +13,7 @@
 ## GNU Affero General Public License for more details.
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
-import os, re, datetime, StringIO
+import re, datetime, StringIO
 
 from Bio import SeqIO
 
@@ -343,25 +343,3 @@ class ChemicalComponentForm(forms.ModelForm, CleaningMixIn):
             'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
         }
-
-
-
-
-
-class AttachmentForm(forms.ModelForm):
-    """
-    Catch missing files which can happen if object is resurrected by 
-    reversion / History.
-    """
-        
-    def clean_f(self):
-        """Enforce existing file"""
-        f = self.cleaned_data['f']
-        if isinstance(f, models.fields.files.FieldFile) \
-           and not os.path.exists( f.path ):
-
-            fname = os.path.split( f.path )[-1]
-            raise ValidationError('Attached file %s does not exist.' % fname, 
-                                  code='file error')
-        return f
-    
