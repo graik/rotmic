@@ -19,7 +19,7 @@ from componentForms import DnaComponentForm, CellComponentForm, \
 
 from componentForms import AttachmentForm
 
-from componentForms import LocationForm, RackForm, ContainerForm
+from locationForms import LocationForm, RackForm, ContainerForm
 
 from sampleForms import SampleForm, DnaSampleForm, CellSampleForm, \
      OligoSampleForm, ChemicalSampleForm
