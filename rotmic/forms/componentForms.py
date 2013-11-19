@@ -14,7 +14,6 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 import os, re, datetime, StringIO
-import itertools
 
 from Bio import SeqIO
 
@@ -29,179 +28,13 @@ import rotmic.models as M
 
 import rotmic.initialTypes as T
 import rotmic.initialUnits as U
-import rotmic.initialComponents as IC
 
 import rotmic.utils.sequtils as sequtils
 from rotmic.utils.filefields import DocumentFormField
 import rotmic.utils.ids as ids
 
-## third-party ForeignKey lookup field
-from selectable.base import ModelLookup
-from selectable.registry import registry
+import selectLookups as L
 import selectable.forms as sforms
-
-class SilentSelectWidget( forms.Select ):
-    """
-    Custom Select Widget which is never reporting to have changed.
-    This fixes the issue that reversion is reporting componentCategory as
-    changed whenever the form is saved.
-    The category field is not backed by any model value but only reports the 
-    parent of componentType. That's why it cannot change by itself.
-    """    
-    def _has_changed(self,initial, data):
-        """never mark as changed."""
-        return False
-
-class FixedSelectMultipleWidget( sforms.AutoComboboxSelectMultipleWidget ):
-    """
-    Bug fix the change detection method
-    """    
-    def _has_changed(self,initial, data):
-        """override buggy method from SelectWidget"""
-        old_values = [ unicode(i) for i in (initial or [u''])]
-        new_values = [ unicode(i) for i in (data or [u''])]
-        return not set(new_values) == set(old_values)
-
-
-class DnaLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.DnaComponent
-    search_fields = ('displayId__startswith', 'name__icontains')
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(DnaLookup)
-
-class OligoLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.OligoComponent
-    search_fields = ('displayId__startswith', 'name__icontains')
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(OligoLookup)
-
-class ChemicalLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.ChemicalComponent
-    search_fields = ('displayId__startswith', 'name__icontains')
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(ChemicalLookup)
-
-
-class InsertLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.DnaComponent
-    search_fields = ('displayId__startswith', 'name__icontains')
-    
-    filters = {'componentType__subTypeOf': T.dcFragment,
-               'componentType__isInsert' : True}
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(InsertLookup)
-
-
-class VectorLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.DnaComponent
-    search_fields = ('displayId__startswith', 'name__icontains')
-    
-    filters = {'componentType__subTypeOf': T.dcVectorBB }
-    
-    def get_query(self, request, term):
-        """
-        Special case: sort 'unknown vector' to top.
-        See: http://stackoverflow.com/questions/431628/how-to-combine-2-or-more-querysets-in-a-django-view
-        """
-        q = super(VectorLookup, self).get_query(request, term)
-
-        rest = q.exclude(id=IC.vectorUnknown.id)
-        unknown = q.filter(id=IC.vectorUnknown.id)
-        
-        r = list(itertools.chain(unknown, rest))
-        return r    
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(VectorLookup)
-
-
-class PlasmidLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.DnaComponent
-    search_fields = ('displayId__startswith', 'name__icontains')
-    filters = {'componentType__subTypeOf': T.dcPlasmid }
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(PlasmidLookup)
-
-
-class MarkerLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.DnaComponent
-    search_fields = ('displayId__startswith', 'name__icontains')
-    filters = {'componentType__subTypeOf': T.dcMarker }
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(MarkerLookup)
-
-class SampleDnaLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.DnaComponent
-    search_fields = ('displayId__startswith', 'name__icontains')
-    filters = {'componentType__subTypeOf__in': [T.dcPlasmid, T.dcFragment] }
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(SampleDnaLookup)
-
-class SampleCellLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.CellComponent
-    search_fields = ('displayId__startswith', 'name__icontains')
-    ##filters = {'componentType__subTypeOf__in': [T.dcPlasmid, T.dcFragment] }
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(SampleCellLookup)
-
-
-class SampleContainerLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.Container
-    search_fields = ('rack__displayId__startswith',
-                     'displayId__startswith', 'name__icontains')
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(SampleContainerLookup)
-
-
-class ContainerRackLookup(ModelLookup):
-    """for selectable auto-completion field in Container form"""
-    model = M.Rack
-    search_fields = ('displayId__startswith', 'name__icontains')
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register( ContainerRackLookup )
-
 
 class CleaningMixIn:
     """Mixin to enforce a certain displayID format"""
@@ -223,7 +56,7 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
-                            widget=SilentSelectWidget,
+                            widget=L.SilentSelectWidget,
                             queryset=M.DnaComponentType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,
@@ -387,12 +220,12 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
             'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
 
-            'insert' : sforms.AutoComboboxSelectWidget(lookup_class=InsertLookup, 
+            'insert' : sforms.AutoComboboxSelectWidget(lookup_class=L.InsertLookup, 
                                                        allow_new=False,
                                                        attrs={'size':35}),
-            'vectorBackbone' : sforms.AutoComboboxSelectWidget(lookup_class=VectorLookup, allow_new=False),
+            'vectorBackbone' : sforms.AutoComboboxSelectWidget(lookup_class=L.VectorLookup, allow_new=False),
 
-            'markers' : FixedSelectMultipleWidget(lookup_class=MarkerLookup)
+            'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup)
         }
 
 
@@ -400,7 +233,7 @@ class CellComponentForm(forms.ModelForm, CleaningMixIn):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Species',
-                            widget=SilentSelectWidget,
+                            widget=L.SilentSelectWidget,
                             queryset=M.CellComponentType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,
@@ -452,10 +285,10 @@ class CellComponentForm(forms.ModelForm, CleaningMixIn):
             'name' : forms.TextInput(attrs={'size':25}),
             'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
-            'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=PlasmidLookup, 
+            'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=L.PlasmidLookup, 
                                                        allow_new=False,
                                                        attrs={'size':35}),
-            'markers' : FixedSelectMultipleWidget(lookup_class=MarkerLookup)
+            'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup)
         }
 
 
@@ -475,7 +308,7 @@ class OligoComponentForm(forms.ModelForm, CleaningMixIn):
             'name' : forms.TextInput(attrs={'size':25}),
             'sequence' : forms.TextInput(attrs={'size':88}),
             'meltingTemp' : forms.TextInput(attrs={'size':4}),
-            'templates' : FixedSelectMultipleWidget(lookup_class=DnaLookup),
+            'templates' : L.FixedSelectMultipleWidget(lookup_class=L.DnaLookup),
             
             'description' : forms.Textarea(attrs={'cols': 100, 'rows': 5,
                                               'style':'font-family:monospace'}),
@@ -486,7 +319,7 @@ class ChemicalComponentForm(forms.ModelForm, CleaningMixIn):
     """Customized Form for ChemicalComponent add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
-                            widget=SilentSelectWidget,
+                            widget=L.SilentSelectWidget,
                             queryset=M.ChemicalType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,
@@ -514,54 +347,10 @@ class ChemicalComponentForm(forms.ModelForm, CleaningMixIn):
         }
 
 
-class UnitLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.Unit
-    search_fields = ('name__startswith', )
-    
-    def get_query(self, request, term):
-        """Special case: replace 'u' by \micro during autocomplete"""
-        r = super(UnitLookup, self).get_query(request, term)
-        
-        if 'u' in term:
-            microterm = term.replace('u',u"\u00B5")
-            r = r | super(UnitLookup, self).get_query(request, microterm)
-        return r    
-
-    def get_item_id(self,item):
-        return item.pk
-
-
-class ConcentrationUnitLookup(UnitLookup):
-    """Limit choices to concentration units"""
-    def get_query(self, request, term):
-        r = super(ConcentrationUnitLookup, self).get_query(request, term)
-        return r.filter(unitType='concentration')
-    
-registry.register(ConcentrationUnitLookup)
-
-class AmountUnitLookup(UnitLookup):
-    """Limit choices to amount units"""
-    def get_query(self, request, term):
-        r = super(AmountUnitLookup, self).get_query(request, term)
-        r = r.filter(unitType__in=['volume', 'mass','number'])
-        return r
-
-registry.register(AmountUnitLookup)
-
-class VolumeAmountUnitLookup(UnitLookup):
-    """Limit choices to Volume units"""
-    def get_query(self, request, term):
-        r = super(VolumeAmountUnitLookup, self).get_query(request, term)
-        r = r.filter(unitType='volume')
-        return r
-
-registry.register(VolumeAmountUnitLookup)
-
 def getSampleWidgets( extra={} ):
     """widgets shared between different types of Sample forms."""
     r = {
-        'container' : sforms.AutoComboboxSelectWidget(lookup_class=SampleContainerLookup,
+        'container' : sforms.AutoComboboxSelectWidget(lookup_class=L.SampleContainerLookup,
                                                      allow_new=False),
 
         'displayId' : forms.TextInput(attrs={'size':5}),
@@ -639,9 +428,9 @@ class DnaSampleForm( SampleForm ):
     concentrationUnit = sforms.AutoCompleteSelectField(
         label='... unit',
         required=False,
-        lookup_class=ConcentrationUnitLookup,
+        lookup_class=L.ConcentrationUnitLookup,
         allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.ConcentrationUnitLookup,
                                                allow_new=False,attrs={'size':5}),
         initial=U.ngul)
     
@@ -649,16 +438,16 @@ class DnaSampleForm( SampleForm ):
     amountUnit = sforms.AutoCompleteSelectField(
         label='... unit',
         required=False,
-        lookup_class=VolumeAmountUnitLookup,
+        lookup_class=L.VolumeAmountUnitLookup,
         allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=VolumeAmountUnitLookup,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.VolumeAmountUnitLookup,
                                                allow_new=False,attrs={'size':5}),
         initial=U.ul)
 
     class Meta:
         model = M.DnaSample
         widgets = getSampleWidgets( \
-            {'dna': sforms.AutoComboboxSelectWidget(lookup_class=SampleDnaLookup,
+            {'dna': sforms.AutoComboboxSelectWidget(lookup_class=L.SampleDnaLookup,
                                                     allow_new=False,
                                                     attrs={'size':35}),
              })
@@ -668,24 +457,24 @@ class CellSampleForm( SampleForm ):
     """Customized Form for CellSample add / change"""
     
     cellCategory = forms.ModelChoiceField(label='In Species',
-                            widget=SilentSelectWidget,
+                            widget=L.SilentSelectWidget,
                             queryset=M.CellComponentType.objects.filter(subTypeOf=None),
                             required=False, 
                             empty_label=None,
                             initial=T.ccEcoli)
     
     cellType = forms.ModelChoiceField(label='Strain',
-                            widget=SilentSelectWidget,
+                            widget=L.SilentSelectWidget,
                             queryset=M.CellComponentType.objects.exclude(subTypeOf=None),
                             required=False,
                             empty_label=None,
                             initial=T.ccMach1)
     
     plasmid = sforms.AutoCompleteSelectField(label='Plasmid',
-                            lookup_class=PlasmidLookup,
+                            lookup_class=L.PlasmidLookup,
                             required=False,
                             help_text='Start typing name or ID...',
-                            widget=sforms.AutoCompleteSelectWidget(lookup_class=PlasmidLookup,
+                            widget=sforms.AutoCompleteSelectWidget(lookup_class=L.PlasmidLookup,
                                                         allow_new=False,
                                                         attrs={'size':35}),)
 
@@ -694,9 +483,9 @@ class CellSampleForm( SampleForm ):
     amountUnit = sforms.AutoCompleteSelectField(
         label='... unit',
         required=False,
-        lookup_class=VolumeAmountUnitLookup,
+        lookup_class=L.VolumeAmountUnitLookup,
         allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=VolumeAmountUnitLookup,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.VolumeAmountUnitLookup,
                                                allow_new=False,attrs={'size':5}),
         initial=U.ul)
 
@@ -770,7 +559,7 @@ class CellSampleForm( SampleForm ):
     class Meta:
         model = M.CellSample
         widgets = getSampleWidgets( \
-            {'cell': sforms.AutoComboboxSelectWidget(lookup_class=SampleCellLookup,
+            {'cell': sforms.AutoComboboxSelectWidget(lookup_class=L.SampleCellLookup,
                                                     allow_new=False,
                                                     attrs={'size':35}),
              })
@@ -783,9 +572,9 @@ class OligoSampleForm( SampleForm ):
     concentrationUnit = sforms.AutoCompleteSelectField(
         label='... unit',
         required=False,
-        lookup_class=ConcentrationUnitLookup,
+        lookup_class=L.ConcentrationUnitLookup,
         allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.ConcentrationUnitLookup,
                                                allow_new=False,attrs={'size':5}),
         initial=U.uM)
     
@@ -793,16 +582,16 @@ class OligoSampleForm( SampleForm ):
     amountUnit = sforms.AutoCompleteSelectField(
         label='... unit',
         required=False,
-        lookup_class=VolumeAmountUnitLookup,
+        lookup_class=L.VolumeAmountUnitLookup,
         allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=VolumeAmountUnitLookup,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.VolumeAmountUnitLookup,
                                                allow_new=False,attrs={'size':5}),
         initial=U.ul)
 
     class Meta:
         model = M.OligoSample
         widgets = getSampleWidgets( \
-            {'oligo': sforms.AutoComboboxSelectWidget(lookup_class=OligoLookup,
+            {'oligo': sforms.AutoComboboxSelectWidget(lookup_class=L.OligoLookup,
                                                       allow_new=False,
                                                       attrs={'size':35}),
              })
@@ -814,9 +603,9 @@ class ChemicalSampleForm( SampleForm ):
     concentrationUnit = sforms.AutoCompleteSelectField(
         label='... unit',
         required=False,
-        lookup_class=ConcentrationUnitLookup,
+        lookup_class=L.ConcentrationUnitLookup,
         allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=ConcentrationUnitLookup,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.ConcentrationUnitLookup,
                                                allow_new=False,attrs={'size':5}),
         initial=U.M)
     
@@ -824,16 +613,16 @@ class ChemicalSampleForm( SampleForm ):
     amountUnit = sforms.AutoCompleteSelectField(
         label='... unit',
         required=False,
-        lookup_class=VolumeAmountUnitLookup,
+        lookup_class=L.VolumeAmountUnitLookup,
         allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=AmountUnitLookup,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.AmountUnitLookup,
                                                allow_new=False,attrs={'size':5}),
         initial=U.g)
 
     class Meta:
         model = M.ChemicalSample
         widgets = getSampleWidgets( \
-            {'chemical': sforms.AutoComboboxSelectWidget(lookup_class=ChemicalLookup,
+            {'chemical': sforms.AutoComboboxSelectWidget(lookup_class=L.ChemicalLookup,
                                                       allow_new=False,
                                                       attrs={'size':35}),
              })
@@ -893,7 +682,7 @@ class ContainerForm(forms.ModelForm, CleaningMixIn):
         widgets = { ## customize widget dimensions and include dynamic select widgets
             'displayId' : forms.TextInput(attrs={'size':10}),
             'rack' : sforms.AutoComboboxSelectWidget(
-                lookup_class=ContainerRackLookup, allow_new=False),
+                lookup_class=L.ContainerRackLookup, allow_new=False),
             'name' : forms.TextInput(attrs={'size':20}),
             }
     
