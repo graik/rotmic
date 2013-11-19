@@ -21,5 +21,5 @@ from componentForms import AttachmentForm
 
 from componentForms import LocationForm, RackForm, ContainerForm
 
-from componentForms import SampleForm, DnaSampleForm, CellSampleForm, \
+from sampleForms import SampleForm, DnaSampleForm, CellSampleForm, \
      OligoSampleForm, ChemicalSampleForm
