@@ -22,8 +22,8 @@ class TableUploadForm(forms.Form):
     """Form for uploading table"""
     
     tableFile = DocumentFormField(label='Select a file',
-                                  help_text='csv file',
-                                  extensions=['csv'])
+                                  help_text='Excel file',
+                                  extensions=['xls','xlsx'])
     
     
     

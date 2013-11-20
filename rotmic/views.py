@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 from rotmic.models import DnaComponent, DnaComponentType
+from rotmic.utils.importFiles import ImportXls
 
 from rotmic.forms import TableUploadForm
 from django.shortcuts import render_to_response
@@ -34,6 +35,9 @@ def view_uploadform(request):
         if form.is_valid():
             
             ## parse file and save entries here
+            f = request.FILES['tableFile']
+            p = ImportXls(f)
+            r = p.parse() ## list of dictionaries with key(heading)-value pairs
             
             return HttpResponseRedirect(reverse('admin:rotmic_dnacomponent_changelist'))
         
