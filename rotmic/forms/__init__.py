@@ -23,3 +23,5 @@ from locationForms import LocationForm, RackForm, ContainerForm
 
 from sampleForms import SampleForm, DnaSampleForm, CellSampleForm, \
      OligoSampleForm, ChemicalSampleForm
+
+from uploadForms import TableUploadForm
