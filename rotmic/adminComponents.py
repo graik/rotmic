@@ -161,7 +161,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
     
     actions = ['make_csv']
     
-    ## custom parameter for table generation
+    ## custom class variable for table generation
     csv_fields = OrderedDict( [('ID', 'displayId'),
                                ('Name', 'name'),
                                ('Status','status'),
@@ -282,6 +282,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
     
     actions = ['make_csv']
     
+    ## custom class variable for table generation
     csv_fields = OrderedDict( [('ID', 'displayId'),
                                ('Name', 'name'),
                                ('Status','status'),
@@ -377,6 +378,7 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
     
     actions = ['make_csv']
     
+    ## custom class variable for table generation
     csv_fields = OrderedDict( [('ID', 'displayId'),
                                ('Name', 'name'),
                                ('Status','status'),
@@ -443,7 +445,8 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
     ordering = ('displayId', 'name')
     
     actions = ['make_csv']
-    
+
+    ## custom class variable for table generation
     csv_fields = OrderedDict( [('ID', 'displayId'),
                                ('Name', 'name'),
                                ('Status','status'),
