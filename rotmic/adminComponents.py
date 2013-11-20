@@ -16,6 +16,7 @@
 """Admin interface for Component and derrived classes"""
 
 import StringIO
+from collections import OrderedDict
 
 from django.contrib import admin, messages
 from django.utils import safestring, html
@@ -160,6 +161,23 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
     
     actions = ['make_csv']
     
+    ## custom parameter for table generation
+    csv_fields = OrderedDict( [('ID', 'displayId'),
+                               ('Name', 'name'),
+                               ('Status','status'),
+                               ('Registered','registrationDate()'),
+                               ('Author','registeredBy.username'),
+                               ('Modified', 'modificationDate()'),
+                               ('Modified By','modifiedBy.username'),
+                               ('Category', 'componentType.category()'),
+                               ('Type', 'componentType.name'),
+                               ('Insert','insert.displayId'),
+                               ('Vector','vectorBackbone.displayId'),
+                               ('Markers',"markers.values_list('displayId', flat=True)"),
+                               ('n Samples', 'allSamplesCount()'),
+                               ('Description','description'),
+                               ('Sequence','sequence')])
+    
     
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""
@@ -223,24 +241,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
     showMarkerUrls.short_description = 'Markers'
 
     def make_csv(self, request, queryset):
-        from collections import OrderedDict
-        
-        fields = OrderedDict( [('ID', 'displayId'),
-                               ('Name', 'name'),
-                               ('Status','status'),
-                               ('Registered','registrationDate()'),
-                               ('Author','registeredBy.username'),
-                               ('Modified', 'modificationDate()'),
-                               ('Modified By','modifiedBy.username'),
-                               ('Category', 'componentType.category()'),
-                               ('Type', 'componentType.name'),
-                               ('Insert','insert.displayId'),
-                               ('Vector','vectorBackbone.displayId'),
-                               ('Markers',"markers.values_list('displayId', flat=True)"),
-                               ('n Samples', 'allSamplesCount()'),
-                               ('Description','description')])
-        return export_csv( request, queryset, fields)
-    
+        return export_csv( request, queryset, self.csv_fields)
     make_csv.short_description = 'Export items as CSV'
 
 admin.site.register(M.DnaComponent, DnaComponentAdmin)
@@ -281,6 +282,20 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
     
     actions = ['make_csv']
     
+    csv_fields = OrderedDict( [('ID', 'displayId'),
+                               ('Name', 'name'),
+                               ('Status','status'),
+                               ('Registered','registrationDate()'),
+                               ('Author','registeredBy.username'),
+                               ('Modified', 'modificationDate()'),
+                               ('Modified By','modifiedBy.username'),
+                               ('Category', 'componentType.category()'),
+                               ('Type', 'componentType.name'),
+                               ('Plasmid','plasmid.displayId'),
+                               ('Markers',"markers.values_list('displayId', flat=True)"),
+                               ('n Samples', 'allSamplesCount()'),
+                               ('Description','description')])
+
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""
         return super(ComponentAdmin,self).queryset(request)
@@ -323,23 +338,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
     showMarkerUrls.short_description = 'Markers'
 
     def make_csv(self, request, queryset):
-        from collections import OrderedDict
-        
-        fields = OrderedDict( [('ID', 'displayId'),
-                               ('Name', 'name'),
-                               ('Status','status'),
-                               ('Registered','registrationDate()'),
-                               ('Author','registeredBy.username'),
-                               ('Modified', 'modificationDate()'),
-                               ('Modified By','modifiedBy.username'),
-                               ('Category', 'componentType.category()'),
-                               ('Type', 'componentType.name'),
-                               ('Plasmid','plasmid.displayId'),
-                               ('Markers',"markers.values_list('displayId', flat=True)"),
-                               ('n Samples', 'allSamplesCount()'),
-                               ('Description','description')])
-        return export_csv( request, queryset, fields)
-    
+        return export_csv( request, queryset, self.csv_fields)
     make_csv.short_description = 'Export items as CSV'
 
 
@@ -378,6 +377,20 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
     
     actions = ['make_csv']
     
+    csv_fields = OrderedDict( [('ID', 'displayId'),
+                               ('Name', 'name'),
+                               ('Status','status'),
+                               ('Registered','registrationDate()'),
+                               ('Author','registeredBy.username'),
+                               ('Modified', 'modificationDate()'),
+                               ('Modified By','modifiedBy.username'),
+                               ('Type', 'componentType.name'),
+                               ('Tm', 'meltingTemp'),
+                               ('Templates',"templates.values_list('displayId', flat=True)"),
+                               ('n Samples', 'oligo_samples.count()'),
+                               ('Description','description'),
+                               ('Sequence','sequence')])
+
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""
         return super(ComponentAdmin,self).queryset(request)
@@ -390,22 +403,7 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
     showTm.short_description = 'Tm'
     
     def make_csv(self, request, queryset):
-        from collections import OrderedDict
-        
-        fields = OrderedDict( [('ID', 'displayId'),
-                               ('Name', 'name'),
-                               ('Status','status'),
-                               ('Registered','registrationDate()'),
-                               ('Author','registeredBy.username'),
-                               ('Modified', 'modificationDate()'),
-                               ('Modified By','modifiedBy.username'),
-                               ('Type', 'componentType.name'),
-                               ('Tm', 'meltingTemp'),
-                               ('Templates',"templates.values_list('displayId', flat=True)"),
-                               ('n Samples', 'oligo_samples.count()'),
-                               ('Description','description')])
-        return export_csv( request, queryset, fields)
-    
+        return export_csv( request, queryset, self.csv_fields)
     make_csv.short_description = 'Export items as CSV'
 
     
@@ -446,14 +444,7 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
     
     actions = ['make_csv']
     
-    def queryset(self, request):
-        """Revert modification made by ComponentModelAdmin"""
-        return super(ComponentAdmin,self).queryset(request)
-
-    def make_csv(self, request, queryset):
-        from collections import OrderedDict
-        
-        fields = OrderedDict( [('ID', 'displayId'),
+    csv_fields = OrderedDict( [('ID', 'displayId'),
                                ('Name', 'name'),
                                ('Status','status'),
                                ('Registered','registrationDate()'),
@@ -465,8 +456,13 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
                                ('CAS', 'cas'),
                                ('n Samples', 'oligo_samples.count()'),
                                ('Description','description')])
-        return export_csv( request, queryset, fields)
     
+    def queryset(self, request):
+        """Revert modification made by ComponentModelAdmin"""
+        return super(ComponentAdmin,self).queryset(request)
+
+    def make_csv(self, request, queryset):
+        return export_csv( request, queryset, self.csv_fields)
     make_csv.short_description = 'Export items as CSV'
 
 admin.site.register(M.ChemicalComponent, ChemicalComponentAdmin)
