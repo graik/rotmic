@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
-        <head>
-                <meta charset="utf-8">
-                <title>Minimal Django File Upload Example</title>        
-        </head>
+{% extends "admin/base_site.html" %}
+{% load i18n %}
 
-        <body>
+
+{% block content %}        
+
                 <!-- Upload form. Note enctype attribute! -->
                 <form action="{% url "uploadform" %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
@@ -18,6 +16,4 @@
                         <p><input type="submit" value="Upload" /></p>
                 </form>
                 
-        </body>
-
-</html> 
+{% endblock %}

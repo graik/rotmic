@@ -14,15 +14,23 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 """Bulk import of records from XLS and/or CSV files"""
-import tempfile
+import tempfile, datetime, re
 
 import xlrd as X
 import django.core.files.uploadedfile as U
 
+import rotmic.models as M
+import rotmic.forms as F
+
 class ImportXls:
     
-    def __init__(self, f):
-        """@param f: file handle pointing to Excel file"""
+    dataForm = F.DnaComponentForm
+    
+    def __init__(self, f, user):
+        """
+        @param f: file handle pointing to Excel file
+        @param user: django.auth.models.User instance
+        """
         if isinstance(f, U.File):
             fname = tempfile.mktemp(prefix='rotmicupload_')
             ftemp = open(fname, 'w')
@@ -31,6 +39,10 @@ class ImportXls:
             f = fname
             
         self.f = f
+        self.user = user
+        
+        self.objects = []
+
         
     def parse(self, keyrow=0, firstrow=1 ):
         """
@@ -49,4 +61,155 @@ class ImportXls:
         for row in range( firstrow, sheet.nrows ):
             r += [ dict( zip( keys, sheet.row_values( row ) ) ) ] 
         
+        self.rows = r
+        
         return r
+    
+
+    def renameKey( self, d, key, newkey):
+        d[newkey] = d[key]
+        del d[key]
+    
+    
+    def cleanDict( self, d ):
+        """
+        Pre-processing of dictionary values (before foreignKey lookup).
+        """
+        for key in d:
+            newKey = key.lower()
+            if newKey != key:
+                self.renameKey( d, key, newKey )
+                
+        self.renameKey(d, 'id', 'displayId')
+        self.renameKey(d, 'type', 'componentType')
+        self.renameKey(d, 'vector', 'vectorBackbone')
+        
+        return d
+
+
+    def __lookup(self, d, field='', model=M.DnaComponent, targetfield='displayId'):
+        """
+        Lookup a foreign-key object by its name, displayId, etc. The method replaces
+        the value of d[field] by the model ID. Errors are recorded
+        in d['errors'][field].
+        
+        @param d: single dict as returned by parse
+        @param field: the field in the dict that should be converted
+        @param model: the registry data model (table) that should be querried
+        @param targetfield: the field within the data model that is used to
+                            identify the correct instance
+        @return: True if there wasn't any error
+        """
+        error = None
+        r = value = d[field]
+        value = value.strip()
+        
+        ## don't lookup empty fields
+        if not value:
+            return value, error
+        
+        try:
+            kwarg = { targetfield : value }
+            r = model.objects.get( **kwarg ).id
+        except Exception, msg:
+            d['errors'][field] = [ msg ]
+
+        d[field] = r
+        
+        return error is None
+    
+    def lookupRelations(self, d ):
+        """
+        Convert names or displayIds into db IDs to foreignKey instances.
+        """
+        d['errors'] = {}
+        self.__lookup( d, field='insert', model=M.DnaComponent )
+        self.__lookup( d, field='vectorBackbone', model=M.DnaComponent )
+        self.__lookup( d, field='componentType', model=M.DnaComponentType,
+                       targetfield='name')
+        
+        return d
+
+
+    def postprocessDict( self, d ):
+        """Add fields to dict after cleanup and forgeignKey lookup
+        """
+        d['registeredBy'] = self.user.id
+        d['registeredAt'] = datetime.datetime.now()
+        d['modifiedAt'] = datetime.datetime.now()
+        d['modifiedBy'] = self.user.id
+        try:
+            t = M.DnaComponentType.objects.get( id=d['componentType'])
+            d['componentCategory'] = t.category().id
+        except Exception as e:
+            d['errors']['componentType'] = d['errors'].get('componentType', [])
+            d['errors']['componentType'].append( unicode(e) )
+
+        return d
+    
+
+    def updateErrors( self, d, errors ):
+        """
+        Append additional errors to entries in d['errors']
+        @param d: dict, row dictionary with field : value pairs
+        @param errors: dict { 'str' : [ str ] }
+        Note: the input errors are assumed to be a list of str (not str).
+        """
+        r = d['errors']
+        
+        for k, v in errors.items():
+            if k in r:
+                r[k].extend( [ x for x in v] ) ## somehow the [...] magically removes HTML tags
+            else:
+                r[k] = [ x for x in v]
+
+        return r
+
+    def dict2instance( self, d ):
+        """
+        Create a model instance from a dictionary.
+        """
+        ## no errors while looking up related fields
+        if not d.get('errors', []):
+            try:
+                form = self.dataForm( data=d )
+                valid = form.is_valid()
+                
+                d['object'] = form.save( commit=False )
+                d['object_form'] = form
+            except ValueError as e:
+                self.updateErrors( d, form._errors )
+        
+        return d
+
+    
+    def getObjects( self ):
+        """
+        Run all parsing, cleanup and object extraction steps.
+        Each returned dict has a key 'object' pointing to a (non-saved) model 
+        instance or None, as well as a key 'errors' pointing to a dictionary
+        with a list of errors associated to each field (if any).
+    
+        @return [ dict ]; 
+        """
+        r = self.parse() ## list of dictionaries with key(heading)-value pairs
+        
+        self.forms = []
+        self.objects = []
+        self.failed = []
+
+        for d in r:
+            entry = self.lookupRelations( self.cleanDict(d) )
+            entry = self.postprocessDict( entry )
+            entry = self.dict2instance( entry )
+            
+            if entry.get('object', None):
+                self.objects += [ entry['object'] ]
+
+            if entry.get('object_form', None):
+                self.forms += [ entry['object_form'] ]
+
+            if entry['errors']:
+                self.failed += [ entry ]
+        
+    
