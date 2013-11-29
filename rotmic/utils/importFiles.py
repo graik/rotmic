@@ -131,8 +131,21 @@ class ImportXls:
         return d
 
 
+    def generateName(self, d):
+        """If missing, compose name from insert and vectorbackbone"""
+        ## automatically create name
+        try:
+            if not d.get('name', '') and ('vectorBackbone' in d) and ('insert' in d):
+                vector = M.DnaComponent.objects.get( id=d['vectorBackbone'])
+                insert = M.DnaComponent.objects.get( id=d['insert'])
+                d['name'] = insert.name + '_' + vector.name
+        except Exception as e:
+            d['errors']['name'] = [u'error assigning name: '+unicode(e)]
+        
+    
     def postprocessDict( self, d ):
-        """Add fields to dict after cleanup and forgeignKey lookup
+        """
+        Add fields to dict after cleanup and forgeignKey lookup
         """
         d['registeredBy'] = self.user.id
         d['registeredAt'] = datetime.datetime.now()
@@ -147,15 +160,8 @@ class ImportXls:
             d['errors']['componentType'] = d['errors'].get('componentType', [])
             d['errors']['componentType'].append( unicode(e) )
         
-        ## automatically create name
-        try:
-            if not d.get('name', '') and ('vectorBackbone' in d) and ('insert' in d):
-                vector = M.DnaComponent.objects.get( id=d['vectorBackbone'])
-                insert = M.DnaComponent.objects.get( id=d['insert'])
-                d['name'] = vector.name + '_' + insert.name
-        except Exception as e:
-            d['errors']['name'] = [u'error assigning name: '+unicode(e)]
-
+        self.generateName(d)
+        
         return d
     
 
