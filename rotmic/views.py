@@ -1,18 +1,19 @@
 import StringIO
 
 from django.core.servers.basehttp import FileWrapper
-from django.http import HttpResponse
-from django.template import loader, Context, RequestContext
-
-from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from rotmic.models import DnaComponent, DnaComponentType
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.generic import TemplateView
+from django.shortcuts import render
+
+import django.contrib.messages as messages
+
+from rotmic.models import DnaComponent
 from rotmic.utils.importFiles import ImportXls
 
 from rotmic.forms import TableUploadForm
-from django.shortcuts import render_to_response
-import django.contrib.messages as messages
+
 
 def view_genbankfile(request, pk):
     """DC View"""
@@ -28,18 +29,37 @@ def view_genbankfile(request, pk):
     return response
 
 
-## see: https://github.com/axelpale/minimal-django-file-upload-example/blob/master/src/for_django_1-5/myproject/myproject/myapp/views.py
-def view_uploadform(request):
-    """Upload File Dialog"""
-    import django.utils.safestring as S
+
+class XlsUploadView(TemplateView):
+    """View for uploading Excel files into DnaComponent table"""
+    template_name = 'admin/rotmic/upload.html'
+   
+    form_class = TableUploadForm
     
-    if request.method == 'POST':
-        form = TableUploadForm(request.POST, request.FILES)
+    parser_class = ImportXls
+    
+    model = DnaComponent
+    
+    def get(self, request):
+        form = self.form_class()
+        return render( request, self.template_name, {'form':form})
+    
+    def returnto(self):
+        """
+        Name of view to serve after upload.
+        """
+        s = 'admin:%s_%s_changelist' % (self.model._meta.app_label,
+                                        self.model._meta.object_name.lower())
+        return s
+    
+    ## see: https://github.com/axelpale/minimal-django-file-upload-example/blob/master/src/for_django_1-5/myproject/myproject/myapp/views.py
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
             
             f = request.FILES['tableFile']
             
-            p = ImportXls(f, request.user)
+            p = self.parser_class(f, request.user)
             p.getObjects()
             
             if p.failed:
@@ -63,16 +83,6 @@ def view_uploadform(request):
                     msg = 'Successfully imported %s.' % unicode(o)
                     messages.success(request, msg )
             
-            return HttpResponseRedirect(reverse('admin:rotmic_dnacomponent_changelist'))
-        
-    else:
-        form = TableUploadForm()
-        
-    # Render list page with the documents and the form
-    return render_to_response(
-        'admin/rotmic/upload.html',
-        {'form': form},
-        context_instance=RequestContext(request)
-    )
+            return HttpResponseRedirect(reverse(self.returnto()))
 
-    
+        
