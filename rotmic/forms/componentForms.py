@@ -38,7 +38,7 @@ class CleaningMixIn:
     """Mixin to enforce a certain displayID format"""
     
     ex_id = re.compile('[a-z]{1,6}[0-9]{4}[a-z]{0,1}')
-    msg_id = 'ID must have format a[bcdef]0123[a].'  ## for human-readable messages
+    msg_id = 'ID must have format a[bcdef]0123[a]. Example: rg0022 or mtz9900b'  ## for human-readable messages
     
     def clean_displayId(self):
         """enforce letter-digit displayId: a(bcdef)0123(a)"""
