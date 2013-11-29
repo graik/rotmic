@@ -87,6 +87,24 @@ class ImportXls:
         return d
 
 
+    def __lookupId(self, value, model=M.DnaComponent, targetfield='displayId'):
+        """Convert unique field value into ID for a model instance"""
+        error = r = None
+        try:
+            value = value.strip()
+            
+            if not value:
+                return value, error
+        
+            kwarg = { targetfield : value }
+            r = model.objects.get( **kwarg ).id
+        except Exception as e:
+            error = unicode(e)
+            r = None
+        
+        return r, error
+        
+
     def __lookup(self, d, field='', model=M.DnaComponent, targetfield='displayId'):
         """
         Lookup a foreign-key object by its name, displayId, etc. The method replaces
@@ -100,24 +118,52 @@ class ImportXls:
                             identify the correct instance
         @return: True if there wasn't any error
         """
-        error = None
-        r = value = d[field]
-        value = value.strip()
+        value, error = self.__lookupId( d[field], 
+                                        model=model, targetfield=targetfield )
         
-        ## don't lookup empty fields
-        if not value:
-            return value, error
+        d[field] = value
+        if error:
+            d['errors'][field] = d['errors'].get(field, [])
+            d['errors'][field] = [ error ]
+    
+    
+    def __lookupMany(self, d, field='', model=M.DnaComponent, targetfield='displayId'):
+        """
+        Lookup Many2Many objects by name, displayId, etc. The method replaces
+        the value of d[field] by a list of model IDs. Errors are recorded
+        in d['errors'][field].
         
+        @param d: single dict as returned by parse
+        @param field: the field in the dict that should be converted
+        @param model: the registry data model (table) that should be querried
+        @param targetfield: the field within the data model that is used to
+                            identify the correct instance
+        @return: True if there wasn't any error
+        """
         try:
-            kwarg = { targetfield : value }
-            r = model.objects.get( **kwarg ).id
-        except Exception, msg:
-            d['errors'][field] = [ msg ]
+            values = d.get(field, '').strip()
+            values = values.split(',')
+            
+            r = []
+            errors = []
+            for v in values:
+                v = v.strip()
+                x, e = self.__lookupId(v, model=model, targetfield=targetfield)
+                if x:
+                    r += [x]
+                if e:
+                    errors += [e]
+
+        except Exception as e:
+            errors += [ unicode(e) ]
 
         d[field] = r
-        
-        return error is None
-    
+            
+        if errors:
+            d['errors'][field] = d['errors'].get(field, [])
+            d['errors'][field] += errors
+
+
     def lookupRelations(self, d ):
         """
         Convert names or displayIds into db IDs to foreignKey instances.
@@ -127,6 +173,7 @@ class ImportXls:
         self.__lookup( d, field='vectorBackbone', model=M.DnaComponent )
         self.__lookup( d, field='componentType', model=M.DnaComponentType,
                        targetfield='name')
+        self.__lookupMany( d, field='markers', model=M.DnaComponent )
         
         return d
 
