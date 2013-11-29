@@ -138,12 +138,23 @@ class ImportXls:
         d['registeredAt'] = datetime.datetime.now()
         d['modifiedAt'] = datetime.datetime.now()
         d['modifiedBy'] = self.user.id
+        
+        ## set category
         try:
             t = M.DnaComponentType.objects.get( id=d['componentType'])
             d['componentCategory'] = t.category().id
         except Exception as e:
             d['errors']['componentType'] = d['errors'].get('componentType', [])
             d['errors']['componentType'].append( unicode(e) )
+        
+        ## automatically create name
+        try:
+            if not d.get('name', '') and ('vectorBackbone' in d) and ('insert' in d):
+                vector = M.DnaComponent.objects.get( id=d['vectorBackbone'])
+                insert = M.DnaComponent.objects.get( id=d['insert'])
+                d['name'] = vector.name + '_' + insert.name
+        except Exception as e:
+            d['errors']['name'] = [u'error assigning name: '+unicode(e)]
 
         return d
     
