@@ -185,7 +185,9 @@ class ImportXls:
             if not d.get('name', '') and ('vectorBackbone' in d) and ('insert' in d):
                 vector = M.DnaComponent.objects.get( id=d['vectorBackbone'])
                 insert = M.DnaComponent.objects.get( id=d['insert'])
+                
                 d['name'] = insert.name + '_' + vector.name
+
         except Exception as e:
             d['errors']['name'] = [u'error assigning name: '+unicode(e)]
         
