@@ -89,7 +89,7 @@ class ImportXls:
 
     def __lookupId(self, value, model=M.DnaComponent, targetfield='displayId'):
         """Convert unique field value into ID for a model instance"""
-        error = r = None
+        error, r = None, None
         try:
             value = value.strip()
             
