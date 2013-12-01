@@ -26,6 +26,23 @@ class ImportXls:
     
     dataForm = F.DnaComponentForm
     
+    # rename Excel headers to field name
+    xls2field = { 'id' : 'displayId',
+                  'type' : 'componentType',
+                  'vector' : 'vectorBackbone' }
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = [ { 'field' : 'insert' },
+                       { 'field' : 'vectorBackbone' },
+                       { 'field' : 'componentType', 'model' : M.DnaComponentType,
+                         'targetfield' : 'name'}
+                       ]
+    
+    # lookup instructions for Many2Many fields
+    xls2many = [ { 'field' : 'markers' } ]
+                       
+    
     def __init__(self, f, user):
         """
         @param f: file handle pointing to Excel file
@@ -79,10 +96,9 @@ class ImportXls:
             newKey = key.lower()
             if newKey != key:
                 self.renameKey( d, key, newKey )
-                
-        self.renameKey(d, 'id', 'displayId')
-        self.renameKey(d, 'type', 'componentType')
-        self.renameKey(d, 'vector', 'vectorBackbone')
+        
+        for key, value in self.xls2field.items():
+            self.renameKey(d, key, value )
         
         return d
 
@@ -169,11 +185,12 @@ class ImportXls:
         Convert names or displayIds into db IDs to foreignKey instances.
         """
         d['errors'] = {}
-        self.__lookup( d, field='insert', model=M.DnaComponent )
-        self.__lookup( d, field='vectorBackbone', model=M.DnaComponent )
-        self.__lookup( d, field='componentType', model=M.DnaComponentType,
-                       targetfield='name')
-        self.__lookupMany( d, field='markers', model=M.DnaComponent )
+
+        for x in self.xls2foreignkey:
+            self.__lookup( d, **x )
+
+        for x in self.xls2many:
+            self.__lookupMany( d, **x )
         
         return d
 
