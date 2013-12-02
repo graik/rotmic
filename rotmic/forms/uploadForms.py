@@ -21,8 +21,7 @@ from rotmic.utils.filefields import DocumentFormField
 class TableUploadForm(forms.Form):
     """Form for uploading table"""
     
-    tableFile = DocumentFormField(label='Select a file',
-                                  help_text='Excel file',
+    tableFile = DocumentFormField(label='Now, having read all that, please select an Excel file:',
                                   extensions=['xls','xlsx'])
     
     

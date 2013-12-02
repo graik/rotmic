@@ -22,6 +22,9 @@ import django.core.files.uploadedfile as U
 import rotmic.models as M
 import rotmic.forms as F
 
+class ImportError( Exception ):
+    pass
+
 class ImportXls:
     
     dataForm = F.DnaComponentForm
@@ -40,7 +43,10 @@ class ImportXls:
                        ]
     
     # lookup instructions for Many2Many fields
-    xls2many = [ { 'field' : 'markers' } ]
+    xls2many = [ { 'field' : 'markers', 
+                   'model' : M.DnaComponent, 'targetfield' : 'displayId',
+                   'targetfield2' : 'name' } 
+                 ]
                        
     
     def __init__(self, f, user):
@@ -72,11 +78,23 @@ class ImportXls:
         book = X.open_workbook( self.f )
         sheet= book.sheets()[0]
 
-        keys = sheet.row_values(0) ## extract labels from first row
-        
+        firstrow -= 1
+        keys = []
+        ## iterate until there is a row with at least 3 non-empty values
+        while len([k for k in keys if k]) < 3:
+            keys = sheet.row_values(firstrow) ## extract labels from header row
+            firstrow += 1
+
+        if not keys:
+            raise ImportError, 'Could not identify table header row.'
+            
         r = []
         for row in range( firstrow, sheet.nrows ):
-            r += [ dict( zip( keys, sheet.row_values( row ) ) ) ] 
+            values = sheet.row_values( row )
+
+            ## ignore rows with empty first column
+            if values[0]:
+                r += [ dict( zip( keys, values ) ) ] 
         
         self.rows = r
         
@@ -84,8 +102,24 @@ class ImportXls:
     
 
     def renameKey( self, d, key, newkey):
-        d[newkey] = d[key]
-        del d[key]
+        if key in d:
+            d[newkey] = d[key]
+            del d[key]
+        
+
+    def cleanType( self, d):
+        """
+        Remove category from type string. Example:
+        'Plasmid / generic plasmid' -> 'generic plasmid'
+        @param d - dict with field information for one entry (after cleaning)
+        """
+        value = d.get('componentType', '')
+        
+        try:    
+            if '/' in value:
+                d['componentType'] = value[ value.index('/')+1 : ].strip()
+        except ValueError:
+            pass
     
     
     def cleanDict( self, d ):
@@ -100,10 +134,19 @@ class ImportXls:
         for key, value in self.xls2field.items():
             self.renameKey(d, key, value )
         
+        self.cleanType(d)    
+        
         return d
 
+    def __dbfetchSingle(self, model, **kwarg ):
+        matches = model.objects.filter( **kwarg )
+        if len( matches ) == 1:
+            return matches[0].id
+        return None
+        
 
-    def __lookupId(self, value, model=M.DnaComponent, targetfield='displayId'):
+    def __lookupId(self, value, model=M.DnaComponent, targetfield='displayId', 
+                   targetfield2=None ):
         """Convert unique field value into ID for a model instance"""
         error, r = None, None
         try:
@@ -113,7 +156,17 @@ class ImportXls:
                 return value, error
         
             kwarg = { targetfield : value }
-            r = model.objects.get( **kwarg ).id
+            r = self.__dbfetchSingle( model, **kwarg )
+    
+            if r is None and targetfield2:
+                kwarg = { targetfield2 : value }
+                r = self.__dbfetchSingle( model, **kwarg )
+            
+            if r is None:
+                raise model.DoesNotExist(\
+                    'Cannot find entry with queries %r or %r' %\
+                    ({ targetfield : value }, { targetfield2 : value }) )
+            
         except Exception as e:
             error = unicode(e)
             r = None
@@ -143,7 +196,8 @@ class ImportXls:
             d['errors'][field] = [ error ]
     
     
-    def __lookupMany(self, d, field='', model=M.DnaComponent, targetfield='displayId'):
+    def __lookupMany(self, d, field='', model=M.DnaComponent, 
+                     targetfield='displayId', targetfield2=None ):
         """
         Lookup Many2Many objects by name, displayId, etc. The method replaces
         the value of d[field] by a list of model IDs. Errors are recorded
@@ -164,7 +218,8 @@ class ImportXls:
             errors = []
             for v in values:
                 v = v.strip()
-                x, e = self.__lookupId(v, model=model, targetfield=targetfield)
+                x, e = self.__lookupId(v, model=model, targetfield=targetfield,
+                                       targetfield2=targetfield2 )
                 if x:
                     r += [x]
                 if e:
@@ -206,7 +261,7 @@ class ImportXls:
                 d['name'] = insert.name + '_' + vector.name
 
         except Exception as e:
-            d['errors']['name'] = [u'error assigning name: '+unicode(e)]
+            d['errors']['name'] = [u'Error generating name from insert and vector: '+unicode(e)]
         
     
     def postprocessDict( self, d ):
