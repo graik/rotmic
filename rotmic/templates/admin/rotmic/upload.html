@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n %}
+{% load i18n admin_static %}
 
 {% block breadcrumbs%}
 <div class="breadcrumbs">
@@ -19,7 +19,9 @@
     This form allows you to create several <b>new</b> {{verbose_name}} entries
     at once. This is how it works:
     <ol>
-        <li>Click to download the Excel template file.</li>
+        <li>Click to <a href="{% static 'uploadexample_'|add:model_name|add:'.xlsx'%}">
+                    download the Excel template file.</a>
+        </li>
 
         <li>Replace any example data in that file with your description of new 
             DNA constructs -- one construct per row. Do not change table headers.
