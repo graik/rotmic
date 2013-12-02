@@ -1,6 +1,15 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
 
+{% block breadcrumbs%}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
+    <a href="{% url 'admin:index' %}">Rotmic</a> &rsaquo;
+    <a href="{% url 'admin:rotmic_'|add:model_name|add:'_changelist' %}">{% block object-class1 %}{{verbose_name|capfirst}}s{% endblock %}</a> &rsaquo;
+    Upload Table
+</div>
+{% endblock %}
+
 
 {% block content %}        
 
@@ -34,6 +43,7 @@
         <li>Plasmids, vector backbones or similar references are linked by 
         specifying their ID. Capitalization matters (usually, IDs should be all
         lower case).</li>
+        <li>Markers can be referenced by their ID or by their Name (but by ID is safer).</li>
         <li>Entries referenced by ID must already be registered in the system.
         You cannot create them in the same Excel table.</li>       
     </ul>
@@ -42,15 +52,15 @@
     <p><br></p>
 
     <!-- Upload form. Note enctype attribute! -->
-    <form action="{% url "uploadform" %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <p>{{ form.non_field_errors }}</p>
-            <p>{{ form.tableFile.label_tag }} {{ form.tableFile.help_text }}</p>
-            <p>
-                    {{ form.tableFile.errors }}
-                    {{ form.tableFile }}
-            </p>
-            <p><input type="submit" value="Upload" /></p>
+    <form action="{% url "upload_"|add:model_name %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ form.non_field_errors }}</p>
+        <p>{{ form.tableFile.label_tag }} {{ form.tableFile.help_text }}</p>
+        <p>
+                {{ form.tableFile.errors }}
+                {{ form.tableFile }}
+        </p>
+        <p><input type="submit" value="Upload" /></p>
     </form>
                 
 {% endblock %}

@@ -128,6 +128,8 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
     inlines = [ ComponentAttachmentInline ]
     form = forms.DnaComponentForm
     
+    change_list_template = "admin/rotmic/dnacomponent/change_list.html"
+    
     fieldsets = (
         (None, {
             'fields': (('displayId', 'name','status'),

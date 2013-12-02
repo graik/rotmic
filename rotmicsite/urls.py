@@ -33,7 +33,7 @@ urlpatterns = patterns('',
 
     url(r'^rotmic/dnacomponent/(?P<pk>.*)/genbank/$',view_genbankfile,name='genbankfile'),
 
-    url(r'^rotmic/upload/dna/$', XlsUploadView.as_view(), name='uploadform'),
+    url(r'^rotmic/upload/dna/$', XlsUploadView.as_view(), name='upload_dnacomponent'),
 
     url(r'^', include(admin.site.urls)),
 )

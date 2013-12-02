@@ -162,7 +162,7 @@ class SampleAttachmentInline(admin.TabularInline):
 class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
     form = forms.SampleForm     
     
-    change_list_template = 'admin/rotmic/sample/change_list.html'  ## for some reason this is needed.
+    change_list_template = 'admin/rotmic/sample/change_list.html'  ## ReversionAdmin de-activated default template loading
     
     template = 'admin/rotmic/change_form_viewfirst.html'
 

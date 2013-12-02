@@ -43,7 +43,8 @@ class XlsUploadView(TemplateView):
     def get(self, request):
         form = self.form_class()
         return render( request, self.template_name, 
-                       {'form':form, 'verbose_name':self.model._meta.verbose_name})
+                       {'form':form, 'verbose_name':self.model._meta.verbose_name,
+                        'model_name':self.model._meta.object_name.lower() })
     
     def returnto(self):
         """
