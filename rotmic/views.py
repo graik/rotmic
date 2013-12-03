@@ -9,8 +9,8 @@ from django.shortcuts import render
 
 import django.contrib.messages as messages
 
-from rotmic.models import DnaComponent
-from rotmic.utils.importFiles import ImportXls
+import rotmic.models as M
+from rotmic.utils.importFiles import ImportXlsDna, ImportXlsCell
 
 from rotmic.forms import TableUploadForm
 
@@ -36,9 +36,9 @@ class XlsUploadView(TemplateView):
    
     form_class = TableUploadForm
     
-    parser_class = ImportXls
+    parser_class = ImportXlsDna
     
-    model = DnaComponent
+    model = M.DnaComponent
     
     def get(self, request):
         form = self.form_class()
@@ -88,3 +88,13 @@ class XlsUploadView(TemplateView):
             return HttpResponseRedirect(reverse(self.returnto()))
 
 
+class DnaXlsUploadView(XlsUploadView):    
+    model = M.DnaComponent
+    
+    parser_class = ImportXlsDna
+    
+
+class CellXlsUploadView(XlsUploadView):
+    model = M.CellComponent
+    
+    parser_class = ImportXlsCell

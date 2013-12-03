@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 
-from rotmic.views import view_genbankfile, XlsUploadView
+from rotmic.views import view_genbankfile, DnaXlsUploadView, CellXlsUploadView
 from rotmic.jsviews import getTypeDnaInfo, getCellTypes, nextDnaId, \
      nextCellId, nextSampleId, nextOligoId, getChemicalTypes, nextChemicalId
 import rotmicsite.settings as settings
@@ -33,7 +33,8 @@ urlpatterns = patterns('',
 
     url(r'^rotmic/dnacomponent/(?P<pk>.*)/genbank/$',view_genbankfile,name='genbankfile'),
 
-    url(r'^rotmic/upload/dna/$', XlsUploadView.as_view(), name='upload_dnacomponent'),
+    url(r'^rotmic/upload/dna/$', DnaXlsUploadView.as_view(), name='upload_dnacomponent'),
+    url(r'^rotmic/upload/cell/$', CellXlsUploadView.as_view(), name='upload_cellcomponent'),
 
     url(r'^', include(admin.site.urls)),
 )

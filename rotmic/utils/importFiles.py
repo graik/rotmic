@@ -25,9 +25,14 @@ import rotmic.forms as F
 class ImportError( Exception ):
     pass
 
-class ImportXls:
+class ImportXlsDna:
+    """
+    Import DnaComponent objects from Excel table.
+    """
     
     dataForm = F.DnaComponentForm
+    
+    typeClass = M.DnaComponentType
     
     # rename Excel headers to field name
     xls2field = { 'id' : 'displayId',
@@ -254,7 +259,7 @@ class ImportXls:
         """If missing, compose name from insert and vectorbackbone"""
         ## automatically create name
         try:
-            if not d.get('name', '') and ('vectorBackbone' in d) and ('insert' in d):
+            if not d.get('name', '') and d.get('vectorBackbone','') and d.get('insert',''):
                 vector = M.DnaComponent.objects.get( id=d['vectorBackbone'])
                 insert = M.DnaComponent.objects.get( id=d['insert'])
                 
@@ -275,7 +280,7 @@ class ImportXls:
         
         ## set category
         try:
-            t = M.DnaComponentType.objects.get( id=d['componentType'])
+            t = self.typeClass.objects.get( id=d['componentType'])
             d['componentCategory'] = t.category().id
         except Exception as e:
             d['errors']['componentType'] = d['errors'].get('componentType', [])
@@ -350,4 +355,40 @@ class ImportXls:
             if entry['errors']:
                 self.failed += [ entry ]
         
+
+class ImportXlsCell( ImportXlsDna ):
+    
+    dataForm = F.CellComponentForm
+    
+    typeClass = M.CellComponentType
+    
+    # rename Excel headers to field name
+    xls2field = { 'id' : 'displayId',
+                  'strain' : 'componentType' }
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = [ { 'field' : 'plasmid' },
+                       { 'field' : 'componentType', 'model' : M.CellComponentType,
+                         'targetfield' : 'name'}
+                       ]
+    
+    # lookup instructions for Many2Many fields
+    xls2many = [ { 'field' : 'markers', 
+                   'model' : M.DnaComponent, 'targetfield' : 'displayId',
+                   'targetfield2' : 'name' } 
+                 ]
+    
+    def generateName(self, d):
+        """If missing, compose name from plasmid and cell"""
+        ## automatically create name
+        try:
+            if not d.get('name', '') and d.get('plasmid',''):
+                plasmid = M.DnaComponent.objects.get( id=d['plasmid'])
+                cell = M.CellComponentType.objects.get( id=d['componentType'])
+                
+                d['name'] = plasmid.name + '@' + cell.name
+
+        except Exception as e:
+            d['errors']['name'] = [u'Error generating name from plasmid and cell: '+unicode(e)]
     

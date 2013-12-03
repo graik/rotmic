@@ -254,6 +254,8 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
     inlines = [ ComponentAttachmentInline ]
     form = forms.CellComponentForm
     
+    change_list_template = "admin/rotmic/cellcomponent/change_list.html"
+
     fieldsets = (
         (None, {
             'fields': (('displayId', 'name','status'),
