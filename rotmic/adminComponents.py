@@ -355,6 +355,8 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
     inlines = [ ComponentAttachmentInline ]
     form = forms.OligoComponentForm
     
+    change_list_template = "admin/rotmic/oligocomponent/change_list.html"
+
     fieldsets = (
         (None, {
             'fields': (('displayId', 'name','status'),

@@ -25,7 +25,7 @@ import rotmic.forms as F
 class ImportError( Exception ):
     pass
 
-class ImportXlsDna:
+class ImportXlsDna(object):
     """
     Import DnaComponent objects from Excel table.
     """
@@ -391,4 +391,50 @@ class ImportXlsCell( ImportXlsDna ):
 
         except Exception as e:
             d['errors']['name'] = [u'Error generating name from plasmid and cell: '+unicode(e)]
+
+
+
+class ImportXlsOligo( ImportXlsDna ):
     
+    dataForm = F.OligoComponentForm
+    
+    typeClass = M.OligoComponentType
+    
+    # rename Excel headers to field name
+    xls2field = { 'id' : 'displayId',
+                  'type' : 'componentType',
+                  'tm in c' : 'meltingTemp',
+                  'tm' : 'meltingTemp',
+                  'dna templates' : 'templates'}
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = [  { 'field' : 'componentType', 'model' : M.OligoComponentType,
+                         'targetfield' : 'name'}
+                       ]
+    
+    # lookup instructions for Many2Many fields
+    xls2many = [ { 'field' : 'templates', 
+                   'model' : M.DnaComponent, 'targetfield' : 'displayId' } 
+                 ]
+    
+    def generateName(self, d):
+        """If missing, compose name from plasmid and cell"""
+        ## automatically create name
+        try:
+            pass
+        except Exception as e:
+            d['errors']['name'] = [u'Error generating name: '+unicode(e)]
+            
+    def postprocessDict(self, d):
+        """Enforce integer melting temperatures"""
+        d = super(ImportXlsOligo, self).postprocessDict(d)
+        
+        try:
+            if d.get('meltingTemp',None):
+                d['meltingTemp'] = int(d['meltingTemp'])
+        except Exception as e:
+            d['errors']['meltingTemp'] = d['errors'].get('meltingTemp', [])
+            d['errors']['meltingTemp'].append( unicode(e) )
+    
+        return d

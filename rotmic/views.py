@@ -10,7 +10,7 @@ from django.shortcuts import render
 import django.contrib.messages as messages
 
 import rotmic.models as M
-from rotmic.utils.importFiles import ImportXlsDna, ImportXlsCell
+import rotmic.utils.importFiles as I
 
 from rotmic.forms import TableUploadForm
 
@@ -36,7 +36,7 @@ class XlsUploadView(TemplateView):
    
     form_class = TableUploadForm
     
-    parser_class = ImportXlsDna
+    parser_class = I.ImportXlsDna
     
     model = M.DnaComponent
     
@@ -91,10 +91,16 @@ class XlsUploadView(TemplateView):
 class DnaXlsUploadView(XlsUploadView):    
     model = M.DnaComponent
     
-    parser_class = ImportXlsDna
+    parser_class = I.ImportXlsDna
     
 
 class CellXlsUploadView(XlsUploadView):
     model = M.CellComponent
     
-    parser_class = ImportXlsCell
+    parser_class = I.ImportXlsCell
+    
+    
+class OligoXlsUploadView(XlsUploadView):
+    model = M.OligoComponent
+    
+    parser_class = I.ImportXlsOligo
