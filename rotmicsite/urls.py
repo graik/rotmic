@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 
 from rotmic.views import view_genbankfile, DnaXlsUploadView, CellXlsUploadView,\
-     OligoXlsUploadView
+     OligoXlsUploadView, ChemicalXlsUploadView
 from rotmic.jsviews import getTypeDnaInfo, getCellTypes, nextDnaId, \
      nextCellId, nextSampleId, nextOligoId, getChemicalTypes, nextChemicalId
 import rotmicsite.settings as settings
