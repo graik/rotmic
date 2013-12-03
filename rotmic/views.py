@@ -104,3 +104,9 @@ class OligoXlsUploadView(XlsUploadView):
     model = M.OligoComponent
     
     parser_class = I.ImportXlsOligo
+    
+    
+class ChemicalXlsUploadView(XlsUploadView):
+    model = M.ChemicalComponent
+    
+    parser_class = I.ImportXlsChemical

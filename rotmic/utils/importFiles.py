@@ -456,3 +456,34 @@ class ImportXlsOligo( ImportXlsDna ):
             d['errors']['meltingTemp'].append( unicode(e) )
     
         return d
+    
+
+class ImportXlsChemical( ImportXlsDna ):
+    
+    dataForm = F.ChemicalComponentForm
+    
+    typeClass = M.ChemicalType
+    
+    modelClass = M.ChemicalComponent
+    
+    # rename Excel headers to field name
+    xls2field = { 'id' : 'displayId',
+                  'type' : 'componentType',
+                  'c.a.s.' : 'cas' }
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = [  { 'field' : 'componentType', 'model' : M.ChemicalType,
+                         'targetfield' : 'name'}
+                       ]
+    
+    # lookup instructions for Many2Many fields
+    xls2many = []
+    
+    def generateName(self, d):
+        """If missing, compose name from plasmid and cell"""
+        ## automatically create name
+        try:
+            pass
+        except Exception as e:
+            d['errors']['name'] = [u'Error generating name: '+unicode(e)]

@@ -37,6 +37,7 @@ urlpatterns = patterns('',
     url(r'^rotmic/upload/dna/$', DnaXlsUploadView.as_view(), name='upload_dnacomponent'),
     url(r'^rotmic/upload/cell/$', CellXlsUploadView.as_view(), name='upload_cellcomponent'),
     url(r'^rotmic/upload/oligo/$', OligoXlsUploadView.as_view(), name='upload_oligocomponent'),
+    url(r'^rotmic/upload/chemical/$', ChemicalXlsUploadView.as_view(), name='upload_chemicalcomponent'),
 
     url(r'^', include(admin.site.urls)),
 )

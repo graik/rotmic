@@ -423,6 +423,8 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
     inlines = [ ComponentAttachmentInline ]
     form = forms.ChemicalComponentForm
     
+    change_list_template = "admin/rotmic/chemicalcomponent/change_list.html"
+
     fieldsets = (
         (None, {
             'fields': (('displayId', 'name','status'),
