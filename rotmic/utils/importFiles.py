@@ -25,9 +25,9 @@ import rotmic.forms as F
 class ImportError( Exception ):
     pass
 
-class ImportXlsDna(object):
+class ImportXls(object):
     """
-    Import DnaComponent objects from Excel table.
+    Import of Component objects from Excel table (pseudo-abstract base class)
     """
     
     dataForm = F.DnaComponentForm
@@ -39,21 +39,14 @@ class ImportXlsDna(object):
     # rename Excel headers to field name
     xls2field = { 'id' : 'displayId',
                   'type' : 'componentType',
-                  'vector' : 'vectorBackbone' }
+                }
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
-    xls2foreignkey = [ { 'field' : 'insert' },
-                       { 'field' : 'vectorBackbone' },
-                       { 'field' : 'componentType', 'model' : M.DnaComponentType,
-                         'targetfield' : 'name'}
-                       ]
+    xls2foreignkey = [ ]
     
     # lookup instructions for Many2Many fields
-    xls2many = [ { 'field' : 'markers', 
-                   'model' : M.DnaComponent, 'targetfield' : 'displayId',
-                   'targetfield2' : 'name' } 
-                 ]
+    xls2many = [ ]
                        
     
     def __init__(self, f, user):
@@ -261,12 +254,7 @@ class ImportXlsDna(object):
         """If missing, compose name from insert and vectorbackbone"""
         ## automatically create name
         try:
-            if not d.get('name', '') and d.get('vectorBackbone','') and d.get('insert',''):
-                vector = M.DnaComponent.objects.get( id=d['vectorBackbone'])
-                insert = M.DnaComponent.objects.get( id=d['insert'])
-                
-                d['name'] = insert.name + '_' + vector.name
-
+            pass
         except Exception as e:
             d['errors']['name'] = [u'Error generating name from insert and vector: '+unicode(e)]
         
@@ -368,6 +356,48 @@ class ImportXlsDna(object):
 
             if entry['errors']:
                 self.failed += [ entry ]
+        
+
+class ImportXlsDna( ImportXls ):
+    
+    dataForm = F.DnaComponentForm
+    
+    modelClass = M.DnaComponent
+    
+    typeClass = M.DnaComponentType
+    
+    # rename Excel headers to field name
+    xls2field = { 'id' : 'displayId',
+                  'type' : 'componentType',
+                  'vector' : 'vectorBackbone' }
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = [ { 'field' : 'insert' },
+                       { 'field' : 'vectorBackbone' },
+                       { 'field' : 'componentType', 'model' : M.DnaComponentType,
+                         'targetfield' : 'name'}
+                       ]
+    
+    # lookup instructions for Many2Many fields
+    xls2many = [ { 'field' : 'markers', 
+                   'model' : M.DnaComponent, 'targetfield' : 'displayId',
+                   'targetfield2' : 'name' } 
+                 ]
+
+    def generateName(self, d):
+        """If missing, compose name from insert and vectorbackbone"""
+        ## automatically create name
+        try:
+            if not d.get('name', '') and d.get('vectorBackbone','') and d.get('insert',''):
+                vector = M.DnaComponent.objects.get( id=d['vectorBackbone'])
+                insert = M.DnaComponent.objects.get( id=d['insert'])
+                
+                d['name'] = insert.name + '_' + vector.name
+
+        except Exception as e:
+            d['errors']['name'] = [u'Error generating name from insert and vector: '+unicode(e)]
+
         
 
 class ImportXlsCell( ImportXlsDna ):
