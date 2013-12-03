@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 
-from rotmic.views import view_genbankfile, DnaXlsUploadView, CellXlsUploadView,\
-     OligoXlsUploadView, ChemicalXlsUploadView
+import rotmic.views as V
+
 from rotmic.jsviews import getTypeDnaInfo, getCellTypes, nextDnaId, \
      nextCellId, nextSampleId, nextOligoId, getChemicalTypes, nextChemicalId
 import rotmicsite.settings as settings
@@ -32,12 +32,14 @@ urlpatterns = patterns('',
 
     url(r'^selectable/', include('selectable.urls')),
 
-    url(r'^rotmic/dnacomponent/(?P<pk>.*)/genbank/$',view_genbankfile,name='genbankfile'),
+    url(r'^rotmic/dnacomponent/(?P<pk>.*)/genbank/$',V.view_genbankfile,name='genbankfile'),
 
-    url(r'^rotmic/upload/dna/$', DnaXlsUploadView.as_view(), name='upload_dnacomponent'),
-    url(r'^rotmic/upload/cell/$', CellXlsUploadView.as_view(), name='upload_cellcomponent'),
-    url(r'^rotmic/upload/oligo/$', OligoXlsUploadView.as_view(), name='upload_oligocomponent'),
-    url(r'^rotmic/upload/chemical/$', ChemicalXlsUploadView.as_view(), name='upload_chemicalcomponent'),
+    url(r'^rotmic/upload/dna/$', V.DnaXlsUploadView.as_view(), name='upload_dnacomponent'),
+    url(r'^rotmic/upload/cell/$', V.CellXlsUploadView.as_view(), name='upload_cellcomponent'),
+    url(r'^rotmic/upload/oligo/$', V.OligoXlsUploadView.as_view(), name='upload_oligocomponent'),
+    url(r'^rotmic/upload/chemical/$', V.ChemicalXlsUploadView.as_view(), name='upload_chemicalcomponent'),
+
+    url(r'^rotmic/upload/location/$', V.LocationXlsUploadView.as_view(), name='upload_location'),
 
     url(r'^', include(admin.site.urls)),
 )

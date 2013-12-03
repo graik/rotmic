@@ -110,3 +110,8 @@ class ChemicalXlsUploadView(XlsUploadView):
     model = M.ChemicalComponent
     
     parser_class = I.ImportXlsChemical
+    
+class LocationXlsUploadView(XlsUploadView):
+    model = M.Location
+    
+    parser_class = I.ImportXlsLocation

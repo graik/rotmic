@@ -523,7 +523,29 @@ class ImportXlsLocation( ImportXls ):
     # targetfield=displayId)
     xls2foreignkey = []
     
-    def postprocessDict(self, d):
-        """de-activate auto-addition of fields and category"""
+    def setCategory(self, d):
+        """de-activate auto-addition of category"""
         return d
     
+    def correctStatus(self, d):
+        """de-activate status related cleanup"""
+        return d
+    
+    def postprocessDict(self, d):
+        d = super(ImportXlsLocation, self).postprocessDict(d)
+        
+        try:
+            if d.get('temperature',None):
+                d['temperature'] = int(d['temperature'])
+        except Exception as e:
+            d['errors']['temperature'] = d['errors'].get('temperature', [])
+            d['errors']['temperature'].append( unicode(e) )
+
+        try:
+            if type(d.get('room', '')) is float:
+                d['room'] = int(d['room'])
+        except Exception as e:
+            d['errors']['room'] = d['room'].get('room', [])
+            d['errors']['room'].append( unicode(e) )
+            
+        return d

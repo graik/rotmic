@@ -458,6 +458,8 @@ class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin)
     
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
 
+    change_list_template = "admin/rotmic/location/change_list.html"
+
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'name'),
