@@ -32,6 +32,8 @@ class ImportXlsDna(object):
     
     dataForm = F.DnaComponentForm
     
+    modelClass = M.DnaComponent
+    
     typeClass = M.DnaComponentType
     
     # rename Excel headers to field name
@@ -268,6 +270,17 @@ class ImportXlsDna(object):
         except Exception as e:
             d['errors']['name'] = [u'Error generating name from insert and vector: '+unicode(e)]
         
+
+    def correctStatus(self, d):
+        """Replace human-readable status by internal status value"""
+        choices = self.modelClass.STATUS_CHOICES
+
+        human2system = { x[1] : x[0] for x in choices }
+
+        status = d.get('status', None)
+        ## replace only if listed as key in human to system map
+        d['status'] = human2system.get(status, status)
+
     
     def postprocessDict( self, d ):
         """
@@ -287,6 +300,7 @@ class ImportXlsDna(object):
             d['errors']['componentType'].append( unicode(e) )
         
         self.generateName(d)
+        self.correctStatus(d)
         
         return d
     
@@ -362,6 +376,8 @@ class ImportXlsCell( ImportXlsDna ):
     
     typeClass = M.CellComponentType
     
+    modelClass = M.CellComponent
+    
     # rename Excel headers to field name
     xls2field = { 'id' : 'displayId',
                   'strain' : 'componentType' }
@@ -399,6 +415,8 @@ class ImportXlsOligo( ImportXlsDna ):
     dataForm = F.OligoComponentForm
     
     typeClass = M.OligoComponentType
+    
+    modelClass = M.OligoComponent
     
     # rename Excel headers to field name
     xls2field = { 'id' : 'displayId',
