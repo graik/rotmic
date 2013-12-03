@@ -36,16 +36,16 @@ class ImportXls(object):
     
     typeClass = M.DnaComponentType
     
-    # rename Excel headers to field name
+    # rename Excel headers to field name (dict)
     xls2field = { 'id' : 'displayId',
                   'type' : 'componentType',
                 }
     
-    # lookup instructions for fields (default model=DnaComponent,
-    # targetfield=displayId)
+    # lookup instructions for fields (default: model=DnaComponent,
+    # targetfield=displayId) (list of dict)
     xls2foreignkey = [ ]
     
-    # lookup instructions for Many2Many fields
+    # lookup instructions for Many2Many fields (list of dict)
     xls2many = [ ]
                        
     
@@ -270,6 +270,16 @@ class ImportXls(object):
         d['status'] = human2system.get(status, status)
 
     
+    def setCategory(self, d):
+        """Extract category from componentType"""
+        try:
+            t = self.typeClass.objects.get( id=d['componentType'])
+            d['componentCategory'] = t.category().id
+        except Exception as e:
+            d['errors']['componentType'] = d['errors'].get('componentType', [])
+            d['errors']['componentType'].append( unicode(e) )
+        
+    
     def postprocessDict( self, d ):
         """
         Add fields to dict after cleanup and forgeignKey lookup
@@ -280,13 +290,7 @@ class ImportXls(object):
         d['modifiedBy'] = self.user.id
         
         ## set category
-        try:
-            t = self.typeClass.objects.get( id=d['componentType'])
-            d['componentCategory'] = t.category().id
-        except Exception as e:
-            d['errors']['componentType'] = d['errors'].get('componentType', [])
-            d['errors']['componentType'].append( unicode(e) )
-        
+        self.setCategory(d)
         self.generateName(d)
         self.correctStatus(d)
         
@@ -359,6 +363,7 @@ class ImportXls(object):
         
 
 class ImportXlsDna( ImportXls ):
+    """DNA construct import"""
     
     dataForm = F.DnaComponentForm
     
@@ -400,7 +405,8 @@ class ImportXlsDna( ImportXls ):
 
         
 
-class ImportXlsCell( ImportXlsDna ):
+class ImportXlsCell( ImportXls ):
+    """Modifed cell import"""
     
     dataForm = F.CellComponentForm
     
@@ -440,7 +446,8 @@ class ImportXlsCell( ImportXlsDna ):
 
 
 
-class ImportXlsOligo( ImportXlsDna ):
+class ImportXlsOligo( ImportXls ):
+    """Oligo import"""
     
     dataForm = F.OligoComponentForm
     
@@ -465,15 +472,7 @@ class ImportXlsOligo( ImportXlsDna ):
     xls2many = [ { 'field' : 'templates', 
                    'model' : M.DnaComponent, 'targetfield' : 'displayId' } 
                  ]
-    
-    def generateName(self, d):
-        """If missing, compose name from plasmid and cell"""
-        ## automatically create name
-        try:
-            pass
-        except Exception as e:
-            d['errors']['name'] = [u'Error generating name: '+unicode(e)]
-            
+                
     def postprocessDict(self, d):
         """Enforce integer melting temperatures"""
         d = super(ImportXlsOligo, self).postprocessDict(d)
@@ -488,7 +487,8 @@ class ImportXlsOligo( ImportXlsDna ):
         return d
     
 
-class ImportXlsChemical( ImportXlsDna ):
+class ImportXlsChemical( ImportXls ):
+    """Chemical import"""
     
     dataForm = F.ChemicalComponentForm
     
@@ -507,13 +507,23 @@ class ImportXlsChemical( ImportXlsDna ):
                          'targetfield' : 'name'}
                        ]
     
-    # lookup instructions for Many2Many fields
-    xls2many = []
+
+class ImportXlsLocation( ImportXls ):
+    """Import location records from table"""
+    dataForm = F.LocationForm
     
-    def generateName(self, d):
-        """If missing, compose name from plasmid and cell"""
-        ## automatically create name
-        try:
-            pass
-        except Exception as e:
-            d['errors']['name'] = [u'Error generating name: '+unicode(e)]
+    typeClass = None
+    
+    modelClass = M.Location
+    
+    # rename Excel headers to field name
+    xls2field = { 'id' : 'displayId' }
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = []
+    
+    def postprocessDict(self, d):
+        """de-activate auto-addition of fields and category"""
+        return d
+    
