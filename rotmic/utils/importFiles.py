@@ -107,21 +107,6 @@ class ImportXls(object):
             del d[key]
         
 
-    def cleanType( self, d):
-        """
-        Remove category from type string. Example:
-        'Plasmid / generic plasmid' -> 'generic plasmid'
-        @param d - dict with field information for one entry (after cleaning)
-        """
-        value = d.get('componentType', '')
-        
-        try:    
-            if '/' in value:
-                d['componentType'] = value[ value.index('/')+1 : ].strip()
-        except ValueError:
-            pass
-    
-    
     def cleanDict( self, d ):
         """
         Pre-processing of dictionary values (before foreignKey lookup).
@@ -133,8 +118,6 @@ class ImportXls(object):
         
         for key, value in self.xls2field.items():
             self.renameKey(d, key, value )
-        
-        self.cleanType(d)    
         
         return d
 
@@ -250,36 +233,6 @@ class ImportXls(object):
         return d
 
 
-    def generateName(self, d):
-        """If missing, compose name from insert and vectorbackbone"""
-        ## automatically create name
-        try:
-            pass
-        except Exception as e:
-            d['errors']['name'] = [u'Error generating name from insert and vector: '+unicode(e)]
-        
-
-    def correctStatus(self, d):
-        """Replace human-readable status by internal status value"""
-        choices = self.modelClass.STATUS_CHOICES
-
-        human2system = { x[1] : x[0] for x in choices }
-
-        status = d.get('status', None)
-        ## replace only if listed as key in human to system map
-        d['status'] = human2system.get(status, status)
-
-    
-    def setCategory(self, d):
-        """Extract category from componentType"""
-        try:
-            t = self.typeClass.objects.get( id=d['componentType'])
-            d['componentCategory'] = t.category().id
-        except Exception as e:
-            d['errors']['componentType'] = d['errors'].get('componentType', [])
-            d['errors']['componentType'].append( unicode(e) )
-        
-    
     def postprocessDict( self, d ):
         """
         Add fields to dict after cleanup and forgeignKey lookup
@@ -288,12 +241,7 @@ class ImportXls(object):
         d['registeredAt'] = datetime.datetime.now()
         d['modifiedAt'] = datetime.datetime.now()
         d['modifiedBy'] = self.user.id
-        
-        ## set category
-        self.setCategory(d)
-        self.generateName(d)
-        self.correctStatus(d)
-        
+
         return d
     
 
@@ -362,7 +310,79 @@ class ImportXls(object):
                 self.failed += [ entry ]
         
 
-class ImportXlsDna( ImportXls ):
+
+class ImportXlsComponent( ImportXls ):
+    """Base class for Component-derrived import."""
+    
+    # rename Excel headers to field name (dict)
+    xls2field = { 'id' : 'displayId',
+                  'type' : 'componentType',
+                }
+
+    def generateName(self, d):
+        """If missing, compose name from insert and vectorbackbone"""
+        ## automatically create name
+        try:
+            pass
+        except Exception as e:
+            d['errors']['name'] = [u'Error generating name from insert and vector: '+unicode(e)]
+        
+
+    def correctStatus(self, d):
+        """Replace human-readable status by internal status value"""
+        choices = self.modelClass.STATUS_CHOICES
+
+        human2system = { x[1] : x[0] for x in choices }
+
+        status = d.get('status', None)
+        ## replace only if listed as key in human to system map
+        d['status'] = human2system.get(status, status)
+
+    
+    def setCategory(self, d):
+        """Extract category from componentType"""
+        try:
+            t = self.typeClass.objects.get( id=d['componentType'])
+            d['componentCategory'] = t.category().id
+        except Exception as e:
+            d['errors']['componentType'] = d['errors'].get('componentType', [])
+            d['errors']['componentType'].append( unicode(e) )
+
+    def postprocessDict( self, d ):
+        """
+        Add fields to dict after cleanup and forgeignKey lookup
+        """
+        d = super(ImportXlsComponent, self).postprocessDict(d)
+
+        ## set category
+        self.setCategory(d)
+        self.generateName(d)
+        self.correctStatus(d)
+        
+        return d
+    
+    def cleanType( self, d):
+        """
+        Remove category from type string. Example:
+        'Plasmid / generic plasmid' -> 'generic plasmid'
+        @param d - dict with field information for one entry (after cleaning)
+        """
+        value = d.get('componentType', '')
+        
+        try:    
+            if '/' in value:
+                d['componentType'] = value[ value.index('/')+1 : ].strip()
+        except ValueError:
+            pass
+    
+    def cleanDict(self, d):
+        """Add componentType string cleaning."""
+        super(ImportXlsComponent,self).cleanDict(d)
+        self.cleanType(d)
+        return d
+
+
+class ImportXlsDna( ImportXlsComponent ):
     """DNA construct import"""
     
     dataForm = F.DnaComponentForm
@@ -405,7 +425,7 @@ class ImportXlsDna( ImportXls ):
 
         
 
-class ImportXlsCell( ImportXls ):
+class ImportXlsCell( ImportXlsComponent ):
     """Modifed cell import"""
     
     dataForm = F.CellComponentForm
@@ -446,7 +466,7 @@ class ImportXlsCell( ImportXls ):
 
 
 
-class ImportXlsOligo( ImportXls ):
+class ImportXlsOligo( ImportXlsComponent ):
     """Oligo import"""
     
     dataForm = F.OligoComponentForm
@@ -487,7 +507,7 @@ class ImportXlsOligo( ImportXls ):
         return d
     
 
-class ImportXlsChemical( ImportXls ):
+class ImportXlsChemical( ImportXlsComponent ):
     """Chemical import"""
     
     dataForm = F.ChemicalComponentForm
@@ -522,15 +542,7 @@ class ImportXlsLocation( ImportXls ):
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
     xls2foreignkey = []
-    
-    def setCategory(self, d):
-        """de-activate auto-addition of category"""
-        return d
-    
-    def correctStatus(self, d):
-        """de-activate status related cleanup"""
-        return d
-    
+        
     def postprocessDict(self, d):
         d = super(ImportXlsLocation, self).postprocessDict(d)
         
@@ -551,7 +563,7 @@ class ImportXlsLocation( ImportXls ):
         return d
     
     
-class ImportXlsRack( ImportXlsLocation ):
+class ImportXlsRack( ImportXls ):
     dataForm = F.RackForm
     
     typeClass = None
@@ -565,9 +577,4 @@ class ImportXlsRack( ImportXlsLocation ):
     # targetfield=displayId)
     xls2foreignkey = [  { 'field' : 'location', 'model' : M.Location,
                          'targetfield' : 'displayId'}
-                       ]
-    
-    def postprocessDict(self, d):
-        """de-activate Location-specific cleanup"""
-        return ImportXls.postprocessDict(self, d)
-    
+                       ]    
