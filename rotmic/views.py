@@ -111,7 +111,14 @@ class ChemicalXlsUploadView(XlsUploadView):
     
     parser_class = I.ImportXlsChemical
     
+    
 class LocationXlsUploadView(XlsUploadView):
     model = M.Location
     
     parser_class = I.ImportXlsLocation
+
+
+class RackXlsUploadView(XlsUploadView):
+    model = M.Rack
+    
+    parser_class = I.ImportXlsRack    

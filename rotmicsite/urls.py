@@ -40,6 +40,7 @@ urlpatterns = patterns('',
     url(r'^rotmic/upload/chemical/$', V.ChemicalXlsUploadView.as_view(), name='upload_chemicalcomponent'),
 
     url(r'^rotmic/upload/location/$', V.LocationXlsUploadView.as_view(), name='upload_location'),
+    url(r'^rotmic/upload/rack/$', V.RackXlsUploadView.as_view(), name='upload_rack'),
 
     url(r'^', include(admin.site.urls)),
 )

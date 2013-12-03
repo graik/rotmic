@@ -549,3 +549,25 @@ class ImportXlsLocation( ImportXls ):
             d['errors']['room'].append( unicode(e) )
             
         return d
+    
+    
+class ImportXlsRack( ImportXlsLocation ):
+    dataForm = F.RackForm
+    
+    typeClass = None
+    
+    modelClass = M.Rack
+    
+    # rename Excel headers to field name
+    xls2field = { 'id' : 'displayId' }
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = [  { 'field' : 'location', 'model' : M.Location,
+                         'targetfield' : 'displayId'}
+                       ]
+    
+    def postprocessDict(self, d):
+        """de-activate Location-specific cleanup"""
+        return ImportXls.postprocessDict(self, d)
+    
