@@ -426,7 +426,8 @@ admin.site.register( M.OligoSample, OligoSampleAdmin )
 class ChemicalSampleAdmin( SampleAdmin ):
     form = forms.ChemicalSampleForm
     
-    change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
+    ## change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
+    change_list_template = 'admin/rotmic/chemicalsample/change_list.html'
     
     fieldsets = [
         (None, {

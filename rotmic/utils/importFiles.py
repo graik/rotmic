@@ -624,7 +624,7 @@ class ImportXlsSample( ImportXls ):
                        ]
     
 
-class ImportXlsDnaSample( ImportXls ):
+class ImportXlsDnaSample( ImportXlsSample ):
     """Excel import of DNA samples"""
     dataForm = F.DnaSampleForm
     
@@ -638,7 +638,7 @@ class ImportXlsDnaSample( ImportXls ):
     xls2foreignkey = ImportXlsSample.xls2foreignkey + \
                      [ { 'field' : 'dna', 'model' : M.DnaComponent } ]
 
-class ImportXlsOligoSample( ImportXls ):
+class ImportXlsOligoSample( ImportXlsSample ):
     """Excel import of Oligo nucleotide samples"""
     dataForm = F.OligoSampleForm
     
@@ -653,7 +653,7 @@ class ImportXlsOligoSample( ImportXls ):
                      [ { 'field' : 'oligo', 'model' : M.OligoComponent } ]
 
 
-class ImportXlsChemicalSample( ImportXls ):
+class ImportXlsChemicalSample( ImportXlsSample ):
     """Excel import of Oligo nucleotide samples"""
     dataForm = F.ChemicalSampleForm
     
