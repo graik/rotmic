@@ -132,3 +132,7 @@ class DnaSampleXlsUploadView(XlsUploadView):
 class OligoSampleXlsUploadView(XlsUploadView):
     model = M.OligoSample
     parser_class = I.ImportXlsOligoSample
+
+class ChemicalSampleXlsUploadView(XlsUploadView):
+    model = M.ChemicalSample
+    parser_class = I.ImportXlsChemicalSample

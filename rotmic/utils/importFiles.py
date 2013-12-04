@@ -652,4 +652,17 @@ class ImportXlsOligoSample( ImportXls ):
     xls2foreignkey = ImportXlsSample.xls2foreignkey + \
                      [ { 'field' : 'oligo', 'model' : M.OligoComponent } ]
 
+
+class ImportXlsChemicalSample( ImportXls ):
+    """Excel import of Oligo nucleotide samples"""
+    dataForm = F.ChemicalSampleForm
+    
+    modelClass = M.ChemicalSample
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = ImportXlsSample.xls2foreignkey + \
+                     [ { 'field' : 'chemical', 'model' : M.ChemicalComponent } ]
+
+
     
