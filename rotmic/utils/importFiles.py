@@ -593,11 +593,9 @@ class ImportXlsContainer( ImportXls ):
                        ]
     ## ToDo include type code cleanup
     
-class ImportXlsDnaSample( ImportXls ):
-    """Excel import of DNA samples"""
-    dataForm = F.DnaSampleForm
-    
-    modelClass = M.DnaSample
+
+class ImportXlsSample( ImportXls ):
+    """Base class for different Sample imports"""
     
     # rename Excel headers to field name
     xls2field = { 'id' : 'displayId',
@@ -606,8 +604,7 @@ class ImportXlsDnaSample( ImportXls ):
                   'aliquots' : 'aliquotNr',
                   'in buffer': 'solvent',
                   'concentration unit' : 'concentrationUnit',
-                  'amount unit' : 'amountUnit',
-                  'dna construct' : 'dna'}
+                  'amount unit' : 'amountUnit' }
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
@@ -618,11 +615,21 @@ class ImportXlsDnaSample( ImportXls ):
                         { 'field' : 'amountUnit', 'model' : M.Unit,
                           'targetfield' : 'name'},
 
-                        { 'field' : 'dna', 'model' : M.DnaComponent }
                        ]
     
-    # lookup instructions for Many2Many fields
-    xls2many = []
+
+class ImportXlsDnaSample( ImportXls ):
+    """Excel import of DNA samples"""
+    dataForm = F.DnaSampleForm
     
+    modelClass = M.DnaSample
     
+    # rename Excel headers to field name
+    xls2field = ImportXlsSample.xls2field.update({'dna construct' : 'dna'})
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = ImportXlsSample.xls2foreignkey + \
+                     [ { 'field' : 'dna', 'model' : M.DnaComponent } ]
+
     
