@@ -90,40 +90,37 @@ class XlsUploadView(TemplateView):
 
 class DnaXlsUploadView(XlsUploadView):    
     model = M.DnaComponent
-    
     parser_class = I.ImportXlsDna
     
 
 class CellXlsUploadView(XlsUploadView):
     model = M.CellComponent
-    
     parser_class = I.ImportXlsCell
     
     
 class OligoXlsUploadView(XlsUploadView):
     model = M.OligoComponent
-    
     parser_class = I.ImportXlsOligo
     
     
 class ChemicalXlsUploadView(XlsUploadView):
     model = M.ChemicalComponent
-    
     parser_class = I.ImportXlsChemical
     
     
 class LocationXlsUploadView(XlsUploadView):
     model = M.Location
-    
     parser_class = I.ImportXlsLocation
 
 
 class RackXlsUploadView(XlsUploadView):
     model = M.Rack
-    
     parser_class = I.ImportXlsRack    
     
 class ContainerXlsUploadView(XlsUploadView):
     model = M.Container
-    
     parser_class = I.ImportXlsContainer
+
+class DnaSampleXlsUploadView(XlsUploadView):
+    model = M.DnaSample
+    parser_class = I.ImportXlsDnaSample

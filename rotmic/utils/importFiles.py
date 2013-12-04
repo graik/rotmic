@@ -592,3 +592,37 @@ class ImportXlsContainer( ImportXls ):
                          'targetfield' : 'displayId'}
                        ]
     ## ToDo include type code cleanup
+    
+class ImportXlsDnaSample( ImportXls ):
+    """Excel import of DNA samples"""
+    dataForm = F.DnaSampleForm
+    
+    modelClass = M.DnaSample
+    
+    # rename Excel headers to field name
+    xls2field = { 'id' : 'displayId',
+                  'position' : 'displayId',
+                  'prepared' : 'preparedAt',
+                  'aliquots' : 'aliquotNr',
+                  'in buffer': 'solvent',
+                  'concentration unit' : 'concentrationUnit',
+                  'amount unit' : 'amountUnit',
+                  'dna construct' : 'dna'}
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = [  { 'field' : 'container', 'model' : M.Container },
+
+                        { 'field' : 'concentrationUnit', 'model' : M.Unit,
+                          'targetfield' : 'name'},
+                        { 'field' : 'amountUnit', 'model' : M.Unit,
+                          'targetfield' : 'name'},
+
+                        { 'field' : 'dna', 'model' : M.DnaComponent }
+                       ]
+    
+    # lookup instructions for Many2Many fields
+    xls2many = []
+    
+    
+    

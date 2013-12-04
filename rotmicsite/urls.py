@@ -43,6 +43,8 @@ urlpatterns = patterns('',
     url(r'^rotmic/upload/rack/$', V.RackXlsUploadView.as_view(), name='upload_rack'),
     url(r'^rotmic/upload/container/$', V.ContainerXlsUploadView.as_view(), name='upload_container'),
 
+    url(r'^rotmic/upload/dnasample/$', V.DnaSampleXlsUploadView.as_view(), name='upload_dnasample'),
+
     url(r'^', include(admin.site.urls)),
 )
 

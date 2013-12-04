@@ -317,7 +317,8 @@ admin.site.register( M.Sample, SampleAdmin )
 class DnaSampleAdmin( SampleAdmin ):
     form = forms.DnaSampleForm
     
-    change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
+    change_list_template = 'admin/rotmic/dnasample/change_list.html'
+    ## change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
     
     fieldsets = [
         (None, {
