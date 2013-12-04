@@ -47,7 +47,7 @@ class ImportXls(object):
     xls2many = [ ]
                        
     
-    def __init__(self, f, user):
+    def __init__(self, f, user, request=None):
         """
         @param f: file handle pointing to Excel file
         @param user: django.auth.models.User instance
@@ -61,6 +61,7 @@ class ImportXls(object):
             
         self.f = f
         self.user = user
+        self.request = request
         
         self.objects = []
 
@@ -274,6 +275,8 @@ class ImportXls(object):
         if not d.get('errors', []):
             try:
                 form = self.dataForm( data=d )
+                form.request = self.request  ##This is actually only required for forms derrived from SampleForm
+                
                 valid = form.is_valid()
                 
                 d['object'] = form.save( commit=False )
@@ -624,6 +627,24 @@ class ImportXlsSample( ImportXls ):
                        ]
     
 
+    def correctStatus(self, d):
+        """Replace human-readable status by internal status value"""
+        choices = self.modelClass.STATUS_CHOICES
+
+        human2system = { x[1] : x[0] for x in choices }
+
+        status = d.get('status', None)
+        ## replace only if listed as key in human to system map
+        d['status'] = human2system.get(status, status)
+
+    def postprocessDict( self, d ):
+        """Add fields to dict after cleanup and forgeignKey lookup"""
+        d = super(ImportXlsSample, self).postprocessDict(d)
+
+        self.correctStatus(d)
+        return d
+
+
 class ImportXlsDnaSample( ImportXlsSample ):
     """Excel import of DNA samples"""
     dataForm = F.DnaSampleForm
@@ -637,6 +658,8 @@ class ImportXlsDnaSample( ImportXlsSample ):
     # targetfield=displayId)
     xls2foreignkey = ImportXlsSample.xls2foreignkey + \
                      [ { 'field' : 'dna', 'model' : M.DnaComponent } ]
+
+
 
 class ImportXlsOligoSample( ImportXlsSample ):
     """Excel import of Oligo nucleotide samples"""
@@ -665,4 +688,44 @@ class ImportXlsChemicalSample( ImportXlsSample ):
                      [ { 'field' : 'chemical', 'model' : M.ChemicalComponent } ]
 
 
+class ImportXlsCellSample( ImportXlsSample ):
+    """Excel import of DNA samples"""
+    dataForm = F.CellSampleForm
+    
+    modelClass = M.CellSample
+    
+    # rename Excel headers to field name
+    xls2field = dict( ImportXlsSample.xls2field, **{'modified cell' : 'cell',
+                                                    'strain' : 'cellType',
+                                                    'in strain' : 'cellType',
+                                                    'or plasmid' : 'plasmid'})
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = ImportXlsSample.xls2foreignkey + \
+                     [ { 'field' : 'cell', 'model' : M.CellComponent},
+                       { 'field' : 'cellType', 'model' : M.CellComponentType, 
+                         'targetfield' : 'name'},
+                       { 'field' : 'plasmid', 'model' : M.DnaComponent}
+                       ]
+
+    def cleanType( self, d):
+        """
+        Remove category from type string. Example:
+        'E. coli / Mach1' -> 'Mach1'
+        @param d - dict with field information for one entry (after cleaning)
+        """
+        value = d.get('cellType', '')
+        
+        try:    
+            if '/' in value:
+                d['cellType'] = value[ value.index('/')+1 : ].strip()
+        except ValueError:
+            pass
+    
+    def cleanDict(self, d):
+        """Add componentType string cleaning."""
+        super(ImportXlsCellSample,self).cleanDict(d)
+        self.cleanType(d)
+        return d
     

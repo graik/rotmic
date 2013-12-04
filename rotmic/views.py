@@ -62,7 +62,7 @@ class XlsUploadView(TemplateView):
             f = request.FILES['tableFile']
             
             try:
-                p = self.parser_class(f, request.user)
+                p = self.parser_class(f, request.user, request=request)
                 p.getObjects()
             
                 if p.failed:
@@ -136,3 +136,7 @@ class OligoSampleXlsUploadView(XlsUploadView):
 class ChemicalSampleXlsUploadView(XlsUploadView):
     model = M.ChemicalSample
     parser_class = I.ImportXlsChemicalSample
+
+class CellSampleXlsUploadView(XlsUploadView):
+    model = M.CellSample
+    parser_class = I.ImportXlsCellSample
