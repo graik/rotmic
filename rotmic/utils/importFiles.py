@@ -73,30 +73,36 @@ class ImportXls(object):
         @param firstrow: int, first row containing data
         @return: [ {} ], list of dictionaries 
         """
-        book = X.open_workbook( self.f )
-        sheet= book.sheets()[0]
-
-        firstrow -= 1
-        keys = []
-        ## iterate until there is a row with at least 3 non-empty values
-        while len([k for k in keys if k]) < 3:
-            keys = sheet.row_values(firstrow) ## extract labels from header row
-            firstrow += 1
-
-        if not keys:
-            raise ImportError, 'Could not identify table header row.'
+        try:
+            book = X.open_workbook( self.f )
+            sheet= book.sheets()[0]
+    
+            firstrow -= 1
+            keys = []
+            ## iterate until there is a row with at least 3 non-empty values
+            while len([k for k in keys if k]) < 3:
+                keys = sheet.row_values(firstrow) ## extract labels from header row
+                firstrow += 1
+    
+            if not keys:
+                raise ImportError, 'Could not identify table header row.'
+                
+            r = []
+            for row in range( firstrow, sheet.nrows ):
+                values = sheet.row_values( row )
+    
+                ## ignore rows with empty first column
+                if values[0]:
+                    r += [ dict( zip( keys, values ) ) ] 
             
-        r = []
-        for row in range( firstrow, sheet.nrows ):
-            values = sheet.row_values( row )
+            self.rows = r
+            
+            return r
 
-            ## ignore rows with empty first column
-            if values[0]:
-                r += [ dict( zip( keys, values ) ) ] 
-        
-        self.rows = r
-        
-        return r
+        except Exception as e:
+            raise ImportError('Something went terribly wrong during parsing of the file: '+\
+                              unicode(e))
+            return []
     
 
     def renameKey( self, d, key, newkey):
@@ -625,11 +631,25 @@ class ImportXlsDnaSample( ImportXls ):
     modelClass = M.DnaSample
     
     # rename Excel headers to field name
-    xls2field = ImportXlsSample.xls2field.update({'dna construct' : 'dna'})
+    xls2field = dict( ImportXlsSample.xls2field, **{'dna construct' : 'dna'})
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
     xls2foreignkey = ImportXlsSample.xls2foreignkey + \
                      [ { 'field' : 'dna', 'model' : M.DnaComponent } ]
+
+class ImportXlsOligoSample( ImportXls ):
+    """Excel import of Oligo nucleotide samples"""
+    dataForm = F.OligoSampleForm
+    
+    modelClass = M.OligoSample
+    
+    # rename Excel headers to field name
+    xls2field = dict( ImportXlsSample.xls2field, **{'oligo nucleotide' : 'oligo'})
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = ImportXlsSample.xls2foreignkey + \
+                     [ { 'field' : 'oligo', 'model' : M.OligoComponent } ]
 
     

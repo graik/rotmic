@@ -352,6 +352,8 @@ class CellSampleAdmin( SampleAdmin ):
     form = forms.CellSampleForm
     
     change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
+    ##change_list_template = 'admin/rotmic/cellsample/change_list.html'
+    
     
     fieldsets = [
         (None, {
@@ -390,7 +392,8 @@ admin.site.register( M.CellSample, CellSampleAdmin )
 class OligoSampleAdmin( SampleAdmin ):
     form = forms.OligoSampleForm
     
-    change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
+    ##change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
+    change_list_template = 'admin/rotmic/oligosample/change_list.html'
     
     fieldsets = [
         (None, {

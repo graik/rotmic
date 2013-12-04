@@ -61,30 +61,34 @@ class XlsUploadView(TemplateView):
             
             f = request.FILES['tableFile']
             
-            p = self.parser_class(f, request.user)
-            p.getObjects()
+            try:
+                p = self.parser_class(f, request.user)
+                p.getObjects()
             
-            if p.failed:
-                msg = 'Import of %s failed. Correct errors and try again. (Nothing has been imported.)\n' \
-                    % (f.name)
-                messages.error(request, msg)
-
-                for d in p.failed:
-                    id = d.get('displayId', '??')
-                    errors = ['%s (%s)' % (k,v) for k,v in d['errors'].items() ]
-                    errors = '; '.join(errors)
-
-                    msg = 'Import error(s) for entry "%s": %s' % (id, errors)
+                if p.failed:
+                    msg = 'Import of %s failed. Correct errors and try again. (Nothing has been imported.)\n' \
+                        % (f.name)
                     messages.error(request, msg)
-
-            else:
-                for f in p.forms:
-                    o = f.save()
-                    f.save_m2m()
-
-                    msg = 'Successfully imported %s.' % unicode(o)
-                    messages.success(request, msg )
+    
+                    for d in p.failed:
+                        id = d.get('displayId', '??')
+                        errors = ['%s (%s)' % (k,v) for k,v in d['errors'].items() ]
+                        errors = '; '.join(errors)
+    
+                        msg = 'Import error(s) for entry "%s": %s' % (id, errors)
+                        messages.error(request, msg)
+    
+                else:
+                    for f in p.forms:
+                        o = f.save()
+                        f.save_m2m()
+    
+                        msg = 'Successfully imported %s.' % unicode(o)
+                        messages.success(request, msg )
             
+            except I.ImportError, why:
+                messages.error(request, why)
+                
             return HttpResponseRedirect(reverse(self.returnto()))
 
 
@@ -124,3 +128,7 @@ class ContainerXlsUploadView(XlsUploadView):
 class DnaSampleXlsUploadView(XlsUploadView):
     model = M.DnaSample
     parser_class = I.ImportXlsDnaSample
+
+class OligoSampleXlsUploadView(XlsUploadView):
+    model = M.OligoSample
+    parser_class = I.ImportXlsOligoSample
