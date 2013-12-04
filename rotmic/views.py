@@ -122,3 +122,8 @@ class RackXlsUploadView(XlsUploadView):
     model = M.Rack
     
     parser_class = I.ImportXlsRack    
+    
+class ContainerXlsUploadView(XlsUploadView):
+    model = M.Container
+    
+    parser_class = I.ImportXlsContainer

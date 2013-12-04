@@ -33,9 +33,7 @@ class ImportXls(object):
     dataForm = F.DnaComponentForm
     
     modelClass = M.DnaComponent
-    
-    typeClass = M.DnaComponentType
-    
+       
     # rename Excel headers to field name (dict)
     xls2field = { 'id' : 'displayId',
                   'type' : 'componentType',
@@ -318,6 +316,8 @@ class ImportXlsComponent( ImportXls ):
     xls2field = { 'id' : 'displayId',
                   'type' : 'componentType',
                 }
+    
+    typeClass = M.ComponentType  ## abstract base class
 
     def generateName(self, d):
         """If missing, compose name from insert and vectorbackbone"""
@@ -532,8 +532,6 @@ class ImportXlsLocation( ImportXls ):
     """Import location records from table"""
     dataForm = F.LocationForm
     
-    typeClass = None
-    
     modelClass = M.Location
     
     # rename Excel headers to field name
@@ -566,8 +564,6 @@ class ImportXlsLocation( ImportXls ):
 class ImportXlsRack( ImportXls ):
     dataForm = F.RackForm
     
-    typeClass = None
-    
     modelClass = M.Rack
     
     # rename Excel headers to field name
@@ -577,4 +573,22 @@ class ImportXlsRack( ImportXls ):
     # targetfield=displayId)
     xls2foreignkey = [  { 'field' : 'location', 'model' : M.Location,
                          'targetfield' : 'displayId'}
-                       ]    
+                       ]
+    
+
+class ImportXlsContainer( ImportXls ):
+    """Excel Import of Containers"""
+    
+    dataForm = F.ContainerForm
+    
+    modelClass = M.Container
+    
+    # rename Excel headers to field name
+    xls2field = { 'id' : 'displayId' }
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = [  { 'field' : 'rack', 'model' : M.Rack,
+                         'targetfield' : 'displayId'}
+                       ]
+    ## ToDo include type code cleanup
