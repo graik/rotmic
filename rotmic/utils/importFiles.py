@@ -103,7 +103,7 @@ class ImportXls(object):
         except Exception as e:
             raise ImportError('Something went terribly wrong during parsing of the file: '+\
                               unicode(e))
-            return []
+        return []
     
 
     def renameKey( self, d, key, newkey):
