@@ -113,7 +113,7 @@ class Rack(UserMixin):
     """
     A Rack (box) where containers are stored
     """
-    displayId = models.CharField('Rack ID', max_length=20, unique=True, 
+    displayId = models.CharField('Rack ID', max_length=20, 
                                  help_text='Unique identifier')
 
     name = models.CharField('Name', max_length=100, blank=True, 
@@ -176,6 +176,7 @@ class Rack(UserMixin):
         app_label = 'rotmic'   
         ordering = ('location__displayId', 'displayId',)
         verbose_name = 'Rack'
+        unique_together = ('displayId', 'location')
 
 
 class Container( UserMixin ):
