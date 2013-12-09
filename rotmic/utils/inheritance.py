@@ -135,7 +135,8 @@ class InheritanceManager(models.Manager):
     """
     use_for_related_fields = True
 
-    def get_query_set(self):
+    def get_queryset(self):
+        """get_queryset in django 1.6 / get_query_set before that."""
 ##        return InheritanceQuerySet(self.model)  ## original configuration
         return InheritanceQuerySet(self.model)
 

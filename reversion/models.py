@@ -2,17 +2,13 @@
 
 from __future__ import unicode_literals
 
-import warnings
-from functools import partial
-
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, IntegrityError
-from django.db.models.signals import pre_save, post_save
-from django.dispatch.dispatcher import Signal, _make_id
+from django.dispatch.dispatcher import Signal
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text, python_2_unicode_compatible
 
@@ -88,30 +84,15 @@ class Revision(models.Model):
             current_revision = RevisionManager.get_manager(self.manager_slug)._follow_relationships(obj for obj in old_revision.keys() if obj is not None)
             # Delete objects that are no longer in the current revision.
             for item in current_revision:
-                if item in old_revision:
-                    if old_revision[item].type == VERSION_DELETE:
-                        item.delete()
-                else:
+                if item not in old_revision:
                     item.delete()
         # Attempt to revert all revisions.
-        safe_revert([version for version in version_set if version.type != VERSION_DELETE])
+        safe_revert(version_set)
         
     def __str__(self):
         """Returns a unicode representation."""
         return ", ".join(force_text(version) for version in self.version_set.all())
 
-
-# Version types.
-
-VERSION_ADD = 0
-VERSION_CHANGE = 1
-VERSION_DELETE = 2
-
-VERSION_TYPE_CHOICES = (
-    (VERSION_ADD, "Addition"),
-    (VERSION_CHANGE, "Change"),
-    (VERSION_DELETE, "Deletion"),
-)
 
 def has_int_pk(model):
     """Tests whether the given model has an integer primary key."""
@@ -163,8 +144,6 @@ class Version(models.Model):
         data = force_text(data.encode("utf8"))
         return list(serializers.deserialize(self.format, data, ignorenonexistent=True))[0]
     
-    type = models.PositiveSmallIntegerField(choices=VERSION_TYPE_CHOICES, db_index=True)
-    
     @property   
     def field_dict(self):
         """
@@ -210,17 +189,3 @@ class Version(models.Model):
 # Version management signals.
 pre_revision_commit = Signal(providing_args=["instances", "revision", "versions"])
 post_revision_commit = Signal(providing_args=["instances", "revision", "versions"])
-    
-
-def check_for_receivers(sender, sending_signal, **kwargs):
-    """Checks that no other signal receivers have been connected."""
-    if len(sending_signal._live_receivers(_make_id(sender))) > 1:
-        warnings.warn("pre_save and post_save signals will not longer be sent for Revision and Version models in django-reversion 1.8. Please use the pre_revision_commit and post_revision_commit signals instead.")
-
-check_for_pre_save_receivers = partial(check_for_receivers, sending_signal=pre_save)
-check_for_post_save_receivers = partial(check_for_receivers, sending_signal=post_save) 
-
-pre_save.connect(check_for_pre_save_receivers, sender=Revision)
-pre_save.connect(check_for_pre_save_receivers, sender=Version)
-post_save.connect(check_for_post_save_receivers, sender=Revision)
-post_save.connect(check_for_post_save_receivers, sender=Version)
