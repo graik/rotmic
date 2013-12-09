@@ -501,10 +501,10 @@ class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
          )
         ]
 
-    list_display = ('displayId', 'showLocationUrl', 'name',
+    list_display = ('displayId', 'name', 'showLocationUrl', 
                     'showContainerCount', 'showSampleCount')
     list_filter = (filters.RackLocationFilter,)
-    search_fields = ('displayId', 'name',)
+    search_fields = ('displayId', 'name', 'location__displayId', 'location__name')
 
     save_as = True
 

@@ -11,6 +11,7 @@ import datetime, os
 from django.db import models
 from django.test import TestCase
 from django.core.management import call_command
+from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.conf.urls import url, patterns, include
 from django.contrib import admin
@@ -27,7 +28,7 @@ from django.utils.encoding import force_text, python_2_unicode_compatible
 
 import reversion
 from reversion.revisions import RegistrationError, RevisionManager
-from reversion.models import Revision, Version, VERSION_ADD, VERSION_CHANGE, VERSION_DELETE
+from reversion.models import Revision, Version
 from reversion.middleware import RevisionMiddleware
 
 
@@ -234,21 +235,6 @@ class InternalsTest(RevisionTestBase):
             pass
         self.assertEqual(Revision.objects.count(), 1)
         self.assertEqual(Version.objects.count(), 4)
-        
-    def testCorrectVersionFlags(self):
-        self.assertEqual(Version.objects.filter(type=VERSION_ADD).count(), 4)
-        self.assertEqual(Version.objects.filter(type=VERSION_CHANGE).count(), 0)
-        self.assertEqual(Version.objects.filter(type=VERSION_DELETE).count(), 0)
-        with reversion.create_revision():
-            self.test11.save()
-        self.assertEqual(Version.objects.filter(type=VERSION_ADD).count(), 4)
-        self.assertEqual(Version.objects.filter(type=VERSION_CHANGE).count(), 1)
-        self.assertEqual(Version.objects.filter(type=VERSION_DELETE).count(), 0)
-        with reversion.create_revision():
-            self.test11.delete()
-        self.assertEqual(Version.objects.filter(type=VERSION_ADD).count(), 4)
-        self.assertEqual(Version.objects.filter(type=VERSION_CHANGE).count(), 1)
-        self.assertEqual(Version.objects.filter(type=VERSION_DELETE).count(), 1)
 
 
 class ApiTest(RevisionTestBase):
@@ -640,6 +626,13 @@ def error_revision_view(request):
     raise Exception("Foo")
 
 
+# A dumb view that has two revision middlewares.
+@revision_middleware_decorator
+@revision_middleware_decorator
+def double_middleware_revision_view(request):
+    raise Exception("Foo")
+
+
 site = admin.AdminSite()
 
 
@@ -714,6 +707,8 @@ urlpatterns = patterns("",
     url("^success/$", save_revision_view),
     
     url("^error/$", error_revision_view),
+
+    url("^double/$", double_middleware_revision_view),
     
     url("^admin/", include(site.get_urls(), namespace="admin")),
 
@@ -737,6 +732,9 @@ class RevisionMiddlewareTest(ReversionTestBase):
         self.assertRaises(Exception, lambda: self.client.get("/error/"))
         self.assertEqual(Revision.objects.count(), 0)
         self.assertEqual(Version.objects.count(), 0)
+
+    def testRevisionMiddlewareErrorOnDoubleMiddleware(self):
+        self.assertRaises(ImproperlyConfigured, lambda: self.client.get("/double/"))
 
 
 class VersionAdminTest(TestCase):
