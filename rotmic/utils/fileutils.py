@@ -38,10 +38,8 @@ def approot():
              i.e. '/home/py/rotmicproject/'
     @rtype: string
     """
-    ## import this module
-    #from labrack import tools
     ## get location of this module
     f = absfile(__file__)
-    ## extract path and assume it is 'project_root/Biskit'
+    ## extract path and assume it is 'project_root/rotmic/utils'
     f = osp.split( f )[0] + '/../../'
     return absfile( f )
