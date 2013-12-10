@@ -13,7 +13,7 @@
 ## GNU Affero General Public License for more details.
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
-VERSION = (0,0,1)
+VERSION = (1,0,0)
 
 __version__ = '.'.join([ str(i) for i in VERSION])
 
