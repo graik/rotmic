@@ -243,7 +243,7 @@ class DnaComponent(Component, StatusMixinDna):
             self.insert = None
             self.vectorBackbone = None
         
-##        ## this part somehow has no effect and leads to bugs.
+        ## this part somehow has no effect and leads to bugs.
 ##        if category not in ['Vector Backbone', 'Insert']:
 ##            self.marker = Q()        
         return super(DnaComponent,self).save(*args, **kwargs)

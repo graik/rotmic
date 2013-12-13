@@ -171,7 +171,7 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
             data['vectorBackbone'] = None
         
         if category and (category not in [T.dcVectorBB, T.dcFragment] and 'markers' in data):
-            data['markers'] = QuerySet()
+            data['markers'] = []
             
         ## validate that a vector backbone is given if category == Plasmid
         if category == T.dcPlasmid and not data.get('vectorBackbone',None):
