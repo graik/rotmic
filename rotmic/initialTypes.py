@@ -2,11 +2,11 @@
 Pre-populate database with componentType instances that are needed for templates
 and pre-defined actions.
 """
-from rotmic.models import DnaComponentType, CellComponentType, \
-     OligoComponentType, ChemicalType
+import rotmic.models as M
+
 import logging
 
-def getcreate(typeClass=DnaComponentType, name='', **kwargs):
+def getcreate(typeClass=M.DnaComponentType, name='', **kwargs):
     """
     Look up type of given name or create a new one and save it to the DB.
     """
@@ -20,99 +20,99 @@ def getcreate(typeClass=DnaComponentType, name='', **kwargs):
     return r
 
 ## category "root" types (all required)
-dcPlasmid = getcreate(DnaComponentType, name='Plasmid')
-dcVectorBB = getcreate(DnaComponentType, name='Vector Backbone')
-dcFragment = getcreate(DnaComponentType, name='Fragment')
-dcMarker = getcreate(DnaComponentType, name='Marker')
+dcPlasmid = getcreate(M.DnaComponentType, name='Plasmid')
+dcVectorBB = getcreate(M.DnaComponentType, name='Vector Backbone')
+dcFragment = getcreate(M.DnaComponentType, name='Fragment')
+dcMarker = getcreate(M.DnaComponentType, name='Marker')
 
 ## Plasmid types (optional)
-dcPlasmidGeneric = getcreate(DnaComponentType, subTypeOf=dcPlasmid,
+dcPlasmidGeneric = getcreate(M.DnaComponentType, subTypeOf=dcPlasmid,
                              name='generic plasmid')
 
 ## Vector Backbones
 
 ## required:
-dcVectorUndefined = getcreate(DnaComponentType, subTypeOf=dcVectorBB,
+dcVectorUndefined = getcreate(M.DnaComponentType, subTypeOf=dcVectorBB,
                               name='undefined vector')
 
 
 ## all optional:
-dcVectorBacterialHigh = getcreate(DnaComponentType, subTypeOf=dcVectorBB, 
+dcVectorBacterialHigh = getcreate(M.DnaComponentType, subTypeOf=dcVectorBB, 
                                   name = 'bacterial expression')
-dcVectorBacterialMedium = getcreate(DnaComponentType, subTypeOf=dcVectorBB,
+dcVectorBacterialMedium = getcreate(M.DnaComponentType, subTypeOf=dcVectorBB,
                                     name = 'bacterial cloning')
 
-dcVectorMammalian = getcreate(DnaComponentType, subTypeOf=dcVectorBB, 
+dcVectorMammalian = getcreate(M.DnaComponentType, subTypeOf=dcVectorBB, 
                                   name = 'mammalian expression')
 
-dcVectorYeast2M = getcreate(DnaComponentType, subTypeOf=dcVectorBB, 
+dcVectorYeast2M = getcreate(M.DnaComponentType, subTypeOf=dcVectorBB, 
                                   name = 'yeast 2micron')
-dcVectorYeastCentromeric = getcreate(DnaComponentType, subTypeOf=dcVectorBB, 
+dcVectorYeastCentromeric = getcreate(M.DnaComponentType, subTypeOf=dcVectorBB, 
                                   name = 'yeast centromeric')
-dcVectorYeastIntegrating = getcreate(DnaComponentType, subTypeOf=dcVectorBB, 
+dcVectorYeastIntegrating = getcreate(M.DnaComponentType, subTypeOf=dcVectorBB, 
                                   name = 'yeast integrating')
 
 
 
 ## Fragments (all optional)
-dcFragmentCDS = getcreate(DnaComponentType, subTypeOf=dcFragment, 
+dcFragmentCDS = getcreate(M.DnaComponentType, subTypeOf=dcFragment, 
                           name = 'CDS', isInsert=True)
 
-dcFragmentProteinPart = getcreate(DnaComponentType, subTypeOf=dcFragment,
+dcFragmentProteinPart = getcreate(M.DnaComponentType, subTypeOf=dcFragment,
                                     name = 'protein part', isInsert=True)
 
-dcFragmentIntegration = getcreate(DnaComponentType, subTypeOf=dcFragment,
+dcFragmentIntegration = getcreate(M.DnaComponentType, subTypeOf=dcFragment,
                                     name = 'integration casette', isInsert=True)
 
-dcFragmentConstruction = getcreate(DnaComponentType, subTypeOf=dcFragment,
+dcFragmentConstruction = getcreate(M.DnaComponentType, subTypeOf=dcFragment,
                                     name = 'construction intermediate', isInsert=True)
 
-dcFragmentOther = getcreate(DnaComponentType, subTypeOf=dcFragment,
+dcFragmentOther = getcreate(M.DnaComponentType, subTypeOf=dcFragment,
                                     name = 'other fragment')
 
 
 ## Markers (all optional)
-dcMarkerBacterial = getcreate(DnaComponentType, subTypeOf=dcMarker,
+dcMarkerBacterial = getcreate(M.DnaComponentType, subTypeOf=dcMarker,
                               name='bacterial resistance')
 
-dcMarkerMammalian = getcreate(DnaComponentType, subTypeOf=dcMarker,
+dcMarkerMammalian = getcreate(M.DnaComponentType, subTypeOf=dcMarker,
                               name='mammalian resistance')
 
-dcMarkerYeastAuxo = getcreate(DnaComponentType, subTypeOf=dcMarker,
+dcMarkerYeastAuxo = getcreate(M.DnaComponentType, subTypeOf=dcMarker,
                               name='yeast auxotrophic')
 
 ###########################
 ## Basic CellComponentTypes
 
 ## required:
-ccEcoli = getcreate(CellComponentType, name='E. coli', 
+ccEcoli = getcreate(M.CellComponentType, name='E. coli', 
                     description='Escherichia coli (all strains)')
 
 ## optional:
-ccYeast = getcreate(CellComponentType, name='S. cerevisiae',
+ccYeast = getcreate(M.CellComponentType, name='S. cerevisiae',
                     description='S. cerevisiae (all strains)')
 
-ccHuman = getcreate(CellComponentType, name='H. sapiens',
+ccHuman = getcreate(M.CellComponentType, name='H. sapiens',
                     description='human cell culture')
 
 ## common cell types (all optional)
-ccTop10 = getcreate(CellComponentType, name='Top10', subTypeOf=ccEcoli,
+ccTop10 = getcreate(M.CellComponentType, name='Top10', subTypeOf=ccEcoli,
                     allowMarkers=True,
                     description='standard E. coli cloning strain')
 
-ccMach1 = getcreate(CellComponentType, name='Mach1', subTypeOf=ccEcoli,
+ccMach1 = getcreate(M.CellComponentType, name='Mach1', subTypeOf=ccEcoli,
                     allowMarkers=True,
                     description='fast growing E. coli for cloning purposes')
 
-ccBL21 = getcreate(CellComponentType, name='BL21', subTypeOf=ccEcoli,
+ccBL21 = getcreate(M.CellComponentType, name='BL21', subTypeOf=ccEcoli,
                    allowMarkers=False,
                    description='E. coli protein expression strain')
 
-ccHeLa = getcreate(CellComponentType, name='HeLa', subTypeOf=ccHuman,
+ccHeLa = getcreate(M.CellComponentType, name='HeLa', subTypeOf=ccHuman,
                    allowMarkers=False,
                    description='most classic human cancer cell culture')
 
-ccHek = getcreate(CellComponentType, name='HEK293', subTypeOf=ccHuman,
+ccHek = getcreate(M.CellComponentType, name='HEK293', subTypeOf=ccHuman,
                   allowMarkers=False,
                   description='Human embryonic kidney cells')
 
@@ -120,24 +120,32 @@ ccHek = getcreate(CellComponentType, name='HEK293', subTypeOf=ccHuman,
 ##############################
 ## Oligo types (all required):
 
-ocStandard = getcreate(OligoComponentType, name='standard',
+ocStandard = getcreate(M.OligoComponentType, name='standard',
                        description='standard oligonucleotide for PCR reactions')
 
-ocSequencing = getcreate(OligoComponentType, name='sequencing',
+ocSequencing = getcreate(M.OligoComponentType, name='sequencing',
                        description='Primer for sequencing reactions')
 
 
+#################
 ## Chemical types
 
 ## required:
-chemReagent = getcreate(ChemicalType, name='reagent', subTypeOf=None)
+chemReagent = getcreate(M.ChemicalType, name='Reagent', subTypeOf=None)
 
-chemOther = getcreate(ChemicalType, name='other reagent', subTypeOf=chemReagent)
+chemOther = getcreate(M.ChemicalType, name='other reagent', subTypeOf=chemReagent)
 
 #### optional:
-##chemBio = getcreate(ChemicalType, name='biological', subTypeOf=None)
+##chemBio = getcreate(M.ChemicalType, name='biological', subTypeOf=None)
 ##
-##chemAB = getcreate(ChemicalType, name='antibody', subTypeOf=chemBio)
+##chemAB = getcreate(M.ChemicalType, name='antibody', subTypeOf=chemBio)
 ##
-##chemEnzyme = getcreate(ChemicalType, name='enzyme', subTypeOf=chemBio)
+##chemEnzyme = getcreate(M.ChemicalType, name='enzyme', subTypeOf=chemBio)
 
+#################
+## Protein types
+
+## required:
+pcProtein = getcreate(M.ProteinComponentType, name='Full Protein', subTypeOf=None)
+
+pcOther = getcreate(M.ProteinComponentType, name='other protein', subTypeOf=pcProtein)

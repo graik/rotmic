@@ -51,6 +51,10 @@ class UserProfile(models.Model):
                                 help_text='default ID prefix for Chemicals',
                                 blank=True)
     
+    pcPrefix = models.CharField('Protein Prefix', max_length=5,
+                                help_text='default ID prefix for Proteins',
+                                blank=True)
+
     def __unicode__(self):
         return unicode(self.user)
     

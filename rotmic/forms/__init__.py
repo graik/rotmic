@@ -15,7 +15,7 @@
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 
 from componentForms import DnaComponentForm, CellComponentForm, \
-     ChemicalComponentForm, OligoComponentForm
+     ChemicalComponentForm, OligoComponentForm, ProteinComponentForm
 
 from attachmentForms import AttachmentForm
 

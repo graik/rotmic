@@ -323,6 +323,27 @@ class CellComponent(Component, StatusMixinDna):
         ordering = ['displayId']
 
 
+class ProteinComponent(Component, StatusMixinDna):
+    """
+    Description of a protein or protein fragment.
+    """
+   
+    sequence = models.TextField( help_text='amino acid sequence', blank=True, 
+                                 null=True )
+    
+    genbank = models.TextField( help_text='genbank file content', blank=True,
+                                null=True )
+    
+    componentType = models.ForeignKey('ProteinComponentType', 
+                                      verbose_name='Type',
+                                      blank=False )
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'Protein'
+        ordering = ['displayId']
+
+
 class StatusMixinCommercial(models.Model, StatusMixin):
     
     STATUS_CHOICES = ( ('available', 'available'),

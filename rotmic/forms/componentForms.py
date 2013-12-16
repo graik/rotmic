@@ -343,3 +343,88 @@ class ChemicalComponentForm(forms.ModelForm, CleaningMixIn):
             'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
         }
+
+    
+class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
+    """Customized Form for ProteinComponent add / change"""
+    
+    componentCategory = forms.ModelChoiceField(label='Category',
+                            widget=L.SilentSelectWidget,
+                            queryset=M.ProteinComponentType.objects.filter(subTypeOf=None),
+                            required=True, 
+                            empty_label=None,
+                            initial=T.pcProtein)
+    
+    ## genbankFile upload into textfield 'genbank' is handled by ModelAdmin.save_model
+    genbankFile = DocumentFormField(label='GenBank file', required=False,
+                                    help_text='This will replace the current sequence.',
+                                     extensions=['gbk','gb','genebank'])
+    
+
+    def __init__(self, *args, **kwargs):
+        super(ProteinComponentForm, self).__init__(*args, **kwargs)
+        self.request = kwargs.pop('request', None)
+
+        self.fields['status'].initial = 'available'
+
+        o = kwargs.get('instance', None)
+        if o:
+            self.fields['componentCategory'].initial = o.componentType.subTypeOf
+        
+    def clean_sequence(self):
+        """Enforce Protein sequence."""
+        r = self.cleaned_data['sequence']
+        if not r:
+            return r
+
+        r = sequtils.cleanseq( r )
+        
+        if not sequtils.isaa( r ):
+            raise ValidationError('This is not a protein sequence.', code='invalid')        
+        return r
+    
+    def clean(self):
+        """
+        Remove values for hidden fields, which might have been set before final
+        category was selected.
+        Note: this is also partly enforced by the DnaComponent.save method.
+        """
+        data = super(ProteinComponentForm, self).clean()
+        
+        ## extract genbank file from upload field
+        try:
+            if data.get('genbankFile', None):
+                if self.errors:
+                    msg = 'Please correct the other error(s) and upload the file again.'
+                    self._errors['genbankFile'] = self.error_class([msg])
+                else:
+                    o = self.instance
+                    upload = data['genbankFile']
+                    o.genbank = ''.join(upload.readlines())
+    
+                    f = StringIO.StringIO( o.genbank )
+                    seqrecord = SeqIO.parse( f, 'gb' ).next()
+                    data['sequence'] = seqrecord.seq.tostring()
+                    if not data.get('name', ''):
+                        data['name'] = seqrecord.name
+                    if not data.get('description', ''):
+                        data['description'] = seqrecord.description
+        except StopIteration:
+            msg = 'Empty or corrupted genbank file'
+            self._errors['genbankFile'] = self.error_class([msg])
+        except ValueError, why:
+            msg = 'Error reading genbank file: %r' % why
+            self._errors['genbankFile'] = self.error_class([msg])
+
+        return data
+
+    class Meta:
+        model = M.ProteinComponent
+        widgets = {  ## customize widget dimensions and include dynamic select widgets
+            'displayId' : forms.TextInput(attrs={'size':10}),
+            'name' : forms.TextInput(attrs={'size':25}),
+            'sequence': forms.Textarea(attrs={'cols': 100, 'rows': 4,
+                                               'style':'font-family:monospace'}), 
+            'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
+                                              'style':'font-family:monospace'}),
+        }

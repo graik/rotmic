@@ -123,6 +123,26 @@ class ChemicalTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
 admin.site.register(M.ChemicalType, ChemicalTypeAdmin)
 
 
+class ProteinComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
+    
+    fieldsets = (
+        (None, {
+            'fields': (('name', 'subTypeOf'),
+                       ('description',),
+                       ('uri',),
+                       )
+            }
+         ),
+        )
+    
+    list_display = ('__unicode__', 'subTypeOf', 'description')
+    list_filter = ('subTypeOf',)
+
+    list_display_links = ('__unicode__',)
+
+admin.site.register(M.ProteinComponentType, ProteinComponentTypeAdmin)
+
+
 class UnitAdmin( admin.ModelAdmin ):
     
     fieldsets = (

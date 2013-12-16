@@ -128,6 +128,12 @@ class ChemicalCategoryListFilter( CategoryListFilter ):
 class ChemicalTypeListFilter( TypeListFilter ):
     _class = M.ChemicalType
 
+class ProteinCategoryListFilter( CategoryListFilter ):
+    _class = M.ProteinComponentType
+
+class ProteinTypeListFilter( TypeListFilter ):
+    _class = M.ProteinComponentType
+
 
 class RackLocationFilter( admin.SimpleListFilter ):
     """

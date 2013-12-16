@@ -465,7 +465,7 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
                                ('Category', 'componentType.category()'),
                                ('Type', 'componentType.name'),
                                ('CAS', 'cas'),
-                               ('n Samples', 'oligo_samples.count()'),
+                               ('n Samples', 'chemical_samples.count()'),
                                ('Description','description')])
     
     def queryset(self, request):
@@ -478,4 +478,64 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
 
 admin.site.register(M.ChemicalComponent, ChemicalComponentAdmin)
 
+
+class ProteinComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
+    """Admin interface description for DNA constructs."""
+    inlines = [ ComponentAttachmentInline ]
+    form = forms.ProteinComponentForm
+    
+    change_list_template = "admin/rotmic/proteincomponent/change_list.html"
+
+    fieldsets = (
+        (None, {
+            'fields': (('displayId', 'name','status'),
+                       ('componentCategory', 'componentType'),
+                       )
+        }
+         ),
+        ('Details', {
+            'fields' : (('description',),
+                        ('sequence', 'genbankFile'),
+                        )
+        }
+         ),            
+    )
+
+    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
+                    'showDescription','showStatus','showEdit')
+    
+    list_filter = ( filters.ProteinCategoryListFilter, filters.ProteinTypeListFilter, 
+                    'status', filters.SortedUserFilter)
+    
+    search_fields = ('displayId', 'name', 'description',)
+    
+    date_hierarchy = 'registeredAt'
+    
+    ordering = ('displayId', 'name')
+    
+    actions = ['make_csv']
+
+    ## custom class variable for table generation
+    csv_fields = OrderedDict( [('ID', 'displayId'),
+                               ('Name', 'name'),
+                               ('Status','status'),
+                               ('Registered','registrationDate()'),
+                               ('Author','registeredBy.username'),
+                               ('Modified', 'modificationDate()'),
+                               ('Modified By','modifiedBy.username'),
+                               ('Category', 'componentType.category()'),
+                               ('Type', 'componentType.name'),
+                               ('Sequence', 'sequence'),
+                               ('n Samples', 'protein_samples.count()'),
+                               ('Description','description')])
+    
+    def queryset(self, request):
+        """Revert modification made by ComponentModelAdmin"""
+        return super(ComponentAdmin,self).queryset(request)
+
+    def make_csv(self, request, queryset):
+        return export_csv( request, queryset, self.csv_fields)
+    make_csv.short_description = 'Export items as CSV'
+
+admin.site.register(M.ProteinComponent, ProteinComponentAdmin)
 

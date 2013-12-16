@@ -19,7 +19,7 @@
         <table summary="Content Models">
         <caption><a href="/rotmic" class="section">Sequences and Constructs</a></caption>
            <tr>
-                <td rowspan="4"><img src="{% static "img/plasmid2.png" %}" height="80" width="80"></td>
+                <td rowspan="5"><img src="{% static "img/plasmid2.png" %}" height="80" width="80"></td>
                 
                 <th scope="row"><a href="{% url 'admin:rotmic_dnacomponent_changelist' %}">DNA constructs</a></th>
                 <td><a href="{% url 'admin:rotmic_dnacomponent_add' %}" class="addlink">Add</a></td>
@@ -31,6 +31,10 @@
             <tr>
                 <th scope="row"><a href="{% url 'admin:rotmic_oligocomponent_changelist' %}">Oligonucleotides</a></th>
                 <td><a href="{% url 'admin:rotmic_oligocomponent_add' %}" class="addlink">Add</a></td>
+            </tr>
+            <tr>
+                <th scope="row"><a href="{% url 'admin:rotmic_proteincomponent_changelist' %}">Proteins</a></th>
+                <td><a href="{% url 'admin:rotmic_proteincomponent_add' %}" class="addlink">Add</a></td>
             </tr>
             <tr>
                 <th scope="row"><a href="{% url 'admin:rotmic_chemicalcomponent_changelist' %}">Chemicals & Reagents</a></th>
@@ -134,6 +138,13 @@
                 <tr>
                      <th scope="row"><a href="{% url 'admin:rotmic_oligocomponenttype_changelist' %}">Oligo Categories</a></th>
                      <td><a href="{% url 'admin:rotmic_oligocomponenttype_add' %}" class="addlink">Add</a></td>
+                </tr>
+                {% endif %}
+
+                {% if perms.rotmic.change_proteincomponenttype %}
+                <tr>
+                     <th scope="row"><a href="{% url 'admin:rotmic_proteincomponenttype_changelist' %}">Protein Categories</a></th>
+                     <td><a href="{% url 'admin:rotmic_proteincomponenttype_add' %}" class="addlink">Add</a></td>
                 </tr>
                 {% endif %}
 

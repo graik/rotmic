@@ -36,6 +36,15 @@ def getChemicalTypes(request, maintype):
     json_models = serializers.serialize("json", subtypes)
     return HttpResponse(json_models, mimetype="application/javascript") 
 
+def getProteinTypes(request, maintype):
+    if maintype.isdigit():  ## support identification by primary key
+        subtypes = M.ProteinComponentType.objects.filter(subTypeOf__id=int(maintype))
+    else:
+        subtypes = M.ProteinComponentType.objects.filter(subTypeOf__name=maintype)
+    
+    json_models = serializers.serialize("json", subtypes)
+    return HttpResponse(json_models, mimetype="application/javascript") 
+
 
 def getParentTypeDnaInfo(request, subtype):
     currentSubType = M.DnaComponentType.objects.get(id=subtype)
@@ -85,6 +94,19 @@ def nextChemicalId(request, category):
     category - ignored for now
     """
     r = {'id': I.suggestChemicalId( request.user.id )}
+    
+    json_models = json.dumps(r)
+    return HttpResponse(json_models, mimetype="application/json") 
+
+
+def nextProteinId(request, category):
+    """
+    request - request object
+    category - parent ComponentType
+    """
+    ## middle = category[0].lower()
+    middle = 'prt'
+    r = {'id': I.suggestProteinId( request.user.id, middle=middle )}
     
     json_models = json.dumps(r)
     return HttpResponse(json_models, mimetype="application/json") 

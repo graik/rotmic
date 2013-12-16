@@ -3,7 +3,9 @@ from django.conf.urls import patterns, include, url
 import rotmic.views as V
 
 from rotmic.jsviews import getTypeDnaInfo, getCellTypes, nextDnaId, \
-     nextCellId, nextSampleId, nextOligoId, getChemicalTypes, nextChemicalId
+     nextCellId, nextSampleId, nextOligoId, getChemicalTypes, nextChemicalId, \
+     getProteinTypes, nextProteinId
+
 import rotmicsite.settings as settings
 
 # Uncomment the next two lines to enable the admin:
@@ -14,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^getTypeDnaInfo/(?P<maintype>.*)/$',getTypeDnaInfo,name='getTypeDnaInfo'),
     url(r'^getCellTypes/(?P<maintype>.*)/$',getCellTypes,name='getCellTypes'),
     url(r'^getChemicalTypes/(?P<maintype>.*)/$',getChemicalTypes,name='getChemicalTypes'),
+    url(r'^getProteinTypes/(?P<maintype>.*)/$',getProteinTypes,name='getProteinTypes'),
 
     url(r'^rotmic/ajax/nextDnaId/(?P<category>.+)/$', 
         nextDnaId, name='nextDnaId' ),
@@ -26,6 +29,9 @@ urlpatterns = patterns('',
 
     url(r'^rotmic/ajax/nextChemicalId/(?P<category>.+)/$', 
         nextChemicalId, name='nextChemicalId' ),
+
+    url(r'^rotmic/ajax/nextProteinId/(?P<category>.+)/$', 
+        nextProteinId, name='nextProteinId' ),
 
     url(r'^rotmic/ajax/nextSampleId/(?P<container>.+)/$', 
         nextSampleId, name='nextSampleId' ),

@@ -1,0 +1,31 @@
+{% extends "admin/rotmic/change_form_component.html" %}
+
+{% load i18n admin_modify  %}
+{% load rotmicfilters %}
+
+    {# duplicating a line from parent template but activates syntax highlighting #}
+<!--    <script language=javascript type='text/javascript'>-->
+        
+        {% block ajax-typeinfo %}"/getProteinTypes/"{% endblock %}   
+            
+        {% block ajax-nextId %}"/rotmic/ajax/nextProteinId/"{% endblock %}
+        
+    
+        {% block func_suggestName %}
+        // de-activate name-suggestion
+        function suggestName() {
+        }
+        {% endblock %}
+
+        {% block func_categoryAction %}
+        // method called if componentCategory select element is changed
+        function categoryAction(){
+            updateListBox();
+            hideShow();
+            // suggestName(); // only suggest name on loading of the form
+            // suggestId(); // only suggest ID on loading of the form
+        }
+        {% endblock func_categoryAction %}
+        
+<!--    </script>-->
+    

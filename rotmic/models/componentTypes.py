@@ -118,7 +118,7 @@ class OligoComponentType( ComponentType ):
         
         
 class ChemicalType( ComponentType ):
-    """Classification of OligoComponents"""
+    """Classification of ChemicalComponents"""
     
     #: directional relationship to parent type or types
     subTypeOf = models.ForeignKey('self', blank=True, null=True,
@@ -136,5 +136,28 @@ class ChemicalType( ComponentType ):
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'Chemical Type'
+        abstract = False
+        ordering = ['subTypeOf__name', 'name']
+
+
+class ProteinComponentType( ComponentType ):
+    """Classification of ProteinComponents"""
+    
+    #: directional relationship to parent type or types
+    subTypeOf = models.ForeignKey('self', blank=True, null=True,
+                                  limit_choices_to={'subTypeOf':None},
+                                  related_name='subTypes',
+                                  verbose_name='sub-type of',
+                                  help_text='Assign to existing type or leave blank to create a new top-level type.')
+    
+    def __unicode__(self):
+        r = unicode(self.name)
+        if self.subTypeOf:
+            r = self.subTypeOf.__unicode__() + ' / ' + r
+        return r    
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'Protein Type'
         abstract = False
         ordering = ['subTypeOf__name', 'name']
