@@ -231,15 +231,16 @@ class _BaseMultipleSelectWidget(SelectableMultiWidget, SelectableMediaMixin):
         value = ['', value]
         return super(_BaseMultipleSelectWidget, self).render(name, value, attrs)
 
-    def _has_changed(self, initial, data):
-        """"
-        Decects if the widget was changed. This is removed in 1.6.
-
-        For the multi-select case we only care if the hidden inputs changed.
-        """
-        initial = ['', initial]
-        data = ['', data]
-        return super(_BaseMultipleSelectWidget, self)._has_changed(initial, data)
+## Commented out by Raik for compatibility with Django 1.6
+##    def _has_changed(self, initial, data):
+##        """"
+##        Decects if the widget was changed. This is removed in 1.6.
+##
+##        For the multi-select case we only care if the hidden inputs changed.
+##        """
+##        initial = ['', initial]
+##        data = ['', data]
+##        return super(_BaseMultipleSelectWidget, self)._has_changed(initial, data)
 
 
 class AutoCompleteSelectMultipleWidget(_BaseMultipleSelectWidget):
