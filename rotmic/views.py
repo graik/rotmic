@@ -17,7 +17,7 @@ from rotmic.forms import TableUploadForm
 
 def view_genbankfile(request, pk):
     """DC View"""
-    o = DnaComponent.objects.get(id=pk)
+    o = M.DnaComponent.objects.get(id=pk)
     txt = o.genbank
     f = StringIO.StringIO( txt )
     
