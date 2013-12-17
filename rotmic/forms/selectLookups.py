@@ -30,7 +30,9 @@ import rotmic.initialComponents as IC
 
 class FixedSelectMultipleWidget( sforms.AutoComboboxSelectMultipleWidget ):
     """
-    Bug fix the change detection method
+    Bug fix the change detection method;
+    This should, in theory, be obsolete since Django 1.6
+    (The _has_changed method has moved from widget to FormField)
     """    
     def _has_changed(self,initial, data):
         """override buggy method from SelectWidget"""
