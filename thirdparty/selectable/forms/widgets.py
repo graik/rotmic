@@ -65,13 +65,14 @@ class SelectableMultiWidget(forms.MultiWidget):
     def update_query_parameters(self, qs_dict):
         self.widgets[0].update_query_parameters(qs_dict)
 
-    def _has_changed(self, initial, data):
-        "Decects if the widget was changed. This is removed in 1.6."
-        if initial is None and data is None:
-            return False
-        if data and not hasattr(data, '__iter__'):
-            data = self.decompress(data)
-        return super(SelectableMultiWidget, self)._has_changed(initial, data)
+## commented out by Raik for compability to Django 1.6
+##    def _has_changed(self, initial, data):
+##        "Decects if the widget was changed. This is removed in 1.6."
+##        if initial is None and data is None:
+##            return False
+##        if data and not hasattr(data, '__iter__'):
+##            data = self.decompress(data)
+##        return super(SelectableMultiWidget, self)._has_changed(initial, data)
 
     def decompress(self, value):
         if value:
