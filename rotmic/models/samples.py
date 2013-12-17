@@ -26,6 +26,48 @@ from .storage import Container
 import rotmic.utils.inheritance as I
 
 
+class SampleProvenanceType(models.Model):
+    """Classification of relations between samples"""
+    
+    name = models.CharField('Name', max_length=200, blank=True, 
+                            help_text='short descriptive name (must be unique)',
+                            unique=True )
+    
+    requiresSource = models.BooleanField('Requires source', default=True, 
+                                          help_text='Links of this type require a source sample.')
+    
+    description = models.TextField('Description', blank=True, help_text='detailed description' )
+    
+    isDefault = models.BooleanField('make Default', default=False,
+                                    help_text='Make this the default choice of provenance type.')
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name  = 'Provenance Type'
+        ordering = ['isDefault', 'name']
+    
+
+class SampleProvenance(models.Model):
+    """Sample History"""
+    
+    sample = models.ForeignKey('Sample', related_name='sampleProvenance')
+    
+    sourceSample = models.ForeignKey('Sample', null=True, related_name='derivedSample')
+    
+    description = models.CharField( 'Description', max_length=200,
+                                    help_text='Brief description for tables and listings',
+                                    blank=True )
+
+    provenanceType = models.ForeignKey( SampleProvenanceType, 
+                                        verbose_name='Provenance Type',
+                                        help_text="How is this sample derived from it's source?")
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name  = 'Provenance'
+        ordering = ['sample']
+
+
 class Sample( UserMixin ):
     """Base class for DNA, cell and protein samples."""
 
@@ -74,6 +116,12 @@ class Sample( UserMixin ):
                                    limit_choices_to = Q(unitType__in=['volume','number', 'mass'])
                                    )
 
+
+    provenance =models.ManyToManyField(SampleProvenance, blank=True, null=True, 
+                                       related_name='samples+',   ## end with + to suppress reverse relationship
+                                       verbose_name='History',
+                                       help_text='Sample History')
+    
     ## return child classes in queries using select_subclasses()
     objects = I.InheritanceManager()  
 
