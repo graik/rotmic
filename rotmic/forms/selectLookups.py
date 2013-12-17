@@ -28,18 +28,6 @@ import rotmic.initialUnits as U
 import rotmic.initialComponents as IC
 
 
-class SilentSelectWidget( forms.Select ):
-    """
-    Custom Select Widget which is never reporting to have changed.
-    This fixes the issue that reversion is reporting componentCategory as
-    changed whenever the form is saved.
-    The category field is not backed by any model value but only reports the 
-    parent of componentType. That's why it cannot change by itself.
-    """    
-    def _has_changed(self,initial, data):
-        """never mark as changed."""
-        return False
-
 class FixedSelectMultipleWidget( sforms.AutoComboboxSelectMultipleWidget ):
     """
     Bug fix the change detection method

@@ -139,14 +139,12 @@ class CellSampleForm( SampleForm ):
     """Customized Form for CellSample add / change"""
     
     cellCategory = forms.ModelChoiceField(label='In Species',
-                            widget=L.SilentSelectWidget,
                             queryset=M.CellComponentType.objects.filter(subTypeOf=None),
                             required=False, 
                             empty_label=None,
                             initial=T.ccEcoli)
     
     cellType = forms.ModelChoiceField(label='Strain',
-                            widget=L.SilentSelectWidget,
                             queryset=M.CellComponentType.objects.exclude(subTypeOf=None),
                             required=False,
                             empty_label=None,
