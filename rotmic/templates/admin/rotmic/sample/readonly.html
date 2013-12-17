@@ -189,6 +189,11 @@
                 <h2>Record</h2>
                 <ul>    
                     <li><B>Status</B>:<p>{{o.status}}</p></li>
+                    <li><B>prepared</B>: 
+                        <p>
+                            {{o.preparedAt|date:"Y-m-d"}}
+                        </p>
+                    </li>
                     <li><B>registered</B>: 
                         <p>
                         {% with o.registeredBy as U %}
