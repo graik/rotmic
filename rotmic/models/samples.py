@@ -53,9 +53,9 @@ class SampleProvenanceType(models.Model):
 class SampleProvenance(models.Model):
     """Sample History"""
     
-    sample = models.ForeignKey('Sample', related_name='sampleProvenance')
+    sample = models.ForeignKey('Sample', related_name='sampleParents')
     
-    sourceSample = models.ForeignKey('Sample', null=True, blank=True, related_name='derivedSample',
+    sourceSample = models.ForeignKey('Sample', null=True, blank=True, related_name='sampleChilds',
                                      verbose_name='from sample')
     
     description = models.CharField( 'Comment', max_length=200,
