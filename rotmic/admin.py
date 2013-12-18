@@ -147,7 +147,7 @@ class SampleAttachmentInline(admin.TabularInline):
     ## Note: this template may be affected by:
     ## https://code.djangoproject.com/ticket/13696
     ## Todo: update to django 1.6 version of this template
-    template = 'admin/rotmic/componentattachment/tabular.html'
+    ## template = 'admin/rotmic/componentattachment/tabular.html'
     
     can_delete=True
     extra = 1

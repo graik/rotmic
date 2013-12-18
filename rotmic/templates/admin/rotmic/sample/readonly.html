@@ -148,9 +148,80 @@
             <h2>Sample history</h2>
             <div>
                 <p class='description'>
-                    {% if o.sameSamples.all.count %}
-                        The following samples have the same content as {{o}}:
+                    {% if o.sampleParents.all.count %}
                         <div style="margin: 10px">
+                            <b>Origin: </b>This sample has the following origin(s):
+                            <table cellspacing="1">
+                    
+                                <thead>
+                                <tr>
+                                    <th>Derived by</th>
+                                    <th>From source sample</th><th>comment</th>
+                                </tr>
+                                </thead>
+                                
+                                <tbody>
+                                {% for prov in o.sampleParents.all %}
+                                
+                                    {% with x=prov.sourceSample %}
+
+                                    <tr class="{% cycle 'row1' 'row2' %}">
+                                      <td>{{prov.provenanceType}}</td>
+                                                           
+                                      <td>{%if x%}<b><a href="{{x.get_absolute_url}}">{{x}}</a></b>{%endif%}</td>
+                                      
+                                      <td>{{prov.comment}}</td>
+                                    </tr>
+                                    
+                                    {% endwith %}
+                    
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                            <p></p>
+                        </div>
+                    {% endif %}
+                    <p></p>
+
+                    {% if o.sampleChilds.all.count %}
+                        <div style="margin: 10px">
+                            <b>Child samples:</b> The following samples were generated from this sample:
+                            <table cellspacing="1">
+                    
+                                <thead>
+                                <tr>
+                                    <th>Used for...</th>
+                                    <th>...to generate sample</th><th>comment</th>
+                                </tr>
+                                </thead>
+                                
+                                <tbody>
+                                {% for prov in o.sampleChilds.all %}
+                                
+                                    {% with x=prov.sample %}
+
+                                    <tr class="{% cycle 'row1' 'row2' %}">
+                                      <td>{{prov.provenanceType}}</td>
+                                                           
+                                      <td>{%if x%}<b><a href="{{x.get_absolute_url}}">{{x}}</a></b>{%endif%}</td>
+                                      
+                                      <td>{{prov.comment}}</td>
+                                    </tr>
+                                    
+                                    {% endwith %}
+                    
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                            <p></p>
+                        </div>
+                    {% endif %}
+
+                </p>
+            </div>
+        </div>
+        {% endblock %}
+                        
 
     </div>
 
