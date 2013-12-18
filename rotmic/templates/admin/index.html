@@ -151,6 +151,12 @@
                 </tr>
                 {% endif %}
     
+                {% if perms.rotmic.change_sampleprovenancetype %}
+                <tr>
+                    <th scope="row"><a href="{% url 'admin:rotmic_sampleprovenancetype_changelist' %}">Sample Provenance Types</a></th>
+                    <td><a href="{% url 'admin:rotmic_sampleprovenancetype_add' %}" class="addlink">Add</a></td>
+                </tr>
+                {% endif %}
             </table>
         </div>
     {% endif %}
