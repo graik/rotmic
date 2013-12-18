@@ -123,7 +123,8 @@ class Rack(UserMixin):
                                   related_name='racks')
         
     def __unicode__(self):
-        r = unicode(self.displayId)
+        location = self.location.displayId if self.location else ''
+        r = u'%s / %s' % ( location, unicode(self.displayId))
         if self.name:
             r += ' (%s)' % self.name
         return r

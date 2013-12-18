@@ -173,7 +173,7 @@ registry.register(SampleContainerLookup)
 class ContainerRackLookup(ModelLookup):
     """for selectable auto-completion field in Container form"""
     model = M.Rack
-    search_fields = ('displayId__startswith', 'name__icontains')
+    search_fields = ('location__displayId__startswith', 'displayId__startswith', 'name__icontains')
     
     def get_item_id(self,item):
         return item.pk
