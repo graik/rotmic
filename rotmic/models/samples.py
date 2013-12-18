@@ -50,7 +50,7 @@ class Sample( UserMixin ):
     
     description = models.TextField('Description', blank=True)
 
-    preparedAt = models.DateField(default=datetime.datetime.now().date, verbose_name="Prepared")
+    preparedAt = models.DateField(default=datetime.now().date, verbose_name="Prepared")
     
     source = models.CharField('External Source', blank=True, null=True, 
                               max_length=100,
