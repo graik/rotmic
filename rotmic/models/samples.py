@@ -40,6 +40,9 @@ class SampleProvenanceType(models.Model):
     
     isDefault = models.BooleanField('make Default', default=False,
                                     help_text='Make this the default choice of provenance type.')
+    
+    def __unicode__(self):
+        return unicode(self.name)
 
     class Meta:
         app_label = 'rotmic'
@@ -52,19 +55,21 @@ class SampleProvenance(models.Model):
     
     sample = models.ForeignKey('Sample', related_name='sampleProvenance')
     
-    sourceSample = models.ForeignKey('Sample', null=True, related_name='derivedSample')
+    sourceSample = models.ForeignKey('Sample', null=True, related_name='derivedSample',
+                                     verbose_name='from sample')
     
-    description = models.CharField( 'Description', max_length=200,
+    description = models.CharField( 'Comment', max_length=200,
                                     help_text='Brief description for tables and listings',
                                     blank=True )
 
     provenanceType = models.ForeignKey( SampleProvenanceType, 
-                                        verbose_name='Provenance Type',
+                                        verbose_name='derived how (provenance type)',
                                         help_text="How is this sample derived from it's source?")
 
     class Meta:
         app_label = 'rotmic'
-        verbose_name  = 'Provenance'
+        verbose_name  = 'Sample History'
+        verbose_name_plural = 'Sample History'
         ordering = ['sample']
 
 
