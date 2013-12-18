@@ -181,6 +181,18 @@ class ContainerRackLookup(ModelLookup):
 registry.register( ContainerRackLookup )
 
 
+class ProvenanceSampleLookup(ModelLookup):
+    """for selectable auto-completion field in SampleProvenance form"""
+    model = M.Sample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register( ProvenanceSampleLookup )
+
+
 class UnitLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
     model = M.Unit

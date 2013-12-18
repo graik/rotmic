@@ -306,3 +306,22 @@ class ChemicalSampleForm( SampleForm ):
                                                       allow_new=False,
                                                       attrs={'size':35}),
              })
+
+class SampleProvenanceForm( forms.ModelForm ):
+    """minimal form used inline for sample History records"""
+    
+    def clean_sourceSample(self):
+        r = self.cleaned_data['sourceSample']
+        t = self.cleaned_data['provenanceType']
+
+        if t and t.requiresSource and not r:
+            raise ValidationError('%s requires a source sample.' % unicode(t))
+        
+        return r
+        
+    
+    class Meta:
+        widgets = {'sourceSample': sforms.AutoComboboxSelectWidget(lookup_class=L.ProvenanceSampleLookup,
+                                                                   allow_new=False,
+                                                                   attrs={'size':20})
+                   }

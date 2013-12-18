@@ -143,7 +143,12 @@ admin.site.register( M.Unit, UnitAdmin )
 class SampleAttachmentInline(admin.TabularInline):
     model = M.SampleAttachment
     form = forms.AttachmentForm
+
+    ## Note: this template may be affected by:
+    ## https://code.djangoproject.com/ticket/13696
+    ## Todo: update to django 1.6 version of this template
     template = 'admin/rotmic/componentattachment/tabular.html'
+    
     can_delete=True
     extra = 1
     max_num = 5
@@ -162,7 +167,8 @@ class SampleProvenanceInline(admin.TabularInline):
     model = M.SampleProvenance
     fk_name = 'sample'  ## ensure provenance is attached to target sample (not to source sample)
     
-    template = 'admin/rotmic/componentattachment/tabular.html'
+    form = forms.SampleProvenanceForm
+    
     can_delete=True
     extra = 1
     max_num = 5

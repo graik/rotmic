@@ -55,7 +55,7 @@ class SampleProvenance(models.Model):
     
     sample = models.ForeignKey('Sample', related_name='sampleProvenance')
     
-    sourceSample = models.ForeignKey('Sample', null=True, related_name='derivedSample',
+    sourceSample = models.ForeignKey('Sample', null=True, blank=True, related_name='derivedSample',
                                      verbose_name='from sample')
     
     description = models.CharField( 'Comment', max_length=200,
@@ -65,6 +65,13 @@ class SampleProvenance(models.Model):
     provenanceType = models.ForeignKey( SampleProvenanceType, 
                                         verbose_name='derived how (provenance type)',
                                         help_text="How is this sample derived from it's source?")
+
+    def __unicode__(self):
+        """"""
+        r = unicode(self.provenanceType.name)
+        if self.sourceSample:
+            r += u' from ' + unicode(self.sourceSample)
+        return r
 
     class Meta:
         app_label = 'rotmic'
