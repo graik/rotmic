@@ -163,7 +163,7 @@ class SampleAttachmentInline(admin.TabularInline):
         }),
     )
     
-class SampleProvenanceInline(admin.TabularInline):
+class SampleProvenanceInline(admin.StackedInline):
     model = M.SampleProvenance
     fk_name = 'sample'  ## ensure provenance is attached to target sample (not to source sample)
     
@@ -175,7 +175,7 @@ class SampleProvenanceInline(admin.TabularInline):
 
     fieldsets = (
         (None, {
-            'fields': ('provenanceType', 'sourceSample', 'description',),
+            'fields': (('provenanceType', 'sourceSample', ), ('description',)),
             'description': 'Specify how this sample was created or from which other sample it was derived from.',
 ##            'classes': ('collapse',),
         }),

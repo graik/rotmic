@@ -68,10 +68,13 @@ class SampleProvenance(models.Model):
 
     def __unicode__(self):
         """"""
-        r = unicode(self.provenanceType.name)
-        if self.sourceSample:
-            r += u' from ' + unicode(self.sourceSample)
-        return r
+        try:
+            r = unicode(self.provenanceType.name)
+            if self.sourceSample:
+                r += u' from ' + unicode(self.sourceSample)
+            return r
+        except:
+            return 'undefined Sample Provenance'
 
     class Meta:
         app_label = 'rotmic'

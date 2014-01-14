@@ -318,7 +318,7 @@ class SampleProvenanceForm( forms.ModelForm ):
         if t and t.requiresSource and not r:
             raise ValidationError('%s requires a source sample.' % unicode(t))
         
-        if r and r.id == self.instance.sample.id:
+        if r and self.instance and r.id == self.instance.sample_id:
             raise ValidationError('Cannot derive sample from itself.')
         
         return r
