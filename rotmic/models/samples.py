@@ -168,6 +168,11 @@ class Sample( UserMixin ):
         return r
     descriptionText.short_description = 'description'
     
+    def sourceSamples(self):
+        """All samples that are registered as source in provenance records"""
+        return Sample.objects.filter(sampleChilds__sample__id=self.id)
+    
+    
     def sameSamples(self):
         """
         Needs to be overriden!
@@ -180,6 +185,29 @@ class Sample( UserMixin ):
         Samples that are related but not identical
         """
         return []
+
+    def subClass(self):
+        """
+        Identify sample subClass used for this instance.
+        @return: class, (either DnaSample, CellSample, ChemicalSample or OligoSample)
+        """
+        if self.__class__ is not Sample:
+            return self.__class__
+
+        for c in [DnaSample, CellSample, ChemicalSample, OligoSample]:
+            try: 
+                return c.objects.get(id=self.id).__class__
+            except:
+                pass
+
+        return self.__class__   
+    
+    def convertClass(self):
+        """
+        Convert a generic Sample instance into the best matching specific sample instance.
+        @return: instance of specific Sample sub-class.
+        """
+        return self.subClass().objects.get(id=self.id)
 
     def get_absolute_url(self):
         """
