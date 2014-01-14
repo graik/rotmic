@@ -313,9 +313,13 @@ class SampleProvenanceForm( forms.ModelForm ):
     def clean_sourceSample(self):
         r = self.cleaned_data['sourceSample']
         t = self.cleaned_data['provenanceType']
+        
 
         if t and t.requiresSource and not r:
             raise ValidationError('%s requires a source sample.' % unicode(t))
+        
+        if r and r.id == self.instance.sample.id:
+            raise ValidationError('Cannot derive sample from itself.')
         
         return r
         

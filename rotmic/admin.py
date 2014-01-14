@@ -158,7 +158,7 @@ class SampleAttachmentInline(admin.TabularInline):
             'fields': ('f', 'description',),
             'description': 'Only attach files that are specific to this very sample\n'\
                            +'Use DNA or Cell attachments otherwise.',
-            'classes': ('collapse',),
+##            'classes': ('collapse',),
             
         }),
     )
@@ -177,7 +177,7 @@ class SampleProvenanceInline(admin.TabularInline):
         (None, {
             'fields': ('provenanceType', 'sourceSample', 'description',),
             'description': 'Specify how this sample was created or from which other sample it was derived from.',
-            'classes': ('collapse',),
+##            'classes': ('collapse',),
         }),
     )
 
