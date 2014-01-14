@@ -85,6 +85,81 @@
             {% endblock %}
             
         </div>
+            
+        {% block sample-history %}
+        <div class='module'>
+            <h2>Sample history</h2>
+            <div>
+                <p class='description'>
+                    {% if o.sampleParents.all.count or o.sampleChilds.all.count %}
+                        <div style="margin: 10px">
+                        
+                            <table>
+                                <tr>
+                                    <td style="vertical-align:middle">
+                                        <!-- Source Samples-->
+                                        <table>
+                                            {% for prov in o.sampleParents.all %}
+                                                <tr>
+                                                    <td style="vertical-align:middle">
+                                                        {% if prov.sourceSample %}
+                                                            {% with s=prov.sourceSample.convertClass %}
+                                                                <b><a href="{{s.get_absolute_url}}">{{s}}
+                                                                </a></b>
+                                                            {% endwith %}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td style="vertical-align:middle" align='center'>
+                                                        {{prov.provenanceType}}<br>
+                                                        <img src="{% static "img/arrow_right.png" %}" width="100"><br>
+                                                        {{prov.description}}<br>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </table>
+                                    </td>
+                                    
+                                    <td style="vertical-align:middle">
+                                        <!-- Center-->
+                                        <table>
+                                            <th>This Sample</th>
+                                        </table>
+                                    </td>
+                                    
+                                    <td>
+                                        <!-- derived samples -->
+                                        <table>
+                                            {% for prov in o.sampleChilds.all %}
+                                                <tr>
+                                                    <td style="vertical-align:middle" align='center'>
+                                                        {{prov.provenanceType}}<br>
+                                                        <img src="{% static "img/arrow_right.png" %}" width="100"><br>
+                                                        {{prov.description}}<br>
+                                                    </td>
+                                                    <td style="vertical-align:middle">
+                                                        {% if prov.sample %}
+                                                            {% with s=prov.sample.convertClass %}
+                                                                <b><a href="{{s.get_absolute_url}}">{{s}}
+                                                                </a></b>
+                                                            {% endwith %}
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                        </div>
+                    {% endif %}
+
+                </p>
+            </div>
+        </div>
+        {% endblock %}
+                        
+
         
         {% block related-samples %}
         <div class='module'>
@@ -142,87 +217,6 @@
             </div>
         </div>    
         {% endblock %}
-            
-        {% block sample-history %}
-        <div class='module'>
-            <h2>Sample history</h2>
-            <div>
-                <p class='description'>
-                    {% if o.sampleParents.all.count %}
-                        <div style="margin: 10px">
-                            <b>Origin: </b>This sample has the following origin(s):
-                            <table cellspacing="1">
-                    
-                                <thead>
-                                <tr>
-                                    <th>Derived by</th>
-                                    <th>From source sample</th><th>comment</th>
-                                </tr>
-                                </thead>
-                                
-                                <tbody>
-                                {% for prov in o.sampleParents.all %}
-                                
-                                    {% with x=prov.sourceSample %}
-
-                                    <tr class="{% cycle 'row1' 'row2' %}">
-                                      <td>{{prov.provenanceType}}</td>
-                                                           
-                                      <td>{%if x%}<b><a href="{{x.get_absolute_url}}">{{x}}</a></b>{%endif%}</td>
-                                      
-                                      <td>{{prov.comment}}</td>
-                                    </tr>
-                                    
-                                    {% endwith %}
-                    
-                              {% endfor %}
-                              </tbody>
-                            </table>
-                            <p></p>
-                        </div>
-                    {% endif %}
-                    <p></p>
-
-                    {% if o.sampleChilds.all.count %}
-                        <div style="margin: 10px">
-                            <b>Child samples:</b> The following samples were generated from this sample:
-                            <table cellspacing="1">
-                    
-                                <thead>
-                                <tr>
-                                    <th>Used for...</th>
-                                    <th>...to generate sample</th><th>comment</th>
-                                </tr>
-                                </thead>
-                                
-                                <tbody>
-                                {% for prov in o.sampleChilds.all %}
-                                
-                                    {% with x=prov.sample %}
-
-                                    <tr class="{% cycle 'row1' 'row2' %}">
-                                      <td>{{prov.provenanceType}}</td>
-                                                           
-                                      <td>{%if x%}<b><a href="{{x.get_absolute_url}}">{{x}}</a></b>{%endif%}</td>
-                                      
-                                      <td>{{prov.comment}}</td>
-                                    </tr>
-                                    
-                                    {% endwith %}
-                    
-                              {% endfor %}
-                              </tbody>
-                            </table>
-                            <p></p>
-                        </div>
-                    {% endif %}
-
-                </p>
-            </div>
-        </div>
-        {% endblock %}
-                        
-
     </div>
 
 
