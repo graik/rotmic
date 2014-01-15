@@ -279,6 +279,8 @@ class ImportXls(object):
                 
                 valid = form.is_valid()
                 
+                ## inline forms for provenance would need to be created separately here.
+                
                 d['object'] = form.save( commit=False )
                 d['object_form'] = form
             except ValueError as e:
