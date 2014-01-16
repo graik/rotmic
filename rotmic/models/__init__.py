@@ -29,6 +29,6 @@ from rotmic.models.components import Component, DnaComponent, CellComponent, \
      OligoComponent, ChemicalComponent
 
 from rotmic.models.samples import Sample, DnaSample, CellSample, OligoSample,\
-     ChemicalSample
+     ChemicalSample, SampleProvenance, SampleProvenanceType
 
 from rotmic.models.storage import Location, Rack, Container

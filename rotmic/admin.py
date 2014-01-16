@@ -143,7 +143,12 @@ admin.site.register( M.Unit, UnitAdmin )
 class SampleAttachmentInline(admin.TabularInline):
     model = M.SampleAttachment
     form = forms.AttachmentForm
-    template = 'admin/rotmic/componentattachment/tabular.html'
+
+    ## Note: this template may be affected by:
+    ## https://code.djangoproject.com/ticket/13696
+    ## Todo: update to django 1.6 version of this template
+    ## template = 'admin/rotmic/componentattachment/tabular.html'
+    
     can_delete=True
     extra = 1
     max_num = 5
@@ -153,11 +158,26 @@ class SampleAttachmentInline(admin.TabularInline):
             'fields': ('f', 'description',),
             'description': 'Only attach files that are specific to this very sample\n'\
                            +'Use DNA or Cell attachments otherwise.',
-            'classes': ('collapse',),
             
         }),
     )
     
+class SampleProvenanceInline(admin.StackedInline):
+    model = M.SampleProvenance
+    fk_name = 'sample'  ## ensure provenance is attached to target sample (not to source sample)
+    
+    form = forms.SampleProvenanceForm
+    
+    can_delete=True
+    extra = 1
+    max_num = 5
+
+    fieldsets = (
+        (None, {
+            'fields': (('provenanceType', 'sourceSample', ), ('description',)),
+            'description': 'Specify how this sample was created or from which other sample it was derived from.',
+        }),
+    )
 
 class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
     form = forms.SampleForm     
@@ -166,7 +186,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     
     template = 'admin/rotmic/change_form_viewfirst.html'
 
-    inlines = [ SampleAttachmentInline ]
+    inlines = [ SampleProvenanceInline, SampleAttachmentInline ]
     date_hierarchy = 'preparedAt'
     
     fieldsets = [
@@ -574,3 +594,11 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin
 
 admin.site.register( M.Container, ContainerAdmin )
 
+
+class SampleProvenanceTypeAdmin(admin.ModelAdmin):
+    
+    list_display = ('name','isDefault', 'requiresSource', 'description')
+    list_filter = ('requiresSource',)
+    
+admin.site.register( M.SampleProvenanceType, SampleProvenanceTypeAdmin )
+    
