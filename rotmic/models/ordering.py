@@ -19,6 +19,14 @@ from django.core.urlresolvers import reverse
 
 from rotmic.models.components import UserMixin
 
+"""
+The general idea is:
+Component(DNA, ...Chemical) -> ProductInfo -> Vendor
+
+A single component can have several product infos associated to it (e.g. different
+vendors or packaging).
+"""
+
 class Vendor(UserMixin):
     """Vendor (company) of a product"""
 
@@ -54,4 +62,26 @@ class Vendor(UserMixin):
 
     def get_absolute_url(self):
         return reverse('admin:rotmic_vendor', args=(self.id,))
+
+
+class ProductInfo(UserMixin):
+    """Vendor-specific information for a given Component (DNA, Oligo, Chemical...)"""
+    
+    component = models.ForeignKey('Component', 
+                                  help_text='pointer to the actual product or thing')
+    
+    vendor = models.ForeignKey('Vendor', verbose_name='Vendor', 
+                               blank=True, null=True, 
+                               help_text='select normal supplier of this product')
+
+    catalog = models.CharField(max_length=30, unique=False, blank=True, 
+                               help_text='catalogue number')
+    
+    link = models.URLField(blank=True, 
+                           help_text='URL Link to product description')
+    
+    class Meta:
+        abstract = False
+        app_label= 'rotmic'
+
 

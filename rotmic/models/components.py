@@ -92,7 +92,7 @@ class Component(UserMixin):
     description = models.TextField('Description', blank=True,
                 help_text='You can format your text and include links. See: <a href="http://daringfireball.net/projects/markdown/basics">Markdown Quick Reference</a>')
     
-    ## return child classes in queries using select_subclasses()
+    ## return child classes in queries, uses select_subclasses()
     objects = I.InheritanceManager()  
 
     def __unicode__(self):
@@ -161,22 +161,6 @@ class StatusMixinDna(models.Model, StatusMixin):
     class Meta:
         abstract = True
     
-
-class ProductMixin(models.Model):
-    
-    vendor = models.ForeignKey('Vendor', verbose_name='Vendor', 
-                               blank=True, null=True, 
-                               help_text='select normal supplier of this product')
-
-    catalog = models.CharField(max_length=30, unique=False, blank=True, 
-                               help_text='catalogue number')
-    
-    link = models.URLField(blank=True, 
-                           help_text='URL Link to product description')
-    
-    class Meta:
-        abstract = True
-
 
 class DnaComponent(Component, StatusMixinDna):
     """
@@ -353,7 +337,7 @@ class StatusMixinCommercial(models.Model, StatusMixin):
         abstract = True
     
 
-class OligoComponent(Component, StatusMixinCommercial, ProductMixin):
+class OligoComponent(Component, StatusMixinCommercial):
     """
     Description of DNA primer / oligo
     """
@@ -379,7 +363,7 @@ class OligoComponent(Component, StatusMixinCommercial, ProductMixin):
         ordering = ['displayId']
 
 
-class ChemicalComponent(Component, StatusMixinCommercial, ProductMixin):
+class ChemicalComponent(Component, StatusMixinCommercial):
     """
     Description of a Chemical
     """

@@ -33,4 +33,4 @@ from rotmic.models.samples import Sample, DnaSample, CellSample, OligoSample,\
 
 from rotmic.models.storage import Location, Rack, Container
 
-from rotmic.models.ordering import Vendor
+from rotmic.models.ordering import Vendor, ProductInfo
