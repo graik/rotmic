@@ -162,6 +162,22 @@ class StatusMixinDna(models.Model, StatusMixin):
         abstract = True
     
 
+class ProductMixin(models.Model):
+    
+    vendor = models.ForeignKey('Vendor', verbose_name='Vendor', 
+                               blank=True, null=True, 
+                               help_text='select normal supplier of this product')
+
+    catalog = models.CharField(max_length=30, unique=False, blank=True, 
+                               help_text='catalogue number')
+    
+    link = models.URLField(blank=True, 
+                           help_text='URL Link to product description')
+    
+    class Meta:
+        abstract = True
+
+
 class DnaComponent(Component, StatusMixinDna):
     """
     Description of a stretch of DNA.
@@ -337,7 +353,7 @@ class StatusMixinCommercial(models.Model, StatusMixin):
         abstract = True
     
 
-class OligoComponent(Component, StatusMixinCommercial):
+class OligoComponent(Component, StatusMixinCommercial, ProductMixin):
     """
     Description of DNA primer / oligo
     """
@@ -363,7 +379,7 @@ class OligoComponent(Component, StatusMixinCommercial):
         ordering = ['displayId']
 
 
-class ChemicalComponent(Component, StatusMixinCommercial):
+class ChemicalComponent(Component, StatusMixinCommercial, ProductMixin):
     """
     Description of a Chemical
     """
