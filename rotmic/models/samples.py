@@ -109,9 +109,9 @@ class Sample( UserMixin ):
 
     preparedAt = models.DateField(default=datetime.now().date, verbose_name="Prepared")
     
-    source = models.CharField('External Source', blank=True, null=True, 
+    experimentNr = models.CharField('Exeriment Nr.', blank=True, null=True, 
                               max_length=100,
-                              help_text='external lab or company' )
+                              help_text='exeriment/lab book Nr.' )
     
     solvent = models.CharField('in Buffer/Medium', max_length=100, blank=True)
 

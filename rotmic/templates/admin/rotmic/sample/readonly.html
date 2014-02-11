@@ -256,6 +256,11 @@
                             <p>{{o.solvent}}</p>
                         {% endif %}
                     </li>
+                    <li><B>Experiment #</B>:
+                        {% if o.experimentNr %}
+                            {{o.experimentNr}}
+                        {% endif %}
+                    </li>
                 </u>
             </div>
         {% endblock %}

@@ -192,7 +192,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     fieldsets = [
         (None, {
             'fields' : ((('container', 'displayId', 'status'),
-                         ('preparedAt',),
+                         ('preparedAt', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -215,7 +215,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     save_as = True
     save_on_top = True
 
-    search_fields = ('diplayId', 'name','description')
+    search_fields = ('diplayId', 'name','description', 'experimentNr')
     
     list_filter = ('status', filters.SampleLocationFilter, 
                    filters.SampleRackFilter, filters.SampleContainerFilter,
@@ -324,7 +324,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
                                ('Amount', 'amount'),
                                ('Amount Unit', 'amountUnit'),
                                ('Solvent', 'solvent'),
-                               ('Source', 'source'),
+                               ('ExperimentNr', 'experimentNr'),
                                ('Description','description')])
         return export_csv( request, queryset, fields)
     
@@ -343,7 +343,7 @@ class DnaSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt',),
+                         ('preparedAt', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -378,7 +378,7 @@ class CellSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt',),
+                         ('preparedAt', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -418,7 +418,7 @@ class OligoSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt',),
+                         ('preparedAt', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -452,7 +452,7 @@ class ChemicalSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt',),
+                         ('preparedAt', 'experimentNr'),
                          ('description'),
                     ))
             } ),

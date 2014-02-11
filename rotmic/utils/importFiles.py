@@ -615,7 +615,8 @@ class ImportXlsSample( ImportXls ):
                   'aliquots' : 'aliquotNr',
                   'in buffer': 'solvent',
                   'concentration unit' : 'concentrationUnit',
-                  'amount unit' : 'amountUnit' }
+                  'amount unit' : 'amountUnit',
+                  'experiment #' : 'experimentNr'}
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
