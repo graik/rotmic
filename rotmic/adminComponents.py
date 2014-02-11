@@ -121,6 +121,16 @@ class ComponentAdmin( ViewFirstModelAdmin ):
                (color.get(obj.status, '000000'), obj.statusValue())
     showStatus.allow_tags = True
     showStatus.short_description = 'Status'
+    
+    def showType(self, obj):
+        cat = unicode(obj.componentType.category())
+        try:
+            cat = cat[:4].replace(' ', '')
+        except:
+            pass
+        return cat + '/ ' + unicode(obj.componentType.name)
+    showType.allow_tags = True
+    showType.short_description = 'Type'
 
 
 class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin):
@@ -147,8 +157,8 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showInsertUrl', 'showVectorUrl', 'showMarkerUrls', 
-                    'showDescription','showStatus', 'showEdit')
+                    'showVectorUrl', 'showMarkerUrls', 
+                    'showDescription', 'showType', 'showStatus', 'showEdit')
     
     list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 
                     'status',filters.SortedUserFilter)
@@ -227,7 +237,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
         return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
                               % (url, x.description, x.displayId, x.name))
     showVectorUrl.allow_tags = True
-    showVectorUrl.short_description = 'Vector'
+    showVectorUrl.short_description = 'Base Vector'
     
     def showMarkerUrls(self, obj):
         """Table display of Vector Backbone markers"""
@@ -272,8 +282,9 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showPlasmidUrl', 'showMarkerUrls', 'showDescription','showStatus',
-                    'showEdit')
+                    'showPlasmidUrl', 'showMarkerUrls', 'showDescription',
+                    'showType',
+                    'showStatus', 'showEdit')
     
     list_filter = ( filters.CellCategoryListFilter, filters.CellTypeListFilter, 
                     'status', filters.SortedUserFilter)
@@ -372,7 +383,8 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'componentType', 'showTm', 'showDescription','showStatus','showEdit')
+                    'componentType', 'showTm', 'showDescription',
+                    'showStatus','showEdit')
     
     list_filter = ( 'componentType', 'status', filters.SortedUserFilter)
     
@@ -440,7 +452,8 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
     )
 
     list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'cas', 'showDescription','showStatus',
+                    'cas', 'showDescription', 'showType',
+                    'showStatus',
                     'showEdit')
     
     list_filter = ( filters.ChemicalCategoryListFilter, filters.ChemicalTypeListFilter, 
