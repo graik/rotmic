@@ -165,7 +165,8 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
     
     search_fields = ('displayId', 'name', 'description', 
                      'insert__name', 'insert__displayId',
-                     'vectorBackbone__name', 'vectorBackbone__displayId')
+                     'vectorBackbone__name', 'vectorBackbone__displayId',
+                     'vectorBackbone__markers__name', 'vectorBackbone__markers__displayId')
     
     date_hierarchy = 'registeredAt'
     
