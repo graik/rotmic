@@ -161,7 +161,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
                     'showDescription', 'showType', 'showStatus', 'showEdit')
     
     list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 
-                    'status',filters.SortedUserFilter)
+                    'status', filters.MarkerTypeFilter, filters.SortedUserFilter)
     
     search_fields = ('displayId', 'name', 'description', 
                      'insert__name', 'insert__displayId',

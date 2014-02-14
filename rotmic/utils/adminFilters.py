@@ -14,11 +14,97 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 from django.contrib import admin
-from django.db.models.query import QuerySet as Q
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 import rotmic.models as M
+import rotmic.initialTypes as I
+
+class MarkerTypeFilter( admin.SimpleListFilter ):
+    """Pre-filter table by *types of markers*"""
+    title = 'Selection...'
+    parameter_name = 'markertype'
+    
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        markers = M.DnaComponentType.objects.filter(subTypeOf=I.dcMarker)
+        return ( (x.name, x.name) for x in markers )
+    
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        q = queryset
+        
+        if not self.value():
+            return q
+    
+        markers = M.DnaComponent.objects.filter(componentType__name=self.value())
+        constraint = Q(markers__in=markers)\
+            | Q(vectorBackbone__markers__in=markers)\
+            | Q(insert__markers__in=markers)
+        
+        return q.filter(constraint)
+    
+
+class MarkerListFilter( admin.SimpleListFilter):
+    """
+    Filter DnaComponent Table by marker contained directly or indirectly.
+
+    The available markers are pre-filtered by MarkerTypeFilter.
+    """
+    title = '...Marker'
+    parameter_name = 'marker'
+    
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        if not u'markertype' in request.GET:
+            return ()
+        
+        markertype = request.GET[u'markertype']
+        markers = M.DnaComponent.objects.filter(componentType__name=markertype)
+        
+        return ( (x.name, x.name) for x in markers )
+    
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if not u'markertype' in request.GET:
+            return queryset
+        
+        markertype = request.GET[u'markertype']
+        markers = M.DnaComponent.objects.filter(componentType__name=markertype)
+        
+        if not self.value():
+            return q
+        
+        ## special case: missmatch between subtype and category
+        ## which happens after switching the category
+        if len(subtypes.filter(name=self.value())) == 0:
+            return r
+        
+        return r.filter(componentType__name=self.value())
+
+
 
 class CategoryListFilter( admin.SimpleListFilter):
     """
