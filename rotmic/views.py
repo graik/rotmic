@@ -89,7 +89,10 @@ class XlsUploadView(TemplateView):
             except I.ImportError, why:
                 messages.error(request, why)
                 
-            return HttpResponseRedirect(reverse(self.returnto()))
+        else:
+            messages.error(request, 'No Excel file given.')
+                
+        return HttpResponseRedirect(reverse(self.returnto()))
 
 
 class DnaXlsUploadView(XlsUploadView):    
