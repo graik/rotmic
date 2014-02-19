@@ -64,6 +64,7 @@ class ImportXls(object):
         self.request = request
         
         self.objects = []
+        self.book = None  ## will hold XLRD workbook object
 
         
     def parse(self, keyrow=0, firstrow=1 ):
@@ -75,8 +76,8 @@ class ImportXls(object):
         @return: [ {} ], list of dictionaries 
         """
         try:
-            book = X.open_workbook( self.f )
-            sheet= book.sheets()[0]
+            self.book = X.open_workbook( self.f )
+            sheet= self.book.sheets()[0]
     
             firstrow -= 1
             keys = []
@@ -641,12 +642,24 @@ class ImportXlsSample( ImportXls ):
         status = d.get('status', None)
         ## replace only if listed as key in human to system map
         d['status'] = human2system.get(status, status)
+        
+    def cleanDate(self, d):
+        """Convert Excel Date Integer to date string for Form field"""
+        r = d.get('preparedAt', '')
+        
+        if type(r) is float:
+            datetuple = X.xldate_as_tuple(r,self.book.datemode)
+            r = '-'.join(map( str, datetuple[:3]) )
+        
+        d['preparedAt'] = r        
+        
 
     def postprocessDict( self, d ):
         """Add fields to dict after cleanup and forgeignKey lookup"""
         d = super(ImportXlsSample, self).postprocessDict(d)
 
         self.correctStatus(d)
+        self.cleanDate(d)
         return d
 
 
