@@ -18,6 +18,7 @@ import tempfile, datetime, re
 
 import xlrd as X
 import django.core.files.uploadedfile as U
+from django.contrib.auth.models import User
 
 import rotmic.models as M
 import rotmic.forms as F
@@ -615,6 +616,7 @@ class ImportXlsSample( ImportXls ):
     xls2field = { 'id' : 'displayId',
                   'position' : 'displayId',
                   'prepared' : 'preparedAt',
+                  'by'       : 'preparedBy',
                   'aliquots' : 'aliquotNr',
                   'in buffer': 'solvent',
                   'concentration unit' : 'concentrationUnit',
@@ -627,8 +629,12 @@ class ImportXlsSample( ImportXls ):
 
                         { 'field' : 'concentrationUnit', 'model' : M.Unit,
                           'targetfield' : 'name'},
+
                         { 'field' : 'amountUnit', 'model' : M.Unit,
                           'targetfield' : 'name'},
+                        
+                        { 'field' : 'preparedBy', 'model' : User, 
+                          'targetfield' : 'username' }
 
                        ]
     
@@ -654,12 +660,25 @@ class ImportXlsSample( ImportXls ):
         d['preparedAt'] = r        
         
 
+    def cleanPreparedBy(self, d):
+        """Fill in prepared By user info"""
+        r = d.get('preparedBy', None)
+        
+        if not r:
+            r = self.request.user.id
+        ## fill in lookup by name here
+            
+        d['preparedBy'] = r
+
+
     def postprocessDict( self, d ):
         """Add fields to dict after cleanup and forgeignKey lookup"""
         d = super(ImportXlsSample, self).postprocessDict(d)
 
         self.correctStatus(d)
         self.cleanDate(d)
+        self.cleanPreparedBy(d)
+
         return d
 
 
