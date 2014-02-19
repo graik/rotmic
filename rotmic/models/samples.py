@@ -20,6 +20,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 import django.utils.html as html
+from django.contrib.auth.models import User, Group
 
 from .components import UserMixin
 from .storage import Container
@@ -108,6 +109,10 @@ class Sample( UserMixin ):
     description = models.TextField('Description', blank=True)
 
     preparedAt = models.DateField(default=datetime.now().date, verbose_name="Prepared")
+    
+    preparedBy = models.ForeignKey(User, null=False, blank=False, 
+                                related_name='%(class)s_prepared_by',
+                                verbose_name='By')
     
     experimentNr = models.CharField('Exeriment Nr.', blank=True, null=True, 
                               max_length=100,

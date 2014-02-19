@@ -56,6 +56,9 @@ class SampleForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super(SampleForm, self).__init__(*args, **kwargs)
 
+        self.fields['preparedBy'].initial = self.request.user
+        
+
     def clean_displayId(self):
         r = self.cleaned_data['displayId']
         r = r.strip()

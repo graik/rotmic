@@ -192,7 +192,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     fieldsets = [
         (None, {
             'fields' : ((('container', 'displayId', 'status'),
-                         ('preparedAt', 'experimentNr'),
+                         ('preparedAt', 'preparedBy', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -206,7 +206,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
           
     ]
     list_display = ('showExtendedId', 'showRack', 'showLocation',
-                    'preparedAt', 'registeredBy',
+                    'preparedAt', 'preparedBy',
                     'showContent', 'showConcentration', 'showAmount',
                     'showStatus','showEdit')
     
@@ -343,7 +343,7 @@ class DnaSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt', 'experimentNr'),
+                         ('preparedAt', 'preparedBy', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -378,7 +378,7 @@ class CellSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt', 'experimentNr'),
+                         ('preparedAt', 'preparedBy', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -418,7 +418,7 @@ class OligoSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt', 'experimentNr'),
+                         ('preparedAt', 'preparedBy', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -452,7 +452,7 @@ class ChemicalSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt', 'experimentNr'),
+                         ('preparedAt', 'preparedBy', 'experimentNr'),
                          ('description'),
                     ))
             } ),
