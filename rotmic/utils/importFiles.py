@@ -595,12 +595,14 @@ class ImportXlsContainer( ImportXls ):
     modelClass = M.Container
     
     # rename Excel headers to field name
-    xls2field = { 'id' : 'displayId' }
+    xls2field = { 'id' : 'displayId',
+                  'type' : 'containerType' }
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
-    xls2foreignkey = [  { 'field' : 'rack', 'model' : M.Rack,
-                         'targetfield' : 'displayId'}
+    xls2foreignkey = [  { 'field' : 'rack', 
+                          'model' : M.Rack,
+                          'targetfield' : 'displayId'},
                        ]
     ## ToDo include type code cleanup
     
