@@ -8,6 +8,8 @@ from django.views.generic import TemplateView
 from django.shortcuts import render
 
 import django.contrib.messages as messages
+from django.db import transaction
+import django.db.utils as U
 
 import rotmic.models as M
 import rotmic.utils.importFiles as I
@@ -79,15 +81,19 @@ class XlsUploadView(TemplateView):
                         messages.error(request, msg)
     
                 else:
-                    for f in p.forms:
-                        o = f.save()
-                        f.save_m2m()
-    
-                        msg = 'Successfully imported %s.' % unicode(o)
-                        messages.success(request, msg )
+                    with transaction.atomic():
+                        for f in p.forms:
+                            o = f.save()
+                            f.save_m2m()
+        
+                            msg = 'Successfully imported %s.' % unicode(o)
+                            messages.success(request, msg )
             
             except I.ImportError, why:
                 messages.error(request, why)
+                
+            except U.IntegrityError, why:
+                messages.error(request, 'Consistency Error In Table. All imports are reverted. Reason: ' + str(why))
                 
         else:
             messages.error(request, 'No Excel file given.')
