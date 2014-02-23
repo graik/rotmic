@@ -58,8 +58,8 @@ class SampleForm(forms.ModelForm):
         super(SampleForm, self).__init__(*args, **kwargs)
 
         ## only execute for Add forms without existing instance
-        o = kwargs.get('instance', None)
-        if o is None and self.request: 
+        ## o = kwargs.get('instance', None)
+        if self.request: 
             self.fields['preparedBy'].initial = User.objects.get(id=self.request.user.id)
         
 

@@ -305,6 +305,7 @@ class OligoComponentForm(forms.ModelForm, CleaningMixIn):
             'sequence' : forms.TextInput(attrs={'size':88}),
             'meltingTemp' : forms.TextInput(attrs={'size':4}),
             'templates' : L.FixedSelectMultipleWidget(lookup_class=L.DnaLookup),
+            'reversePrimers' : L.FixedSelectMultipleWidget(lookup_class=L.OligoLookup),
             
             'description' : forms.Textarea(attrs={'cols': 100, 'rows': 5,
                                               'style':'font-family:monospace'}),

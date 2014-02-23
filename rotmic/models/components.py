@@ -341,6 +341,12 @@ class OligoComponent(Component, StatusMixinCommercial):
     """
     Description of DNA primer / oligo
     """
+    PURE_CHOICES = (('desalting','desalting'),
+                    ('RPC', 'Reverse-phase cartridge'),
+                    ('HPLC','HPLC'),
+                    ('PAGE','PAGE'),
+                    ('unknown','unknown'))
+
     sequence = models.CharField( max_length=300,
                                  help_text="5' -> 3' nucleotide sequence", blank=True, 
                                  null=True )
@@ -357,6 +363,15 @@ class OligoComponent(Component, StatusMixinCommercial):
     meltingTemp = models.IntegerField(u'Tm in \u00B0C', blank=True, null=True,
                                       help_text='melting temperature')
     
+
+    purification = models.CharField( max_length=50, choices=PURE_CHOICES,
+                                     blank=False)
+    
+    reversePrimers = models.ManyToManyField('self', 
+                                            blank=True, null=True,
+                                            symmetrical=True,
+                                            help_text='select potential reverse primers')
+
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'Oligo'
