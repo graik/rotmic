@@ -18,6 +18,7 @@ import datetime
 import django.forms as forms
 from django.core.exceptions import ValidationError
 import django.contrib.messages as messages
+from django.contrib.auth.models import User
 
 import selectLookups as L
 import selectable.forms as sforms
@@ -56,8 +57,10 @@ class SampleForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super(SampleForm, self).__init__(*args, **kwargs)
 
-        if not self.instance and self.request:
-            self.fields['preparedBy'].initial = self.request.user
+        ## only execute for Add forms without existing instance
+        o = kwargs.get('instance', None)
+        if o is None and self.request: 
+            self.fields['preparedBy'].initial = User.objects.get(id=self.request.user.id)
         
 
     def clean_displayId(self):
