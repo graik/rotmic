@@ -95,6 +95,9 @@ class XlsUploadView(TemplateView):
             except U.IntegrityError, why:
                 messages.error(request, 'Consistency Error In Table. All imports are reverted. Reason: ' + str(why))
                 
+            except Exception, why:
+                messages.error(request, 'Some unforeseen error occured. All imports are reverted. Reason: ' + str(why))
+
         else:
             messages.error(request, 'No Excel file given.')
                 
