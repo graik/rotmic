@@ -206,7 +206,7 @@
             
             {% if o.as_plasmid_in_cell.count > 0 %}
                 <p>
-                    {{o.displayId}} is used within the following Cells:
+                    {{o.displayId}} is used within the following <b>Cells</b>:
                 </p>
                 <div style="margin: 10px">
                     <table cellspacing="1">
@@ -214,7 +214,9 @@
                         <thead>
                         <tr>
                             <th>used as</th>
-                            <th>in</th><th>Description</th>
+                            <th>in</th>
+                            <th>Species</th>
+                            <th>Description</th>
                             <th>Samples</th>
                         </tr>
                         </thead>
@@ -226,8 +228,10 @@
                         
                                 <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
                                   
-                                <td>{{x.showDescription}}</td>
+                                <td>{{x.componentType}}</td>
                                   
+                                <td>{{x.showDescription}}</td>
+                                
                                 <td style="text-align: center;">{{x.cell_samples.count}}</td>
 
                                 </tr>
