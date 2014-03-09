@@ -105,7 +105,7 @@ def nextProteinId(request, category):
     category - parent ComponentType
     """
     ## middle = category[0].lower()
-    middle = 'prt'
+    middle = 'aa'
     r = {'id': I.suggestProteinId( request.user.id, middle=middle )}
     
     json_models = json.dumps(r)

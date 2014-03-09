@@ -96,11 +96,11 @@ def suggestChemicalId(user_id, prefix='', middle='chem'):
     return suggestComponentId( M.ChemicalComponent, prefix )
 
 
-def suggestProteinId(user_id, prefix='', middle='prt'):
+def suggestProteinId(user_id, prefix='', middle='aa'):
     """
     user_id - int, pk of User object
     prefix  - str, first characters of desired ID (default: from user.profile)
-    middle  - str, additional prefix characters (e.g. "E" for enzyme, default: 'prt')
+    middle  - str, additional prefix characters (e.g. "E" for enzyme, default: 'aa')
     """
     user = User.objects.get( id=user_id )
     prefix = prefix or user.profile.pcPrefix or user.profile.prefix + middle

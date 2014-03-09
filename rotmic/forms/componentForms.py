@@ -347,7 +347,6 @@ class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
     """Customized Form for ProteinComponent add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
-                            widget=L.SilentSelectWidget,
                             queryset=M.ProteinComponentType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,

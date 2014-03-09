@@ -130,10 +130,10 @@ class Migration(SchemaMigration):
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'displayId': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '20'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 12, 16, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 9, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'component_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 12, 16, 0, 0)'}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 9, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'component_created_by'", 'to': u"orm['auth.User']"})
         },
         'rotmic.componentattachment': {
@@ -149,11 +149,11 @@ class Migration(SchemaMigration):
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'displayId': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '20'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 12, 16, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 9, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'container_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'rack': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'containers'", 'to': "orm['rotmic.Rack']"}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 12, 16, 0, 0)'}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 9, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'container_created_by'", 'to': u"orm['auth.User']"})
         },
         'rotmic.dnacomponent': {
@@ -185,10 +185,10 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "('displayId',)", 'object_name': 'Location'},
             'displayId': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '20'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 12, 16, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 9, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'location_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 12, 16, 0, 0)'}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 9, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'location_created_by'", 'to': u"orm['auth.User']"}),
             'room': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'temperature': ('django.db.models.fields.FloatField', [], {'default': '25.0', 'null': 'True', 'blank': 'True'})
@@ -198,6 +198,8 @@ class Migration(SchemaMigration):
             'componentType': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rotmic.OligoComponentType']"}),
             u'component_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['rotmic.Component']", 'unique': 'True', 'primary_key': 'True'}),
             'meltingTemp': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'purification': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'reversePrimers': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'reversePrimers_rel_+'", 'null': 'True', 'to': "orm['rotmic.OligoComponent']"}),
             'sequence': ('django.db.models.fields.CharField', [], {'max_length': '300', 'null': 'True', 'blank': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'default': "'available'", 'max_length': '30'}),
             'templates': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'template_for_oligos'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['rotmic.DnaComponent']"})
@@ -235,10 +237,10 @@ class Migration(SchemaMigration):
             'displayId': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'location': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'racks'", 'null': 'True', 'to': "orm['rotmic.Location']"}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 12, 16, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 9, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'rack_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 12, 16, 0, 0)'}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 9, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'rack_created_by'", 'to': u"orm['auth.User']"})
         },
         'rotmic.sample': {
@@ -251,14 +253,16 @@ class Migration(SchemaMigration):
             'container': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'samples'", 'to': "orm['rotmic.Container']"}),
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'displayId': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'experimentNr': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 12, 16, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 9, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sample_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
-            'preparedAt': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2013, 12, 16, 0, 0)'}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 12, 16, 0, 0)'}),
+            'preparedAt': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 3, 9, 0, 0)'}),
+            'preparedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sample_prepared_by'", 'to': u"orm['auth.User']"}),
+            'provenance': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'samples+'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['rotmic.SampleProvenance']"}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 9, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sample_created_by'", 'to': u"orm['auth.User']"}),
             'solvent': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'source': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'default': "'ok'", 'max_length': '30'})
         },
         'rotmic.sampleattachment': {
@@ -267,6 +271,22 @@ class Migration(SchemaMigration):
             'f': ('rotmic.utils.filefields.DocumentModelField', [], {'max_length': '100', 'extensions': '()'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'attachments'", 'to': "orm['rotmic.Sample']"})
+        },
+        'rotmic.sampleprovenance': {
+            'Meta': {'ordering': "['sample']", 'object_name': 'SampleProvenance'},
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'provenanceType': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rotmic.SampleProvenanceType']"}),
+            'sample': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sampleParents'", 'to': "orm['rotmic.Sample']"}),
+            'sourceSample': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'sampleChilds'", 'null': 'True', 'to': "orm['rotmic.Sample']"})
+        },
+        'rotmic.sampleprovenancetype': {
+            'Meta': {'ordering': "['isDefault', 'name']", 'object_name': 'SampleProvenanceType'},
+            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'isDefault': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '200', 'blank': 'True'}),
+            'requiresSource': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
         },
         'rotmic.unit': {
             'Meta': {'ordering': "['unitType', 'conversion', 'name']", 'object_name': 'Unit'},
