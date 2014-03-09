@@ -18,6 +18,7 @@ import tempfile, datetime, re
 
 import xlrd as X
 import django.core.files.uploadedfile as U
+from django.contrib.auth.models import User
 
 import rotmic.models as M
 import rotmic.forms as F
@@ -64,6 +65,7 @@ class ImportXls(object):
         self.request = request
         
         self.objects = []
+        self.book = None  ## will hold XLRD workbook object
 
         
     def parse(self, keyrow=0, firstrow=1 ):
@@ -75,8 +77,8 @@ class ImportXls(object):
         @return: [ {} ], list of dictionaries 
         """
         try:
-            book = X.open_workbook( self.f )
-            sheet= book.sheets()[0]
+            self.book = X.open_workbook( self.f )
+            sheet= self.book.sheets()[0]
     
             firstrow -= 1
             keys = []
@@ -267,9 +269,10 @@ class ImportXls(object):
 
         return r
 
-    def dict2instance( self, d ):
+    def dict2instance( self, d, commit=False ):
         """
         Create a model instance from a dictionary.
+        @param commit: bool, save to database (default: False)
         """
         ## no errors while looking up related fields
         if not d.get('errors', []):
@@ -279,7 +282,10 @@ class ImportXls(object):
                 
                 valid = form.is_valid()
                 
-                d['object'] = form.save( commit=False )
+                ## inline forms for provenance would need to be created separately here.
+                
+                d['object'] = form.save( commit=commit )
+                    
                 d['object_form'] = form
             except ValueError as e:
                 self.updateErrors( d, form._errors )
@@ -287,7 +293,7 @@ class ImportXls(object):
         return d
 
     
-    def getObjects( self ):
+    def getObjects( self, commit=False ):
         """
         Run all parsing, cleanup and object extraction steps.
         Each returned dict has a key 'object' pointing to a (non-saved) model 
@@ -305,7 +311,7 @@ class ImportXls(object):
         for d in r:
             entry = self.lookupRelations( self.cleanDict(d) )
             entry = self.postprocessDict( entry )
-            entry = self.dict2instance( entry )
+            entry = self.dict2instance( entry, commit=commit )
             
             if entry.get('object', None):
                 self.objects += [ entry['object'] ]
@@ -315,7 +321,6 @@ class ImportXls(object):
 
             if entry['errors']:
                 self.failed += [ entry ]
-        
 
 
 class ImportXlsComponent( ImportXls ):
@@ -489,22 +494,45 @@ class ImportXlsOligo( ImportXlsComponent ):
                   'type' : 'componentType',
                   'tm in c' : 'meltingTemp',
                   'tm' : 'meltingTemp',
-                  'dna templates' : 'templates'}
+                  'dna templates' : 'templates',
+                  'reverse primers': 'reversePrimers'}
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
     xls2foreignkey = [  { 'field' : 'componentType', 'model' : M.OligoComponentType,
-                         'targetfield' : 'name'}
+                          'targetfield' : 'name'}
                        ]
     
     # lookup instructions for Many2Many fields
     xls2many = [ { 'field' : 'templates', 
-                   'model' : M.DnaComponent, 'targetfield' : 'displayId' } 
+                   'model' : M.DnaComponent, 'targetfield' : 'displayId' },
+                 { 'field' : 'reversePrimers', 
+                   'model' : M.OligoComponent, 'targetfield' : 'displayId',
+                   'targetfield2' : 'name' }                  
                  ]
                 
+    def correctPurification(self, d):
+        """Replace human-readable purification by internal choices value"""
+        choices = self.modelClass.PURE_CHOICES
+
+        human2system = { x[1] : x[0] for x in choices }
+
+        status = d.get('purification', 'unknown')
+
+        if not (status in human2system.keys() or status in human2system.values()):
+            d['errors']['purification'] = d['errors'].get('purification', [])
+            d['errors']['purification'].append(\
+                'invalid purification choice: ' + unicode(status) )
+            
+        ## replace only if listed as key in human to system map
+        d['purification'] = human2system.get(status, status)
+
+
     def postprocessDict(self, d):
         """Enforce integer melting temperatures"""
         d = super(ImportXlsOligo, self).postprocessDict(d)
+        
+        self.correctPurification(d)
         
         try:
             if d.get('meltingTemp',None):
@@ -593,12 +621,14 @@ class ImportXlsContainer( ImportXls ):
     modelClass = M.Container
     
     # rename Excel headers to field name
-    xls2field = { 'id' : 'displayId' }
+    xls2field = { 'id' : 'displayId',
+                  'type' : 'containerType' }
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
-    xls2foreignkey = [  { 'field' : 'rack', 'model' : M.Rack,
-                         'targetfield' : 'displayId'}
+    xls2foreignkey = [  { 'field' : 'rack', 
+                          'model' : M.Rack,
+                          'targetfield' : 'displayId'},
                        ]
     ## ToDo include type code cleanup
     
@@ -610,10 +640,12 @@ class ImportXlsSample( ImportXls ):
     xls2field = { 'id' : 'displayId',
                   'position' : 'displayId',
                   'prepared' : 'preparedAt',
+                  'by'       : 'preparedBy',
                   'aliquots' : 'aliquotNr',
                   'in buffer': 'solvent',
                   'concentration unit' : 'concentrationUnit',
-                  'amount unit' : 'amountUnit' }
+                  'amount unit' : 'amountUnit',
+                  'experiment #' : 'experimentNr'}
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
@@ -621,8 +653,12 @@ class ImportXlsSample( ImportXls ):
 
                         { 'field' : 'concentrationUnit', 'model' : M.Unit,
                           'targetfield' : 'name'},
+
                         { 'field' : 'amountUnit', 'model' : M.Unit,
                           'targetfield' : 'name'},
+                        
+                        { 'field' : 'preparedBy', 'model' : User, 
+                          'targetfield' : 'username' }
 
                        ]
     
@@ -636,12 +672,37 @@ class ImportXlsSample( ImportXls ):
         status = d.get('status', None)
         ## replace only if listed as key in human to system map
         d['status'] = human2system.get(status, status)
+        
+    def cleanDate(self, d):
+        """Convert Excel Date Integer to date string for Form field"""
+        r = d.get('preparedAt', '')
+        
+        if type(r) is float:
+            datetuple = X.xldate_as_tuple(r,self.book.datemode)
+            r = '-'.join(map( str, datetuple[:3]) )
+        
+        d['preparedAt'] = r        
+        
+
+    def cleanPreparedBy(self, d):
+        """Fill in prepared By user info"""
+        r = d.get('preparedBy', None)
+        
+        if not r:
+            r = self.request.user.id
+        ## fill in lookup by name here
+            
+        d['preparedBy'] = r
+
 
     def postprocessDict( self, d ):
         """Add fields to dict after cleanup and forgeignKey lookup"""
         d = super(ImportXlsSample, self).postprocessDict(d)
 
         self.correctStatus(d)
+        self.cleanDate(d)
+        self.cleanPreparedBy(d)
+
         return d
 
 

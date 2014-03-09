@@ -22,6 +22,6 @@ from attachmentForms import AttachmentForm
 from locationForms import LocationForm, RackForm, ContainerForm
 
 from sampleForms import SampleForm, DnaSampleForm, CellSampleForm, \
-     OligoSampleForm, ChemicalSampleForm
+     OligoSampleForm, ChemicalSampleForm, SampleProvenanceForm
 
 from uploadForms import TableUploadForm

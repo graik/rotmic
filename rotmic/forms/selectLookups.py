@@ -28,21 +28,11 @@ import rotmic.initialUnits as U
 import rotmic.initialComponents as IC
 
 
-class SilentSelectWidget( forms.Select ):
-    """
-    Custom Select Widget which is never reporting to have changed.
-    This fixes the issue that reversion is reporting componentCategory as
-    changed whenever the form is saved.
-    The category field is not backed by any model value but only reports the 
-    parent of componentType. That's why it cannot change by itself.
-    """    
-    def _has_changed(self,initial, data):
-        """never mark as changed."""
-        return False
-
 class FixedSelectMultipleWidget( sforms.AutoComboboxSelectMultipleWidget ):
     """
-    Bug fix the change detection method
+    Bug fix the change detection method;
+    This should, in theory, be obsolete since Django 1.6
+    (The _has_changed method has moved from widget to FormField)
     """    
     def _has_changed(self,initial, data):
         """override buggy method from SelectWidget"""
@@ -183,12 +173,24 @@ registry.register(SampleContainerLookup)
 class ContainerRackLookup(ModelLookup):
     """for selectable auto-completion field in Container form"""
     model = M.Rack
-    search_fields = ('displayId__startswith', 'name__icontains')
+    search_fields = ('location__displayId__startswith', 'displayId__startswith', 'name__icontains')
     
     def get_item_id(self,item):
         return item.pk
 
 registry.register( ContainerRackLookup )
+
+
+class ProvenanceSampleLookup(ModelLookup):
+    """for selectable auto-completion field in SampleProvenance form"""
+    model = M.Sample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register( ProvenanceSampleLookup )
 
 
 class UnitLookup(ModelLookup):

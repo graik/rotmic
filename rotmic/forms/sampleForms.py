@@ -18,6 +18,7 @@ import datetime
 import django.forms as forms
 from django.core.exceptions import ValidationError
 import django.contrib.messages as messages
+from django.contrib.auth.models import User
 
 import selectLookups as L
 import selectable.forms as sforms
@@ -55,6 +56,12 @@ class SampleForm(forms.ModelForm):
         """Rescue request object from kwargs pushed in from SampleAdmin"""
         self.request = kwargs.pop('request', None)
         super(SampleForm, self).__init__(*args, **kwargs)
+
+        ## only execute for Add forms without existing instance
+        ## o = kwargs.get('instance', None)
+        if self.request: 
+            self.fields['preparedBy'].initial = User.objects.get(id=self.request.user.id)
+        
 
     def clean_displayId(self):
         r = self.cleaned_data['displayId']
@@ -139,14 +146,12 @@ class CellSampleForm( SampleForm ):
     """Customized Form for CellSample add / change"""
     
     cellCategory = forms.ModelChoiceField(label='In Species',
-                            widget=L.SilentSelectWidget,
                             queryset=M.CellComponentType.objects.filter(subTypeOf=None),
                             required=False, 
                             empty_label=None,
                             initial=T.ccEcoli)
     
     cellType = forms.ModelChoiceField(label='Strain',
-                            widget=L.SilentSelectWidget,
                             queryset=M.CellComponentType.objects.exclude(subTypeOf=None),
                             required=False,
                             empty_label=None,
@@ -308,3 +313,26 @@ class ChemicalSampleForm( SampleForm ):
                                                       allow_new=False,
                                                       attrs={'size':35}),
              })
+
+class SampleProvenanceForm( forms.ModelForm ):
+    """minimal form used inline for sample History records"""
+    
+    def clean_sourceSample(self):
+        r = self.cleaned_data['sourceSample']
+        t = self.cleaned_data['provenanceType']
+        
+
+        if t and t.requiresSource and not r:
+            raise ValidationError('%s requires a source sample.' % unicode(t))
+        
+        if r and self.instance and r.id == self.instance.sample_id:
+            raise ValidationError('Cannot derive sample from itself.')
+        
+        return r
+        
+    
+    class Meta:
+        widgets = {'sourceSample': sforms.AutoComboboxSelectWidget(lookup_class=L.ProvenanceSampleLookup,
+                                                                   allow_new=False,
+                                                                   attrs={'size':20})
+                   }

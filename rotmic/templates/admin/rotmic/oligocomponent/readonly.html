@@ -50,6 +50,7 @@
             
             <p><ul>
                 <li><b>Length:</b> {% if o.sequence %}{{o.sequence|length}}{%else%} 0{%endif%} bp</li>
+                <li><b>Purification:</b> {{o.purification}}</li>
                 <li><b>Tm:</b> {% if o.meltingTemp %}{{o.meltingTemp}} C{%else%}{%endif%}</li>
             </ul><p>
 
@@ -97,11 +98,11 @@
         </div>
     
         <div class='module'>
-            <h2>Related Entries: {{o.templates.count}}</h2>
+            <h2>related templates: {{o.templates.count}}; related primers: {{o.reversePrimers.count}}</h2>
             
             {% if o.templates.count > 0 %}
                 <p>
-                    {{o.displayId}} is matched to the following DNA templates:
+                    {{o.displayId}} is matched to the following <b>DNA templates</b>:
                 </p>
                 <div style="margin: 10px">
                     <table cellspacing="1">
@@ -129,6 +130,37 @@
                 </div>
             {% endif %}
         
+            <p><br></p>        
+            
+            {% if o.reversePrimers.count > 0 %}
+                <p>
+                    {{o.displayId}} is matched to the following <b>reverse Primers</b>:
+                </p>
+                <div style="margin: 10px">
+                    <table cellspacing="1">
+            
+                        <thead>
+                        <tr>
+                            <th>Oligo</th><th>Description</th>
+                            <th>Samples</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for x in o.reversePrimers.all %}
+                                <tr class="{% cycle 'row1' 'row2' %}">
+                                
+                                <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                                  
+                                <td>{{x.showDescription}}</td>
+                                  
+                                <td style="text-align: center;">{{x.oligo_samples.count}}</td>
+
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
         </div>
 
         

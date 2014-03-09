@@ -8,6 +8,8 @@ from django.views.generic import TemplateView
 from django.shortcuts import render
 
 import django.contrib.messages as messages
+from django.db import transaction
+import django.db.utils as U
 
 import rotmic.models as M
 import rotmic.utils.importFiles as I
@@ -17,7 +19,7 @@ from rotmic.forms import TableUploadForm
 
 def view_genbankfile(request, pk):
     """DC View"""
-    o = DnaComponent.objects.get(id=pk)
+    o = M.DnaComponent.objects.get(id=pk)
     txt = o.genbank
     f = StringIO.StringIO( txt )
     
@@ -62,34 +64,40 @@ class XlsUploadView(TemplateView):
             f = request.FILES['tableFile']
             
             try:
-                p = self.parser_class(f, request.user, request=request)
-                p.getObjects()
-            
-                if p.failed:
-                    msg = 'Import of %s failed. Correct errors and try again. (Nothing has been imported.)\n' \
-                        % (f.name)
-                    messages.error(request, msg)
-    
-                    for d in p.failed:
-                        id = d.get('displayId', '??')
-                        errors = ['%s (%s)' % (k,v) for k,v in d['errors'].items() ]
-                        errors = '; '.join(errors)
-    
-                        msg = 'Import error(s) for entry "%s": %s' % (id, errors)
-                        messages.error(request, msg)
-    
-                else:
-                    for f in p.forms:
-                        o = f.save()
-                        f.save_m2m()
-    
+                with transaction.atomic():
+                    
+                    p = self.parser_class(f, request.user, request=request)
+                    p.getObjects(commit=True)
+                
+                    if p.failed:
+                        s = 'Import of %s failed. Correct errors and try again. (Nothing has been imported.)\n' \
+                            % (f.name)
+                        messages.error(request, s)
+                        
+                        for d in p.failed:
+                            id = d.get('displayId', '??')
+                            errors = ['%s (%s)' % (k,v) for k,v in d['errors'].items() ]
+                            errors = '; '.join(errors)
+        
+                            msg = 'Import error(s) for entry "%s": %s' % (id, errors)
+                            messages.error(request, msg)
+                        
+                        raise I.ImportError  ## reverts all transactions
+        
+                    for o in p.objects:
                         msg = 'Successfully imported %s.' % unicode(o)
                         messages.success(request, msg )
             
-            except I.ImportError, why:
-                messages.error(request, why)
+            except I.ImportError:
+                pass  ## error message is already on top of messages stack
                 
-            return HttpResponseRedirect(reverse(self.returnto()))
+            except Exception, why:
+                messages.error(request, 'Some unforeseen error occured. All imports are reverted. Reason: ' + str(why))
+
+        else:
+            messages.error(request, 'No Excel file given.')
+                
+        return HttpResponseRedirect(reverse(self.returnto()))
 
 
 class DnaXlsUploadView(XlsUploadView):    

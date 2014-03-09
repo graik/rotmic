@@ -20,10 +20,68 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 import django.utils.html as html
+from django.contrib.auth.models import User, Group
 
 from .components import UserMixin
 from .storage import Container
 import rotmic.utils.inheritance as I
+
+
+class SampleProvenanceType(models.Model):
+    """Classification of relations between samples"""
+    
+    name = models.CharField('Name', max_length=200, blank=True, 
+                            help_text='short descriptive name (must be unique)',
+                            unique=True )
+    
+    requiresSource = models.BooleanField('Requires source', default=True, 
+                                          help_text='Links of this type require a source sample.')
+    
+    description = models.TextField('Description', blank=True, help_text='detailed description' )
+    
+    isDefault = models.BooleanField('make Default', default=False,
+                                    help_text='Make this the default choice of provenance type.')
+    
+    def __unicode__(self):
+        return unicode(self.name)
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name  = 'Provenance Type'
+        ordering = ['isDefault', 'name']
+    
+
+class SampleProvenance(models.Model):
+    """Sample History"""
+    
+    sample = models.ForeignKey('Sample', related_name='sampleParents')
+    
+    sourceSample = models.ForeignKey('Sample', null=True, blank=True, related_name='sampleChilds',
+                                     verbose_name='from sample')
+    
+    description = models.CharField( 'Comment', max_length=200,
+                                    help_text='Brief description for tables and listings',
+                                    blank=True )
+
+    provenanceType = models.ForeignKey( SampleProvenanceType, 
+                                        verbose_name='derived how (provenance type)',
+                                        help_text="How is this sample derived from it's source?")
+
+    def __unicode__(self):
+        """"""
+        try:
+            r = unicode(self.provenanceType.name)
+            if self.sourceSample:
+                r += u' from ' + unicode(self.sourceSample)
+            return r
+        except:
+            return 'undefined Sample Provenance'
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name  = 'Sample History'
+        verbose_name_plural = 'Sample History'
+        ordering = ['sample']
 
 
 class Sample( UserMixin ):
@@ -50,11 +108,15 @@ class Sample( UserMixin ):
     
     description = models.TextField('Description', blank=True)
 
-    preparedAt = models.DateField(default=datetime.now(), verbose_name="Prepared")
+    preparedAt = models.DateField(default=datetime.now().date, verbose_name="Prepared")
     
-    source = models.CharField('External Source', blank=True, null=True, 
+    preparedBy = models.ForeignKey(User, null=False, blank=False, 
+                                related_name='%(class)s_prepared_by',
+                                verbose_name='By')
+    
+    experimentNr = models.CharField('Exeriment Nr.', blank=True, null=True, 
                               max_length=100,
-                              help_text='external lab or company' )
+                              help_text='exeriment/lab book Nr.' )
     
     solvent = models.CharField('in Buffer/Medium', max_length=100, blank=True)
 
@@ -74,6 +136,12 @@ class Sample( UserMixin ):
                                    limit_choices_to = Q(unitType__in=['volume','number', 'mass'])
                                    )
 
+
+    provenance =models.ManyToManyField(SampleProvenance, blank=True, null=True, 
+                                       related_name='samples+',   ## end with + to suppress reverse relationship
+                                       verbose_name='History',
+                                       help_text='Sample History')
+    
     ## return child classes in queries using select_subclasses()
     objects = I.InheritanceManager()  
 
@@ -105,6 +173,11 @@ class Sample( UserMixin ):
         return r
     descriptionText.short_description = 'description'
     
+    def sourceSamples(self):
+        """All samples that are registered as source in provenance records"""
+        return Sample.objects.filter(sampleChilds__sample__id=self.id)
+    
+    
     def sameSamples(self):
         """
         Needs to be overriden!
@@ -117,6 +190,29 @@ class Sample( UserMixin ):
         Samples that are related but not identical
         """
         return []
+
+    def subClass(self):
+        """
+        Identify sample subClass used for this instance.
+        @return: class, (either DnaSample, CellSample, ChemicalSample or OligoSample)
+        """
+        if self.__class__ is not Sample:
+            return self.__class__
+
+        for c in [DnaSample, CellSample, ChemicalSample, OligoSample]:
+            try: 
+                return c.objects.get(id=self.id).__class__
+            except:
+                pass
+
+        return self.__class__   
+    
+    def convertClass(self):
+        """
+        Convert a generic Sample instance into the best matching specific sample instance.
+        @return: instance of specific Sample sub-class.
+        """
+        return self.subClass().objects.get(id=self.id)
 
     def get_absolute_url(self):
         """

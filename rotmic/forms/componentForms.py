@@ -54,7 +54,6 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
-                            widget=L.SilentSelectWidget,
                             queryset=M.DnaComponentType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,
@@ -231,7 +230,6 @@ class CellComponentForm(forms.ModelForm, CleaningMixIn):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Species',
-                            widget=L.SilentSelectWidget,
                             queryset=M.CellComponentType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,
@@ -307,6 +305,7 @@ class OligoComponentForm(forms.ModelForm, CleaningMixIn):
             'sequence' : forms.TextInput(attrs={'size':88}),
             'meltingTemp' : forms.TextInput(attrs={'size':4}),
             'templates' : L.FixedSelectMultipleWidget(lookup_class=L.DnaLookup),
+            'reversePrimers' : L.FixedSelectMultipleWidget(lookup_class=L.OligoLookup),
             
             'description' : forms.Textarea(attrs={'cols': 100, 'rows': 5,
                                               'style':'font-family:monospace'}),
@@ -317,7 +316,6 @@ class ChemicalComponentForm(forms.ModelForm, CleaningMixIn):
     """Customized Form for ChemicalComponent add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
-                            widget=L.SilentSelectWidget,
                             queryset=M.ChemicalType.objects.filter(subTypeOf=None),
                             required=True, 
                             empty_label=None,

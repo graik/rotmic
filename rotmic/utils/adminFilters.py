@@ -14,17 +14,115 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 from django.contrib import admin
-from django.db.models.query import QuerySet as Q
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 import rotmic.models as M
+import rotmic.initialTypes as I
+
+class MarkerTypeFilter( admin.SimpleListFilter ):
+    """Pre-filter table by *types of markers*"""
+    title = 'Selection...'
+    parameter_name = 'markertype'
+    
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        markers = M.DnaComponentType.objects.filter(subTypeOf=I.dcMarker)
+        return ( (x.name, x.name) for x in markers )
+    
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        self.value() is expected to be the name of a DnaComponentType 
+        derived from (subTypeOf) DnaComponentType "Marker".
+        """
+        q = queryset
+        
+        if not self.value():
+            return q
+    
+        markers = M.DnaComponent.objects.filter(componentType__name=self.value())
+        constraint = Q(markers__in=markers)\
+            | Q(vectorBackbone__markers__in=markers)\
+            | Q(insert__markers__in=markers)
+        
+        return q.filter(constraint)
+    
+
+class MarkerListFilter( admin.SimpleListFilter):
+    """
+    Filter DnaComponent Table by marker contained directly or indirectly.
+
+    The available markers are pre-filtered by MarkerTypeFilter.
+    """
+    title = 'Marker'
+    parameter_name = 'marker'
+    
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        if not u'markertype' in request.GET:
+            return ()
+        
+        markertype = request.GET[u'markertype']
+        markers = M.DnaComponent.objects.filter(componentType__name=markertype)
+        
+        return ( (x.name, x.name) for x in markers )
+    
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        self.value() is expected to contain the name of a DC marker entry.
+        (Could also be several if they share the same name.)
+        """
+        if not u'markertype' in request.GET:
+            return queryset
+        
+        if not self.value():
+            return queryset
+        
+        ## extract all DnaComponents belonging to Marker sub-type selected
+        ## in MarkerTypeFilter
+        markertype = request.GET[u'markertype']
+        markers = M.DnaComponent.objects.filter(componentType__name=markertype)
+                
+        selected = markers.filter(name=self.value())
+        
+        ## special case: missmatch between subtype and category
+        ## which happens after switching the category
+        if len(selected) == 0:
+            return queryset
+
+        constraint = Q(markers__in=selected)\
+            | Q(vectorBackbone__markers__in=selected)\
+            | Q(insert__markers__in=selected)
+        
+        return queryset.filter(constraint)
+
+
 
 class CategoryListFilter( admin.SimpleListFilter):
     """
     Provide filter for DnaComponentType.category (all root types)
     """
-    title = 'Category'
+    title = 'Category...'
     parameter_name = 'category'
     
     _class = None
@@ -166,7 +264,7 @@ class ContainerLocationFilter( admin.SimpleListFilter ):
     have any containers in them.
     Entries are selected by pk (ID).
     """    
-    title = 'Location'
+    title = 'Location...'
     parameter_name = 'location'
     
     def lookups(self, request, model_admin):
@@ -226,7 +324,7 @@ class SampleLocationFilter( admin.SimpleListFilter ):
     Modified Admin Filter for Sample locations.
     Entries are selected by displayId.
     """
-    title = 'Location'
+    title = 'Location...'
     parameter_name = 'location'
     _sampleClass = M.Sample
     
@@ -270,8 +368,8 @@ class ChemicalSampleLocationFilter( SampleLocationFilter ):
 
 
 class SampleRackFilter( admin.SimpleListFilter ):
-    """Modified Filter for Sample Racks,  responds to SampleLocationListFilter"""
-    title = 'Rack'
+    """Modified Filter for Sample Racks,  responds to SampleLocationFilter"""
+    title = 'Rack...'
     parameter_name = 'rack'
     _sampleClass = M.Sample
     
@@ -333,7 +431,7 @@ class ChemicalSampleRackFilter( SampleRackFilter ):
 
 
 class SampleContainerFilter( admin.SimpleListFilter ):
-    """Modified Filter for Sample Containers, responds to SampleRackListFilter"""
+    """Modified Filter for Sample Containers, responds to SampleRackFilter"""
     title = 'Container'
     parameter_name = 'container'
     _sampleClass = M.Sample

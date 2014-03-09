@@ -163,7 +163,12 @@ admin.site.register( M.Unit, UnitAdmin )
 class SampleAttachmentInline(admin.TabularInline):
     model = M.SampleAttachment
     form = forms.AttachmentForm
-    template = 'admin/rotmic/componentattachment/tabular.html'
+
+    ## Note: this template may be affected by:
+    ## https://code.djangoproject.com/ticket/13696
+    ## Todo: update to django 1.6 version of this template
+    ## template = 'admin/rotmic/componentattachment/tabular.html'
+    
     can_delete=True
     extra = 1
     max_num = 5
@@ -173,11 +178,26 @@ class SampleAttachmentInline(admin.TabularInline):
             'fields': ('f', 'description',),
             'description': 'Only attach files that are specific to this very sample\n'\
                            +'Use DNA or Cell attachments otherwise.',
-            'classes': ('collapse',),
             
         }),
     )
     
+class SampleProvenanceInline(admin.StackedInline):
+    model = M.SampleProvenance
+    fk_name = 'sample'  ## ensure provenance is attached to target sample (not to source sample)
+    
+    form = forms.SampleProvenanceForm
+    
+    can_delete=True
+    extra = 1
+    max_num = 5
+
+    fieldsets = (
+        (None, {
+            'fields': (('provenanceType', 'sourceSample', ), ('description',)),
+            'description': 'Specify how this sample was created or from which other sample it was derived from.',
+        }),
+    )
 
 class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
     form = forms.SampleForm     
@@ -186,13 +206,13 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     
     template = 'admin/rotmic/change_form_viewfirst.html'
 
-    inlines = [ SampleAttachmentInline ]
+    inlines = [ SampleProvenanceInline, SampleAttachmentInline ]
     date_hierarchy = 'preparedAt'
     
     fieldsets = [
         (None, {
             'fields' : ((('container', 'displayId', 'status'),
-                         ('preparedAt',),
+                         ('preparedAt', 'preparedBy', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -206,7 +226,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
           
     ]
     list_display = ('showExtendedId', 'showRack', 'showLocation',
-                    'preparedAt', 'registeredBy',
+                    'preparedAt', 'preparedBy',
                     'showContent', 'showConcentration', 'showAmount',
                     'showStatus','showEdit')
     
@@ -215,7 +235,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
     save_as = True
     save_on_top = True
 
-    search_fields = ('diplayId', 'name','description')
+    search_fields = ('diplayId', 'name','description', 'experimentNr')
     
     list_filter = ('status', filters.SampleLocationFilter, 
                    filters.SampleRackFilter, filters.SampleContainerFilter,
@@ -324,7 +344,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
                                ('Amount', 'amount'),
                                ('Amount Unit', 'amountUnit'),
                                ('Solvent', 'solvent'),
-                               ('Source', 'source'),
+                               ('ExperimentNr', 'experimentNr'),
                                ('Description','description')])
         return export_csv( request, queryset, fields)
     
@@ -343,7 +363,7 @@ class DnaSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt',),
+                         ('preparedAt', 'preparedBy', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -378,7 +398,7 @@ class CellSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt',),
+                         ('preparedAt', 'preparedBy', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -418,7 +438,7 @@ class OligoSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt',),
+                         ('preparedAt', 'preparedBy', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -452,7 +472,7 @@ class ChemicalSampleAdmin( SampleAdmin ):
     fieldsets = [
         (None, {
             'fields' : ((('displayId', 'container', 'status'),
-                         ('preparedAt',),
+                         ('preparedAt', 'preparedBy', 'experimentNr'),
                          ('description'),
                     ))
             } ),
@@ -594,3 +614,11 @@ class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin
 
 admin.site.register( M.Container, ContainerAdmin )
 
+
+class SampleProvenanceTypeAdmin(admin.ModelAdmin):
+    
+    list_display = ('name','isDefault', 'requiresSource', 'description')
+    list_filter = ('requiresSource',)
+    
+admin.site.register( M.SampleProvenanceType, SampleProvenanceTypeAdmin )
+    
