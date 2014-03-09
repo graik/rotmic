@@ -493,22 +493,45 @@ class ImportXlsOligo( ImportXlsComponent ):
                   'type' : 'componentType',
                   'tm in c' : 'meltingTemp',
                   'tm' : 'meltingTemp',
-                  'dna templates' : 'templates'}
+                  'dna templates' : 'templates',
+                  'reverse primers': 'reversePrimers'}
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
     xls2foreignkey = [  { 'field' : 'componentType', 'model' : M.OligoComponentType,
-                         'targetfield' : 'name'}
+                          'targetfield' : 'name'}
                        ]
     
     # lookup instructions for Many2Many fields
     xls2many = [ { 'field' : 'templates', 
-                   'model' : M.DnaComponent, 'targetfield' : 'displayId' } 
+                   'model' : M.DnaComponent, 'targetfield' : 'displayId' },
+                 { 'field' : 'reversePrimers', 
+                   'model' : M.OligoComponent, 'targetfield' : 'displayId',
+                   'targetfield2' : 'name' }                  
                  ]
                 
+    def correctPurification(self, d):
+        """Replace human-readable purification by internal choices value"""
+        choices = self.modelClass.PURE_CHOICES
+
+        human2system = { x[1] : x[0] for x in choices }
+
+        status = d.get('purification', 'unknown')
+
+        if not (status in human2system.keys() or status in human2system.values()):
+            d['errors']['purification'] = d['errors'].get('purification', [])
+            d['errors']['purification'].append(\
+                'invalid purification choice: ' + unicode(status) )
+            
+        ## replace only if listed as key in human to system map
+        d['purification'] = human2system.get(status, status)
+
+
     def postprocessDict(self, d):
         """Enforce integer melting temperatures"""
         d = super(ImportXlsOligo, self).postprocessDict(d)
+        
+        self.correctPurification(d)
         
         try:
             if d.get('meltingTemp',None):
