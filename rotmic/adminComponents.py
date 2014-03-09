@@ -37,7 +37,6 @@ from .adminBase import BaseAdminMixin, export_csv
 class ComponentAttachmentInline(admin.TabularInline):
     model = M.ComponentAttachment
     form = forms.AttachmentForm
-    template = 'admin/rotmic/componentattachment/tabular.html'
     can_delete=True
     extra = 1
     max_num = 5
