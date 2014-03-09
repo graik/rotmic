@@ -64,36 +64,32 @@ class XlsUploadView(TemplateView):
             f = request.FILES['tableFile']
             
             try:
-                p = self.parser_class(f, request.user, request=request)
-                p.getObjects()
-            
-                if p.failed:
-                    msg = 'Import of %s failed. Correct errors and try again. (Nothing has been imported.)\n' \
-                        % (f.name)
-                    messages.error(request, msg)
-    
-                    for d in p.failed:
-                        id = d.get('displayId', '??')
-                        errors = ['%s (%s)' % (k,v) for k,v in d['errors'].items() ]
-                        errors = '; '.join(errors)
-    
-                        msg = 'Import error(s) for entry "%s": %s' % (id, errors)
-                        messages.error(request, msg)
-    
-                else:
-                    with transaction.atomic():
-                        for f in p.forms:
-                            o = f.save()
-                            f.save_m2m()
-        
-                            msg = 'Successfully imported %s.' % unicode(o)
-                            messages.success(request, msg )
-            
-            except I.ImportError, why:
-                messages.error(request, why)
+                with transaction.atomic():
+                    
+                    p = self.parser_class(f, request.user, request=request)
+                    p.getObjects(commit=True)
                 
-            except U.IntegrityError, why:
-                messages.error(request, 'Consistency Error In Table. All imports are reverted. Reason: ' + str(why))
+                    if p.failed:
+                        s = 'Import of %s failed. Correct errors and try again. (Nothing has been imported.)\n' \
+                            % (f.name)
+                        messages.error(request, s)
+                        
+                        for d in p.failed:
+                            id = d.get('displayId', '??')
+                            errors = ['%s (%s)' % (k,v) for k,v in d['errors'].items() ]
+                            errors = '; '.join(errors)
+        
+                            msg = 'Import error(s) for entry "%s": %s' % (id, errors)
+                            messages.error(request, msg)
+                        
+                        raise I.ImportError  ## reverts all transactions
+        
+                    for o in p.objects:
+                        msg = 'Successfully imported %s.' % unicode(o)
+                        messages.success(request, msg )
+            
+            except I.ImportError:
+                pass  ## error message is already on top of messages stack
                 
             except Exception, why:
                 messages.error(request, 'Some unforeseen error occured. All imports are reverted. Reason: ' + str(why))

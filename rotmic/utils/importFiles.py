@@ -269,9 +269,10 @@ class ImportXls(object):
 
         return r
 
-    def dict2instance( self, d ):
+    def dict2instance( self, d, commit=False ):
         """
         Create a model instance from a dictionary.
+        @param commit: bool, save to database (default: False)
         """
         ## no errors while looking up related fields
         if not d.get('errors', []):
@@ -283,7 +284,8 @@ class ImportXls(object):
                 
                 ## inline forms for provenance would need to be created separately here.
                 
-                d['object'] = form.save( commit=False )
+                d['object'] = form.save( commit=commit )
+                    
                 d['object_form'] = form
             except ValueError as e:
                 self.updateErrors( d, form._errors )
@@ -291,7 +293,7 @@ class ImportXls(object):
         return d
 
     
-    def getObjects( self ):
+    def getObjects( self, commit=False ):
         """
         Run all parsing, cleanup and object extraction steps.
         Each returned dict has a key 'object' pointing to a (non-saved) model 
@@ -309,7 +311,7 @@ class ImportXls(object):
         for d in r:
             entry = self.lookupRelations( self.cleanDict(d) )
             entry = self.postprocessDict( entry )
-            entry = self.dict2instance( entry )
+            entry = self.dict2instance( entry, commit=commit )
             
             if entry.get('object', None):
                 self.objects += [ entry['object'] ]
@@ -319,7 +321,6 @@ class ImportXls(object):
 
             if entry['errors']:
                 self.failed += [ entry ]
-        
 
 
 class ImportXlsComponent( ImportXls ):
