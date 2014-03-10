@@ -264,7 +264,24 @@ class DnaComponent(Component, StatusMixinDna):
         if self.insert:
             r += [ m for m in self.insert.allMarkers() if not m in r ]
         return r
-            
+    
+    def allProteins( self ):
+        """
+        All proteins encoded by this DNA or its markers / insert / vector
+        @return [ProteinComponent]
+        """
+        r = [ self.translatesTo ] if self.translatesTo else []
+
+        if self.markers.count():
+            for m in self.markers.all():
+                r += m.allProteins()
+        if self.insert:
+            r += self.insert.allProteins()
+        if self.vectorBackbone:
+            r += self.vectorBackbone.allProteins()
+
+        return r
+
 
     class Meta:
         app_label = 'rotmic'

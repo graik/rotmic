@@ -113,6 +113,7 @@
                         <p>There are no sequence features described.</p>
                     {% endif %}
                 {% endwith %}
+                
             </div>
         
             <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;"><h4>Attachments</h4></div>
@@ -161,17 +162,23 @@
         </div>
         
         <div class='module'>
-            <h2>Related Entries: {{o.relatedDnaCount|add:o.as_plasmid_in_cell.count}}</h2>
+            <h2>Related Entries: {{o.allProteins|length|add:o.relatedDnaCount|add:o.as_plasmid_in_cell.count}}</h2>
             {% if o.componentType.category.name == 'Plasmid' %}
                 <p><br></p>
                 <ul class="object-tools">
                     <li><a href="{% url 'admin:rotmic_cellcomponent_add'%}?plasmid={{o.pk}}">Add Cell</a></li>
                 </ul>
             {% endif %}
+            {% if o.componentType.category.name == 'Fragment' %}
+                <p><br></p>
+                <ul class="object-tools">
+                    <li><a href="{% url 'admin:rotmic_dnacomponent_add'%}?insert={{o.pk}}">Add Plasmid</a></li>
+                </ul>
+            {% endif %}
            
             {% if o.relatedDnaCount > 0 %}
                 <p>
-                    {{o.displayId}} is used within the following other DNA constructs:
+                    <b>{{o.componentType.name}}</b> {{o.displayId}} is used <b>within</b> the following other <b>DNA constructs</b>:
                 </p>
                 <div style="margin: 10px">
                     <table cellspacing="1">
@@ -189,11 +196,8 @@
                                     <tr class="{% cycle 'row1' 'row2' %}">
                                     
                                     <td>{{key}}</td>
-                            
                                     <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
-                                      
                                     <td>{{x.showDescription}}</td>
-                                      
                                     <td style="text-align: center;">{{x.dna_samples.count}}</td>
     
                                     </tr>
@@ -225,13 +229,9 @@
                                 <tr class="{% cycle 'row1' 'row2' %}">
                                 
                                 <td>plasmid</td>
-                        
                                 <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
-                                  
                                 <td>{{x.componentType}}</td>
-                                  
                                 <td>{{x.showDescription}}</td>
-                                
                                 <td style="text-align: center;">{{x.cell_samples.count}}</td>
 
                                 </tr>
@@ -240,6 +240,40 @@
                     </table>
                 </div>
             {% endif %}
+            
+            {% if o.allProteins %}
+                <br>
+                <p>
+                    {{o.displayId}} encodes the following <b>Proteins</b> or protein fragments:
+                </p>
+                <div style="margin: 10px">
+                    <table cellspacing="1">
+            
+                        <thead>
+                        <tr>
+                            <th>ID (name)</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Samples</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for x in o.allProteins %}
+                                <tr class="{% cycle 'row1' 'row2' %}">
+                                
+                                <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                                <td>{{x.componentType}}</td>
+                                <td>{{x.showDescription}}</td>
+                                <td style="text-align: center;">{{0}}</td>
+
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                        
+            {% endif %}
+
         </div>
 
         <div class='module'>
