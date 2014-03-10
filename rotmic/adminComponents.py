@@ -150,6 +150,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
         ('Details', {
             'fields' : (('description',),
                         ('sequence', 'genbankFile'),
+                        ('translatesTo')
                         ),
         }
          ),            

@@ -135,6 +135,18 @@ class MarkerLookup(ModelLookup):
 
 registry.register(MarkerLookup)
 
+
+class ProteinLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = M.ProteinComponent
+    search_fields = ('displayId__startswith', 'name__icontains')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(ProteinLookup)
+
+
 class SampleDnaLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
     model = M.DnaComponent

@@ -186,12 +186,16 @@ class DnaComponent(Component, StatusMixinDna):
                                         related_name='as_vector_in_plasmid',
                                         help_text='start typing for auto-completion')
     
-    # rename to markers
     markers = models.ManyToManyField( 'self', blank=True, null=True, 
                                      symmetrical=False,
                                      related_name='as_marker_in_dna',   ## end with + to suppress reverse relationship
                                      verbose_name='Selection markers',
                                      help_text='start typing ID or name')
+    
+    translatesTo = models.ForeignKey('ProteinComponent',
+                                     verbose_name='Translates to protein',
+                                     related_name='codingSequences',
+                                     null=True, blank=True)
     
     
     def relatedDnaDict(self):

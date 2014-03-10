@@ -220,9 +220,15 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=L.InsertLookup, 
                                                        allow_new=False,
                                                        attrs={'size':35}),
-            'vectorBackbone' : sforms.AutoComboboxSelectWidget(lookup_class=L.VectorLookup, allow_new=False),
+            'vectorBackbone' : sforms.AutoComboboxSelectWidget(
+                                                  lookup_class=L.VectorLookup, 
+                                                  allow_new=False),
 
-            'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup)
+            'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup),
+            
+            'translatesTo' : sforms.AutoComboboxSelectWidget(\
+                                                 lookup_class=L.ProteinLookup,
+                                                 allow_new=False)
         }
 
 
