@@ -272,7 +272,11 @@
                     <li><B>Status</B>:<p>{{o.status}}</p></li>
                     <li><B>prepared</B>: 
                         <p>
-                            {{o.preparedAt|date:"Y-m-d"}}
+                        {% with o.preparedBy as U %}
+                            {{o.preparedAt|date:"Y-m-d"}}<br>
+                            by <a href="../?preparedBy__id__exact={{U.id}}"> 
+                               {{U.first_name}} {{U.last_name}} ({{U}})</a>
+                        {% endwith %}
                         </p>
                     </li>
                     <li><B>registered</B>: 
