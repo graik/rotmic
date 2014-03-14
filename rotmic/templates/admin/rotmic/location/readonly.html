@@ -8,7 +8,10 @@
     style="padding-left:0px; padding-right:10px; padding-top:0px"> 
 {%endblock%}
 
+{% block content-top %}{%endblock%} {#skip entirely #}
+
 {% block content-bottom %}    
+<div class='module'>
     <h2>Racks</h2>
     
     <p> 
@@ -54,7 +57,7 @@
         <p></p>
         <small>Note: click on container or sample count to jump to pre-filtered Container or Sample table.</small>
     </div>
-    
+</div>    
 {% endblock %} 
 
 {% block side-top %}

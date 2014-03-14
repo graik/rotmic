@@ -11,7 +11,7 @@
     style="padding-left:0px; padding-right:10px; padding-top:0px"> 
 {%endblock%}
 
-{% block content-top %} {# override #}
+{% block content-description %} {# override #}
     <h2>Description</h2>
     <div>
         <p class='description'>
@@ -26,6 +26,7 @@
 
 
 {% block content-bottom %}    
+<div class='module'>
     <h2>Samples</h2>
     <p>
         This Container contains <b>{{o.samples.count}} samples</b>.<br>
@@ -85,7 +86,7 @@
             Move mouse over sample description to see full length description.
         </small>
     </div>
-    
+</div>
 {% endblock %} 
 
 {% block side-top %}

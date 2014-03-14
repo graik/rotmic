@@ -43,9 +43,10 @@
 
     <div id="content-main">
     
+        {% block content-top %}
         <div class='module'>
             
-            {% block content-top %} {# override #}
+            {% block content-description %} {# override #}
                 {% if o.description %}
                     <h2>Description</h2>
                     <div>
@@ -85,6 +86,7 @@
             {% endblock %}
             
         </div>
+        {% endblock %}
             
         {% block content-bottom %}{% endblock %} {# override #}
             
