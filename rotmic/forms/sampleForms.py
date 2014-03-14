@@ -160,7 +160,7 @@ class CellSampleForm( SampleForm ):
     plasmid = sforms.AutoCompleteSelectField(label='Plasmid',
                             lookup_class=L.PlasmidLookup,
                             required=False,
-                            help_text='Start typing name or ID...',
+                            help_text='start typing ID or name of plasmid...',
                             widget=sforms.AutoCompleteSelectWidget(lookup_class=L.PlasmidLookup,
                                                         allow_new=False,
                                                         attrs={'size':35}),)

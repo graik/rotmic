@@ -143,14 +143,13 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
         (None, {
             'fields': (('displayId', 'name','status'),
                        ('componentCategory', 'componentType'),
-                       ('insert', 'vectorBackbone','markers' ),
+                       ('insert', 'vectorBackbone','markers', 'translatesTo' ),
                        )
         }
          ),
         ('Details', {
             'fields' : (('description',),
                         ('sequence', 'genbankFile'),
-                        ('translatesTo')
                         ),
         }
          ),            

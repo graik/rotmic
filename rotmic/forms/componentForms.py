@@ -69,8 +69,6 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
         
-        self.fields['markers'].help_text = 'Start typing ID or name...'
-
         o = kwargs.get('instance', None)
         if o:
             self.fields['componentCategory'].initial = o.componentType.subTypeOf
@@ -99,7 +97,7 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
             
             if not r.id in [T.dcFragment.id, T.dcMarker.id] and \
                self.instance.as_insert_in_dna.count():
-                raise ValidationError(msg + 'This construct in use as an insert.')
+                raise ValidationError(msg + 'This construct is in use as an insert.')
                 
             if r.id != T.dcMarker and (self.instance.as_marker_in_cell.count() \
                                        or self.instance.as_marker_in_dna.count() ):
@@ -154,7 +152,7 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
             if not m.componentType.category().id == T.dcMarker.id:
                 raise ValidationError('%s is not a marker.' % m.__unicode__() )
         return r
-        
+    
 
     def clean(self):
         """
@@ -168,6 +166,9 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
         if category and (category != T.dcPlasmid):
             data['insert'] = None
             data['vectorBackbone'] = None
+            
+        if category and (category != T.dcFragment):
+            data['translatesTo'] = None
         
         if category and (category not in [T.dcVectorBB, T.dcFragment] and 'markers' in data):
             data['markers'] = []
@@ -219,7 +220,7 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
 
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=L.InsertLookup, 
                                                        allow_new=False,
-                                                       attrs={'size':35}),
+                                                       attrs={'size':32}),
             'vectorBackbone' : sforms.AutoComboboxSelectWidget(
                                                   lookup_class=L.VectorLookup, 
                                                   allow_new=False),

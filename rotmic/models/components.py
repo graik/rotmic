@@ -179,22 +179,23 @@ class DnaComponent(Component, StatusMixinDna):
     
     insert = models.ForeignKey( 'self', blank=True, null=True,
                                 related_name='as_insert_in_dna',
-                                help_text='start typing for auto-completion')
+                                help_text='start typing ID or name of insert DNA (Fragment)')
     
     vectorBackbone = models.ForeignKey( 'self', blank=True, null=True ,
                                         verbose_name='Vector Backbone',
                                         related_name='as_vector_in_plasmid',
-                                        help_text='start typing for auto-completion')
+                                        help_text='start typing ID or name of base vector')
     
     markers = models.ManyToManyField( 'self', blank=True, null=True, 
                                      symmetrical=False,
                                      related_name='as_marker_in_dna',   ## end with + to suppress reverse relationship
                                      verbose_name='Selection markers',
-                                     help_text='start typing ID or name')
+                                     help_text='start typing ID or name of marker')
     
     translatesTo = models.ForeignKey('ProteinComponent',
-                                     verbose_name='Translates to protein',
+                                     verbose_name='Translates to',
                                      related_name='codingSequences',
+                                     help_text='start typing ID or name of encoded protein',
                                      null=True, blank=True)
     
     
@@ -246,6 +247,9 @@ class DnaComponent(Component, StatusMixinDna):
         if category != 'Plasmid':
             self.insert = None
             self.vectorBackbone = None
+        
+        if category != 'Fragment':
+            self.translatesTo = None
         
         return super(DnaComponent,self).save(*args, **kwargs)
 
