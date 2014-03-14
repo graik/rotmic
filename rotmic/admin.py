@@ -226,7 +226,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
           
     ]
     list_display = ('showExtendedId', 'showRack', 'showLocation',
-                    'preparedAt', 'preparedBy',
+                    'preparedAt', 'preparedBy', 'showType',
                     'showContent', 'showConcentration', 'showAmount',
                     'showStatus','showEdit')
     
