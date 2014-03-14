@@ -95,6 +95,15 @@ class Component(UserMixin):
     ## return child classes in queries using select_subclasses()
     objects = I.InheritanceManager()  
 
+    @property
+    def samples(self):
+        """
+        return subtype-specific django RelatedManager pointing to all samples
+        for this specific component.
+        Needs to be overriden
+        """
+        raise NotImplemented, 'samples method must be implemented by sub-classes.'
+
     def __unicode__(self):
         name = self.name or ''
         return u'%s (%s)' % (self.displayId, name)
@@ -199,6 +208,14 @@ class DnaComponent(Component, StatusMixinDna):
                                      null=True, blank=True)
     
     
+    @property
+    def samples(self):
+        """
+        return subtype-specific django RelatedManager pointing to all samples
+        for this specific component.
+        """
+        return self.dna_samples
+
     def relatedDnaDict(self):
         """
         DNA components that (directly) contain this dna component.
@@ -326,6 +343,14 @@ class CellComponent(Component, StatusMixinDna):
         return super(CellComponent,self).save(*args, **kwargs)
             
 
+    @property
+    def samples(self):
+        """
+        return subtype-specific django RelatedManager pointing to all samples
+        for this specific component.
+        """
+        return self.cell_samples
+
     def allMarkers( self ):
         """
         @return: [DnaComponent]
@@ -359,6 +384,14 @@ class ProteinComponent(Component, StatusMixinDna):
     componentType = models.ForeignKey('ProteinComponentType', 
                                       verbose_name='Type',
                                       blank=False )
+
+    @property
+    def samples(self):
+        """
+        return subtype-specific django RelatedManager pointing to all samples
+        for this specific component.
+        """
+        return self.protein_samples
 
     class Meta:
         app_label = 'rotmic'
@@ -415,6 +448,14 @@ class OligoComponent(Component, StatusMixinCommercial):
                                             symmetrical=True,
                                             help_text='select potential reverse primers')
 
+    @property
+    def samples(self):
+        """
+        return subtype-specific django RelatedManager pointing to all samples
+        for this specific component.
+        """
+        return self.oligo_samples
+
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'Oligo'
@@ -435,6 +476,14 @@ class ChemicalComponent(Component, StatusMixinCommercial):
                             null=True )
     
     
+    @property
+    def samples(self):
+        """
+        return subtype-specific django RelatedManager pointing to all samples
+        for this specific component.
+        """
+        return self.chemical_samples
+
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'Chemical'

@@ -47,7 +47,7 @@
         </div>
     {% endblock %}
 
-    {% block content-bottom %}
+    {% block content-middle %}
         
         {% block sequence %}
             <div class='module'> 
@@ -61,7 +61,11 @@
                 {% endif %}
             </div>        
         {% endblock sequence %}
-            
+    
+    {% endblock %}
+    
+    {% block content-bottom %}
+    
         {% block samples %}
             <div class='module'>
             <h2>Samples</h2>
