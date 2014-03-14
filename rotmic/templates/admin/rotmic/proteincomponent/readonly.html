@@ -11,7 +11,7 @@
 
 
     {% block content-bottom %}
-
+   
         <div class='module'>    
             <h2>Raw Sequence</h2>
             {% if o.sequence %}
@@ -28,13 +28,13 @@
             <h2>Samples</h2>
                 <p><br></p>
                 <ul class="object-tools">
-                    <li><a href="{% url 'admin:rotmic_chemicalsample_add'%}?chemical={{o.pk}}">Add Chemical Sample</a></li>
+                    <li><a href="{% url 'admin:rotmic_proteinsample_add'%}?protein={{o.pk}}">Add Protein Sample</a></li>
                 </ul>
 
-                {% with n=o.chemical_samples.count %}
+                {% with n=o.protein_samples.count %}
                     {% if n > 0 %}
                         <p>
-                            There are <b>{{n}} samples</b> registered for this Chemical.<br>
+                            There are <b>{{n}} samples</b> registered for this Protein.<br>
                         </p>
                         
                         <div style="margin: 10px">
@@ -50,7 +50,7 @@
                                 </thead>
                     
                                 <tbody>
-                                {% for x in o.chemical_samples.all %}
+                                {% for x in o.protein_samples.all %}
                                 
                                   <tr class="{% cycle 'row1' 'row2' %}">
                                   
@@ -83,7 +83,7 @@
                         </div>
                     
                     {% else %}
-                        <p>There are no samples registered for this chemical.</p>
+                        <p>There are no samples registered for this protein.</p>
                     {% endif %}
                 {% endwith %}
         </div>
