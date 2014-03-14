@@ -2,7 +2,7 @@
 {% load i18n admin_static admin_list admin_modify admin_urls %}
 {% load rotmicfilters %}
 
-        {% block content-top %}
+    {% block content-top %}
         <div class='module'>
             
             {% block content-description %} {# override #}
@@ -45,4 +45,108 @@
             {% endblock %}
             
         </div>
-        {% endblock %}
+    {% endblock %}
+
+    {% block content-bottom %}
+        
+        {% block sequence %}
+            <div class='module'> 
+                <h2>Raw Sequence</h2>
+                {% if o.sequence %}
+                    <div style="height:70px;overflow:auto">
+                    <p style='font-family:monospace;word-wrap:break-word'>&gt;{{o.displayId}}<br>{{o.sequence}}</p>
+                    </div>
+                {% else %}
+                    <p>There is no sequence registered.</p>
+                {% endif %}
+            </div>        
+        {% endblock sequence %}
+            
+        {% block samples %}
+            <div class='module'>
+            <h2>Samples</h2>
+                <p><br></p>
+                <ul class="object-tools">
+                    {% block add-sample %}
+                        <li>
+                            {% block add-sample-url %} {# override! #}
+                                <a href="{% url 'admin:rotmic_sample_add'%}?protein={{o.pk}}">
+                            {% endblock %}
+                            Add {{class_label}} Sample</a>
+                        </li>
+                    {% endblock %}
+                </ul>
+
+                {% with n=o.samples.count %}
+                    {% if n > 0 %}
+                        <p>
+                            There are <b>{{n}} samples</b> registered for this {{class_label}}.<br>
+                        </p>
+                        
+                        <div style="margin: 10px">
+                            <table cellspacing="1">
+                    
+                                <thead>
+                                <tr>
+                                    <th>location</th>
+                                    <th>ID/<br>Pos.</th><th>prepared</th><th>by</th>
+                                    <th>Type</th><th>Content</th>
+                                    <th>Description</th><th>Status</th>
+                                </tr>
+                                </thead>
+                    
+                                <tbody>
+                                {% for x in o.samples.all %}
+                                
+                                  <tr class="{% cycle 'row1' 'row2' %}">
+                                  
+                                    <td>{{x.container.showVerbose}}</td>
+                                                         
+                                    <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
+                                    
+                                    <td>{{x.preparedAt|date:"Y-m-d"}}</td>
+                                    
+                                    <td>{{x.registeredBy}}</td>
+                                    
+                                    <td>{{x.showType}}</td>
+                                    
+                                    <td>{{x.showContent}}</td>
+                                    
+                                    <td>{{x.description | truncateHTML:30}}</td>
+                                    
+                                    <td>{{x.status}}</td>
+                                    
+                                  </tr>
+                    
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                            <p></p>
+                            <small>
+                                Help: Move mouse over content link to see content description. 
+                                Move mouse over sample description to see full length description.
+                            </small>
+                        </div>
+                    
+                    {% else %}
+                        <p>There are no samples registered for this {{class_label}}.</p>
+                    {% endif %}
+                {% endwith %}
+   
+            </div>
+        {% endblock samples %}
+    
+    {% endblock %}
+    
+
+    {% block side-top %}
+        <div class="module" id="classification-module">
+            <h2>Classification</h2>
+                <p> 
+                {% with o.componentType as T %}
+                    <a href="../?category={{T.category}}">{{T.category}}</a> /<br>
+                    &nbsp&nbsp<a href="../?category={{T.category}}&type={{T.name}}">{{T.name}}</a>
+                {% endwith %}
+                </p>
+        </div>
+    {% endblock side-top %}
