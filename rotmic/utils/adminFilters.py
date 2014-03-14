@@ -366,6 +366,9 @@ class OligoSampleLocationFilter( SampleLocationFilter ):
 class ChemicalSampleLocationFilter( SampleLocationFilter ):
     _sampleClass = M.ChemicalSample
 
+class ProteinSampleLocationFilter( SampleLocationFilter ):
+    _sampleClass = M.ProteinSample
+
 
 class SampleRackFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Racks,  responds to SampleLocationFilter"""
@@ -429,6 +432,9 @@ class OligoSampleRackFilter( SampleRackFilter ):
 class ChemicalSampleRackFilter( SampleRackFilter ):
     _sampleClass = M.ChemicalSample
 
+class ProteinSampleRackFilter( SampleRackFilter ):
+    _sampleClass = M.ProteinSample
+
 
 class SampleContainerFilter( admin.SimpleListFilter ):
     """Modified Filter for Sample Containers, responds to SampleRackFilter"""
@@ -491,6 +497,9 @@ class OligoSampleContainerFilter( SampleContainerFilter ):
 
 class ChemicalSampleContainerFilter( SampleContainerFilter ):
     _sampleClass = M.ChemicalSample
+
+class ProteinSampleContainerFilter( SampleContainerFilter ):
+    _sampleClass = M.ProteinSample
 
     
 class SortedUserFilter( admin.SimpleListFilter ):

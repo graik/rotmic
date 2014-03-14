@@ -497,6 +497,40 @@ class ChemicalSampleAdmin( SampleAdmin ):
 admin.site.register( M.ChemicalSample, ChemicalSampleAdmin )
 
 
+class ProteinSampleAdmin( SampleAdmin ):
+    form = forms.ProteinSampleForm
+    
+    ## change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
+    change_list_template = 'admin/rotmic/proteinsample/change_list.html'
+    
+    fieldsets = [
+        (None, {
+            'fields' : ((('displayId', 'container', 'status'),
+                         ('preparedAt', 'preparedBy', 'experimentNr'),
+                         ('description'),
+                    ))
+            } ),
+         ('Content', {
+             'fields' : ((('protein',),
+                          ('concentration','concentrationUnit','amount','amountUnit',),
+                          ('solvent','aliquotNr',),
+                         )
+                        ),
+         }
+        ), 
+    ]
+
+    list_filter = ('status', filters.ProteinSampleLocationFilter, 
+                   filters.ProteinSampleRackFilter, filters.ProteinSampleContainerFilter,
+                   filters.SortedUserFilter)
+        
+    def queryset(self, request):
+        """Revert modification made by SampleAdmin"""
+        return super(SampleAdmin,self).queryset(request)
+    
+admin.site.register( M.ProteinSample, ProteinSampleAdmin )
+
+
 
 class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = forms.LocationForm

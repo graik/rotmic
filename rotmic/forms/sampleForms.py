@@ -51,6 +51,27 @@ def getSampleWidgets( extra={} ):
 class SampleForm(forms.ModelForm):
     """Customized Form for Sample add / change. 
     To be overridden rather than used directly."""
+
+    ## use lookup fields and provide default value
+    concentrationUnit = sforms.AutoCompleteSelectField(
+        label='... unit',
+        required=False,
+        lookup_class=L.ConcentrationUnitLookup,
+        allow_new=False,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.ConcentrationUnitLookup,
+                                               allow_new=False,attrs={'size':5}),
+        initial=U.uM)
+    
+    ## restrict choices to volume units; override for other choices
+    amountUnit = sforms.AutoCompleteSelectField(
+        label='... unit',
+        required=False,
+        lookup_class=L.VolumeAmountUnitLookup,
+        allow_new=False,
+        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.VolumeAmountUnitLookup,
+                                               allow_new=False,attrs={'size':5}),
+        initial=U.ul)
+
     
     def __init__(self, *args, **kwargs):
         """Rescue request object from kwargs pushed in from SampleAdmin"""
@@ -123,16 +144,6 @@ class DnaSampleForm( SampleForm ):
                                                allow_new=False,attrs={'size':5}),
         initial=U.ngul)
     
-    ## restrict available choices to volume units only
-    amountUnit = sforms.AutoCompleteSelectField(
-        label='... unit',
-        required=False,
-        lookup_class=L.VolumeAmountUnitLookup,
-        allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.VolumeAmountUnitLookup,
-                                               allow_new=False,attrs={'size':5}),
-        initial=U.ul)
-
     class Meta:
         model = M.DnaSample
         widgets = getSampleWidgets( \
@@ -166,16 +177,6 @@ class CellSampleForm( SampleForm ):
                                                         attrs={'size':35}),)
 
     
-    ## restrict available choices to volume units only
-    amountUnit = sforms.AutoCompleteSelectField(
-        label='... unit',
-        required=False,
-        lookup_class=L.VolumeAmountUnitLookup,
-        allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.VolumeAmountUnitLookup,
-                                               allow_new=False,attrs={'size':5}),
-        initial=U.ul)
-
     def __init__(self, *args, **kwargs):
         super(CellSampleForm, self).__init__(*args, **kwargs)
 
@@ -255,26 +256,6 @@ class CellSampleForm( SampleForm ):
 class OligoSampleForm( SampleForm ):
     """Customized Form for DnaSample add / change"""
     
-    ## modify initial (default) value
-    concentrationUnit = sforms.AutoCompleteSelectField(
-        label='... unit',
-        required=False,
-        lookup_class=L.ConcentrationUnitLookup,
-        allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.ConcentrationUnitLookup,
-                                               allow_new=False,attrs={'size':5}),
-        initial=U.uM)
-    
-    ## restrict available choices to volume units only
-    amountUnit = sforms.AutoCompleteSelectField(
-        label='... unit',
-        required=False,
-        lookup_class=L.VolumeAmountUnitLookup,
-        allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.VolumeAmountUnitLookup,
-                                               allow_new=False,attrs={'size':5}),
-        initial=U.ul)
-
     class Meta:
         model = M.OligoSample
         widgets = getSampleWidgets( \
@@ -300,7 +281,7 @@ class ChemicalSampleForm( SampleForm ):
     amountUnit = sforms.AutoCompleteSelectField(
         label='... unit',
         required=False,
-        lookup_class=L.VolumeAmountUnitLookup,
+        lookup_class=L.AmountUnitLookup,
         allow_new=False,
         widget=sforms.AutoComboboxSelectWidget(lookup_class=L.AmountUnitLookup,
                                                allow_new=False,attrs={'size':5}),
@@ -313,6 +294,18 @@ class ChemicalSampleForm( SampleForm ):
                                                       allow_new=False,
                                                       attrs={'size':35}),
              })
+
+class ProteinSampleForm( SampleForm ):
+    """Customized Form for ChemicalSample add / change"""
+    
+    class Meta:
+        model = M.ProteinSample
+        widgets = getSampleWidgets( \
+            {'protein': sforms.AutoComboboxSelectWidget(lookup_class=L.ProteinLookup,
+                                                      allow_new=False,
+                                                      attrs={'size':35}),
+             })
+
 
 class SampleProvenanceForm( forms.ModelForm ):
     """minimal form used inline for sample History records"""

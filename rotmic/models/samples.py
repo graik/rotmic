@@ -393,7 +393,7 @@ class OligoSample( Sample ):
 
 
 class ChemicalSample( Sample ):
-    """Samples linked to CellComponent"""
+    """Samples linked to ChemicalComponent"""
     
     chemical = models.ForeignKey('ChemicalComponent',
                               verbose_name = 'Chemical',
@@ -424,3 +424,37 @@ class ChemicalSample( Sample ):
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'Chemical Sample'
+
+
+class ProteinSample( Sample ):
+    """Samples linked to ProteinComponent"""
+    
+    protein = models.ForeignKey('ProteinComponent',
+                              verbose_name = 'Protein',
+                              related_name = 'protein_samples',
+                              help_text='start typing name or ID of existing protein record...',
+                              )
+
+    def sameSamples(self):
+        """
+        @return samples that have exactly the same content
+        """
+        return ProteinSample.objects.filter(protein=self.protein).exclude(id=self.id)
+    
+    def relatedSamples(self):
+        """
+        Samples that are related but not identical
+        """
+        return []
+
+    @property
+    def content(self):
+        return self.protein
+
+    def showContent(self):
+        return super(ProteinSample, self).showContent()
+    showContent.short_description = 'Protein'
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'Protein Sample'
