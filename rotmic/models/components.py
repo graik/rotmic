@@ -24,6 +24,9 @@ from django.core.urlresolvers import reverse
 
 from django.contrib.auth.models import User, Group
 
+import Bio.SeqUtils.ProtParam as PP
+import Bio.SeqUtils.MeltingTemp as TM
+
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
 
@@ -393,6 +396,25 @@ class ProteinComponent(Component, StatusMixinDna):
         """
         return self.protein_samples
 
+    def length( self ):
+        """@return int, amino acid count"""
+        if not self.sequence:
+            return 0
+        return len(self.sequence)
+    
+    def mass( self ):
+        """@return float, ProtParam molecular weight"""
+        if not self.sequence:
+            return 0.0
+        return PP.ProteinAnalysis(self.sequence).molecular_weight()
+    
+    def isoelectric( self ):
+        """@return float, ProtParam iso-electric point"""
+        if not self.sequence:
+            return 0.0
+        r = PP.ProteinAnalysis(self.sequence).isoelectric_point()
+        return round(r, 2)
+
     class Meta:
         app_label = 'rotmic'
         verbose_name = 'Protein'
@@ -455,6 +477,18 @@ class OligoComponent(Component, StatusMixinCommercial):
         for this specific component.
         """
         return self.oligo_samples
+    
+    def tm_nn(self, dnaconc=500, saltconc=50):
+        """
+        dnaconc - float, [DNA] nM
+        saltconc - float, [salt] mM
+        @return float, nearest neighbore dna/dna melting temperature
+        """
+        if not self.sequence:
+            return 0
+        r = TM.Tm_staluc(self.sequence, dnac=dnaconc, saltc=saltconc)
+        return round(r,1)
+        
 
     class Meta:
         app_label = 'rotmic'

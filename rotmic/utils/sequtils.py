@@ -89,3 +89,4 @@ def recenter_sequence( seq, recenter=0, start=0, stop=None ):
     stop = stop or len( seq )
     
     return seq[start:stop]
+

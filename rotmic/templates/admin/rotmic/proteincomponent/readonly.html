@@ -9,6 +9,13 @@
         style="padding-left:0px; padding-right:10px; padding-top:0px; padding-bottom:5px"> 
     {%endblock%}
 
+    {% block content-details %}
+        <p><ul>
+            <li><b>Length:</b> {{o.length}} aa</li>
+            <li><b>Molecular Weight:</b> {{o.mass}} D</li>
+            <li><b>Isoelectric Point:</b> {{o.isoelectric}}</li>
+        </ul><p>
+    {% endblock %}
 
     {% block add-sample-url %} {# Link for "Add Sample" Button #}
         <a href="{% url 'admin:rotmic_proteinsample_add'%}?protein={{o.pk}}">

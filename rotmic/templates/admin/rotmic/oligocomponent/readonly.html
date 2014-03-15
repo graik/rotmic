@@ -14,7 +14,8 @@
         <p><ul>
             <li><b>Length:</b> {% if o.sequence %}{{o.sequence|length}}{%else%} 0{%endif%} bp</li>
             <li><b>Purification:</b> {{o.purification}}</li>
-            <li><b>Tm:</b> {% if o.meltingTemp %}{{o.meltingTemp}} C{%else%}{%endif%}</li>
+            <li><b>Tm registered:</b> {% if o.meltingTemp %}{{o.meltingTemp}} C{%else%}{%endif%}</li>
+            <li><b>Tm calculated:</b> {{o.tm_nn}} C [500 nM DNA, 50 mM salt, nearest neighbor]</li>
         </ul><p>
     {% endblock %}
     
