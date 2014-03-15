@@ -29,7 +29,13 @@ def isdna( seq ):
 def isaa( seq ):
     """@return: True, if given sequence looks not like DNA"""
     atgc = [ seq.upper().count( letter ) for letter in ['A','T','C','G'] ]
-    return sum( atgc ) < len( seq )
+    isnotdna = sum( atgc ) < len( seq )
+    
+    aa = 'ACDEFGHIKLMNPQRSTVWY'
+    count = [ seq.upper().count( l ) for l in aa ]
+    isaa = sum( count ) == len(seq)
+    
+    return isaa and isnotdna
 
 def seqlen( seq ):
     """
