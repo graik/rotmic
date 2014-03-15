@@ -22,6 +22,7 @@ import django.db.models as models
 from django.db.models.query import QuerySet
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+import django.contrib.messages as messages
 
 import rotmic.models as M
 
@@ -312,6 +313,18 @@ class OligoComponentForm(forms.ModelForm, CleaningMixIn):
         
         self.fields['componentType'].initial = T.ocStandard
     
+    def clean_sequence(self):
+        """Enforce DNA sequence."""
+        r = self.cleaned_data['sequence']
+        if not r:
+            return r
+
+        r = sequtils.cleanseq( r )
+        
+        if not sequtils.isdna( r ):
+            raise ValidationError('This is not a DNA sequence.', code='invalid')        
+        return r
+
     class Meta:
         model = M.OligoComponent
         widgets = {  ## customize widget dimensions and include dynamic select widgets
@@ -372,16 +385,22 @@ class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
                                     help_text='This will replace the current sequence.',
                                      extensions=['gbk','gb','genebank'])
     
+    ## hidden field which can be set through URL parameter
+    encodedBy = forms.CharField(label='', 
+                                widget=forms.HiddenInput,
+                                required=False)
+    
 
     def __init__(self, *args, **kwargs):
         super(ProteinComponentForm, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
 
         self.fields['status'].initial = 'available'
-
+        
         o = kwargs.get('instance', None)
         if o:
             self.fields['componentCategory'].initial = o.componentType.subTypeOf
+        
         
     def clean_sequence(self):
         """Enforce Protein sequence."""
@@ -394,6 +413,17 @@ class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
         if not sequtils.isaa( r ):
             raise ValidationError('This is not a protein sequence.', code='invalid')        
         return r
+    
+    def clean_encodedBy(self):
+        r = self.cleaned_data['encodedBy']
+        try:
+            if r:
+                r = int(r)
+                instance = M.DnaComponent.objects.get(id=r)
+                return instance
+        except M.DnaComponent.DoesNotExist:
+            raise forms.ValidationError()
+        return ''
     
     def clean(self):
         """
@@ -429,7 +459,8 @@ class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
             self._errors['genbankFile'] = self.error_class([msg])
 
         return data
-
+    
+    
     class Meta:
         model = M.ProteinComponent
         widgets = {  ## customize widget dimensions and include dynamic select widgets

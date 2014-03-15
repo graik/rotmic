@@ -26,6 +26,8 @@ from django.contrib.auth.models import User, Group
 
 import Bio.SeqUtils.ProtParam as PP
 import Bio.SeqUtils.MeltingTemp as TM
+from Bio.Seq import Seq
+from Bio.Alphabet import generic_dna, generic_protein
 
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
@@ -306,6 +308,16 @@ class DnaComponent(Component, StatusMixinDna):
 
         return r
 
+    def seq2aa(self):
+        """translate nucleotide to protein sequence"""
+        r = ''
+        try:
+            dna = Seq(self.sequence, generic_dna)
+            r = dna.translate()
+        except ValueError, why:
+            r = why
+        return r
+
 
     class Meta:
         app_label = 'rotmic'
@@ -406,14 +418,21 @@ class ProteinComponent(Component, StatusMixinDna):
         """@return float, ProtParam molecular weight"""
         if not self.sequence:
             return 0.0
-        return PP.ProteinAnalysis(self.sequence).molecular_weight()
+        try:
+            return PP.ProteinAnalysis(self.sequence).molecular_weight()
+        except:
+            return 0.0
     
     def isoelectric( self ):
         """@return float, ProtParam iso-electric point"""
         if not self.sequence:
             return 0.0
-        r = PP.ProteinAnalysis(self.sequence).isoelectric_point()
-        return round(r, 2)
+        try:
+            r = PP.ProteinAnalysis(self.sequence).isoelectric_point()
+            return round(r, 2)
+        except:
+            return 0.0
+        
 
     class Meta:
         app_label = 'rotmic'

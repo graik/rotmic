@@ -172,9 +172,11 @@
             {% if o.componentType.category.name == 'Fragment' %}
                 <p><br></p>
                 <ul class="object-tools">
-                    <li><a href="{% url 'admin:rotmic_dnacomponent_add'%}?insert={{o.pk}}">Add Plasmid</a></li>
+                    <li><a href="{% url 'admin:rotmic_dnacomponent_add'%}?insert={{o.pk}}">Insert in Plasmid</a></li>
+                    <li><a href="{% url 'admin:rotmic_proteincomponent_add'%}?name={{o.name}}&sequence={{o.seq2aa}}&encodedBy={{o.pk}}">Translate to Protein</a></li>
                 </ul>
             {% endif %}
+            
            
             {% if o.relatedDnaCount > 0 %}
                 <p>
@@ -244,7 +246,7 @@
             {% if o.allProteins %}
                 <br>
                 <p>
-                    {{o.displayId}} encodes the following <b>Proteins</b> or protein fragments:
+                    {{o.displayId}} <b>encodes</b> the following <b>Proteins</b> or protein fragments:
                 </p>
                 <div style="margin: 10px">
                     <table cellspacing="1">
@@ -271,7 +273,14 @@
                         </tbody>
                     </table>
                 </div>
-                        
+            {% else %}
+                {% if o.componentType.category.name == 'Fragment' %}
+                    <br>
+                    <p>
+                        No <b>protein translations</b> found for this DNA fragment. 
+                        Use the "translates To" field to connect this entry to an existing protein record.
+                    </p>
+                {% endif %}
             {% endif %}
 
         </div>

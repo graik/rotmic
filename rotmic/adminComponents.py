@@ -511,7 +511,7 @@ class ProteinComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAd
          ),
         ('Details', {
             'fields' : (('description',),
-                        ('sequence', 'genbankFile'),
+                        ('sequence', 'genbankFile', 'encodedBy'),
                         )
         }
          ),            
@@ -552,6 +552,29 @@ class ProteinComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAd
     def make_csv(self, request, queryset):
         return export_csv( request, queryset, self.csv_fields)
     make_csv.short_description = 'Export items as CSV'
+    
+    def save_model(self, request, obj, form, change):
+        """
+        Save DnaComponent.translatesTo relation to new Protein instance if
+        given via URL like add/?encodedBy=1
+        This cannot be done on the ModelForm.save level because the latter is called
+        with commit=False.
+        """
+        super(ProteinComponentAdmin, self).save_model(request, obj, form, change)
+        
+        encodedBy = form.cleaned_data.get('encodedBy', None)
+        if encodedBy:
+            try:
+                encodedBy.translatesTo = form.instance
+                encodedBy.save()
+                msg = 'Updated DNA construct %s.' % str(encodedBy)
+                messages.success(request, msg)
+            except Exception, why:
+                msg = 'Could not create translatesTo relation with %r. Reason: %s'\
+                    % (encodedBy, why)
+                messages.error(request, msg)
+        
+    
 
 admin.site.register(M.ProteinComponent, ProteinComponentAdmin)
 
