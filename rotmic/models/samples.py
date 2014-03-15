@@ -126,14 +126,16 @@ class Sample( UserMixin ):
                                           verbose_name='Conc. Unit',
                                           related_name='concUnit+',  ## supress back-reference
                                           null=True, blank=True,
-                                          limit_choices_to = {'unitType': 'concentration'})    
+                                          limit_choices_to = {'unitType': 'concentration'},
+                                          on_delete=models.PROTECT)    
     
     amount = models.FloatField('Amount', null=True, blank=True)
     amountUnit = models.ForeignKey('Unit', 
                                    verbose_name='Amount Unit',
                                    related_name='amountUnit+', ## suppress back-reference
                                    null=True, blank=True, 
-                                   limit_choices_to = Q(unitType__in=['volume','number', 'mass'])
+                                   limit_choices_to = Q(unitType__in=['volume','number', 'mass']),
+                                   on_delete=models.PROTECT
                                    )
 
 
