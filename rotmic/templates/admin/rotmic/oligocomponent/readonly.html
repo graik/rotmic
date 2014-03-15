@@ -10,24 +10,15 @@
 
     {%block super-title%}<h3>Oligonucleotide</h3>{%endblock%}
 
-    {%block content-description %}
-        <h2>Details</h2>
+    {%block content-details %}
         <p><ul>
             <li><b>Length:</b> {% if o.sequence %}{{o.sequence|length}}{%else%} 0{%endif%} bp</li>
             <li><b>Purification:</b> {{o.purification}}</li>
             <li><b>Tm:</b> {% if o.meltingTemp %}{{o.meltingTemp}} C{%else%}{%endif%}</li>
         </ul><p>
-
-        {% if o.description %}
-            <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;"><h4>Description</h4></div>
-            <p></p>
-            <div>
-                <p class='description'>
-                    {{o.description|markdown}}
-                </p>
-            </div>
-        {% endif %}
     {% endblock %}
+    
+    {% block seqstyle %}{% endblock %}
 
     {%block add-sample-url %} {# Link for "Add Sample" Button #}
         <a href="{% url 'admin:rotmic_oligosample_add'%}?oligo={{o.pk}}">
