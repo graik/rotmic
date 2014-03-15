@@ -45,7 +45,9 @@
             
                         <thead>
                         <tr>
-                            <th>construct</th><th>Description</th>
+                            <th>construct</th>
+                            <th>Type</th>
+                            <th>Description</th>
                             <th>Samples</th>
                         </tr>
                         </thead>
@@ -54,6 +56,8 @@
                                 <tr class="{% cycle 'row1' 'row2' %}">
                                 
                                 <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                                
+                                <td>{{x.componentType}}</td>
                                   
                                 <td>{{x.showDescription}}</td>
                                   
@@ -71,5 +75,7 @@
                     in the DNA record.
                 </p>
             {% endif %}
+        
+        </div>
 
     {% endblock %}
