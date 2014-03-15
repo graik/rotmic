@@ -189,7 +189,8 @@ class DnaComponent(Component, StatusMixinDna):
     
     componentType = models.ForeignKey('DnaComponentType', 
                                       verbose_name='Type',
-                                      blank=False )    
+                                      blank=False,
+                                      on_delete=models.PROTECT)    
     
     insert = models.ForeignKey( 'self', blank=True, null=True,
                                 related_name='as_insert_in_dna',
@@ -198,19 +199,22 @@ class DnaComponent(Component, StatusMixinDna):
     vectorBackbone = models.ForeignKey( 'self', blank=True, null=True ,
                                         verbose_name='Vector Backbone',
                                         related_name='as_vector_in_plasmid',
-                                        help_text='start typing ID or name of base vector')
+                                        help_text='start typing ID or name of base vector',
+                                        on_delete=models.PROTECT)  ## prevent deletion of vectorBB in use
     
     markers = models.ManyToManyField( 'self', blank=True, null=True, 
                                      symmetrical=False,
                                      related_name='as_marker_in_dna',   ## end with + to suppress reverse relationship
                                      verbose_name='Selection markers',
-                                     help_text='start typing ID or name of marker')
+                                     help_text='start typing ID or name of marker',
+                                     on_delete=models.PROTECT)
     
     translatesTo = models.ForeignKey('ProteinComponent',
                                      verbose_name='Translates to',
                                      related_name='codingSequences',
                                      help_text='start typing ID or name of encoded protein',
-                                     null=True, blank=True)
+                                     null=True, blank=True,
+                                     on_delete=models.SET_NULL)  ## do not remove DC if protein is deleted
     
     
     @property
@@ -331,7 +335,8 @@ class CellComponent(Component, StatusMixinDna):
     """
     componentType = models.ForeignKey('CellComponentType', 
                                       verbose_name='Strain',
-                                      blank=False )    
+                                      blank=False,
+                                      on_delete=models.PROTECT)    
     
     # convert to many2many ?
     plasmid = models.ForeignKey( 'DnaComponent', blank=True, null=True, 
@@ -398,7 +403,8 @@ class ProteinComponent(Component, StatusMixinDna):
     
     componentType = models.ForeignKey('ProteinComponentType', 
                                       verbose_name='Type',
-                                      blank=False )
+                                      blank=False,
+                                      on_delete=models.PROTECT)
 
     @property
     def samples(self):
@@ -470,7 +476,8 @@ class OligoComponent(Component, StatusMixinCommercial):
     
     componentType = models.ForeignKey('OligoComponentType',
                                       verbose_name='Oligo Type',
-                                      blank=False)
+                                      blank=False,
+                                      on_delete=models.PROTECT)
     
     templates = models.ManyToManyField('DnaComponent', blank=True, null=True,
                                        related_name='template_for_oligos',
@@ -522,7 +529,8 @@ class ChemicalComponent(Component, StatusMixinCommercial):
     
     componentType = models.ForeignKey('ChemicalType',
                                       verbose_name='Chemical Type',
-                                      blank=False)
+                                      blank=False,
+                                      on_delete=models.PROTECT)
 
     cas = models.CharField( 'C.A.S.', max_length=20,
                             help_text="C.A.S. number", blank=True, 
