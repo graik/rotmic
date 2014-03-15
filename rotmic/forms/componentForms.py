@@ -70,8 +70,16 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
         self.request = kwargs.pop('request', None)
         
         o = kwargs.get('instance', None)
+        ## Edit form
         if o:
             self.fields['componentCategory'].initial = o.componentType.subTypeOf
+
+        ## Add New form
+        else:
+            ## pre-set category if 'translatesTo' is given as URL parameter
+            if 'translatesTo' in self.initial:
+                self.initial['componentType'] = unicode(T.dcFragmentCDS.pk)
+                self.initial['componentCategory'] = unicode(T.dcFragment.pk)
     
     def clean_sequence(self):
         """Enforce DNA sequence."""

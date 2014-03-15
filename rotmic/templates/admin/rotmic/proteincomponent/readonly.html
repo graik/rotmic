@@ -21,3 +21,77 @@
         <a href="{% url 'admin:rotmic_proteinsample_add'%}?protein={{o.pk}}">
     {% endblock %}
 
+    {% block content-middle %}
+        
+        {{block.super}}
+
+        <div class='module'>
+            <h2>encoding DNA</h2>
+
+            <p><br></p>
+            <ul class="object-tools">
+                {% block add-encoding %}
+                    <li>
+                        {% block add-encoding-url %}
+                            <a href="{%url 'admin:rotmic_dnacomponent_add'%}?translatesTo={{o.pk}}&name={{o.name}}">
+                        {% endblock %}
+                        Add encoding DNA</a>
+                    </li>
+                {% endblock %}
+            </ul>
+
+            {% if o.codingSequences.count > 0 %}
+                <p>
+                    {{o.displayId}} is <b>encoded</b> by the following <b>DNA construct(s)</b>:
+                </p>
+                <div style="margin: 10px">
+                    <table cellspacing="1">
+            
+                        <thead>
+                        <tr>
+                            <th>construct</th><th>Description</th>
+                            <th>Samples</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for x in o.codingSequences.all %}
+                                <tr class="{% cycle 'row1' 'row2' %}">
+                                
+                                <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                                  
+                                <td>{{x.showDescription}}</td>
+                                  
+                                <td style="text-align: center;">{{x.dna_samples.count}}</td>
+
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>
+                    No encoding DNA constructs registered. You can connect DNA
+                    fragments to this protein using the "translates To" field
+                    in the DNA record.
+                </p>
+            {% endif %}
+
+    {% endblock %}
+    
+{% block after_field_sets %}
+
+    {{ block.super }}
+
+    <script language=javascript type='text/javascript'>
+        // return PK of DnaComponentType category of given name
+        function category(name) {
+            var map = {
+                {% for t in dnaCategories %}"{{t.name}}" : "{{t.pk}}",
+                {% endfor %}};
+            
+            if ( !(name in map) ){ return ''; };
+            return map[ name ];
+        }
+    </script>
+
+{% endblock after_field_sets %}    
