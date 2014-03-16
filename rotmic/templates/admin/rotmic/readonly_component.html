@@ -5,7 +5,7 @@
     {% block content-top %}
         <div class='module'>
                         
-            <h2>Details</h2>
+            {% block content-title %}<h2>Details</h2>{% endblock %}
             {% block content-details %}{% endblock %}
         
             {% block content-description %} {# override #}

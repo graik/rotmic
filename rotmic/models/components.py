@@ -26,8 +26,8 @@ from django.contrib.auth.models import User, Group
 
 import Bio.SeqUtils.ProtParam as PP
 import Bio.SeqUtils.MeltingTemp as TM
+import Bio.SeqUtils as SeqUtils
 from Bio.Seq import Seq
-from Bio.Alphabet import generic_dna, generic_protein
 
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
@@ -321,6 +321,20 @@ class DnaComponent(Component, StatusMixinDna):
             r = why
         return r
 
+    def length( self ):
+        """@return int, nt count"""
+        if not self.sequence:
+            return 0
+        return len(self.sequence)
+    
+    def gccontent(self):
+        """@return float, GC content of sequence in %"""
+        r = 0.0
+        try:
+            r = SeqUtils.GC(self.sequence)
+        except:
+            pass
+        return round(r, 0)
 
     class Meta:
         app_label = 'rotmic'
