@@ -206,8 +206,7 @@ class DnaComponent(Component, StatusMixinDna):
                                      symmetrical=False,
                                      related_name='as_marker_in_dna',   ## end with + to suppress reverse relationship
                                      verbose_name='Selection markers',
-                                     help_text='start typing ID or name of marker',
-                                     on_delete=models.PROTECT)
+                                     help_text='start typing ID or name of marker')
     
     translatesTo = models.ForeignKey('ProteinComponent',
                                      verbose_name='Translates to',
