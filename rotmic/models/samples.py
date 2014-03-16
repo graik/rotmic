@@ -201,7 +201,7 @@ class Sample( UserMixin ):
         if self.__class__ is not Sample:
             return self.__class__
 
-        for c in [DnaSample, CellSample, ChemicalSample, OligoSample]:
+        for c in [DnaSample, CellSample, ChemicalSample, OligoSample, ProteinSample]:
             try: 
                 return c.objects.get(id=self.id).__class__
             except:
