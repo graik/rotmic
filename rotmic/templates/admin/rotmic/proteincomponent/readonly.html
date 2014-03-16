@@ -79,3 +79,14 @@
         </div>
 
     {% endblock %}
+
+    {% block side-bottom %}
+        <div class="module" id="record-module">
+            <h2>Export</h2>
+            {% if o.genbank %}
+                <p><a href="genbank/">Download GenBank file</a><p>
+            {% else %}
+                <p>No genbank file attached.</p>
+            {% endif %}
+        </div>
+    {% endblock %}
