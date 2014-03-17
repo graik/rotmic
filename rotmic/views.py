@@ -18,7 +18,7 @@ from rotmic.forms import TableUploadForm
 
 
 def view_genbankfile(request, pk):
-    """DC View"""
+    """DC genbank file download View"""
     o = M.DnaComponent.objects.get(id=pk)
     txt = o.genbank
     f = StringIO.StringIO( txt )
@@ -30,6 +30,18 @@ def view_genbankfile(request, pk):
     
     return response
 
+def view_genbankfile_aa(request, pk):
+    """PC genbank file download View"""
+    o = M.ProteinComponent.objects.get(id=pk)
+    txt = o.genbank
+    f = StringIO.StringIO( txt )
+    
+    response = HttpResponse( FileWrapper( f ),
+                             content_type='text/gbk')
+    
+    response['Content-Disposition'] = 'attachment; filename="%s.gbk"' % o.displayId
+    
+    return response
 
 
 class XlsUploadView(TemplateView):
@@ -120,6 +132,11 @@ class ChemicalXlsUploadView(XlsUploadView):
     parser_class = I.ImportXlsChemical
     
     
+class ProteinXlsUploadView(XlsUploadView):    
+    model = M.ProteinComponent
+    parser_class = I.ImportXlsProtein
+
+
 class LocationXlsUploadView(XlsUploadView):
     model = M.Location
     parser_class = I.ImportXlsLocation
@@ -148,3 +165,7 @@ class ChemicalSampleXlsUploadView(XlsUploadView):
 class CellSampleXlsUploadView(XlsUploadView):
     model = M.CellSample
     parser_class = I.ImportXlsCellSample
+
+class ProteinSampleXlsUploadView(XlsUploadView):
+    model = M.ProteinSample
+    parser_class = I.ImportXlsProteinSample

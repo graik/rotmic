@@ -565,6 +565,42 @@ class ImportXlsChemical( ImportXlsComponent ):
                        ]
     
 
+class ImportXlsProtein( ImportXlsComponent ):
+    """Protein construct import"""
+    
+    dataForm = F.ProteinComponentForm
+    
+    modelClass = M.ProteinComponent
+    
+    typeClass = M.ProteinComponentType
+    
+    # rename Excel headers to field name
+    xls2field = { 'id' : 'displayId',
+                  'type' : 'componentType',
+                }
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = [ { 'field' : 'componentType', 'model' : M.ProteinComponentType,
+                         'targetfield' : 'name'},
+                       { 'field' : 'encodedBy', 'model' : M.DnaComponent }
+                       ]
+    
+    # lookup instructions for Many2Many fields
+    xls2many = []
+
+    def generateName(self, d):
+        """If missing, copy name from encodedBy field"""
+        ## automatically create name
+        try:
+            if not d.get('name', '') and d.get('encodedBy',''):
+                dna = M.DnaComponent.objects.get( id=d['encodedBy'])
+                d['name'] = dna.name
+                
+        except Exception as e:
+            d['errors']['name'] = [u'Error generating name from encoding DNA: '+unicode(e)]
+
+
 class ImportXlsLocation( ImportXls ):
     """Import location records from table"""
     dataForm = F.LocationForm
@@ -789,4 +825,19 @@ class ImportXlsCellSample( ImportXlsSample ):
         super(ImportXlsCellSample,self).cleanDict(d)
         self.cleanType(d)
         return d
+
+class ImportXlsProteinSample( ImportXlsSample ):
+    """Excel import of Protein samples"""
+    dataForm = F.ProteinSampleForm
+    
+    modelClass = M.ProteinSample
+    
+    # rename Excel headers to field name
+    xls2field = dict( ImportXlsSample.xls2field, **{'protein' : 'protein'})
+    
+    # lookup instructions for fields (default model=DnaComponent,
+    # targetfield=displayId)
+    xls2foreignkey = ImportXlsSample.xls2foreignkey + \
+                     [ { 'field' : 'protein', 'model' : M.ProteinComponent } ]
+
     
