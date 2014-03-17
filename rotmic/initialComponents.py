@@ -1,4 +1,4 @@
-## Copyright 2013 Raik Gruenberg
+## Copyright 2013 - 2014 Raik Gruenberg
 
 ## This file is part of the rotmic project (https://github.com/graik/rotmic).
 ## rotmic is free software: you can redistribute it and/or modify
