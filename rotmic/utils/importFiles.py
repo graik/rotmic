@@ -577,6 +577,7 @@ class ImportXlsProtein( ImportXlsComponent ):
     # rename Excel headers to field name
     xls2field = { 'id' : 'displayId',
                   'type' : 'componentType',
+                  'encoded by' : 'encodedBy'
                 }
     
     # lookup instructions for fields (default model=DnaComponent,
