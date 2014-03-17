@@ -834,7 +834,7 @@ class ImportXlsProteinSample( ImportXlsSample ):
     modelClass = M.ProteinSample
     
     # rename Excel headers to field name
-    xls2field = dict( ImportXlsSample.xls2field, **{'protein' : 'protein'})
+    # xls2field = dict( ImportXlsSample.xls2field, **{'protein' : 'protein'})
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
