@@ -117,51 +117,23 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
         return r
     
     
-    def clean_insert(self):
+    def _validateLinked(self, data, field='insert', 
+                        categories=[T.dcFragment,T.dcMarker]):
         """
-        Enforce DC of type 'Fragment' or 'Marker'
-        This should not strictly be needed as the dialogue is only populated
-        with correct types of DnaComponents but the type of an existing
-        construct may later be change.
+        Enforce that linked DC instances have given categories and check
+        for circular references
         """
-        r = self.cleaned_data['insert']
-        if not r:
-            return r
+        x = data.get(field, None)
         
-        assert( isinstance(r, M.DnaComponent) )
-        if not r.componentType.category().id in [T.dcFragment.id, T.dcMarker.id]:
-            raise ValidationError('Constructs of category %s are not allowed as an insert.'\
-                                  % r.componentType.category().name )
-        return r
-
-    def clean_vectorBackbone(self):
-        """
-        Enforce DC of type 'VectorBackbone'. 
-        This should not strictly be needed as the dialogue is only populated
-        with correct types of DnaComponents but the type of an existing
-        construct may later be change.
-        """
-        r = self.cleaned_data['vectorBackbone']
-        if not r:
-            return r
+        if x:
+            cat_ids = [ cat.id for cat in categories ]
+            if not x.componentType.category().id in cat_ids:
+                msg = 'Constructs of category %s are not allowed here.'\
+                    % x.componentType.category().name
+                self._errors[field] = self.error_class([msg])
         
-        assert( isinstance(r, M.DnaComponent) )
-        if not r.componentType.category().id == T.dcVectorBB.id:  ## for some reason "is" doesn't work
-            raise ValidationError('Given construct is not a vector backbone.')
-        return r
-    
-    def clean_markers(self):
-        """Enforce all markers to be really classified as marker"""
-        r = self.cleaned_data['markers']
-        if not r.count():
-            return r
-        
-        for m in r:
-            assert( isinstance(m, M.DnaComponent))
-            if not m.componentType.category().id == T.dcMarker.id:
-                raise ValidationError('%s is not a marker.' % m.__unicode__() )
-        return r
-    
+            if x.id == self.instance.id: 
+                self._errors[field] = self.error_class(['Circular reference!'])
 
     def clean(self):
         """
@@ -186,6 +158,16 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
         if category == T.dcPlasmid and not data.get('vectorBackbone',None):
             msg = u'Vector Backbone is required for Plasmids.'
             self._errors['vectorBackbone'] = self.error_class([msg])
+        
+        ## validate Insert, Marker, Vector, and Protein categories
+        self._validateLinked(data, 'insert', [T.dcFragment, T.dcMarker])
+        
+        self._validateLinked(data, 'vector', [T.dcVectorBB])
+        
+        self._validateLinked(data, 'markers', [T.dcMarker])
+        
+        self._validateLinked(data, 'translatesTo', [T.pcProtein])
+        
         
         ## extract genbank file from upload field
         try:
@@ -416,6 +398,7 @@ class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
         return r
     
     def clean_encodedBy(self):
+        """Convert hidden field value to DC instance (from URL parameter)"""
         r = self.cleaned_data['encodedBy']
         try:
             if r:
@@ -428,9 +411,6 @@ class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
     
     def clean(self):
         """
-        Remove values for hidden fields, which might have been set before final
-        category was selected.
-        Note: this is also partly enforced by the DnaComponent.save method.
         """
         data = super(ProteinComponentForm, self).clean()
         
