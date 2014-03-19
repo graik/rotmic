@@ -146,6 +146,6 @@ chemOther = getcreate(M.ChemicalType, name='other reagent', subTypeOf=chemReagen
 ## Protein types
 
 ## required:
-pcProtein = getcreate(M.ProteinComponentType, name='Full Protein', subTypeOf=None)
+pcProtein = getcreate(M.ProteinComponentType, name='Protein', subTypeOf=None)
 
 pcOther = getcreate(M.ProteinComponentType, name='other protein', subTypeOf=pcProtein)
