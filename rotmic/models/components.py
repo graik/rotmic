@@ -28,7 +28,7 @@ import Bio.SeqUtils.ProtParam as PP
 import Bio.SeqUtils.MeltingTemp as TM
 import Bio.SeqUtils as SeqUtils
 from Bio.Seq import Seq
-from Bio.Seq.Alphabet import generic_dna
+from Bio.Alphabet import generic_dna
 
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
