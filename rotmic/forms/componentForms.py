@@ -396,6 +396,7 @@ class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
         self.request = kwargs.pop('request', None)
 
         self.fields['status'].initial = 'available'
+        self.fields['componentType'].initial = T.pcOther
         
         o = kwargs.get('instance', None)
         if o:
