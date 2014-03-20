@@ -52,7 +52,7 @@ class Component(UserMixin):
     
     projects = models.ManyToManyField('Project', blank=True, null=True, 
                                      related_name='components',   ## end with + to suppress reverse relationship
-                                     help_text='Assign this construct to projects.')
+                                     )
 
     description = models.TextField('Description', blank=True,
                 help_text='You can format your text and include links. See: <a href="http://daringfireball.net/projects/markdown/basics">Markdown Quick Reference</a>')

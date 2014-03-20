@@ -69,6 +69,8 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
+
+        self.fields['projects'].widget.can_add_related = False
         
         o = kwargs.get('instance', None)
         ## Edit form
@@ -211,7 +213,7 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
             'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
             
-            'projects': L.FixedSelectMultipleWidget(lookup_class=L.ProjectLookup),
+            'projects': L.FixedSelectMultipleWidget(lookup_class=L.ProjectLookup,),
 
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=L.InsertLookup, 
                                                        allow_new=False,
@@ -241,6 +243,8 @@ class CellComponentForm(forms.ModelForm, CleaningMixIn):
     def __init__(self, *args, **kwargs):
         super(CellComponentForm, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
+
+        self.fields['projects'].widget.can_add_related = False
 
         o = kwargs.get('instance', None)
         if o:
@@ -297,6 +301,8 @@ class OligoComponentForm(forms.ModelForm, CleaningMixIn):
         super(OligoComponentForm, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
         
+        self.fields['projects'].widget.can_add_related = False
+
         self.fields['componentType'].initial = T.ocStandard
     
     def clean_sequence(self):
@@ -340,6 +346,8 @@ class ChemicalComponentForm(forms.ModelForm, CleaningMixIn):
         super(ChemicalComponentForm, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
 
+        self.fields['projects'].widget.can_add_related = False
+
         self.fields['status'].initial = 'available'
 
         o = kwargs.get('instance', None)
@@ -380,6 +388,8 @@ class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
     def __init__(self, *args, **kwargs):
         super(ProteinComponentForm, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
+
+        self.fields['projects'].widget.can_add_related = False
 
         self.fields['status'].initial = 'available'
         self.fields['componentType'].initial = T.pcOther
