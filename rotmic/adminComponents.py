@@ -278,7 +278,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
         }
          ),
         ('Details', {
-            'fields' : (('projects',),('description',),
+            'fields' : (('projects','description',),
                         )
         }
          ),            
@@ -381,7 +381,7 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
         ('Details', {
             'fields' : (('sequence',),('purification', 'meltingTemp'), 
                         ('templates', 'reversePrimers'),
-                        ('projects',),('description',),
+                        ('projects','description',),
                         )
         }
          ),            
@@ -450,7 +450,7 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
         }
          ),
         ('Details', {
-            'fields' : (('projects',),('cas','description',),
+            'fields' : (('cas','projects','description',),
                         )
         }
          ),            
@@ -512,7 +512,7 @@ class ProteinComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAd
         }
          ),
         ('Details', {
-            'fields' : (('projects',), ('description',),
+            'fields' : (('projects','description',),
                         ('sequence', 'genbankFile', 'encodedBy'),
                         )
         }
