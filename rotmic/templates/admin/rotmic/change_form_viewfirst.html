@@ -24,7 +24,7 @@
             <a href="../../../../">Home</a> &rsaquo;
             <a href="../../../">Rotmic</a> &rsaquo;
             <a href="../../">{% block object-class1 %}{{opts.verbose_name_plural|capfirst}}{% endblock %}</a> &rsaquo;
-            <a href="../">{{original.displayId|truncatewords:"18"}}</a> &rsaquo;
+            <a href="../">{%block breadcrums-id%}{{original.displayId|truncatewords:"18"}}{%endblock%}</a> &rsaquo;
             Edit
         {% else %}
             <a href="../../../">Home</a> &rsaquo;

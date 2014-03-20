@@ -1,0 +1,31 @@
+{% extends "admin/rotmic/readonly.html" %}
+{% load i18n admin_static admin_list admin_modify admin_urls %}
+{% load rotmicfilters %}
+
+{% block breadcrums-id %}{{o.name|truncatewords:"18"}}{% endblock %}
+
+{% block side-rating %}{% endblock %}
+
+{% block title %}{{o.name}}{% endblock %}
+
+{%block title-image%}
+    <img src="{% static "img/project.jpg" %}" align="left" height="60" width="60" 
+    style="padding-left:0px; padding-right:10px; padding-top:0px"> 
+{%endblock%}
+
+
+{% block content-top %}
+    <div class='module'>
+        <h2>Description</h2>
+            <p class='description'>
+                {{o.description|markdown}}
+            </p>        
+    </div>
+{% endblock %}
+
+{% block content-bottom %}    
+    <div class='module'>
+        <h2>Constructs</h2>
+        <p>display not implemented</p>
+    </div>
+{% endblock %} 

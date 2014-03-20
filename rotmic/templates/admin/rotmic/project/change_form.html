@@ -1,0 +1,4 @@
+{% extends "admin/rotmic/change_form_viewfirst.html" %}
+{% load i18n admin_modify admin_static %}
+
+{%block breadcrums-id%}{{original.name|truncatewords:"18"}}{%endblock%}

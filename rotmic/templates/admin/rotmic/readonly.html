@@ -12,7 +12,7 @@
       <a href="../../../">Home</a> &rsaquo;
       <a href="../../">Rotmic</a> &rsaquo;
       <a href="../">{{class_label}}s</a> &rsaquo;
-      {{ o.displayId }}
+      {%block breadcrums-id%}{{ o.displayId }}{%endblock%}
     </div>
     {% endblock %}
 {% endif %}

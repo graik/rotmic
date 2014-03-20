@@ -39,6 +39,7 @@ from .adminBase import BaseAdminMixin, export_csv
 
 from . import adminUser  ## trigger extension of User
 from . import adminComponents ## trigger registration of component admin interfaces
+from . import adminProjects ## trigger registration of ProjectAdmin
 
 
 class DnaComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):

@@ -22,61 +22,16 @@ from django.utils.safestring import mark_safe
 import django.utils.html as html
 from django.core.urlresolvers import reverse
 
-from django.contrib.auth.models import User, Group
-
 import Bio.SeqUtils.ProtParam as PP
 import Bio.SeqUtils.MeltingTemp as TM
 import Bio.SeqUtils as SeqUtils
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 
+from .usermixin import UserMixin
+
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
-
-
-class UserMixin(models.Model):
-    """
-    Basic record keeping of registration dates and user.
-    """
-
-    registeredBy = models.ForeignKey(User, null=False, blank=False, 
-                                related_name='%(class)s_created_by',
-                                verbose_name='Author')
-    
-    registeredAt = models.DateTimeField(default=datetime.now(), 
-                                verbose_name="registered")
-    
-    modifiedBy = models.ForeignKey(User, null=True, blank=False, 
-                                related_name='%(class)s_modified_by',
-                                verbose_name='modified by')
-    
-    modifiedAt = models.DateTimeField(default=datetime.now(), 
-                                verbose_name="modified")
-    
-    
-    def registrationDate(self):
-        """extract date from date+time"""
-        return self.registeredAt.date().isoformat()
-    registrationDate.short_description = 'registered'
-    
-    def registrationTime(self):
-        """extract time from date+time"""
-        return self.registeredAt.time()
-    registrationTime.short_description = 'at'
-
-    def modificationDate(self):
-        """extract date from date+time"""
-        return self.modifiedAt.date().isoformat()
-    modificationDate.short_description = 'modified'
-
-    def modificationTime(self):
-        """extract time from date+time"""
-        return self.modifiedAt.time()
-    modificationTime.short_description = 'at'
-
-    class Meta:
-        app_label = 'rotmic'        
-        abstract = True
 
 
 class Component(UserMixin):
@@ -94,6 +49,10 @@ class Component(UserMixin):
 
     name = models.CharField('Name', max_length=200, blank=True, 
                             help_text='short descriptive name')
+    
+    projects = models.ManyToManyField('Project', blank=True, null=True, 
+                                     related_name='components',   ## end with + to suppress reverse relationship
+                                     help_text='start typing ID or name of project')
 
     description = models.TextField('Description', blank=True,
                 help_text='You can format your text and include links. See: <a href="http://daringfireball.net/projects/markdown/basics">Markdown Quick Reference</a>')

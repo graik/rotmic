@@ -22,7 +22,7 @@ from django.db.models import Q
 import django.utils.html as html
 from django.contrib.auth.models import User, Group
 
-from .components import UserMixin
+from .usermixin import UserMixin
 from .storage import Container
 import rotmic.utils.inheritance as I
 

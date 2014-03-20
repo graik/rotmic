@@ -106,8 +106,13 @@
     <br>
     
     <div class="module">
-        <table summary="User Settings">
-        <caption><a href="/rotmic" class="section">User settings</a></caption>
+        <table summary="Miscellaneous">
+        <caption><a href="/rotmic" class="section">Miscellaneous</a></caption>
+           <tr>
+                <th scope="row"><a href="{% url 'admin:rotmic_project_changelist'%}">Projects</a></th>
+                <td><a href="{% url 'admin:rotmic_project_add' %}" class="addlink">Add</a></td>
+                <td></td>
+            </tr>
            <tr>
                 <th scope="row"><a href="{% url 'admin:rotmic_userprofile_change' request.user.profile.id%}">My personal settings</a></th>
                 <td></td>

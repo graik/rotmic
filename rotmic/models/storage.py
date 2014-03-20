@@ -21,7 +21,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 import django.utils.html as html
 
-from rotmic.models.components import UserMixin
+from .usermixin import UserMixin
 
 class Location(UserMixin):
     """
