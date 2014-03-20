@@ -249,3 +249,12 @@ class VolumeAmountUnitLookup(UnitLookup):
 
 registry.register(VolumeAmountUnitLookup)
 
+class ProjectLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = M.Project
+    search_fields = ('name__startswith', )
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(ProjectLookup)

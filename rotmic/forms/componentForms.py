@@ -210,6 +210,8 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
                                                'style':'font-family:monospace'}), 
             'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                               'style':'font-family:monospace'}),
+            
+            'projects': L.FixedSelectMultipleWidget(lookup_class=L.ProjectLookup),
 
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=L.InsertLookup, 
                                                        allow_new=False,
