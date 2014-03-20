@@ -164,7 +164,8 @@ class ImportXls(object):
         return r, error
         
 
-    def __lookup(self, d, field='', model=M.DnaComponent, targetfield='displayId'):
+    def __lookup(self, d, field='', model=M.DnaComponent, targetfield='displayId',
+                 targetfield2=None):
         """
         Lookup a foreign-key object by its name, displayId, etc. The method replaces
         the value of d[field] by the model ID. Errors are recorded
@@ -178,7 +179,8 @@ class ImportXls(object):
         @return: True if there wasn't any error
         """
         value, error = self.__lookupId( d[field], 
-                                        model=model, targetfield=targetfield )
+                                        model=model, targetfield=targetfield,
+                                        targetfield2=targetfield2)
         
         d[field] = value
         if error:
@@ -413,7 +415,8 @@ class ImportXlsDna( ImportXlsComponent ):
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
     xls2foreignkey = [ { 'field' : 'insert' },
-                       { 'field' : 'vectorBackbone' },
+                       { 'field' : 'vectorBackbone', 
+                         'targetfield2' : 'name'},
                        { 'field' : 'componentType', 'model' : M.DnaComponentType,
                          'targetfield' : 'name'}
                        ]
