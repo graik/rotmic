@@ -112,6 +112,7 @@ class Component(UserMixin):
     class Meta:
         app_label = 'rotmic'
         abstract = False
+        ordering = ['displayId']
 
 
 
