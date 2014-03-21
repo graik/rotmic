@@ -114,3 +114,15 @@ def dnaCategoryToId(catName):
         if cat.name == catName:
             return i
     return 1
+
+
+@register.filter 
+def get_verbose_name(object): 
+    return object._meta.verbose_name
+
+@register.filter 
+def get_verbose_short(object): 
+    r = object._meta.verbose_name
+    if not r:
+        return r
+    return r.split()[0]

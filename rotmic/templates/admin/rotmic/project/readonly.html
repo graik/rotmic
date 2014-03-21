@@ -26,6 +26,39 @@
 {% block content-bottom %}    
     <div class='module'>
         <h2>Constructs</h2>
-        <p>display not implemented</p>
+
+        {% if o.components.count > 0 %}
+            <div style="margin: 10px">
+                <table cellspacing="1">
+                    <thead>
+                    <tr>
+                        <th>ID (name)</th>
+                        <th>Class</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Samples</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for x in o.components.all.select_subclasses %}
+                            <tr class="{% cycle 'row1' 'row2' %}">
+                            
+                            <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                            <td>{{x | get_verbose_short}}</td>
+                            <td>{{x.componentType}}</td>
+                            <td>{{x.showDescription}}</td>
+                            <td style="text-align: center;">{{x.samples.count}}</td>
+
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>
+                No constructs found for this project. 
+                Use the "Projects" field in any construct form to assign it to this project.
+            </p>
+        {% endif %}
     </div>
 {% endblock %} 
