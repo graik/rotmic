@@ -22,8 +22,6 @@ from rotmic.models.attachments import ComponentAttachment, SampleAttachment
 
 from rotmic.models.units import Unit
 
-from rotmic.models.projects import Project
-
 from rotmic.models.componentTypes import ComponentType, DnaComponentType, \
      CellComponentType, OligoComponentType, ChemicalType, ProteinComponentType
 
@@ -34,3 +32,6 @@ from rotmic.models.samples import Sample, DnaSample, CellSample, OligoSample,\
      ChemicalSample, ProteinSample, SampleProvenance, SampleProvenanceType
 
 from rotmic.models.storage import Location, Rack, Container
+
+from rotmic.models.projects import Project
+
