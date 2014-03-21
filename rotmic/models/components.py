@@ -50,7 +50,8 @@ class Component(UserMixin):
     name = models.CharField('Name', max_length=200, blank=True, 
                             help_text='short descriptive name')
     
-    projects = models.ManyToManyField('Project', blank=True, null=True, 
+    projects = models.ManyToManyField('Project', blank=True, null=True,
+                                      verbose_name='Projects',
                                      related_name='components',   ## end with + to suppress reverse relationship
                                      )
 

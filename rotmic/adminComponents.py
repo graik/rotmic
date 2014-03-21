@@ -298,9 +298,9 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
                     'showStatus', 'showEdit')
     
     list_filter = ( filters.CellCategoryListFilter, filters.CellTypeListFilter, 
-                    'status', filters.SortedUserFilter)
+                    'status', 'projects', filters.SortedUserFilter)
     
-    search_fields = ('displayId', 'name', 'description')
+    search_fields = ('displayId', 'name', 'description', 'projects__name')
     
     date_hierarchy = 'registeredAt'
     
@@ -393,9 +393,9 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
                     'componentType', 'showTm', 'showDescription',
                     'showStatus','showEdit')
     
-    list_filter = ( 'componentType', 'status', filters.SortedUserFilter)
+    list_filter = ( 'componentType', 'status', 'projects', filters.SortedUserFilter)
     
-    search_fields = ('displayId', 'name', 'description')
+    search_fields = ('displayId', 'name', 'description', 'projects__name')
     
     date_hierarchy = 'registeredAt'
     
@@ -465,9 +465,9 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
                     'showEdit')
     
     list_filter = ( filters.ChemicalCategoryListFilter, filters.ChemicalTypeListFilter, 
-                    'status', filters.SortedUserFilter)
+                    'status', 'projects', filters.SortedUserFilter)
     
-    search_fields = ('displayId', 'name', 'description', 'cas')
+    search_fields = ('displayId', 'name', 'description', 'cas', 'projects__name')
     
     date_hierarchy = 'registeredAt'
     
@@ -520,9 +520,9 @@ class ProteinComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAd
                     'showDescription','showStatus','showEdit')
     
     list_filter = ( filters.ProteinCategoryListFilter, filters.ProteinTypeListFilter, 
-                    'status', filters.SortedUserFilter)
+                    'status', 'projects', filters.SortedUserFilter)
     
-    search_fields = ('displayId', 'name', 'description',)
+    search_fields = ('displayId', 'name', 'description','projects__name')
     
     date_hierarchy = 'registeredAt'
     
