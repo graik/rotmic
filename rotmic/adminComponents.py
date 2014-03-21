@@ -57,6 +57,19 @@ class ComponentAdmin( ViewFirstModelAdmin ):
     * showDescription -- truncated description with html mouse-over full text for tables
     """
     
+    ## custom class variable for table generation
+    csv_fields = OrderedDict( [('ID', 'displayId'),
+                               ('Name', 'name'),
+                               ('Status','status'),
+                               ('Registered','registrationDate()'),
+                               ('Author','registeredBy.username'),
+                               ('Modified', 'modificationDate()'),
+                               ('Modified By','modifiedBy.username'),
+                               ('Projects', "projects.values_list('name', flat=True)"),
+                               ('Category', 'componentType.category()'),
+                               ('Type', 'componentType.name'),
+                               ])
+    
     def queryset(self, request):
         """
         Return actual sub-class instances instead of generic Component super-class
@@ -163,12 +176,13 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
     list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 
                     'status', 
                     filters.MarkerTypeFilter, filters.MarkerListFilter,
-                    filters.SortedUserFilter)
+                    'projects', filters.SortedUserFilter)
     
     search_fields = ('displayId', 'name', 'description', 
                      'insert__name', 'insert__displayId',
                      'vectorBackbone__name', 'vectorBackbone__displayId',
-                     'vectorBackbone__markers__name', 'vectorBackbone__markers__displayId')
+                     'vectorBackbone__markers__name', 'vectorBackbone__markers__displayId',
+                     'projects__name')
     
     date_hierarchy = 'registeredAt'
     
@@ -177,21 +191,15 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
     actions = ['make_csv']
     
     ## custom class variable for table generation
-    csv_fields = OrderedDict( [('ID', 'displayId'),
-                               ('Name', 'name'),
-                               ('Status','status'),
-                               ('Registered','registrationDate()'),
-                               ('Author','registeredBy.username'),
-                               ('Modified', 'modificationDate()'),
-                               ('Modified By','modifiedBy.username'),
-                               ('Category', 'componentType.category()'),
-                               ('Type', 'componentType.name'),
-                               ('Insert','insert.displayId'),
-                               ('Vector','vectorBackbone.displayId'),
-                               ('Markers',"markers.values_list('displayId', flat=True)"),
+    csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
+                              [
+                               ('Insert', 'insert.displayId'),
+                               ('Vector', 'vectorBackbone.displayId'),
+                               ('Markers', "markers.values_list('displayId', flat=True)"),
                                ('n Samples', 'allSamplesCount()'),
                                ('Description','description'),
-                               ('Sequence','sequence')])
+                               ('Sequence','sequence') 
+                              ] )
     
     
     def queryset(self, request):
@@ -301,19 +309,13 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
     actions = ['make_csv']
     
     ## custom class variable for table generation
-    csv_fields = OrderedDict( [('ID', 'displayId'),
-                               ('Name', 'name'),
-                               ('Status','status'),
-                               ('Registered','registrationDate()'),
-                               ('Author','registeredBy.username'),
-                               ('Modified', 'modificationDate()'),
-                               ('Modified By','modifiedBy.username'),
-                               ('Category', 'componentType.category()'),
-                               ('Type', 'componentType.name'),
+    csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
+                              [
                                ('Plasmid','plasmid.displayId'),
                                ('Markers',"markers.values_list('displayId', flat=True)"),
                                ('n Samples', 'allSamplesCount()'),
-                               ('Description','description')])
+                               ('Description','description')
+                              ])
 
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""
@@ -409,6 +411,7 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
                                ('Author','registeredBy.username'),
                                ('Modified', 'modificationDate()'),
                                ('Modified By','modifiedBy.username'),
+                               ('Projects', "projects.values_list('name', flat=True)"),
                                ('Type', 'componentType.name'),
                                ('Tm', 'meltingTemp'),
                                ('Templates',"templates.values_list('displayId', flat=True)"),
@@ -473,18 +476,12 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
     actions = ['make_csv']
 
     ## custom class variable for table generation
-    csv_fields = OrderedDict( [('ID', 'displayId'),
-                               ('Name', 'name'),
-                               ('Status','status'),
-                               ('Registered','registrationDate()'),
-                               ('Author','registeredBy.username'),
-                               ('Modified', 'modificationDate()'),
-                               ('Modified By','modifiedBy.username'),
-                               ('Category', 'componentType.category()'),
-                               ('Type', 'componentType.name'),
+    csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
+                              [
                                ('CAS', 'cas'),
                                ('n Samples', 'chemical_samples.count()'),
-                               ('Description','description')])
+                               ('Description','description')
+                              ])
     
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""
@@ -534,18 +531,12 @@ class ProteinComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAd
     actions = ['make_csv']
 
     ## custom class variable for table generation
-    csv_fields = OrderedDict( [('ID', 'displayId'),
-                               ('Name', 'name'),
-                               ('Status','status'),
-                               ('Registered','registrationDate()'),
-                               ('Author','registeredBy.username'),
-                               ('Modified', 'modificationDate()'),
-                               ('Modified By','modifiedBy.username'),
-                               ('Category', 'componentType.category()'),
-                               ('Type', 'componentType.name'),
-                               ('Sequence', 'sequence'),
+    csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
+                              [
                                ('n Samples', 'protein_samples.count()'),
-                               ('Description','description')])
+                               ('Description','description'),
+                               ('Sequence', 'sequence'),                               
+                              ])
     
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""
