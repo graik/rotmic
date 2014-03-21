@@ -333,6 +333,11 @@ class ImportXlsComponent( ImportXls ):
                   'type' : 'componentType',
                 }
     
+    # lookup instructions for Many2Many fields
+    xls2many = [ { 'field' : 'projects', 
+                   'model' : M.Project, 'targetfield' : 'name' } 
+                 ]
+
     typeClass = M.ComponentType  ## abstract base class
 
     def generateName(self, d):
@@ -422,10 +427,11 @@ class ImportXlsDna( ImportXlsComponent ):
                        ]
     
     # lookup instructions for Many2Many fields
-    xls2many = [ { 'field' : 'markers', 
-                   'model' : M.DnaComponent, 'targetfield' : 'displayId',
-                   'targetfield2' : 'name' } 
-                 ]
+    xls2many = ImportXlsComponent.xls2many +\
+                   [ { 'field' : 'markers', 
+                       'model' : M.DnaComponent, 'targetfield' : 'displayId',
+                       'targetfield2' : 'name' } 
+                     ]
 
     def generateName(self, d):
         """If missing, compose name from insert and vectorbackbone"""
@@ -463,10 +469,11 @@ class ImportXlsCell( ImportXlsComponent ):
                        ]
     
     # lookup instructions for Many2Many fields
-    xls2many = [ { 'field' : 'markers', 
-                   'model' : M.DnaComponent, 'targetfield' : 'displayId',
-                   'targetfield2' : 'name' } 
-                 ]
+    xls2many = ImportXlsComponent.xls2many +\
+                   [ { 'field' : 'markers', 
+                       'model' : M.DnaComponent, 'targetfield' : 'displayId',
+                       'targetfield2' : 'name' } 
+                     ]
     
     def generateName(self, d):
         """If missing, compose name from plasmid and cell"""
@@ -507,7 +514,8 @@ class ImportXlsOligo( ImportXlsComponent ):
                        ]
     
     # lookup instructions for Many2Many fields
-    xls2many = [ { 'field' : 'templates', 
+    xls2many = ImportXlsComponent.xls2many +\
+               [ { 'field' : 'templates', 
                    'model' : M.DnaComponent, 'targetfield' : 'displayId' },
                  { 'field' : 'reversePrimers', 
                    'model' : M.OligoComponent, 'targetfield' : 'displayId',
@@ -589,9 +597,6 @@ class ImportXlsProtein( ImportXlsComponent ):
                          'targetfield' : 'name'},
                        { 'field' : 'encodedBy', 'model' : M.DnaComponent }
                        ]
-    
-    # lookup instructions for Many2Many fields
-    xls2many = []
 
     def generateName(self, d):
         """If missing, copy name from encodedBy field"""
