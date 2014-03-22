@@ -35,12 +35,13 @@ from rotmic.utils.filefields import DocumentFormField
 import selectLookups as L
 import selectable.forms as sforms
 
+    
 class CleaningMixIn:
-    """Mixin to enforce a certain displayID format"""
+    """enforce displayID pattern"""
     
     ex_id = re.compile('[a-z]{1,6}[0-9]{4}[a-z]{0,1}')
     msg_id = 'ID must have format a[bcdef]0123[a]. Example: rg0022 or mtz9900b'  ## for human-readable messages
-    
+
     def clean_displayId(self):
         """enforce letter-digit displayId: a(bcdef)0123(a)"""
         r = self.cleaned_data['displayId']
@@ -49,9 +50,45 @@ class CleaningMixIn:
         if not self.ex_id.match(r):
             raise ValidationError(self.msg_id)
         return r
-        
 
-class DnaComponentForm(forms.ModelForm, CleaningMixIn):
+
+def getComponentWidgets( extra={} ):
+    """widgets shared between different types of Component forms."""
+    r = {'displayId' : forms.TextInput(attrs={'size':10}),
+         'name' : forms.TextInput(attrs={'size':25}),
+
+         'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
+                                          'style':'font-family:monospace'}),
+         
+         'projects': L.FixedSelectMultipleWidget(lookup_class=L.ProjectLookup,),
+         }
+    r.update( extra )
+    return r
+
+
+class ComponentForm(forms.ModelForm, CleaningMixIn):
+        
+    def __init__(self, *args, **kwargs):
+        """capture request instance from modified Admin"""
+        self.request = kwargs.pop('request', None)
+        super(ComponentForm, self).__init__(*args, **kwargs)
+
+        if self.request:
+            self.fields['authors'].initial = [self.request.user]
+        
+        self.fields['projects'].widget.can_add_related = False
+        self.fields['authors'].widget_can_add_related = False
+
+        o = kwargs.get('instance', None)
+        if o and 'componentCategory' in self.fields:
+            self.fields['componentCategory'].initial = o.componentType.subTypeOf
+    
+    class Meta:
+        model = M.Component
+        widgets = getComponentWidgets()
+
+
+class DnaComponentForm(ComponentForm):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
@@ -68,20 +105,10 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
 
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
-        self.request = kwargs.pop('request', None)
 
-        self.fields['projects'].widget.can_add_related = False
-        
-        if self.request:
-            self.fields['authors'].initial = [self.request.user]
-        
         o = kwargs.get('instance', None)
-        ## Edit form
-        if o:
-            self.fields['componentCategory'].initial = o.componentType.subTypeOf
-
         ## Add New form
-        else:
+        if not o:
             ## pre-set category if 'translatesTo' is given as URL parameter
             if 'translatesTo' in self.initial:
                 self.initial['componentType'] = unicode(T.dcFragmentCDS.pk)
@@ -207,16 +234,9 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
     class Meta:
         model = M.DnaComponent
 
-        widgets = {  ## customize widget dimensions and include dynamic select widgets
-            'displayId' : forms.TextInput(attrs={'size':10}),
-            'name' : forms.TextInput(attrs={'size':25}),
-
+        widgets = getComponentWidgets( extra={
             'sequence': forms.Textarea(attrs={'cols': 100, 'rows': 4,
                                                'style':'font-family:monospace'}), 
-            'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
-                                              'style':'font-family:monospace'}),
-            
-            'projects': L.FixedSelectMultipleWidget(lookup_class=L.ProjectLookup,),
 
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=L.InsertLookup, 
                                                        allow_new=False,
@@ -227,13 +247,13 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
 
             'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup),
             
-            'translatesTo' : sforms.AutoComboboxSelectWidget(\
+            'translatesTo' : sforms.AutoComboboxSelectWidget(
                                                  lookup_class=L.ProteinLookup,
                                                  allow_new=False)
-        }
+            })
 
 
-class CellComponentForm(forms.ModelForm, CleaningMixIn):
+class CellComponentForm(ComponentForm):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Species',
@@ -242,17 +262,6 @@ class CellComponentForm(forms.ModelForm, CleaningMixIn):
                             empty_label=None,
                             initial=T.ccEcoli)
     
-
-    def __init__(self, *args, **kwargs):
-        super(CellComponentForm, self).__init__(*args, **kwargs)
-        self.request = kwargs.pop('request', None)
-
-        self.fields['projects'].widget.can_add_related = False
-
-        o = kwargs.get('instance', None)
-        if o:
-            self.fields['componentCategory'].initial = o.componentType.subTypeOf
-        
 
     def clean_plasmid(self):
         """
@@ -285,27 +294,20 @@ class CellComponentForm(forms.ModelForm, CleaningMixIn):
 
     class Meta:
         model = M.CellComponent
-        widgets = {  ## customize widget dimensions and include dynamic select widgets
-            'displayId' : forms.TextInput(attrs={'size':10}),
-            'name' : forms.TextInput(attrs={'size':25}),
-            'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
-                                              'style':'font-family:monospace'}),
+        widgets = getComponentWidgets( extra={
             'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=L.PlasmidLookup, 
                                                        allow_new=False,
                                                        attrs={'size':35}),
             'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup)
-        }
+            })
 
 
-class OligoComponentForm(forms.ModelForm, CleaningMixIn):
+class OligoComponentForm(ComponentForm):
     """Custom form for OligoComponent Add / Change"""
     
     def __init__(self, *args, **kwargs):
         super(OligoComponentForm, self).__init__(*args, **kwargs)
-        self.request = kwargs.pop('request', None)
         
-        self.fields['projects'].widget.can_add_related = False
-
         self.fields['componentType'].initial = T.ocStandard
     
     def clean_sequence(self):
@@ -322,20 +324,15 @@ class OligoComponentForm(forms.ModelForm, CleaningMixIn):
 
     class Meta:
         model = M.OligoComponent
-        widgets = {  ## customize widget dimensions and include dynamic select widgets
-            'displayId' : forms.TextInput(attrs={'size':10}),
-            'name' : forms.TextInput(attrs={'size':25}),
+        widgets = getComponentWidgets( extra={
             'sequence' : forms.TextInput(attrs={'size':88}),
             'meltingTemp' : forms.TextInput(attrs={'size':4}),
             'templates' : L.FixedSelectMultipleWidget(lookup_class=L.DnaLookup),
             'reversePrimers' : L.FixedSelectMultipleWidget(lookup_class=L.OligoLookup),
-            
-            'description' : forms.Textarea(attrs={'cols': 100, 'rows': 5,
-                                              'style':'font-family:monospace'}),
-        }
+            } )
     
 
-class ChemicalComponentForm(forms.ModelForm, CleaningMixIn):
+class ChemicalComponentForm(ComponentForm):
     """Customized Form for ChemicalComponent add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
@@ -347,28 +344,16 @@ class ChemicalComponentForm(forms.ModelForm, CleaningMixIn):
 
     def __init__(self, *args, **kwargs):
         super(ChemicalComponentForm, self).__init__(*args, **kwargs)
-        self.request = kwargs.pop('request', None)
-
-        self.fields['projects'].widget.can_add_related = False
 
         self.fields['status'].initial = 'available'
-
-        o = kwargs.get('instance', None)
-        if o:
-            self.fields['componentCategory'].initial = o.componentType.subTypeOf
         
 
     class Meta:
         model = M.ChemicalComponent
-        widgets = {  ## customize widget dimensions and include dynamic select widgets
-            'displayId' : forms.TextInput(attrs={'size':10}),
-            'name' : forms.TextInput(attrs={'size':25}),
-            'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
-                                              'style':'font-family:monospace'}),
-        }
+        widgets = getComponentWidgets( extra={} )
 
     
-class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
+class ProteinComponentForm(ComponentForm):
     """Customized Form for ProteinComponent add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
@@ -390,16 +375,9 @@ class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
 
     def __init__(self, *args, **kwargs):
         super(ProteinComponentForm, self).__init__(*args, **kwargs)
-        self.request = kwargs.pop('request', None)
-
-        self.fields['projects'].widget.can_add_related = False
 
         self.fields['status'].initial = 'available'
         self.fields['componentType'].initial = T.pcOther
-        
-        o = kwargs.get('instance', None)
-        if o:
-            self.fields['componentCategory'].initial = o.componentType.subTypeOf
         
         
     def clean_sequence(self):
@@ -461,11 +439,7 @@ class ProteinComponentForm(forms.ModelForm, CleaningMixIn):
     
     class Meta:
         model = M.ProteinComponent
-        widgets = {  ## customize widget dimensions and include dynamic select widgets
-            'displayId' : forms.TextInput(attrs={'size':10}),
-            'name' : forms.TextInput(attrs={'size':25}),
+        widgets = getComponentWidgets( extra={
             'sequence': forms.Textarea(attrs={'cols': 100, 'rows': 4,
                                                'style':'font-family:monospace'}), 
-            'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
-                                              'style':'font-family:monospace'}),
-        }
+            })
