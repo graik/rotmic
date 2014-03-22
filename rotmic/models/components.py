@@ -21,6 +21,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 import django.utils.html as html
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 
 import Bio.SeqUtils.ProtParam as PP
 import Bio.SeqUtils.MeltingTemp as TM
@@ -49,6 +50,12 @@ class Component(UserMixin):
 
     name = models.CharField('Name', max_length=200, blank=True, 
                             help_text='short descriptive name')
+    
+    
+    authors = models.ForeignKey(User, null=False, blank=False, 
+                                related_name='%(class)ss_authored',
+                                verbose_name='Authors')
+    
     
     projects = models.ManyToManyField('Project', blank=True, null=True,
                                       verbose_name='Projects',

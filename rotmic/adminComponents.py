@@ -62,7 +62,8 @@ class ComponentAdmin( ViewFirstModelAdmin ):
                                ('Name', 'name'),
                                ('Status','status'),
                                ('Registered','registrationDate()'),
-                               ('Author','registeredBy.username'),
+                               ('By','registeredBy.username'),
+                               ('Authors', "authors.values_list('username', flat=True)"),
                                ('Modified', 'modificationDate()'),
                                ('Modified By','modifiedBy.username'),
                                ('Projects', "projects.values_list('name', flat=True)"),
@@ -162,7 +163,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
          ),
         ('Details', {
             'fields' : (
-                        ('projects', 'description' ),
+                        ('authors', 'projects'), ('description',),
                         ('sequence', 'genbankFile'),
                         ),
         }
@@ -286,7 +287,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
         }
          ),
         ('Details', {
-            'fields' : (('projects','description',),
+            'fields' : (('authors', 'projects'), ('description',),
                         )
         }
          ),            
@@ -381,9 +382,10 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
         }
          ),
         ('Details', {
-            'fields' : (('sequence',),('purification', 'meltingTemp'), 
+            'fields' : (('authors', 'projects'), 
+                        ('sequence',),('purification', 'meltingTemp'), 
                         ('templates', 'reversePrimers'),
-                        ('projects','description',),
+                        ('description',),
                         )
         }
          ),            
@@ -453,7 +455,8 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
         }
          ),
         ('Details', {
-            'fields' : (('cas','projects','description',),
+            'fields' : (('authors','projects'), 
+                        ('cas','description'),
                         )
         }
          ),            
@@ -509,7 +512,7 @@ class ProteinComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAd
         }
          ),
         ('Details', {
-            'fields' : (('projects','description',),
+            'fields' : (('authors', 'projects'), ('description',),
                         ('sequence', 'genbankFile', 'encodedBy'),
                         )
         }
@@ -567,7 +570,6 @@ class ProteinComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAd
                     % (encodedBy, why)
                 messages.error(request, msg)
         
-    
 
 admin.site.register(M.ProteinComponent, ProteinComponentAdmin)
 

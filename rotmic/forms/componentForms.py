@@ -72,6 +72,9 @@ class DnaComponentForm(forms.ModelForm, CleaningMixIn):
 
         self.fields['projects'].widget.can_add_related = False
         
+        if self.request:
+            self.fields['authors'].initial = [self.request.user]
+        
         o = kwargs.get('instance', None)
         ## Edit form
         if o:
