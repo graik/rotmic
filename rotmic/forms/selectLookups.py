@@ -16,6 +16,7 @@
 import itertools
 
 from django import forms
+from django.contrib.auth.models import User
 
 ## third-party ForeignKey lookup field
 from selectable.base import ModelLookup
@@ -258,3 +259,14 @@ class ProjectLookup(ModelLookup):
         return item.pk
 
 registry.register(ProjectLookup)
+
+class UserLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = User
+    search_fields = ('username__startswith', 'first_name__startswith',
+                     'last_name__startswith')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(UserLookup)

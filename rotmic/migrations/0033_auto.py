@@ -8,15 +8,19 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Component.authors'
-        db.add_column(u'rotmic_component', 'authors',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=-1, related_name='components_authored', to=orm['auth.User']),
-                      keep_default=False)
+        # Adding M2M table for field authors on 'Component'
+        m2m_table_name = db.shorten_name(u'rotmic_component_authors')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('component', models.ForeignKey(orm['rotmic.component'], null=False)),
+            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['component_id', 'user_id'])
 
 
     def backwards(self, orm):
-        # Deleting field 'Component.authors'
-        db.delete_column(u'rotmic_component', 'authors_id')
+        # Removing M2M table for field authors on 'Component'
+        db.delete_table(db.shorten_name(u'rotmic_component_authors'))
 
 
     models = {
@@ -101,7 +105,7 @@ class Migration(SchemaMigration):
         },
         'rotmic.component': {
             'Meta': {'ordering': "['displayId']", 'object_name': 'Component'},
-            'authors': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'components_authored'", 'to': u"orm['auth.User']"}),
+            'authors': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'components_authored'", 'symmetrical': 'False', 'to': u"orm['auth.User']"}),
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'displayId': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '20'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

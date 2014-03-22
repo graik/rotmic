@@ -12,8 +12,8 @@ class Migration(DataMigration):
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
         for c in orm.Component.objects.all():
-            c.authors = c.registeredBy
-            c.save()
+            c.authors.add( c.registeredBy )
+            c.save()        
 
     def backwards(self, orm):
         "Write your backwards methods here."
@@ -101,7 +101,7 @@ class Migration(DataMigration):
         },
         'rotmic.component': {
             'Meta': {'ordering': "['displayId']", 'object_name': 'Component'},
-            'authors': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'components_authored'", 'to': u"orm['auth.User']"}),
+            'authors': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'components_authored'", 'symmetrical': 'False', 'to': u"orm['auth.User']"}),
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'displayId': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '20'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

@@ -52,7 +52,7 @@ class Component(UserMixin):
                             help_text='short descriptive name')
     
     
-    authors = models.ForeignKey(User, null=False, blank=False, 
+    authors = models.ManyToManyField(User, null=False, blank=False, 
                                 related_name='%(class)ss_authored',
                                 verbose_name='Authors')
     

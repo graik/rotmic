@@ -103,6 +103,21 @@ class ComponentAdmin( ViewFirstModelAdmin ):
         return super(ComponentAdmin, self).add_view(\
             request, form_url, extra_context=extra_context)
 
+
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Push request into the ModelForm. Requires the form to override __init__
+        and remove request from the kwargs.
+        See: http://stackoverflow.com/questions/1057252/how-do-i-access-the-request-object-or-any-other-variable-in-a-forms-clean-met
+        """
+        ModelForm = super(ComponentAdmin, self).get_form(request, obj, **kwargs)
+        class ModelFormWithRequest(ModelForm):
+            def __new__(cls, *args, **kwargs):
+                kwargs['request'] = request
+                return ModelForm(*args, **kwargs)
+        return ModelFormWithRequest
+
+
     def showDescription(self, obj):
         """
         @return: str; truncated description with full description mouse-over
@@ -145,6 +160,14 @@ class ComponentAdmin( ViewFirstModelAdmin ):
     showType.allow_tags = True
     showType.short_description = 'Type'
 
+    def showFirstAuthor(self, obj):
+        r = u'%s' % obj.authors.first()
+        if obj.authors.count() > 1:
+            r += '+'
+        return r
+    showFirstAuthor.allow_tags = True
+    showFirstAuthor.short_description = 'Authors'
+
 
 class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin):
     """Admin interface description for DNA constructs."""
@@ -170,7 +193,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
          ),            
     )
 
-    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
+    list_display = ('displayId', 'name', 'registrationDate', 'showFirstAuthor',
                     'showVectorUrl', 'showMarkerUrls', 
                     'showDescription', 'showType', 'showStatus', 'showEdit')
     

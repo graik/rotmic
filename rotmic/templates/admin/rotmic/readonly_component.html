@@ -8,7 +8,11 @@
             {% block content-title %}<h2>Details</h2>{% endblock %}
 
             {% block projects %}
-                <p><em>Projects:</em>
+                <p><em>by</em>
+                {% for a in o.authors.all %}
+                    {{a.first_name}} {{a.last_name}} ({{a}}), 
+                {% endfor %}
+                <em>Projects:</em>
                 {% if o.projects.count > 0 %}
                     {% for p in o.projects.all %}
                         <a href={{p.get_absolute_url}}>{{p.name}}</a>;

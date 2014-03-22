@@ -61,6 +61,8 @@ def getComponentWidgets( extra={} ):
                                           'style':'font-family:monospace'}),
          
          'projects': L.FixedSelectMultipleWidget(lookup_class=L.ProjectLookup,),
+
+         'authors': L.FixedSelectMultipleWidget(lookup_class=L.UserLookup,),
          }
     r.update( extra )
     return r
