@@ -513,7 +513,7 @@ class SortedUserFilter( admin.SimpleListFilter ):
     title='Author'
     parameter_name = 'user'
     
-    user_field = 'registeredBy'  ## override if needed
+    user_field = 'authors'  ## override if needed
     
     def lookups(self, request, model_admin):
         qs = model_admin.queryset(request)
@@ -531,6 +531,6 @@ class SortedUserFilter( admin.SimpleListFilter ):
    
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.filter(registeredBy__username__exact=self.value())
+            return queryset.filter(authors__username__exact=self.value())
 
     
