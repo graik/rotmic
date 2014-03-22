@@ -335,7 +335,9 @@ class ImportXlsComponent( ImportXls ):
     
     # lookup instructions for Many2Many fields
     xls2many = [ { 'field' : 'projects', 
-                   'model' : M.Project, 'targetfield' : 'name' } 
+                   'model' : M.Project, 'targetfield' : 'name' },
+                 { 'field' : 'authors',
+                   'model' : User, 'targetfield' : 'username' }
                  ]
 
     typeClass = M.ComponentType  ## abstract base class
