@@ -504,7 +504,7 @@ class ProteinSampleContainerFilter( SampleContainerFilter ):
     
 class SortedUserFilter( admin.SimpleListFilter ):
     """
-    User Admin Filter for Component tables (registeredBy field),
+    User Admin Filter for anything derived from UserMixIn (registeredBy field),
     sorted by user name rather than id
     
     Hints taken from: 
@@ -513,7 +513,7 @@ class SortedUserFilter( admin.SimpleListFilter ):
     title='Author'
     parameter_name = 'user'
     
-    user_field = 'authors'  ## override if needed
+    user_field = 'registeredBy'  ## override if needed
     
     def lookups(self, request, model_admin):
         qs = model_admin.queryset(request)
@@ -531,6 +531,10 @@ class SortedUserFilter( admin.SimpleListFilter ):
    
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.filter(authors__username__exact=self.value())
+            key = self.user_field + '__username__exact'
+            return queryset.filter(**{key:self.value()})
 
+
+class SortedAuthorFilter( SortedUserFilter ):
     
+    user_field = 'authors'  ## override if needed

@@ -200,7 +200,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
     list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 
                     'status', 
                     filters.MarkerTypeFilter, filters.MarkerListFilter,
-                    'projects', filters.SortedUserFilter)
+                    'projects', filters.SortedAuthorFilter)
     
     search_fields = ('displayId', 'name', 'description', 
                      'insert__name', 'insert__displayId',
@@ -324,7 +324,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
                     'showStatus', 'showEdit')
     
     list_filter = ( filters.CellCategoryListFilter, filters.CellTypeListFilter, 
-                    'status', 'projects', filters.SortedUserFilter)
+                    'status', 'projects', filters.SortedAuthorFilter)
     
     search_fields = ('displayId', 'name', 'description', 'projects__name')
     
@@ -420,7 +420,7 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
                     'componentType', 'showTm', 'showDescription',
                     'showStatus','showEdit')
     
-    list_filter = ( 'componentType', 'status', 'projects', filters.SortedUserFilter)
+    list_filter = ( 'componentType', 'status', 'projects', filters.SortedAuthorFilter)
     
     search_fields = ('displayId', 'name', 'description', 'projects__name')
     
@@ -493,7 +493,7 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
                     'showEdit')
     
     list_filter = ( filters.ChemicalCategoryListFilter, filters.ChemicalTypeListFilter, 
-                    'status', 'projects', filters.SortedUserFilter)
+                    'status', 'projects', filters.SortedAuthorFilter)
     
     search_fields = ('displayId', 'name', 'description', 'cas', 'projects__name')
     
@@ -548,7 +548,7 @@ class ProteinComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAd
                     'showDescription','showStatus','showEdit')
     
     list_filter = ( filters.ProteinCategoryListFilter, filters.ProteinTypeListFilter, 
-                    'status', 'projects', filters.SortedUserFilter)
+                    'status', 'projects', filters.SortedAuthorFilter)
     
     search_fields = ('displayId', 'name', 'description','projects__name')
     
