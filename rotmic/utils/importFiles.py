@@ -212,7 +212,9 @@ class ImportXls(object):
                 v = v.strip()
                 x, e = self.__lookupId(v, model=model, targetfield=targetfield,
                                        targetfield2=targetfield2 )
-                if x:
+
+                ## ignore '' and None but not ID=0
+                if x or x==0:
                     r += [x]
                 if e:
                     errors += [e]
@@ -382,6 +384,9 @@ class ImportXlsComponent( ImportXls ):
         self.generateName(d)
         self.correctStatus(d)
         
+        if len(d['authors']) is 0:
+            d['authors'] = [ self.user.id ]
+
         return d
     
     def cleanType( self, d):
