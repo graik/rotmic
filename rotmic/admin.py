@@ -378,6 +378,11 @@ class DnaSampleAdmin( SampleAdmin ):
         ), 
     ]
 
+    list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'preparedAt', 'preparedBy',
+                    'showContent', 'showConcentration', 'showAmount',
+                    'showStatus','showEdit')
+
     list_filter = ('status', filters.DnaSampleLocationFilter, 
                    filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter,
                    filters.SortedUserFilter)
@@ -453,6 +458,11 @@ class OligoSampleAdmin( SampleAdmin ):
         ), 
     ]
 
+    list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'preparedAt', 'preparedBy', 
+                    'showContent', 'showConcentration', 'showAmount',
+                    'showStatus','showEdit')
+
     list_filter = ('status', filters.OligoSampleLocationFilter, 
                    filters.OligoSampleRackFilter, filters.OligoSampleContainerFilter,
                    filters.SortedUserFilter)
@@ -487,6 +497,11 @@ class ChemicalSampleAdmin( SampleAdmin ):
         ), 
     ]
 
+    list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'preparedAt', 'preparedBy',
+                    'showContent', 'showConcentration', 'showAmount',
+                    'showStatus','showEdit')
+
     list_filter = ('status', filters.ChemicalSampleLocationFilter, 
                    filters.ChemicalSampleRackFilter, filters.ChemicalSampleContainerFilter,
                    filters.SortedUserFilter)
@@ -520,6 +535,11 @@ class ProteinSampleAdmin( SampleAdmin ):
          }
         ), 
     ]
+
+    list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'preparedAt', 'preparedBy',
+                    'showContent', 'showConcentration', 'showAmount',
+                    'showStatus','showEdit')
 
     list_filter = ('status', filters.ProteinSampleLocationFilter, 
                    filters.ProteinSampleRackFilter, filters.ProteinSampleContainerFilter,
