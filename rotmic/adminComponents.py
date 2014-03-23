@@ -263,14 +263,16 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
     showInsertUrl.short_description = 'Insert'
         
     def showVectorUrl(self, obj):
-        """Table display of linked insert or ''"""
+        """Table display of linked vector or ''"""
         assert isinstance(obj, M.DnaComponent), 'object missmatch'
         x = obj.vectorBackbone
         if not x:
             return u''
         url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.description, x.displayId, x.name))
+        name = x.name or x.displayId
+        description = '%s (%s)\n%s' % (x.displayId, x.name, x.description)
+        return html.mark_safe('<a href="%s" title="%s">%s</a>' \
+                              % (url, description, name))
     showVectorUrl.allow_tags = True
     showVectorUrl.short_description = 'Base Vector'
     
