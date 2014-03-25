@@ -388,7 +388,7 @@ class DnaSampleAdmin( SampleAdmin ):
 
     list_filter = ('status', filters.DnaSampleLocationFilter, 
                    filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter,
-                   filters.SortedUserFilter)
+                   'dna__projects', filters.SortedUserFilter )
         
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
@@ -430,7 +430,7 @@ class CellSampleAdmin( SampleAdmin ):
     
     list_filter = ('status', filters.CellSampleLocationFilter, 
                    filters.CellSampleRackFilter, filters.CellSampleContainerFilter,
-                   filters.SortedUserFilter)
+                   'cell__projects', filters.SortedUserFilter)
         
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
@@ -470,7 +470,7 @@ class OligoSampleAdmin( SampleAdmin ):
 
     list_filter = ('status', filters.OligoSampleLocationFilter, 
                    filters.OligoSampleRackFilter, filters.OligoSampleContainerFilter,
-                   filters.SortedUserFilter)
+                   'oligo__projects', filters.SortedUserFilter)
         
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
@@ -510,7 +510,7 @@ class ChemicalSampleAdmin( SampleAdmin ):
 
     list_filter = ('status', filters.ChemicalSampleLocationFilter, 
                    filters.ChemicalSampleRackFilter, filters.ChemicalSampleContainerFilter,
-                   filters.SortedUserFilter)
+                   'chemical__projects', filters.SortedUserFilter)
         
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
@@ -550,7 +550,7 @@ class ProteinSampleAdmin( SampleAdmin ):
 
     list_filter = ('status', filters.ProteinSampleLocationFilter, 
                    filters.ProteinSampleRackFilter, filters.ProteinSampleContainerFilter,
-                   filters.SortedUserFilter)
+                   'protein__projects', filters.SortedUserFilter)
         
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
@@ -718,7 +718,7 @@ class SequencingAdmin(BaseAdminMixin, reversion.VersionAdmin):
 
     list_display   = ( '__unicode__', 'showSample', 'orderedAt', 'orderedBy', 'showEvaluation' )
 
-    list_filter    = (filters.SortedOrderedByFilter, 'evaluation',)
+    list_filter    = ('sample__dna__projects', filters.SortedOrderedByFilter, 'evaluation',)
 
     search_fields  = ('sample__displayId', 'sample__name', 'registeredBy__username',
                       'comments','evaluation',
