@@ -88,7 +88,7 @@ class Sample( UserMixin ):
     """Base class for DNA, cell and protein samples."""
 
     displayId = models.CharField('Position', max_length=20,
-                                 help_text='Select container first.')
+                                 help_text='Position or label')
 
     container = models.ForeignKey(Container, related_name='samples',
                                   help_text='Start typing name or ID...')

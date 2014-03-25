@@ -20,6 +20,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 import django.utils.html as html
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 import attachments as A
 from .usermixin import UserMixin
@@ -88,6 +89,14 @@ class Sequencing( UserMixin ):
                                  self.sample.displayId, 
                                  self.registeredAt.strftime('%Y%m%d'),
                                  self.id)
+
+    def get_absolute_url(self):
+        """
+        Define standard URL for object views
+        see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
+        """
+        classname = self.__class__.__name__.lower()
+        return reverse('admin:rotmic_%s_change' % classname, args=(self.id,))
 
     class Meta:
         app_label='rotmic'

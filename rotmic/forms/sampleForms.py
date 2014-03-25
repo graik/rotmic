@@ -58,6 +58,14 @@ class SampleForm(forms.ModelForm):
     """Customized Form for Sample add / change. 
     To be overridden rather than used directly."""
 
+    ## ensure this field is the first in the form (see Admin)
+    ## workaround for selectable focus issue -- AutoComplete fields cannot
+    ## be in first position; otherwise pre-selected values (e.g. from URL) 
+    ## always fail javascript validation when the cursor is moved away
+    dummyfield = forms.CharField(widget=forms.HiddenInput,
+                                 required=False,
+                                 label='')
+
     ## use lookup fields and provide default value
     concentrationUnit = sforms.AutoCompleteSelectField(
         label='... unit',
