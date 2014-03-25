@@ -141,7 +141,7 @@ class InheritanceManager(models.Manager):
         return InheritanceQuerySet(self.model)
 
     def select_subclasses(self, *subclasses):
-        return self.get_query_set().select_subclasses(*subclasses)
+        return self.get_queryset().select_subclasses(*subclasses)
 
     def get_subclass(self, *args, **kwargs):
-        return self.get_query_set().select_subclasses().get(*args, **kwargs)
+        return self.get_queryset().select_subclasses().get(*args, **kwargs)
