@@ -60,11 +60,11 @@ class SampleProvenance(models.Model):
                                      verbose_name='from sample')
     
     description = models.CharField( 'Comment', max_length=200,
-                                    help_text='Brief description for tables and listings',
+                                    help_text='',
                                     blank=True )
 
     provenanceType = models.ForeignKey( SampleProvenanceType, 
-                                        verbose_name='derived how (provenance type)',
+                                        verbose_name='via (method)',
                                         help_text="How is this sample derived from it's source?")
 
     def __unicode__(self):
@@ -165,7 +165,7 @@ class Sample( UserMixin ):
     @property
     def content(self):
         """return subtype-specific content object. Needs to be overriden"""
-        raise NotImplemented, 'content method must be implemented by sub-classes.'
+        return self.convertClass().content
 
     def descriptionText(self):
         """remove some formatting characters from text"""

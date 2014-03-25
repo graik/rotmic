@@ -17,12 +17,27 @@
 
 import datetime, csv, collections
 from django.http import HttpResponse
+from django.contrib.admin import ModelAdmin
 
 class BaseAdminMixin:
     """
     Automatically save and assign house-keeping information like by whom and
     when a record was saved.
+    Create self.request variable in form.
     """
+
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Push request into the ModelForm. Requires the form to override __init__
+        and remove request from the kwargs.
+        See: http://stackoverflow.com/questions/1057252/how-do-i-access-the-request-object-or-any-other-variable-in-a-forms-clean-met
+        """
+        ModelForm = ModelAdmin.get_form(self, request, obj, **kwargs)
+        class ModelFormWithRequest(ModelForm):
+            def __new__(cls, *args, **kwargs):
+                kwargs['request'] = request
+                return ModelForm(*args, **kwargs)
+        return ModelFormWithRequest
 
     def save_model(self, request, obj, form, change):
         """Override to save user who created this record"""

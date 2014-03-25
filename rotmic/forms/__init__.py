@@ -25,4 +25,6 @@ from sampleForms import SampleForm, DnaSampleForm, CellSampleForm, \
      OligoSampleForm, ChemicalSampleForm, SampleProvenanceForm, \
      ProteinSampleForm
 
+from sequencingForms import SequencingForm, SequencingRunForm
+
 from uploadForms import TableUploadForm

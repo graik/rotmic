@@ -38,6 +38,12 @@ def getSampleWidgets( extra={} ):
 
         'displayId' : forms.TextInput(attrs={'size':5}),
         
+        'preparedBy' : sforms.AutoComboboxSelectWidget(lookup_class=L.UserLookup,
+                                                       allow_new=False,
+                                                       attrs={'size':15}),
+        
+        'experimentNr' : forms.TextInput(attrs={'size':15}),
+
         'concentration' : forms.TextInput(attrs={'size':5}),
 
         'amount' : forms.TextInput(attrs={'size':5}),
@@ -325,7 +331,7 @@ class SampleProvenanceForm( forms.ModelForm ):
         
     
     class Meta:
-        widgets = {'sourceSample': sforms.AutoComboboxSelectWidget(lookup_class=L.ProvenanceSampleLookup,
+        widgets = {'sourceSample': sforms.AutoComboboxSelectWidget(lookup_class=L.SampleLookup,
                                                                    allow_new=False,
                                                                    attrs={'size':20})
                    }

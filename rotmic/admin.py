@@ -21,8 +21,6 @@ import django.contrib.admin.widgets as widgets
 import django.utils.html as html
 from django.utils.safestring import mark_safe
 import django.contrib.messages as messages 
-import django.forms
-from django.db import models
 
 import reversion
 
@@ -197,7 +195,8 @@ class SampleProvenanceInline(admin.StackedInline):
 
     fieldsets = (
         (None, {
-            'fields': (('provenanceType', 'sourceSample', ), ('description',)),
+            'fields': (('provenanceType', 'sourceSample', 'description',),
+                       ),
             'description': 'Specify how this sample was created or from which other sample it was derived from.',
         }),
     )
@@ -682,6 +681,7 @@ admin.site.register( M.SampleProvenanceType, SampleProvenanceTypeAdmin )
 
 class SequencingRunInline(admin.TabularInline):
     model = M.SequencingRun
+    form = forms.SequencingRunForm
     extra = 2
     max_num = 15
 
@@ -690,13 +690,10 @@ class SequencingRunInline(admin.TabularInline):
          { 'fields': ('f', 'primer', 'description')
            }),
     )
-
-    formfield_overrides = {
-        models.CharField: {'widget': django.forms.Textarea(attrs={'rows': 2,'cols': 40})
-                           }
-        }
     
-class SequencingAdmin(BaseAdminMixin, admin.ModelAdmin):
+class SequencingAdmin(BaseAdminMixin, reversion.VersionAdmin):
+    form = forms.SequencingForm
+    
     inlines = [ SequencingRunInline ]
 
     fieldsets = (
@@ -711,18 +708,13 @@ class SequencingAdmin(BaseAdminMixin, admin.ModelAdmin):
     save_as = True
     save_on_top = True
 
-    list_display   = ('sample', 'registeredAt', 'registeredBy', 'evaluation' )
+    list_display   = ('sample', 'orderedAt', 'orderedBy', 'evaluation' )
 
-    list_filter    = (filters.SortedUserFilter, 'evaluation',)
+    list_filter    = (filters.SortedOrderedByFilter, 'evaluation',)
 
     search_fields  = ('sample__displayId', 'sample__name', 'registeredBy__username',
                       'comments','evaluation',
+                      'orderedBy__username',
                       'sample__container__displayId')
     
-    ## scale all TextFields (affects single Comments field)
-    formfield_overrides = {
-        models.TextField: {'widget': django.forms.Textarea(attrs={'rows': 5,'cols': 80})
-                           }
-        }
-
 admin.site.register(M.Sequencing, SequencingAdmin)

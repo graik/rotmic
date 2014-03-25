@@ -53,7 +53,6 @@ class DnaLookup(ModelLookup):
 registry.register(DnaLookup)
 
 class OligoLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
     model = M.OligoComponent
     search_fields = ('displayId__startswith', 'name__icontains')
     
@@ -61,6 +60,12 @@ class OligoLookup(ModelLookup):
         return item.pk
 
 registry.register(OligoLookup)
+
+class SequencingOligoLookup(OligoLookup):
+    filters = {'componentType': T.ocSequencing}
+
+registry.register(SequencingOligoLookup)
+
 
 class ChemicalLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
@@ -194,18 +199,6 @@ class ContainerRackLookup(ModelLookup):
 registry.register( ContainerRackLookup )
 
 
-class ProvenanceSampleLookup(ModelLookup):
-    """for selectable auto-completion field in SampleProvenance form"""
-    model = M.Sample
-    search_fields = ('container__displayId__startswith',
-                     'displayId__startswith')
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register( ProvenanceSampleLookup )
-
-
 class UnitLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
     model = M.Unit
@@ -270,3 +263,47 @@ class UserLookup(ModelLookup):
         return item.pk
 
 registry.register(UserLookup)
+
+
+class SampleLookupBase(ModelLookup):
+    """
+    Base class for all sample lookups; not to be used directly.
+    (property .content requires DB lookup in base Sample class)
+    """
+    model = M.Sample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+    def get_item_label(self, item):
+        """The value shown in the drop down list"""
+        return '%s (%s)' % (unicode(item), item.content.displayId) 
+
+    def get_item_value(self, item):
+        """The value shown once the item has been selected"""
+        return '%s (%s)' % (unicode(item), item.content.displayId) 
+
+
+class SampleLookup(SampleLookupBase):
+    """
+    Custom lookup for field that allows connecting to all samples (any subclass).
+    For selectable auto-completion field in SampleProvenance form
+    """
+    def get_query(self, request, term):
+        r = super(SampleLookup, self).get_query(request, term)
+        ## convert Sample instances into DnaSample, CellSample, etc.
+        return r.select_subclasses()    
+
+registry.register( SampleLookup )
+
+
+class DnaSampleLookup(SampleLookupBase):
+    """For selectable auto-completion field in Sequencing form"""
+    model = M.DnaSample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith', 'dna__displayId__startswith')
+    
+registry.register( DnaSampleLookup )
+

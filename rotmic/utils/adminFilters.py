@@ -538,3 +538,7 @@ class SortedUserFilter( admin.SimpleListFilter ):
 class SortedAuthorFilter( SortedUserFilter ):
     
     user_field = 'authors'  ## override if needed
+    
+class SortedOrderedByFilter( SortedUserFilter ):
+    
+    user_field = 'orderedBy'  ## override if needed
