@@ -122,16 +122,7 @@ class Component(UserMixin):
         ordering = ['displayId']
 
 
-
-class StatusMixin:
-    def statusValue(self):
-        """@return str, human-readable version of status flag"""
-        for flag, value in self.STATUS_CHOICES:
-            if flag == self.status:
-                return value
-        return 'unknown'
-    
-class StatusMixinDna(models.Model, StatusMixin):
+class StatusMixinDna(models.Model):
     
     STATUS_CHOICES = ( ('available', 'available'),
                        ('planning', 'planning'),
@@ -428,7 +419,7 @@ class ProteinComponent(Component, StatusMixinDna):
         ordering = ['displayId']
 
 
-class StatusMixinCommercial(models.Model, StatusMixin):
+class StatusMixinCommercial(models.Model):
     
     STATUS_CHOICES = ( ('available', 'available'),
                        ('planning', 'planning'),

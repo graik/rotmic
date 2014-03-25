@@ -315,7 +315,7 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
                  u'preparing':  '0000FF', # blue
                  }
         return '<span style="color: #%s;">%s</span>' %\
-               (color.get(obj.status, '000000'), obj.status)
+               (color.get(obj.status, '000000'), obj.get_status_display())
     showStatus.allow_tags = True
     showStatus.short_description = 'Status'
         
@@ -710,7 +710,7 @@ class SequencingAdmin(BaseAdminMixin, reversion.VersionAdmin):
     save_as = True
     save_on_top = True
 
-    list_display   = ('sample', 'orderedAt', 'orderedBy', 'evaluation' )
+    list_display   = ( '__unicode__', 'showSample', 'orderedAt', 'orderedBy', 'showEvaluation' )
 
     list_filter    = (filters.SortedOrderedByFilter, 'evaluation',)
 
@@ -719,4 +719,30 @@ class SequencingAdmin(BaseAdminMixin, reversion.VersionAdmin):
                       'orderedBy__username',
                       'sample__container__displayId')
     
+    def showSample(self, obj):
+        """Table display of linked sample ''"""
+        assert isinstance(obj, M.Sequencing), 'object missmatch'
+        x = obj.sample
+        if not x:
+            return u''
+        url = x.get_absolute_url()
+        s = '%s (%s)' % ( x, x.content.displayId)
+        return html.mark_safe('<a href="%s" title="">%s</a>' \
+                              % (url, s ))
+    showSample.allow_tags = True
+    showSample.short_description = 'Sample'
+
+##    def showEvaluation(self, obj):
+##        color = {u'confirmed': '088A08', # green
+##                 u'inconsistent': 'B40404', # red
+##                 u'problems': 'FFA500', # orange
+##                 u'ambiguous' : '0000FF', # blue
+##                 u'none':  '000000', # black
+##                 }
+##        return '<span style="color: #%s;">%s</span>' %\
+##               (color.get(obj.evaluation, '000000'), 
+##                obj.get_evaluation_display())
+##    showEvaluation.allow_tags = True
+##    showEvaluation.short_description = 'Evaluation'
+
 admin.site.register(M.Sequencing, SequencingAdmin)

@@ -59,7 +59,7 @@
                             <td>{{x.orderedBy}}</td>
                             <td style="text-align: center;">{{x.runs.count}}</td>
                             <td>{{x.comments |truncatechars:30}}</td>
-                            <td>{{x.get_evaluation_display}}</td>
+                            <td>{{x.showEvaluation}}</td>
                             <td ><a href="{% url 'admin:rotmic_sequencing_delete' x.id %}">
                                 Delete</a>
                             </td>

@@ -98,6 +98,19 @@ class Sequencing( UserMixin ):
         classname = self.__class__.__name__.lower()
         return reverse('admin:rotmic_%s_change' % classname, args=(self.id,))
 
+    def showEvaluation(self):
+        color = {u'confirmed': '088A08', # green
+                 u'inconsistent': 'B40404', # red
+                 u'problems': 'FFA500', # orange
+                 u'ambiguous' : '0000FF', # blue
+                 u'none':  '000000', # black
+                 }
+        return html.mark_safe('<span style="color: #%s;">%s</span>' %\
+                              (color.get(self.evaluation, '000000'), 
+                               self.get_evaluation_display()))
+    showEvaluation.allow_tags = True
+    showEvaluation.short_description = 'Evaluation'
+
     class Meta:
         app_label='rotmic'
         verbose_name='Sequencing'

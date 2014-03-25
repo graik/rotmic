@@ -146,7 +146,7 @@ class ComponentAdmin( ViewFirstModelAdmin ):
                  u'abandoned': 'B40404', # red
                  }
         return '<span style="color: #%s;">%s</span>' %\
-               (color.get(obj.status, '000000'), obj.statusValue())
+               (color.get(obj.status, '000000'), obj.get_status_display())
     showStatus.allow_tags = True
     showStatus.short_description = 'Status'
     
