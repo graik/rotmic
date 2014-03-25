@@ -15,66 +15,83 @@
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
-import re
 
 from django.db import models
 from django.utils.safestring import mark_safe
 import django.utils.html as html
+from django.contrib.auth.models import User
 
-from attachments import Attachment
+import attachments as A
+from .usermixin import UserMixin
 
-class SequencingRun( Attachment ):
+class SequencingRun( A.Attachment ):
     """
     Representation of a single sequencing run -- basically wrapper for a trace
-    file.
+    file. Extends the custom attachment class; inheriting parameters f 
+    (DocumentFileField) and description (CharField).
     """
     valid_extensions = ('abl','scf')
-    parent_class = 'Component'
-
-    sequencing = models.ForeignKey( 'Sequencing', related_name='runs' )
+    parent_class = 'Sequencing'
+    
+    parent = models.ForeignKey(parent_class, related_name='runs')
     
     primer = models.ForeignKey( 'OligoComponent', related_name='sequencingRun',
-                                limit_choices_to={'brick_type__type_code__in':['G']},
+                                limit_choices_to={'componentType__name':'sequencing'},
                                 blank=True, null=True )
-
-    #sequence = customfields.TextModelField( 'sequence', rows=4, cols=40,
-                                 #blank=True, null=True,
-                                 #help_text='sequence extracted from trace file')
+    
+    def __unicode__(self):
+        return u'trace file %i' % self.id
 
     class Meta:
-        ordering = ('trace',)
-        ## unique_together = (('trace',)) doesn't work
-        
+        app_label='rotmic'
+        abstract=False
+        verbose_name='Sequencing Trace'
+
+models.signals.post_delete.connect(A.auto_delete_file_on_delete, 
+                                   sender=SequencingRun)
+
+models.signals.pre_save.connect(A.auto_delete_file_on_change, 
+                                   sender=SequencingRun)
 
 
-class Sequencing( models.Model, UserMixIn ):
+
+class Sequencing( UserMixin ):
     """
     Describe a sequencing result and analysis.
     Sequencing results are attached to Samples.
     """
 
     EVALUATION = (('confirmed','confirmed'), ('inconsistent','inconsistent'),
-                  ('ambiguous','ambiguous'), ('','not analyzed') )
+                  ('ambiguous','ambiguous'), ('problems', 'seq. problems'), ('none','not analyzed') )
 
-    sample = models.ForeignKey(DnaSample, related_name='sequencing', 
-                               verbose_name='sequenced sample',
+    sample = models.ForeignKey('DnaSample', related_name='sequencing', 
+                               verbose_name='Sample',
                                help_text='sample on which sequencing was performed')
 
+    orderedAt = models.DateField(default=datetime.now().date, verbose_name="ordered")
+
+    orderedBy = models.ForeignKey(User, null=False, blank=False, 
+                                related_name='%(class)s',
+                                verbose_name='By',
+                                help_text='User responsible for this sequencing')
+
+    
     evaluation = models.CharField( 'evaluation', max_length=30,
-                                   choices=EVALUATION, blank=True,
-                                   default='',
+                                   choices=EVALUATION, blank=False,
+                                   default='none',
                                    help_text='sequencing verdict with respect to target')
 
-    comments = customfields.TextModelField( blank=True, rows=3)
+    comments = models.TextField( blank=True )
 
     def __unicode__( self ):
-        return u'_'.join([str(s) for s in [self.sample.label, self.created,
-                                           self.id ]] )
-
-    def get_absolute_url(self):
-        """Define standard URL for object.get_absolute_url access in templates """
-        return APP_URL+'/sequencing/%i/' % self.id
+        return u'%s-%s_%s_%i' % (self.sample.container.displayId, 
+                                 self.sample.displayId, 
+                                 self.registeredAt.strftime('%Y%m%d'),
+                                 self.id)
 
     class Meta:
+        app_label='rotmic'
+        verbose_name='Sequencing'
         ordering = ('sample','id')
+        
 

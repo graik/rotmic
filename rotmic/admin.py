@@ -21,6 +21,8 @@ import django.contrib.admin.widgets as widgets
 import django.utils.html as html
 from django.utils.safestring import mark_safe
 import django.contrib.messages as messages 
+import django.forms
+from django.db import models
 
 import reversion
 
@@ -420,7 +422,7 @@ class CellSampleAdmin( SampleAdmin ):
     ]
 
     list_display = ('showExtendedId', 'showRack', 'showLocation',
-                    'preparedAt', 'registeredBy',
+                    'preparedAt', 'preparedBy',
                     'showContent', 'showAmount',
                     'showStatus','showEdit')
     
@@ -677,3 +679,50 @@ class SampleProvenanceTypeAdmin(admin.ModelAdmin):
     
 admin.site.register( M.SampleProvenanceType, SampleProvenanceTypeAdmin )
     
+
+class SequencingRunInline(admin.TabularInline):
+    model = M.SequencingRun
+    extra = 2
+    max_num = 15
+
+    fieldsets = (
+        (None,
+         { 'fields': ('f', 'primer', 'description')
+           }),
+    )
+
+    formfield_overrides = {
+        models.CharField: {'widget': django.forms.Textarea(attrs={'rows': 2,'cols': 40})
+                           }
+        }
+    
+class SequencingAdmin(BaseAdminMixin, admin.ModelAdmin):
+    inlines = [ SequencingRunInline ]
+
+    fieldsets = (
+        (None,
+         { 'fields': (('sample','evaluation'),('orderedAt', 'orderedBy'), 
+                      'comments')
+           }),
+    )
+
+    ordering = ('sample',)
+
+    save_as = True
+    save_on_top = True
+
+    list_display   = ('sample', 'registeredAt', 'registeredBy', 'evaluation' )
+
+    list_filter    = (filters.SortedUserFilter, 'evaluation',)
+
+    search_fields  = ('sample__displayId', 'sample__name', 'registeredBy__username',
+                      'comments','evaluation',
+                      'sample__container__displayId')
+    
+    ## scale all TextFields (affects single Comments field)
+    formfield_overrides = {
+        models.TextField: {'widget': django.forms.Textarea(attrs={'rows': 5,'cols': 80})
+                           }
+        }
+
+admin.site.register(M.Sequencing, SequencingAdmin)

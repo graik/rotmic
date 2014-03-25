@@ -31,6 +31,8 @@ from rotmic.models.components import Component, DnaComponent, CellComponent, \
 from rotmic.models.samples import Sample, DnaSample, CellSample, OligoSample,\
      ChemicalSample, ProteinSample, SampleProvenance, SampleProvenanceType
 
+from rotmic.models.sequencing import SequencingRun, Sequencing
+
 from rotmic.models.storage import Location, Rack, Container
 
 from rotmic.models.projects import Project
