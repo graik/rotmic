@@ -228,9 +228,10 @@ class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin )
           
     ]
     list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'showStatus',
                     'preparedAt', 'preparedBy', 'showType',
                     'showContent', 'showConcentration', 'showAmount',
-                    'showStatus','showEdit')
+                    'showEdit')
     
     ordering = ('container', 'displayId')
 
@@ -380,9 +381,10 @@ class DnaSampleAdmin( SampleAdmin ):
     ]
 
     list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'showStatus',
                     'preparedAt', 'preparedBy',
                     'showContent', 'showConcentration', 'showAmount',
-                    'showStatus','showEdit')
+                    'showEdit')
 
     list_filter = ('status', filters.DnaSampleLocationFilter, 
                    filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter,
@@ -421,9 +423,10 @@ class CellSampleAdmin( SampleAdmin ):
     ]
 
     list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'showStatus',
                     'preparedAt', 'preparedBy',
                     'showContent', 'showAmount',
-                    'showStatus','showEdit')
+                    'showEdit')
     
     list_filter = ('status', filters.CellSampleLocationFilter, 
                    filters.CellSampleRackFilter, filters.CellSampleContainerFilter,
@@ -460,9 +463,10 @@ class OligoSampleAdmin( SampleAdmin ):
     ]
 
     list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'showStatus',
                     'preparedAt', 'preparedBy', 
                     'showContent', 'showConcentration', 'showAmount',
-                    'showStatus','showEdit')
+                    'showEdit')
 
     list_filter = ('status', filters.OligoSampleLocationFilter, 
                    filters.OligoSampleRackFilter, filters.OligoSampleContainerFilter,
@@ -499,9 +503,10 @@ class ChemicalSampleAdmin( SampleAdmin ):
     ]
 
     list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'showStatus',
                     'preparedAt', 'preparedBy',
                     'showContent', 'showConcentration', 'showAmount',
-                    'showStatus','showEdit')
+                    'showEdit')
 
     list_filter = ('status', filters.ChemicalSampleLocationFilter, 
                    filters.ChemicalSampleRackFilter, filters.ChemicalSampleContainerFilter,
@@ -538,9 +543,10 @@ class ProteinSampleAdmin( SampleAdmin ):
     ]
 
     list_display = ('showExtendedId', 'showRack', 'showLocation',
+                    'showStatus',
                     'preparedAt', 'preparedBy',
                     'showContent', 'showConcentration', 'showAmount',
-                    'showStatus','showEdit')
+                    'showEdit')
 
     list_filter = ('status', filters.ProteinSampleLocationFilter, 
                    filters.ProteinSampleRackFilter, filters.ProteinSampleContainerFilter,
@@ -731,18 +737,5 @@ class SequencingAdmin(BaseAdminMixin, reversion.VersionAdmin):
                               % (url, s ))
     showSample.allow_tags = True
     showSample.short_description = 'Sample'
-
-##    def showEvaluation(self, obj):
-##        color = {u'confirmed': '088A08', # green
-##                 u'inconsistent': 'B40404', # red
-##                 u'problems': 'FFA500', # orange
-##                 u'ambiguous' : '0000FF', # blue
-##                 u'none':  '000000', # black
-##                 }
-##        return '<span style="color: #%s;">%s</span>' %\
-##               (color.get(obj.evaluation, '000000'), 
-##                obj.get_evaluation_display())
-##    showEvaluation.allow_tags = True
-##    showEvaluation.short_description = 'Evaluation'
 
 admin.site.register(M.Sequencing, SequencingAdmin)

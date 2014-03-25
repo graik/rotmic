@@ -271,7 +271,7 @@
                 <li><B>registered</B>: 
                     <p>
                     {% with o.registeredBy as U %}
-                        {{o.registrationDate}}; &nbsp{{o.registrationTime}}<br>
+                        {{o.registeredAt}}<br>
                         by <a href="../?registeredBy__id__exact={{U.id}}">
                             {{U.first_name}} {{U.last_name}} ({{U}})</a>
                     {% endwith %}
@@ -281,7 +281,7 @@
                     <li><B>last modified</B>: 
                         <p>
                         {% with o.modifiedBy as U %}
-                            {{o.modificationDate}}; &nbsp{{o.modificationTime}}<br>
+                            {{o.modifiedAt}}<br>
                             by {{U.first_name}} {{U.last_name}} ({{U}})
                         {% endwith %}
                         </p>
