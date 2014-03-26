@@ -222,6 +222,9 @@
                 <p><br></p>
                 <ul class="object-tools">
                     <li><a href="{% url 'admin:rotmic_dnasample_add'%}?dna={{o.pk}}">Add DNA Sample</a></li>
+                    {% if o.componentType.category.name == 'Plasmid' %}
+                        <li><a href="{% url 'admin:rotmic_cellsample_add'%}?plasmid={{o.pk}}">Add Cell Stock</a></li>
+                    {% endif %}
                 </ul>
                 
                 {% with n=o.allSamplesCount %}
