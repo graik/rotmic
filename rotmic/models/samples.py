@@ -24,6 +24,7 @@ from django.contrib.auth.models import User, Group
 
 from .usermixin import UserMixin
 from .storage import Container
+from .sequencing import Sequencing
 import rotmic.utils.inheritance as I
 
 
@@ -319,6 +320,37 @@ class DnaSample( Sample ):
         return super(DnaSample, self).showContent()
     showContent.allow_tags = True
     showContent.short_description = 'DNA construct'
+    
+    def sequencingEvaluation(self):
+        """return highest ranking sequencing evaluation result or None"""
+        if self.sequencing.count() == 0:
+            return None
+        eval_priority = [ x[0] for x in Sequencing.EVALUATIONS ]
+
+        for e in eval_priority:
+            x = self.sequencing.filter(evaluation=e).first()
+            if x:
+                return e
+
+        return None
+    
+    def showSequencing(self):
+        """
+        Show sequencing evaluation of highest priority:
+        confirmed > inconsistent > ambiguous > problems > not analyzed
+        """
+        if self.sequencing.count() == 0:
+            return u''
+        e = self.sequencingEvaluation()
+
+        x = self.sequencing.filter(evaluation=e).first()
+        if x:
+            r = html.mark_safe('<a href="%s">%s</a>' % 
+                               (x.get_absolute_url(), x.showEvaluation()))
+            return r
+        return u'other'
+    showSequencing.allow_tags = True
+    showSequencing.short_description = 'Sequencing'
     
 
     class Meta:

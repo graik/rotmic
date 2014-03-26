@@ -236,34 +236,37 @@
                                 <thead>
                                 <tr>
                                     <th>location</th>
-                                    <th>ID/<br>Pos.</th><th>prepared</th><th>by</th>
+                                    <th>ID/<br>Pos.</th><th>Status</th>
+                                    <th>prepared</th><th>by</th>
                                     <th>Type</th><th>Content</th>
-                                    <th>Description</th><th>Status</th>
+                                    <th>Description</th>
+                                    <th>Sequencing</th>
                                 </tr>
                                 </thead>
                     
                                 <tbody>
                                 {% for x in o.allSamples %}
                                 
-                                  <tr class="{% cycle 'row1' 'row2' %}">
+                                    <tr class="{% cycle 'row1' 'row2' %}">
                                   
-                                    <td>{{x.container.showVerbose}}</td>
-                                                         
-                                    <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
-                                    
-                                    <td>{{x.preparedAt}}</td>
-                                    
-                                    <td>{{x.registeredBy}}</td>
-                                    
-                                    <td>{{x.showType}}</td>
-                                    
-                                    <td>{{x.showContent}}</td>
-                                    
-                                    <td>{{x.description | truncateHTML:30}}</td>
-                                    
-                                    <td>{{x.status}}</td>
-                                    
-                                  </tr>
+                                        <td>{{x.container.showVerbose}}</td>
+                                                             
+                                        <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
+                                        
+                                        <td>{{x.status}}</td>
+                                        
+                                        <td>{{x.preparedAt}}</td>
+                                        
+                                        <td>{{x.registeredBy}}</td>
+                                        
+                                        <td>{{x.showType}}</td>
+                                        
+                                        <td>{{x.showContent}}</td>
+                                        
+                                        <td>{{x.description | truncateHTML:30}}</td>
+
+                                        <td>{{x.showSequencingIcon}}</td>
+                                    </tr>
                     
                               {% endfor %}
                               </tbody>

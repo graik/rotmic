@@ -21,6 +21,7 @@ from django.utils.safestring import mark_safe
 import django.utils.html as html
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+import django.contrib.staticfiles.templatetags.staticfiles as ST
 
 import attachments as A
 from .usermixin import UserMixin
@@ -62,7 +63,7 @@ class Sequencing( UserMixin ):
     Sequencing results are attached to Samples.
     """
 
-    EVALUATION = (('confirmed','confirmed'), ('inconsistent','inconsistent'),
+    EVALUATIONS = (('confirmed','confirmed'), ('inconsistent','inconsistent'),
                   ('ambiguous','ambiguous'), ('problems', 'seq. problems'), ('none','not analyzed') )
 
     sample = models.ForeignKey('DnaSample', related_name='sequencing', 
@@ -78,7 +79,7 @@ class Sequencing( UserMixin ):
 
     
     evaluation = models.CharField( 'evaluation', max_length=30,
-                                   choices=EVALUATION, blank=False,
+                                   choices=EVALUATIONS, blank=False,
                                    default='none',
                                    help_text='sequencing verdict with respect to target')
 
@@ -105,11 +106,25 @@ class Sequencing( UserMixin ):
                  u'ambiguous' : '0000FF', # blue
                  u'none':  '000000', # black
                  }
-        return html.mark_safe('<span style="color: #%s;">%s</span>' %\
+        r = html.mark_safe('<span style="color: #%s;">%s</span>' %\
                               (color.get(self.evaluation, '000000'), 
                                self.get_evaluation_display()))
+        return self.showEvaluationIcon() + ' ' + r
     showEvaluation.allow_tags = True
     showEvaluation.short_description = 'Evaluation'
+ 
+    def showEvaluationIcon(self):
+        icons = {u'confirmed': 'icon_success.gif', # green
+                 u'inconsistent': 'icon_error.gif', # red
+                 u'problems': 'icon_alert.gif', # orange
+                 u'ambiguous' : 'icon-unknown.gif', # blue
+                 u'none':  'icon_clock.gif', # black
+                 }
+        f = ST.static('admin/img/' + icons.get(self.evaluation, ''))
+        return html.mark_safe('<img src="%s" title="%s">' % \
+                              (f, self.get_evaluation_display()))
+    showEvaluationIcon.allow_tags = True
+    showEvaluationIcon.short_description = 'Evaluation'
 
     class Meta:
         app_label='rotmic'
