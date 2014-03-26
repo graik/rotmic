@@ -106,10 +106,10 @@ class Sequencing( UserMixin ):
                  u'ambiguous' : '0000FF', # blue
                  u'none':  '000000', # black
                  }
-        r = html.mark_safe('<span style="color: #%s;">%s</span>' %\
-                              (color.get(self.evaluation, '000000'), 
-                               self.get_evaluation_display()))
-        return self.showEvaluationIcon() + ' ' + r
+        r = '<span style="color: #%s;">%s</span>' %\
+                    (color.get(self.evaluation, '000000'), 
+                     self.get_evaluation_display())
+        return html.mark_safe( self.showEvaluationIcon() + ' ' + r)
     showEvaluation.allow_tags = True
     showEvaluation.short_description = 'Evaluation'
  

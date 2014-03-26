@@ -384,6 +384,7 @@ class DnaSampleAdmin( SampleAdmin ):
                     'showStatus',
                     'preparedAt', 'preparedBy',
                     'showContent', 'showConcentration', 'showAmount',
+                    'showSequencing',
                     'showEdit')
 
     list_filter = ('status', filters.DnaSampleLocationFilter, 

@@ -321,19 +321,6 @@ class DnaSample( Sample ):
     showContent.allow_tags = True
     showContent.short_description = 'DNA construct'
     
-    def sequencingEvaluation(self):
-        """return highest ranking sequencing evaluation result or None"""
-        if self.sequencing.count() == 0:
-            return None
-        eval_priority = [ x[0] for x in Sequencing.EVALUATIONS ]
-
-        for e in eval_priority:
-            x = self.sequencing.filter(evaluation=e).first()
-            if x:
-                return e
-
-        return None
-    
     def showSequencing(self):
         """
         Show sequencing evaluation of highest priority:
@@ -341,17 +328,33 @@ class DnaSample( Sample ):
         """
         if self.sequencing.count() == 0:
             return u''
-        e = self.sequencingEvaluation()
+        eval_priority = [ x[0] for x in Sequencing.EVALUATIONS ]
 
-        x = self.sequencing.filter(evaluation=e).first()
-        if x:
-            r = html.mark_safe('<a href="%s">%s</a>' % 
-                               (x.get_absolute_url(), x.showEvaluation()))
-            return r
+        for e in eval_priority:
+            x = self.sequencing.filter(evaluation=e).first()
+            if x:
+                r = html.mark_safe('<a href="%s">%s</a>' % 
+                                   (x.get_absolute_url(), x.showEvaluationIcon()))
+                return r
         return u'other'
     showSequencing.allow_tags = True
-    showSequencing.short_description = 'Sequencing'
+    showSequencing.short_description = 'Seq'
     
+    def showSequencingAll(self):
+        """
+        Show a sequencing evaluation icon for each registered sequencing.
+        """
+        r = u''
+        eval_priority = [ x[0] for x in Sequencing.EVALUATIONS ]
+        
+        ## display icon for each seq. records in order of evaluation priority
+        for e in eval_priority:
+            for x in self.sequencing.filter(evaluation=e):
+                r += ' ' + '<a href="%s">%s</a>' % \
+                                       (x.get_absolute_url(), x.showEvaluationIcon())
+        return html.mark_safe(r)
+    showSequencingAll.allow_tags = True
+    showSequencingAll.short_description = 'Sequencing'
 
     class Meta:
         app_label = 'rotmic'
