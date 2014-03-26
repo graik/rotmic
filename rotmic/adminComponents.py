@@ -20,6 +20,7 @@ from collections import OrderedDict
 
 from django.contrib import admin, messages
 from django.utils import safestring, html
+import django.contrib.staticfiles.templatetags.staticfiles as ST
 
 import reversion
 from Bio import SeqIO
@@ -168,6 +169,20 @@ class ComponentAdmin( ViewFirstModelAdmin ):
     showFirstAuthor.allow_tags = True
     showFirstAuthor.short_description = 'Authors'
 
+    def showSampleStatus(self, obj):
+        fyes = ST.static('admin/img/icon-yes.gif')
+
+        n = obj.samples.count()
+        x = 's' if n > 1 else ''
+
+        r1 = '<img src="%s" title="%i sample%s">' % (fyes, n, x)
+        r1 = r1 if n else '<span title="no samples">&mdash;</span>'
+        
+        return html.mark_safe(r1)
+
+    showSampleStatus.allow_tags = True    
+    showSampleStatus.short_description = '' 
+
 
 class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin):
     """Admin interface description for DNA constructs."""
@@ -193,9 +208,10 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
          ),            
     )
 
-    list_display = ('displayId', 'name', 'registrationDate', 'showFirstAuthor',
+    list_display = ('displayId', 'name', 'showStatus', 'registrationDate', 'showFirstAuthor',
                     'showVectorUrl', 'showMarkerUrls', 
-                    'showDescription', 'showType', 'showStatus', 'showEdit')
+                    'showDescription', 'showType', 
+                    'showSampleStatus', 'showEdit')
     
     list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 
                     'status', 
@@ -293,6 +309,34 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
         return export_csv( request, queryset, self.csv_fields)
     make_csv.short_description = 'Export items as CSV'
 
+    def showSampleStatus(self, obj):
+        fyes = ST.static('admin/img/icon-yes.gif')
+        ##fno  = ST.static('admin/img/icon-no.gif')
+        
+        n_dna = obj.samples.count()
+        n_cells = obj.cellSamples.count()
+
+        x_dna = 's' if n_dna > 1 else ''
+        x_cells = 's' if n_cells > 1 else ''
+
+        r1 = '<img src="%s" title="%i DNA sample%s">' % (fyes, n_dna, x_dna)
+        r2 = '<img src="%s" title="%i Cell sample%s">'% (fyes, n_cells, x_cells)
+
+        r1 = r1 if n_dna else '<span title="no DNA samples">&mdash;</span>'
+        r2 = r2 if n_cells else '<span title="no cell samples">&mdash;</span>'
+
+        ## don't show icons for non-plasmid constructs unless there are
+        ## samples registered.
+        if obj.componentType.category() != I.dcPlasmid:
+            if not (n_dna or n_cells):
+                return ''
+        
+        return html.mark_safe('%s / %s' % (r1, r2))
+
+    showSampleStatus.allow_tags = True    
+    showSampleStatus.short_description = 'Smpls' 
+
+
 admin.site.register(M.DnaComponent, DnaComponentAdmin)
 
 
@@ -318,10 +362,10 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
          ),            
     )
 
-    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
+    list_display = ('displayId', 'name', 'showStatus', 'registrationDate', 'showFirstAuthor',
                     'showPlasmidUrl', 'showMarkerUrls', 'showDescription',
                     'showType',
-                    'showStatus', 'showEdit')
+                    'showSampleStatus', 'showEdit')
     
     list_filter = ( filters.CellCategoryListFilter, filters.CellTypeListFilter, 
                     'status', 'projects', filters.SortedAuthorFilter)
@@ -416,9 +460,10 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
          ),            
     )
 
-    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
+    list_display = ('displayId', 'name', 'showStatus', 'registrationDate', 'showFirstAuthor',
                     'componentType', 'showTm', 'showDescription',
-                    'showStatus','showEdit')
+                    'showType',
+                    'showSampleStatus', 'showEdit')
     
     list_filter = ( 'componentType', 'status', 'projects', filters.SortedAuthorFilter)
     
@@ -487,10 +532,10 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
          ),            
     )
 
-    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'cas', 'showDescription', 'showType',
-                    'showStatus',
-                    'showEdit')
+    list_display = ('displayId', 'name', 'showStatus', 'registrationDate', 'showFirstAuthor',
+                    'cas', 'showDescription', 
+                    'showType',
+                    'showSampleStatus', 'showEdit')
     
     list_filter = ( filters.ChemicalCategoryListFilter, filters.ChemicalTypeListFilter, 
                     'status', 'projects', filters.SortedAuthorFilter)
@@ -544,8 +589,8 @@ class ProteinComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAd
          ),            
     )
 
-    list_display = ('displayId', 'name', 'registrationDate', 'registeredBy',
-                    'showDescription','showStatus','showEdit')
+    list_display = ('displayId', 'name', 'showStatus', 'registrationDate', 'showFirstAuthor',
+                    'showDescription','showSampleStatus','showEdit')
     
     list_filter = ( filters.ProteinCategoryListFilter, filters.ProteinTypeListFilter, 
                     'status', 'projects', filters.SortedAuthorFilter)

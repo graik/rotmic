@@ -183,6 +183,26 @@ class DnaComponent(Component, StatusMixinDna):
         for this specific component.
         """
         return self.dna_samples
+    
+    @property
+    def cellSamples(self):
+        """Cell samples containing this DNA construct"""
+        from . import CellSample
+
+        sample_ids = self.as_plasmid_in_cell.values_list('cell_samples', flat=True)
+        sample_ids = [ i for i in sample_ids if i ] ## filter out None
+
+        cellsamples = CellSample.objects.filter(id__in=sample_ids)
+        return cellsamples
+
+    @property
+    def allSamples(self):
+        """
+        DNA and cell samples for this construct.
+        """
+        dnasamples = self.dna_samples.all()
+        return list(dnasamples) + list(self.cellSamples)
+
 
     def relatedDnaDict(self):
         """
@@ -202,19 +222,7 @@ class DnaComponent(Component, StatusMixinDna):
         """@return int -- number of related DnaComponent objects"""
         return sum( map(len, self.relatedDnaDict().values()) )
     
-    def allSamples(self):
-        """
-        DNA and cell samples for this construct.
-        """
-        from . import CellSample
-        dnasamples = self.dna_samples.all()
-
-        sample_ids = self.as_plasmid_in_cell.values_list('cell_samples', flat=True)
-        sample_ids = [ i for i in sample_ids if i ] ## filter out None
-        cellsamples = CellSample.objects.filter(id__in=sample_ids)
-
-        return list(dnasamples) + list(cellsamples)
-    
+ 
     def allSamplesCount(self):
         dna = self.dna_samples.count()
         
