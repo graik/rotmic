@@ -62,7 +62,7 @@ def export_csv(request, queryset, fields):
     fields - OrderedDict of name / field pairs, see Item.make_csv for example
     """
     response = HttpResponse(mimetype='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=orders.csv'
+    response['Content-Disposition'] = 'attachment; filename=rotmic.csv'
     
     writer = csv.writer(response)
     writer.writerow(fields.keys())
