@@ -1,0 +1,2120 @@
+[
+{
+    "pk": 1, 
+    "model": "rotmic.userprofile", 
+    "fields": {
+        "pcPrefix": "", 
+        "prefix": "mt", 
+        "ccPrefix": "", 
+        "ocPrefix": "", 
+        "dcPrefix": "", 
+        "user": -1, 
+        "chPrefix": ""
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.userprofile", 
+    "fields": {
+        "pcPrefix": "", 
+        "prefix": "sb", 
+        "ccPrefix": "", 
+        "ocPrefix": "", 
+        "dcPrefix": "", 
+        "user": 0, 
+        "chPrefix": ""
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.userprofile", 
+    "fields": {
+        "pcPrefix": "", 
+        "prefix": "rg", 
+        "ccPrefix": "", 
+        "ocPrefix": "", 
+        "dcPrefix": "", 
+        "user": 1, 
+        "chPrefix": ""
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.componentattachment", 
+    "fields": {
+        "description": "random file attachment", 
+        "parent": 19, 
+        "f": "attachments/ProteinComponent/19/LinFRET-2012.pdf"
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "volume", 
+        "name": "L", 
+        "conversion": 1.0
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "volume", 
+        "name": "ml", 
+        "conversion": 0.001
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "volume", 
+        "name": "\u00b5l", 
+        "conversion": 1e-06
+    }
+},
+{
+    "pk": 4, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "mass", 
+        "name": "g", 
+        "conversion": 1.0
+    }
+},
+{
+    "pk": 5, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "mass", 
+        "name": "kg", 
+        "conversion": 1000.0
+    }
+},
+{
+    "pk": 6, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "mass", 
+        "name": "mg", 
+        "conversion": 0.001
+    }
+},
+{
+    "pk": 7, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "mass", 
+        "name": "\u00b5g", 
+        "conversion": 1e-06
+    }
+},
+{
+    "pk": 8, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "number", 
+        "name": "mol", 
+        "conversion": 1.0
+    }
+},
+{
+    "pk": 9, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "number", 
+        "name": "mmol", 
+        "conversion": 0.001
+    }
+},
+{
+    "pk": 10, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "number", 
+        "name": "\u00b5mol", 
+        "conversion": 1e-06
+    }
+},
+{
+    "pk": 11, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "number", 
+        "name": "nmol", 
+        "conversion": 1e-09
+    }
+},
+{
+    "pk": 12, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "number", 
+        "name": "items", 
+        "conversion": 0.0
+    }
+},
+{
+    "pk": 13, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "concentration", 
+        "name": "M", 
+        "conversion": 1.0
+    }
+},
+{
+    "pk": 14, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "concentration", 
+        "name": "mM", 
+        "conversion": 0.001
+    }
+},
+{
+    "pk": 15, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "concentration", 
+        "name": "\u00b5M", 
+        "conversion": 1e-06
+    }
+},
+{
+    "pk": 16, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "concentration", 
+        "name": "g/l", 
+        "conversion": 0.0
+    }
+},
+{
+    "pk": 17, 
+    "model": "rotmic.unit", 
+    "fields": {
+        "unitType": "concentration", 
+        "name": "ng/\u00b5l", 
+        "conversion": 0.0
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": null, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "Plasmid", 
+        "description": ""
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": null, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "Vector Backbone", 
+        "description": ""
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": null, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "Fragment", 
+        "description": ""
+    }
+},
+{
+    "pk": 4, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": null, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "Marker", 
+        "description": ""
+    }
+},
+{
+    "pk": 5, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 1, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "generic plasmid", 
+        "description": ""
+    }
+},
+{
+    "pk": 6, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 2, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "bacterial expression", 
+        "description": ""
+    }
+},
+{
+    "pk": 7, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 2, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "bacterial cloning", 
+        "description": ""
+    }
+},
+{
+    "pk": 8, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 2, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "mammalian expression", 
+        "description": ""
+    }
+},
+{
+    "pk": 9, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 2, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "yeast 2micron", 
+        "description": ""
+    }
+},
+{
+    "pk": 10, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 2, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "yeast centromeric", 
+        "description": ""
+    }
+},
+{
+    "pk": 11, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 2, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "yeast integrating", 
+        "description": ""
+    }
+},
+{
+    "pk": 12, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "isInsert": true, 
+        "uri": null, 
+        "name": "CDS", 
+        "description": ""
+    }
+},
+{
+    "pk": 13, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "isInsert": true, 
+        "uri": null, 
+        "name": "protein part", 
+        "description": ""
+    }
+},
+{
+    "pk": 14, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "isInsert": true, 
+        "uri": null, 
+        "name": "integration casette", 
+        "description": ""
+    }
+},
+{
+    "pk": 15, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "isInsert": true, 
+        "uri": null, 
+        "name": "construction intermediate", 
+        "description": ""
+    }
+},
+{
+    "pk": 16, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "other fragment", 
+        "description": ""
+    }
+},
+{
+    "pk": 17, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 4, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "bacterial resistance", 
+        "description": ""
+    }
+},
+{
+    "pk": 18, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 4, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "mammalian resistance", 
+        "description": ""
+    }
+},
+{
+    "pk": 19, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 4, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "yeast auxotrophic", 
+        "description": ""
+    }
+},
+{
+    "pk": 20, 
+    "model": "rotmic.dnacomponenttype", 
+    "fields": {
+        "subTypeOf": 2, 
+        "isInsert": false, 
+        "uri": null, 
+        "name": "undefined vector", 
+        "description": ""
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.cellcomponenttype", 
+    "fields": {
+        "allowMarkers": true, 
+        "name": "E. coli", 
+        "subTypeOf": null, 
+        "uri": null, 
+        "allowPlasmids": true, 
+        "description": "Escherichia coli (all strains)"
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.cellcomponenttype", 
+    "fields": {
+        "allowMarkers": true, 
+        "name": "S. cerevisiae", 
+        "subTypeOf": null, 
+        "uri": null, 
+        "allowPlasmids": true, 
+        "description": "S. cerevisiae (all strains)"
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.cellcomponenttype", 
+    "fields": {
+        "allowMarkers": true, 
+        "name": "H. sapiens", 
+        "subTypeOf": null, 
+        "uri": null, 
+        "allowPlasmids": true, 
+        "description": "human cell culture"
+    }
+},
+{
+    "pk": 4, 
+    "model": "rotmic.cellcomponenttype", 
+    "fields": {
+        "allowMarkers": true, 
+        "name": "Top10", 
+        "subTypeOf": 1, 
+        "uri": null, 
+        "allowPlasmids": true, 
+        "description": "standard E. coli cloning strain"
+    }
+},
+{
+    "pk": 5, 
+    "model": "rotmic.cellcomponenttype", 
+    "fields": {
+        "allowMarkers": true, 
+        "name": "Mach1", 
+        "subTypeOf": 1, 
+        "uri": null, 
+        "allowPlasmids": true, 
+        "description": "fast growing E. coli for cloning purposes"
+    }
+},
+{
+    "pk": 6, 
+    "model": "rotmic.cellcomponenttype", 
+    "fields": {
+        "allowMarkers": false, 
+        "name": "BL21", 
+        "subTypeOf": 1, 
+        "uri": null, 
+        "allowPlasmids": true, 
+        "description": "E. coli protein expression strain"
+    }
+},
+{
+    "pk": 7, 
+    "model": "rotmic.cellcomponenttype", 
+    "fields": {
+        "allowMarkers": false, 
+        "name": "HeLa", 
+        "subTypeOf": 3, 
+        "uri": null, 
+        "allowPlasmids": true, 
+        "description": "most classic human cancer cell culture"
+    }
+},
+{
+    "pk": 8, 
+    "model": "rotmic.cellcomponenttype", 
+    "fields": {
+        "allowMarkers": false, 
+        "name": "HEK293", 
+        "subTypeOf": 3, 
+        "uri": null, 
+        "allowPlasmids": true, 
+        "description": "Human embryonic kidney cells"
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.oligocomponenttype", 
+    "fields": {
+        "uri": null, 
+        "name": "standard", 
+        "description": "standard oligonucleotide for PCR reactions"
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.oligocomponenttype", 
+    "fields": {
+        "uri": null, 
+        "name": "sequencing", 
+        "description": "Primer for sequencing reactions"
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.chemicaltype", 
+    "fields": {
+        "subTypeOf": 6, 
+        "uri": "", 
+        "name": "other reagent", 
+        "description": ""
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.chemicaltype", 
+    "fields": {
+        "subTypeOf": null, 
+        "uri": null, 
+        "name": "biological", 
+        "description": ""
+    }
+},
+{
+    "pk": 4, 
+    "model": "rotmic.chemicaltype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "uri": null, 
+        "name": "antibody", 
+        "description": ""
+    }
+},
+{
+    "pk": 5, 
+    "model": "rotmic.chemicaltype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "uri": null, 
+        "name": "enzyme", 
+        "description": ""
+    }
+},
+{
+    "pk": 6, 
+    "model": "rotmic.chemicaltype", 
+    "fields": {
+        "subTypeOf": null, 
+        "uri": null, 
+        "name": "Reagent", 
+        "description": ""
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": null, 
+        "uri": "", 
+        "name": "Protein", 
+        "description": "complete functional protein"
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": 1, 
+        "uri": null, 
+        "name": "other protein", 
+        "description": ""
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": null, 
+        "uri": "", 
+        "name": "Protein Part", 
+        "description": "protein fragment"
+    }
+},
+{
+    "pk": 4, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "uri": "", 
+        "name": "interaction peptide", 
+        "description": "peptide involved in protein-protein interaction"
+    }
+},
+{
+    "pk": 5, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "uri": "", 
+        "name": "peptide linker", 
+        "description": "flexible peptide linker"
+    }
+},
+{
+    "pk": 6, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": 1, 
+        "uri": "", 
+        "name": "native protein", 
+        "description": "wt protein for biological studies"
+    }
+},
+{
+    "pk": 7, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "uri": "", 
+        "name": "affinity tag", 
+        "description": "purification or detection tag"
+    }
+},
+{
+    "pk": 8, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "uri": "", 
+        "name": "interaction domain", 
+        "description": "structured protein domain involved in protein-protein interaction"
+    }
+},
+{
+    "pk": 9, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": 1, 
+        "uri": "", 
+        "name": "engineered protein", 
+        "description": "heavily modified or synthetic protein"
+    }
+},
+{
+    "pk": 10, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "uri": "", 
+        "name": "protease site", 
+        "description": "protease cleavage peptide sequence"
+    }
+},
+{
+    "pk": 11, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "uri": "", 
+        "name": "fluorescent protein", 
+        "description": "fluorescent protein domain"
+    }
+},
+{
+    "pk": 12, 
+    "model": "rotmic.proteincomponenttype", 
+    "fields": {
+        "subTypeOf": 3, 
+        "uri": "", 
+        "name": "other protein part", 
+        "description": "unspecified protein fragment"
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "KanR", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:26:22.147Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "m0002", 
+        "modifiedBy": 1, 
+        "registeredAt": "2013-10-07T02:21:39.185Z", 
+        "projects": [], 
+        "description": "Kanamycin resistance marker"
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "pJEx411", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:24:22.835Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "rgv0001", 
+        "modifiedBy": 1, 
+        "registeredAt": "2013-10-07T02:21:42.503Z", 
+        "projects": [], 
+        "description": ""
+    }
+},
+{
+    "pk": 6, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "unknown vector", 
+        "registeredBy": 0, 
+        "modifiedAt": "2013-11-18T00:16:12.803Z", 
+        "authors": [
+            0
+        ], 
+        "displayId": "v0000", 
+        "modifiedBy": null, 
+        "registeredAt": "2013-11-18T00:16:24.889Z", 
+        "projects": [], 
+        "description": "Default place holder for unknown vector backbones.\nDo not modify."
+    }
+},
+{
+    "pk": 8, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "mCitrine_FW", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-24T15:37:51.084Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "sbo0003", 
+        "modifiedBy": 0, 
+        "registeredAt": "2013-12-09T04:01:09.961Z", 
+        "projects": [], 
+        "description": ""
+    }
+},
+{
+    "pk": 9, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "AmpR", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:25:59.010Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "m0001", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-02-17T02:41:45.023Z", 
+        "projects": [], 
+        "description": "Ampicilin resistance marker (beta lactamase) optimized for E. coli"
+    }
+},
+{
+    "pk": 10, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "NeoR", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:26:36.692Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "m0003", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-02-17T02:43:23.168Z", 
+        "projects": [], 
+        "description": "Neomycin resistance marker"
+    }
+},
+{
+    "pk": 11, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "UraR", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:26:50.218Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "m0004", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-02-17T02:44:01.005Z", 
+        "projects": [], 
+        "description": ""
+    }
+},
+{
+    "pk": 12, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "Leu2R", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:27:03.525Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "m0005", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-02-17T02:44:21.251Z", 
+        "projects": [], 
+        "description": ""
+    }
+},
+{
+    "pk": 13, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "mCit_FW", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-09T20:06:33.325Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "sbo0001", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-03-09T20:06:33.325Z", 
+        "projects": [], 
+        "description": "testing"
+    }
+},
+{
+    "pk": 14, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "mCit_RV", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:32:38.643Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "sbo0002", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-03-09T20:06:33.366Z", 
+        "projects": [], 
+        "description": "testing"
+    }
+},
+{
+    "pk": 19, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "mCitrine-His6", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-16T17:14:26.376Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "sbaa0001", 
+        "modifiedBy": 0, 
+        "registeredAt": "2014-03-09T21:43:40.769Z", 
+        "projects": [], 
+        "description": "test protein data sheet\r\nadditional info\r\nand some details"
+    }
+},
+{
+    "pk": 20, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "NaCl", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-14T21:21:24.764Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "chem0001", 
+        "modifiedBy": 0, 
+        "registeredAt": "2014-03-09T21:45:45.291Z", 
+        "projects": [], 
+        "description": "test chemical"
+    }
+},
+{
+    "pk": 21, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "mTurquoise2", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-15T15:24:51.364Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "sbaa0002", 
+        "modifiedBy": 0, 
+        "registeredAt": "2014-03-14T17:15:03.720Z", 
+        "projects": [], 
+        "description": "cyan fluorescent protein mTurquoise"
+    }
+},
+{
+    "pk": 22, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "mTurquoise2[HS]", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:34:44.443Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "rgf0002", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-03-14T17:15:20.336Z", 
+        "projects": [
+            1
+        ], 
+        "description": "cyan fluorescent protein mTurquoise\r\ncodon-optimized for human"
+    }
+},
+{
+    "pk": 23, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "GFP-Strep", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-16T17:41:17.854Z", 
+        "authors": [
+            0
+        ], 
+        "displayId": "sbaa0003", 
+        "modifiedBy": 0, 
+        "registeredAt": "2014-03-15T18:14:33.329Z", 
+        "projects": [], 
+        "description": "Green Fluorescent Protein with Strep tag for purification\r\ncodon-optimized for H.S.\r\n\r\nNote, this version contains the classic disordered C-terminal linker sequence."
+    }
+},
+{
+    "pk": 24, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "SpyCatcher", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-16T18:10:45.142Z", 
+        "authors": [
+            0
+        ], 
+        "displayId": "sbaa0004", 
+        "modifiedBy": 0, 
+        "registeredAt": "2014-03-16T18:08:44.359Z", 
+        "projects": [], 
+        "description": "bacterial adhesin fragment for spontaneous covalent bond formation with SpyTag fragment"
+    }
+},
+{
+    "pk": 25, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "CDC34", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-17T18:17:35.582Z", 
+        "authors": [
+            0
+        ], 
+        "displayId": "mtaa0002", 
+        "modifiedBy": 0, 
+        "registeredAt": "2014-03-17T18:17:35.582Z", 
+        "projects": [], 
+        "description": "test: native protein"
+    }
+},
+{
+    "pk": 26, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "mCitrine", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-17T18:17:35.610Z", 
+        "authors": [
+            0
+        ], 
+        "displayId": "mtaa0001", 
+        "modifiedBy": 0, 
+        "registeredAt": "2014-03-17T18:17:35.610Z", 
+        "projects": [], 
+        "description": "mCitrine yellow fluorescent protein (test)"
+    }
+},
+{
+    "pk": 27, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "His6", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-17T18:17:35.635Z", 
+        "authors": [
+            0
+        ], 
+        "displayId": "mtaa0003", 
+        "modifiedBy": 0, 
+        "registeredAt": "2014-03-17T18:17:35.635Z", 
+        "projects": [], 
+        "description": "Hexahistidine affinity tag (test)"
+    }
+},
+{
+    "pk": 28, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "pJ421", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-27T19:24:40.161Z", 
+        "authors": [
+            0
+        ], 
+        "displayId": "rgv0002", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-03-20T17:34:27.377Z", 
+        "projects": [], 
+        "description": ""
+    }
+},
+{
+    "pk": 29, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "pJ241", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-27T19:24:54.256Z", 
+        "authors": [
+            0
+        ], 
+        "displayId": "rgv0003", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-03-20T17:34:44.142Z", 
+        "projects": [], 
+        "description": ""
+    }
+},
+{
+    "pk": 30, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "pJEx824", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-27T19:25:10.907Z", 
+        "authors": [
+            0
+        ], 
+        "displayId": "rgv0004", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-03-20T17:34:58.501Z", 
+        "projects": [], 
+        "description": ""
+    }
+},
+{
+    "pk": 50, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-22T21:53:27.637Z", 
+        "authors": [
+            0, 
+            1
+        ], 
+        "displayId": "sbchem0001", 
+        "modifiedBy": null, 
+        "registeredAt": "2014-03-22T21:54:07.764Z", 
+        "projects": [], 
+        "description": ""
+    }
+},
+{
+    "pk": 51, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "pET52", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:23:30.274Z", 
+        "authors": [
+            0
+        ], 
+        "displayId": "rgv0010", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-03-23T00:20:33.735Z", 
+        "projects": [], 
+        "description": "This is an example vector backbone. Multiple markers can be specified by name or ID, separated by comma."
+    }
+},
+{
+    "pk": 52, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "mCitrine", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:34:39.256Z", 
+        "authors": [
+            0, 
+            1
+        ], 
+        "displayId": "rgf0001", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-03-23T00:20:33.841Z", 
+        "projects": [
+            1
+        ], 
+        "description": "An example insert which can be linked into multiple different vector backbones"
+    }
+},
+{
+    "pk": 53, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "mCit_pET52", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:34:22.437Z", 
+        "authors": [
+            0, 
+            1
+        ], 
+        "displayId": "rg0001", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-03-23T00:20:33.887Z", 
+        "projects": [
+            1
+        ], 
+        "description": "mCitrine test expression plasmidAdditional info\u2026"
+    }
+},
+{
+    "pk": 54, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "pJ603", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T17:56:41.976Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "rgv0011", 
+        "modifiedBy": null, 
+        "registeredAt": "2014-03-27T19:29:21.332Z", 
+        "projects": [], 
+        "description": "DNA 2.0 mammalian expression plasmid"
+    }
+},
+{
+    "pk": 55, 
+    "model": "rotmic.component", 
+    "fields": {
+        "name": "mTurquoise2[HS]_pJ603", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-27T19:34:33.339Z", 
+        "authors": [
+            1
+        ], 
+        "displayId": "rg0002", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-03-27T19:29:55.698Z", 
+        "projects": [
+            2, 
+            1
+        ], 
+        "description": "plasmid for transient expression of mTurquoise2 in mammalian cells"
+    }
+},
+{
+    "pk": 9, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "planning", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [], 
+        "componentType": 17, 
+        "translatesTo": null, 
+        "genbank": null, 
+        "authors": [
+            1
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "planning", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [], 
+        "componentType": 17, 
+        "translatesTo": null, 
+        "genbank": null, 
+        "authors": [
+            1
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 10, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "planning", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [], 
+        "componentType": 18, 
+        "translatesTo": null, 
+        "genbank": null, 
+        "authors": [
+            1
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 11, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "planning", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [], 
+        "componentType": 19, 
+        "translatesTo": null, 
+        "genbank": null, 
+        "authors": [
+            1
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 12, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "planning", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [], 
+        "componentType": 19, 
+        "translatesTo": null, 
+        "genbank": null, 
+        "authors": [
+            1
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 53, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "available", 
+        "insert": 52, 
+        "sequence": "AAATTTCCCGGG", 
+        "vectorBackbone": 51, 
+        "markers": [], 
+        "componentType": 5, 
+        "translatesTo": null, 
+        "genbank": "", 
+        "authors": [
+            0, 
+            1
+        ], 
+        "projects": [
+            1
+        ]
+    }
+},
+{
+    "pk": 55, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "available", 
+        "insert": 22, 
+        "sequence": "", 
+        "vectorBackbone": 54, 
+        "markers": [], 
+        "componentType": 5, 
+        "translatesTo": null, 
+        "genbank": null, 
+        "authors": [
+            1
+        ], 
+        "projects": [
+            2, 
+            1
+        ]
+    }
+},
+{
+    "pk": 52, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "construction", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [], 
+        "componentType": 12, 
+        "translatesTo": null, 
+        "genbank": "", 
+        "authors": [
+            0, 
+            1
+        ], 
+        "projects": [
+            1
+        ]
+    }
+},
+{
+    "pk": 22, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "planning", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [], 
+        "componentType": 12, 
+        "translatesTo": 21, 
+        "genbank": null, 
+        "authors": [
+            1
+        ], 
+        "projects": [
+            1
+        ]
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "planning", 
+        "insert": null, 
+        "sequence": "TAAACTAGTCCCCCTAGCATAACCCCTTGGGGCCTCTAAACGGGTCTTGAGGGGTTTTTTGCCCCTGAGAGGCGTCAATCGAGTTCGTACCTAAGGGCGACACCCCCTAATTAGCCCGGGCGAAAGGCCCAGTCTTTCGACTGAGCCTTTCGTTTTATTTGATGCCTGGCAGTTCCCTACTCTCGCATGGGGAGTCCCCACACTACCATCGGCGCTACGGCGTTTCACTTCTGAGTTCGGCATGGGGTCAGGTGGGACCACCGCGCTACTGCCGCCAGGCAAACAAGGGGTGTTATGAGCCATATTCAGGTATAAATGGGCTCGCGATAATGTTCAGAATTGGTTAATTGGTTGTAACACTGACCCCTATTTGTTTATTTTTCTAAATACATTCAAATATGTATCCGCTCATGAGACAATAACCCTGATAAATGCTTCAATAATATTGAAAAAGGAAGAATATGAGCCATATTCAACGGGAAACGTCGAGGCCGCGATTAAATTCCAACATGGATGCTGATTTATATGGGTATAAATGGGCTCGCGATAATGTCGGGCAATCAGGTGCGACAATCTATCGCTTGTATGGGAAGCCCGATGCGCCAGAGTTGTTTCTGAAACATGGCAAAGGTAGCGTTGCCAATGATGTTACAGATGAGATGGTCAGACTAAACTGGCTGACGGAATTTATGCCACTTCCGACCATCAAGCATTTTATCCGTACTCCTGATGATGCATGGTTACTCACCACTGCGATCCCCGGAAAAACAGCGTTCCAGGTATTAGAAGAATATCCTGATTCAGGTGAAAATATTGTTGATGCGCTGGCAGTGTTCCTGCGCCGGTTGCACTCGATTCCTGTTTGTAATTGTCCTTTTAACAGCGATCGCGTATTTCGCCTCGCTCAGGCGCAATCACGAATGAATAACGGTTTGGTTGATGCGAGTGATTTTGATGACGAGCGTAATGGCTGGCCTGTTGAACAAGTCTGGAAAGAAATGCATAAACTTTTGCCATTCTCACCGGATTCAGTCGTCACTCATGGTGATTTCTCACTTGATAACCTTATTTTTGACGAGGGGAAATTAATAGGTTGTATTGATGTTGGACGAGTCGGAATCGCAGACCGATACCAGGATCTTGCCATCCTATGGAACTGCCTCGGTGAGTTTTCTCCTTCATTACAGAAACGGCTTTTTCAAAAATATGGTATTGATAATCCTGATATGAATAAATTGCAGTTTCATTTGATGCTCGATGAGTTTTTCTAAGCGGCGCGCCATCGAATGGCGCAAAACCTTTCGCGGTATGGCATGATAGCGCCCGGAAGAGAGTCAATTCAGGGTGGTGAATATGAAACCAGTAACGTTATACGATGTCGCAGAGTATGCCGGTGTCTCTTATCAGACCGTTTCCCGCGTGGTGAACCAGGCCAGCCACGTTTCTGCGAAAACGCGGGAAAAAGTGGAAGCGGCGATGGCGGAGCTGAATTACATTCCCAACCGCGTGGCACAACAACTGGCGGGCAAACAGTCGTTGCTGATTGGCGTTGCCACCTCCAGTCTGGCCCTGCACGCGCCGTCGCAAATTGTCGCGGCGATTAAATCTCGCGCCGATCAACTGGGTGCCAGCGTGGTGGTGTCGATGGTAGAACGAAGCGGCGTCGAAGCCTGTAAAGCGGCGGTGCACAATCTTCTCGCGCAACGCGTCAGTGGGCTGATCATTAACTATCCGCTGGATGACCAGGATGCCATTGCTGTGGAAGCTGCCTGCACTAATGTTCCGGCGTTATTTCTTGATGTCTCTGACCAGACACCCATCAACAGTATTATTTTCTCCCATGAGGACGGTACGCGACTGGGCGTGGAGCATCTGGTCGCATTGGGTCACCAGCAAATCGCGCTGTTAGCGGGCCCATTAAGTTCTGTCTCGGCGCGTCTGCGTCTGGCTGGCTGGCATAAATATCTCACTCGCAATCAAATTCAGCCGATAGCGGAACGGGAAGGCGACTGGAGTGCCATGTCCGGTTTTCAACAAACCATGCAAATGCTGAATGAGGGCATCGTTCCCACTGCGATGCTGGTTGCCAACGATCAGATGGCGCTGGGCGCAATGCGCGCCATTACCGAGTCCGGGCTGCGCGTTGGTGCGGATATCTCGGTAGTGGGATACGACGATACCGAAGATAGCTCATGTTATATCCCGCCGTTAACCACCATCAAACAGGATTTTCGCCTGCTGGGGCAAACCAGCGTGGACCGCTTGCTGCAACTCTCTCAGGGCCAGGCGGTGAAGGGCAATCAGCTGTTGCCAGTCTCACTGGTGAAAAGAAAAACCACCCTGGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAAGCGGGCAGTGACTCATGACCAAAATCCCTTAACGTGAGTTACGCGCGCGTCGTTCCACTGAGCGTCAGACCCCGTAGAAAAGATCAAAGGATCTTCTTGAGATCCTTTTTTTCTGCGCGTAATCTGCTGCTTGCAAACAAAAAAACCACCGCTACCAGCGGTGGTTTGTTTGCCGGATCAAGAGCTACCAACTCTTTTTCCGAAGGTAACTGGCTTCAGCAGAGCGCAGATACCAAATACTGTTCTTCTAGTGTAGCCGTAGTTAGCCCACCACTTCAAGAACTCTGTAGCACCGCCTACATACCTCGCTCTGCTAATCCTGTTACCAGTGGCTGCTGCCAGTGGCGATAAGTCGTGTCTTACCGGGTTGGACTCAAGACGATAGTTACCGGATAAGGCGCAGCGGTCGGGCTGAACGGGGGGTTCGTGCACACAGCCCAGCTTGGAGCGAACGACCTACACCGAACTGAGATACCTACAGCGTGAGCTATGAGAAAGCGCCACGCTTCCCGAAGGGAGAAAGGCGGACAGGTATCCGGTAAGCGGCAGGGTCGGAACAGGAGAGCGCACGAGGGAGCTTCCAGGGGGAAACGCCTGGTATCTTTATAGTCCTGTCGGGTTTCGCCACCTCTGACTTGAGCGTCGATTTTTGTGATGCTCGTCAGGGGGGCGGAGCCTATGGAAAAACGCCAGCAACGCGGCCTTTTTACGGTTCCTGGCCTTTTGCTGGCCTTTTGCTCACATGTTCTTTCCTGCGTTATCCCCTGATTCTGTGGATAACCGTATTACCGCCTTTGAGTGAGCTGATACCGCTCGCCGCAGCCGAACGACCGAGCGCAGCGAGTCAGTGAGCGAGGAAGCGGAAGGCGAGAGTAGGGAACTGCCAGGCATCAAACTAAGCAGAAGGCCCCTGACGGATGGCCTTTTTGCGTTTCTACAAACTCTTTCTGTGTTGTAAAACGACGGCCAGTCTTAAGCTCGGGCCCCCTGGGCGGTTCTGATAACGAGTAATCGTTAATCCGCAAATAACGTAAAAACCCGCTTCGGCGGGTTTTTTTATGGGGGGAGTTTAGGGAAAGAGCATTTGTCAGAATATTTAAGGGCGCCTGTCACTTTGCTTGATATATGAGAATTATTTAACCTTATAAATGAGAAAAAAGCAACGCACTTTAAATAAGATACGTTGCTTTTTCGATTGATGAACACCTATAATTAAACTATTCATCTATTATTTATGATTTTTTGTATATACAATATTTCTAGTTTGTTAAAGAGAATTAAGAAAATAAATCTCGAAAATAATAAAGGGAAAATCAGTTTTTGATATCAAAATTATACATGTCAACGATAATACAAAATATAATACAAACTATAAGATGTTATCAGTATTTATTATGCATTTAGAATAAATTTTGTGTCGCCCTTCCGCGAAATTAATACGACTCACTATAGGGGAATTGTGAGCGGATAACAATTGGGCCCAAGTTCACTTAAAAAGGAGATCAACAATGAAAGCAATTTTCGTACTGAAACATCTTAATCATGCTAAGGAGGTTTTCTAATG", 
+        "vectorBackbone": null, 
+        "markers": [
+            2
+        ], 
+        "componentType": 6, 
+        "translatesTo": null, 
+        "genbank": "LOCUS       sbv0003_pJEx411c_T7O_BCD2      3989 bp    DNA     linear   UNA \nFEATURES             Location/Qualifiers\n     Gene            1..5\n                     /label=\"Fret constructs\"\n     Vector          1..3901\n                     /label=pJExpress411\n     Misc._feature   1..3\n                     /label=Stop\n     Misc._feature   15..61\n                     /label=\"T7 Terminator\"\n     Primer_binding_ 54..87\n                     /label=pri171_tm80\n     Primer_binding_ complement(54..87)\n                     /label=pri172_tm80\n     Mutation        71\n                     /label=\"mutation C->G to kill Esp31\"\n     Primer_binding_ complement(72..89)\n                     /label=pri038_pJxR_Tm59\n     Misc._feature   109..283\n                     /label=\"rrnB1 B2 T1 txn terminator\"\n     Primer_binding_ complement(192..208)\n                     /label=\"rg0318 55C (pri019_pJxTR)\"\n     Gene            468..1262\n                     /label=KanR\n     Gene            1357..2427\n                     /label=lacI\n     Region          2438..3241\n                     /label=pUC_ori\n     Region          complement(3413..3526)\n                     /label=\"rpn txn terminator\"\n     Misc._feature   complement(3533..3833)\n                     /label=\"bla txn terminator\"\n     Primer_binding_ 3717..3742\n                     /label=\"rg0317 55C (pri018_pJxTF)\"\n     Primer_binding_ complement(3845..3873)\n                     /label=\"rg0332 64C\"\n     Primer_binding_ 3846..3873\n                     /label=\"rg0320 62C\"\n     Promoter        3860..3876\n                     /label=\"T7 promoter\"\n     Promoter        3881..3901\n                     /label=lacO\n     Misc._feature   3902\n                     /label=+1\n     RBS             3920..3928\n                     /label=SD1\n     RBS             3922..3928\n                     /label=\"leader RBS\"\n                     /label=\"leader RBS\"\n     CDS             3934..3987\n                     /label=\"leader peptide\"\n                     /label=\"leader peptide\"\n     RBS             3970..3981\n                     /label=\"variable SD2\"\n                     /label=\"variable SD2\"\n     RBS             3972..3980\n                     /label=\"consensus E.coli RBS\"\n                     /label=\"consensus E.coli RBS\"\n     Misc._feature   3987..3989\n                     /label=START\nORIGIN\n        1 taaactagtc cccctagcat aaccccttgg ggcctctaaa cgggtcttga ggggtttttt\n       61 gcccctgaga ggcgtcaatc gagttcgtac ctaagggcga caccccctaa ttagcccggg\n      121 cgaaaggccc agtctttcga ctgagccttt cgttttattt gatgcctggc agttccctac\n      181 tctcgcatgg ggagtcccca cactaccatc ggcgctacgg cgtttcactt ctgagttcgg\n      241 catggggtca ggtgggacca ccgcgctact gccgccaggc aaacaagggg tgttatgagc\n      301 catattcagg tataaatggg ctcgcgataa tgttcagaat tggttaattg gttgtaacac\n      361 tgacccctat ttgtttattt ttctaaatac attcaaatat gtatccgctc atgagacaat\n      421 aaccctgata aatgcttcaa taatattgaa aaaggaagaa tatgagccat attcaacggg\n      481 aaacgtcgag gccgcgatta aattccaaca tggatgctga tttatatggg tataaatggg\n      541 ctcgcgataa tgtcgggcaa tcaggtgcga caatctatcg cttgtatggg aagcccgatg\n      601 cgccagagtt gtttctgaaa catggcaaag gtagcgttgc caatgatgtt acagatgaga\n      661 tggtcagact aaactggctg acggaattta tgccacttcc gaccatcaag cattttatcc\n      721 gtactcctga tgatgcatgg ttactcacca ctgcgatccc cggaaaaaca gcgttccagg\n      781 tattagaaga atatcctgat tcaggtgaaa atattgttga tgcgctggca gtgttcctgc\n      841 gccggttgca ctcgattcct gtttgtaatt gtccttttaa cagcgatcgc gtatttcgcc\n      901 tcgctcaggc gcaatcacga atgaataacg gtttggttga tgcgagtgat tttgatgacg\n      961 agcgtaatgg ctggcctgtt gaacaagtct ggaaagaaat gcataaactt ttgccattct\n     1021 caccggattc agtcgtcact catggtgatt tctcacttga taaccttatt tttgacgagg\n     1081 ggaaattaat aggttgtatt gatgttggac gagtcggaat cgcagaccga taccaggatc\n     1141 ttgccatcct atggaactgc ctcggtgagt tttctccttc attacagaaa cggctttttc\n     1201 aaaaatatgg tattgataat cctgatatga ataaattgca gtttcatttg atgctcgatg\n     1261 agtttttcta agcggcgcgc catcgaatgg cgcaaaacct ttcgcggtat ggcatgatag\n     1321 cgcccggaag agagtcaatt cagggtggtg aatatgaaac cagtaacgtt atacgatgtc\n     1381 gcagagtatg ccggtgtctc ttatcagacc gtttcccgcg tggtgaacca ggccagccac\n     1441 gtttctgcga aaacgcggga aaaagtggaa gcggcgatgg cggagctgaa ttacattccc\n     1501 aaccgcgtgg cacaacaact ggcgggcaaa cagtcgttgc tgattggcgt tgccacctcc\n     1561 agtctggccc tgcacgcgcc gtcgcaaatt gtcgcggcga ttaaatctcg cgccgatcaa\n     1621 ctgggtgcca gcgtggtggt gtcgatggta gaacgaagcg gcgtcgaagc ctgtaaagcg\n     1681 gcggtgcaca atcttctcgc gcaacgcgtc agtgggctga tcattaacta tccgctggat\n     1741 gaccaggatg ccattgctgt ggaagctgcc tgcactaatg ttccggcgtt atttcttgat\n     1801 gtctctgacc agacacccat caacagtatt attttctccc atgaggacgg tacgcgactg\n     1861 ggcgtggagc atctggtcgc attgggtcac cagcaaatcg cgctgttagc gggcccatta\n     1921 agttctgtct cggcgcgtct gcgtctggct ggctggcata aatatctcac tcgcaatcaa\n     1981 attcagccga tagcggaacg ggaaggcgac tggagtgcca tgtccggttt tcaacaaacc\n     2041 atgcaaatgc tgaatgaggg catcgttccc actgcgatgc tggttgccaa cgatcagatg\n     2101 gcgctgggcg caatgcgcgc cattaccgag tccgggctgc gcgttggtgc ggatatctcg\n     2161 gtagtgggat acgacgatac cgaagatagc tcatgttata tcccgccgtt aaccaccatc\n     2221 aaacaggatt ttcgcctgct ggggcaaacc agcgtggacc gcttgctgca actctctcag\n     2281 ggccaggcgg tgaagggcaa tcagctgttg ccagtctcac tggtgaaaag aaaaaccacc\n     2341 ctggcgccca atacgcaaac cgcctctccc cgcgcgttgg ccgattcatt aatgcagctg\n     2401 gcacgacagg tttcccgact ggaaagcggg cagtgactca tgaccaaaat cccttaacgt\n     2461 gagttacgcg cgcgtcgttc cactgagcgt cagaccccgt agaaaagatc aaaggatctt\n     2521 cttgagatcc tttttttctg cgcgtaatct gctgcttgca aacaaaaaaa ccaccgctac\n     2581 cagcggtggt ttgtttgccg gatcaagagc taccaactct ttttccgaag gtaactggct\n     2641 tcagcagagc gcagatacca aatactgttc ttctagtgta gccgtagtta gcccaccact\n     2701 tcaagaactc tgtagcaccg cctacatacc tcgctctgct aatcctgtta ccagtggctg\n     2761 ctgccagtgg cgataagtcg tgtcttaccg ggttggactc aagacgatag ttaccggata\n     2821 aggcgcagcg gtcgggctga acggggggtt cgtgcacaca gcccagcttg gagcgaacga\n     2881 cctacaccga actgagatac ctacagcgtg agctatgaga aagcgccacg cttcccgaag\n     2941 ggagaaaggc ggacaggtat ccggtaagcg gcagggtcgg aacaggagag cgcacgaggg\n     3001 agcttccagg gggaaacgcc tggtatcttt atagtcctgt cgggtttcgc cacctctgac\n     3061 ttgagcgtcg atttttgtga tgctcgtcag gggggcggag cctatggaaa aacgccagca\n     3121 acgcggcctt tttacggttc ctggcctttt gctggccttt tgctcacatg ttctttcctg\n     3181 cgttatcccc tgattctgtg gataaccgta ttaccgcctt tgagtgagct gataccgctc\n     3241 gccgcagccg aacgaccgag cgcagcgagt cagtgagcga ggaagcggaa ggcgagagta\n     3301 gggaactgcc aggcatcaaa ctaagcagaa ggcccctgac ggatggcctt tttgcgtttc\n     3361 tacaaactct ttctgtgttg taaaacgacg gccagtctta agctcgggcc ccctgggcgg\n     3421 ttctgataac gagtaatcgt taatccgcaa ataacgtaaa aacccgcttc ggcgggtttt\n     3481 tttatggggg gagtttaggg aaagagcatt tgtcagaata tttaagggcg cctgtcactt\n     3541 tgcttgatat atgagaatta tttaacctta taaatgagaa aaaagcaacg cactttaaat\n     3601 aagatacgtt gctttttcga ttgatgaaca cctataatta aactattcat ctattattta\n     3661 tgattttttg tatatacaat atttctagtt tgttaaagag aattaagaaa ataaatctcg\n     3721 aaaataataa agggaaaatc agtttttgat atcaaaatta tacatgtcaa cgataataca\n     3781 aaatataata caaactataa gatgttatca gtatttatta tgcatttaga ataaattttg\n     3841 tgtcgccctt ccgcgaaatt aatacgactc actatagggg aattgtgagc ggataacaat\n     3901 tGGGCCCAAG TTCACTTAAA AAGGAGATCA ACAATGAAAG CAATTTTCGT ACTGAAACAT\n     3961 CTTAATCATG CTAAGGAGGT TTTCTAATG\n//\n", 
+        "authors": [
+            1
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 28, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "planning", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [], 
+        "componentType": 6, 
+        "translatesTo": null, 
+        "genbank": null, 
+        "authors": [
+            0
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 29, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "planning", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [], 
+        "componentType": 7, 
+        "translatesTo": null, 
+        "genbank": null, 
+        "authors": [
+            0
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 30, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "planning", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [], 
+        "componentType": 7, 
+        "translatesTo": null, 
+        "genbank": null, 
+        "authors": [
+            0
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 51, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "available", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [
+            9, 
+            2
+        ], 
+        "componentType": 6, 
+        "translatesTo": null, 
+        "genbank": "", 
+        "authors": [
+            0
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 54, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "available", 
+        "insert": null, 
+        "sequence": "", 
+        "vectorBackbone": null, 
+        "markers": [
+            9, 
+            10
+        ], 
+        "componentType": 8, 
+        "translatesTo": null, 
+        "genbank": null, 
+        "authors": [
+            1
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 6, 
+    "model": "rotmic.dnacomponent", 
+    "fields": {
+        "status": "planning", 
+        "insert": null, 
+        "sequence": null, 
+        "vectorBackbone": null, 
+        "markers": [], 
+        "componentType": 20, 
+        "translatesTo": null, 
+        "genbank": null, 
+        "authors": [
+            0
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 26, 
+    "model": "rotmic.proteincomponent", 
+    "fields": {
+        "status": "construction", 
+        "sequence": "", 
+        "componentType": 11, 
+        "genbank": "", 
+        "authors": [
+            0
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 25, 
+    "model": "rotmic.proteincomponent", 
+    "fields": {
+        "status": "available", 
+        "sequence": "", 
+        "componentType": 6, 
+        "genbank": "", 
+        "authors": [
+            0
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 27, 
+    "model": "rotmic.proteincomponent", 
+    "fields": {
+        "status": "available", 
+        "sequence": "HHHHHH", 
+        "componentType": 7, 
+        "genbank": "", 
+        "authors": [
+            0
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 19, 
+    "model": "rotmic.proteincomponent", 
+    "fields": {
+        "status": "available", 
+        "sequence": "MVSGAAHHHHHH", 
+        "componentType": 2, 
+        "genbank": null, 
+        "authors": [
+            1
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 21, 
+    "model": "rotmic.proteincomponent", 
+    "fields": {
+        "status": "available", 
+        "sequence": "MVSKHHH", 
+        "componentType": 2, 
+        "genbank": null, 
+        "authors": [
+            1
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 23, 
+    "model": "rotmic.proteincomponent", 
+    "fields": {
+        "status": "available", 
+        "sequence": "", 
+        "componentType": 2, 
+        "genbank": null, 
+        "authors": [
+            0
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 24, 
+    "model": "rotmic.proteincomponent", 
+    "fields": {
+        "status": "available", 
+        "sequence": "GAMVDTLSGLSSEQGQSGDMTIEEDSATHIKFSKRDEDGKELAGATMELRDSSGKTISTWISDGQVKDFYLYPGKYTFVETAAPDGYEVATAITFTVNEQGQVTVNGKATKGDAHI", 
+        "componentType": 2, 
+        "genbank": "LOCUS       SpyCatcher_translation_frame_+1       116 aa            linear   UNA \nFEATURES             Location/Qualifiers\nORIGIN\n        1 GAMVDTLSGL SSEQGQSGDM TIEEDSATHI KFSKRDEDGK ELAGATMELR DSSGKTISTW\n       61 ISDGQVKDFY LYPGKYTFVE TAAPDGYEVA TAITFTVNEQ GQVTVNGKAT KGDAHI\n//\n", 
+        "authors": [
+            0
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 13, 
+    "model": "rotmic.oligocomponent", 
+    "fields": {
+        "status": "construction", 
+        "templates": [], 
+        "meltingTemp": 59, 
+        "sequence": "ATGCCCGGACTGGCC", 
+        "purification": "desalting", 
+        "componentType": 2, 
+        "authors": [
+            1
+        ], 
+        "reversePrimers": [
+            14
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 14, 
+    "model": "rotmic.oligocomponent", 
+    "fields": {
+        "status": "planning", 
+        "templates": [], 
+        "meltingTemp": 60, 
+        "sequence": "CCGATAGGCAATTCCAACGAATC", 
+        "purification": "RPC", 
+        "componentType": 2, 
+        "authors": [
+            1
+        ], 
+        "reversePrimers": [
+            13
+        ], 
+        "projects": []
+    }
+},
+{
+    "pk": 8, 
+    "model": "rotmic.oligocomponent", 
+    "fields": {
+        "status": "available", 
+        "templates": [], 
+        "meltingTemp": 59, 
+        "sequence": "AATTCCGGAATTCC", 
+        "purification": "RPC", 
+        "componentType": 1, 
+        "authors": [
+            1
+        ], 
+        "reversePrimers": [], 
+        "projects": []
+    }
+},
+{
+    "pk": 20, 
+    "model": "rotmic.chemicalcomponent", 
+    "fields": {
+        "status": "available", 
+        "componentType": 2, 
+        "cas": "", 
+        "projects": [], 
+        "authors": [
+            1
+        ]
+    }
+},
+{
+    "pk": 50, 
+    "model": "rotmic.chemicalcomponent", 
+    "fields": {
+        "status": "available", 
+        "componentType": 4, 
+        "cas": "", 
+        "projects": [], 
+        "authors": [
+            0, 
+            1
+        ]
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.location", 
+    "fields": {
+        "name": "-80 freezer", 
+        "room": "1212", 
+        "registeredBy": 1, 
+        "modifiedAt": "2013-10-06T23:28:06.356Z", 
+        "displayId": "MT-1", 
+        "modifiedBy": null, 
+        "registeredAt": "2013-10-06T23:35:51.180Z", 
+        "temperature": -80.0
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.location", 
+    "fields": {
+        "name": "-80 freezer", 
+        "room": "1212", 
+        "registeredBy": 1, 
+        "modifiedAt": "2013-10-06T23:28:06.356Z", 
+        "displayId": "MT-2", 
+        "modifiedBy": null, 
+        "registeredAt": "2013-10-06T23:36:09.252Z", 
+        "temperature": -80.0
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.location", 
+    "fields": {
+        "name": "Lea Harrington freezer", 
+        "room": "", 
+        "registeredBy": 1, 
+        "modifiedAt": "2013-10-06T23:28:06.356Z", 
+        "displayId": "LH-1", 
+        "modifiedBy": null, 
+        "registeredAt": "2013-10-06T23:36:29.390Z", 
+        "temperature": -80.0
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.rack", 
+    "fields": {
+        "name": "", 
+        "registeredBy": 1, 
+        "modifiedAt": "2013-10-07T00:01:01.212Z", 
+        "location": 3, 
+        "displayId": "#1", 
+        "modifiedBy": null, 
+        "registeredAt": "2013-10-07T02:06:10.151Z"
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.rack", 
+    "fields": {
+        "name": "SynBio rack 2", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-14T17:38:27.830Z", 
+        "location": 1, 
+        "displayId": "SB-2", 
+        "modifiedBy": null, 
+        "registeredAt": "2014-03-14T17:41:25.070Z"
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.container", 
+    "fields": {
+        "name": "SB Cells 1", 
+        "containerType": "box", 
+        "registeredBy": 1, 
+        "modifiedAt": "2013-10-07T00:01:01.212Z", 
+        "displayId": "1", 
+        "modifiedBy": null, 
+        "registeredAt": "2013-10-07T02:16:01.367Z", 
+        "rack": 1, 
+        "description": "E. coli glycerol stocks with synbio constructs."
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.container", 
+    "fields": {
+        "name": "synbio proteins 1", 
+        "containerType": "box", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-17T20:14:24.835Z", 
+        "displayId": "SB_P01", 
+        "modifiedBy": 0, 
+        "registeredAt": "2014-03-14T17:42:15.291Z", 
+        "rack": 2, 
+        "description": ""
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.container", 
+    "fields": {
+        "name": "synbio primers 1", 
+        "containerType": "box", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-14T20:36:35.063Z", 
+        "displayId": "SB-PRI-1", 
+        "modifiedBy": null, 
+        "registeredAt": "2014-03-14T20:45:00.867Z", 
+        "rack": 2, 
+        "description": "Commercial Oligos"
+    }
+},
+{
+    "pk": 4, 
+    "model": "rotmic.container", 
+    "fields": {
+        "name": "test DNA 1", 
+        "containerType": "box", 
+        "registeredBy": 1, 
+        "modifiedAt": "2014-03-23T18:39:14.875Z", 
+        "displayId": "D_01", 
+        "modifiedBy": null, 
+        "registeredAt": "2014-03-23T18:50:52.301Z", 
+        "rack": 2, 
+        "description": ""
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.sampleprovenancetype", 
+    "fields": {
+        "description": "manual DNA miniprep", 
+        "name": "miniprep (manual)", 
+        "isDefault": true, 
+        "requiresSource": true
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.sampleprovenancetype", 
+    "fields": {
+        "description": "plate-based miniprep", 
+        "name": "miniprep (plate)", 
+        "isDefault": false, 
+        "requiresSource": true
+    }
+},
+{
+    "pk": 3, 
+    "model": "rotmic.sampleprovenancetype", 
+    "fields": {
+        "description": "Protein expression from a cell stock sample", 
+        "name": "expression", 
+        "isDefault": false, 
+        "requiresSource": true
+    }
+},
+{
+    "pk": 4, 
+    "model": "rotmic.sample", 
+    "fields": {
+        "status": "ok", 
+        "solvent": "PBS 10% Glycerol 1mM DTT", 
+        "preparedAt": "2014-03-14", 
+        "container": 2, 
+        "description": "test protein sample", 
+        "amountUnit": 3, 
+        "provenance": [], 
+        "amount": 50.0, 
+        "experimentNr": "", 
+        "aliquotNr": 10, 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-14T17:55:46.933Z", 
+        "preparedBy": 0, 
+        "displayId": "01", 
+        "modifiedBy": 0, 
+        "concentration": 100.0, 
+        "registeredAt": "2014-03-14T17:46:00.853Z", 
+        "concentrationUnit": 15
+    }
+},
+{
+    "pk": 5, 
+    "model": "rotmic.sample", 
+    "fields": {
+        "status": "ok", 
+        "solvent": "TE", 
+        "preparedAt": "2014-03-14", 
+        "container": 3, 
+        "description": "", 
+        "amountUnit": 3, 
+        "provenance": [], 
+        "amount": 120.0, 
+        "experimentNr": "", 
+        "aliquotNr": null, 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-14T20:36:35.063Z", 
+        "preparedBy": 1, 
+        "displayId": "01", 
+        "modifiedBy": null, 
+        "concentration": 100.0, 
+        "registeredAt": "2014-03-14T20:45:58.036Z", 
+        "concentrationUnit": 15
+    }
+},
+{
+    "pk": 6, 
+    "model": "rotmic.sample", 
+    "fields": {
+        "status": "ok", 
+        "solvent": "", 
+        "preparedAt": "2014-03-14", 
+        "container": 3, 
+        "description": "", 
+        "amountUnit": null, 
+        "provenance": [], 
+        "amount": null, 
+        "experimentNr": "", 
+        "aliquotNr": null, 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-14T21:08:20.081Z", 
+        "preparedBy": 1, 
+        "displayId": "02", 
+        "modifiedBy": null, 
+        "concentration": null, 
+        "registeredAt": "2014-03-14T21:16:02.383Z", 
+        "concentrationUnit": null
+    }
+},
+{
+    "pk": 7, 
+    "model": "rotmic.sample", 
+    "fields": {
+        "status": "ok", 
+        "solvent": "PBS; 10% Glycerol; 1mM DTT", 
+        "preparedAt": "2013-12-03", 
+        "container": 2, 
+        "description": "test sample", 
+        "amountUnit": 3, 
+        "provenance": [], 
+        "amount": 100.0, 
+        "experimentNr": "", 
+        "aliquotNr": null, 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-17T20:14:41.212Z", 
+        "preparedBy": 1, 
+        "displayId": "02", 
+        "modifiedBy": 0, 
+        "concentration": 50.0, 
+        "registeredAt": "2014-03-17T20:14:41.212Z", 
+        "concentrationUnit": 15
+    }
+},
+{
+    "pk": 8, 
+    "model": "rotmic.sample", 
+    "fields": {
+        "status": "ok", 
+        "solvent": "PBS; 10% Glycerol; 1mM DTT", 
+        "preparedAt": "2014-02-18", 
+        "container": 2, 
+        "description": "test sample", 
+        "amountUnit": 3, 
+        "provenance": [], 
+        "amount": 50.0, 
+        "experimentNr": "", 
+        "aliquotNr": null, 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-17T20:14:41.293Z", 
+        "preparedBy": 1, 
+        "displayId": "03", 
+        "modifiedBy": 0, 
+        "concentration": 100.0, 
+        "registeredAt": "2014-03-17T20:14:41.293Z", 
+        "concentrationUnit": 15
+    }
+},
+{
+    "pk": 9, 
+    "model": "rotmic.sample", 
+    "fields": {
+        "status": "ok", 
+        "solvent": "PBS; 10% Glycerol; 1mM DTT", 
+        "preparedAt": "2014-02-15", 
+        "container": 2, 
+        "description": "test sample", 
+        "amountUnit": 3, 
+        "provenance": [], 
+        "amount": 50.0, 
+        "experimentNr": "001-51", 
+        "aliquotNr": null, 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-17T20:14:41.338Z", 
+        "preparedBy": 1, 
+        "displayId": "04", 
+        "modifiedBy": 0, 
+        "concentration": 140.0, 
+        "registeredAt": "2014-03-17T20:14:41.338Z", 
+        "concentrationUnit": 15
+    }
+},
+{
+    "pk": 11, 
+    "model": "rotmic.sample", 
+    "fields": {
+        "status": "ok", 
+        "solvent": "", 
+        "preparedAt": "2014-03-23", 
+        "container": 4, 
+        "description": "", 
+        "amountUnit": null, 
+        "provenance": [], 
+        "amount": null, 
+        "experimentNr": "", 
+        "aliquotNr": null, 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-23T20:36:20.520Z", 
+        "preparedBy": 1, 
+        "displayId": "02", 
+        "modifiedBy": null, 
+        "concentration": null, 
+        "registeredAt": "2014-03-23T20:37:14.485Z", 
+        "concentrationUnit": null
+    }
+},
+{
+    "pk": 12, 
+    "model": "rotmic.sample", 
+    "fields": {
+        "status": "ok", 
+        "solvent": "", 
+        "preparedAt": "2014-03-25", 
+        "container": 4, 
+        "description": "", 
+        "amountUnit": null, 
+        "provenance": [], 
+        "amount": null, 
+        "experimentNr": "", 
+        "aliquotNr": null, 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-26T01:31:16.964Z", 
+        "preparedBy": 1, 
+        "displayId": "03", 
+        "modifiedBy": null, 
+        "concentration": null, 
+        "registeredAt": "2014-03-26T01:32:11.858Z", 
+        "concentrationUnit": null
+    }
+},
+{
+    "pk": 11, 
+    "model": "rotmic.dnasample", 
+    "fields": {
+        "provenance": [], 
+        "dna": 53
+    }
+},
+{
+    "pk": 12, 
+    "model": "rotmic.dnasample", 
+    "fields": {
+        "provenance": [], 
+        "dna": 53
+    }
+},
+{
+    "pk": 5, 
+    "model": "rotmic.oligosample", 
+    "fields": {
+        "oligo": 13, 
+        "provenance": []
+    }
+},
+{
+    "pk": 6, 
+    "model": "rotmic.chemicalsample", 
+    "fields": {
+        "chemical": 20, 
+        "provenance": []
+    }
+},
+{
+    "pk": 4, 
+    "model": "rotmic.proteinsample", 
+    "fields": {
+        "protein": 19, 
+        "provenance": []
+    }
+},
+{
+    "pk": 7, 
+    "model": "rotmic.proteinsample", 
+    "fields": {
+        "protein": 26, 
+        "provenance": []
+    }
+},
+{
+    "pk": 8, 
+    "model": "rotmic.proteinsample", 
+    "fields": {
+        "protein": 25, 
+        "provenance": []
+    }
+},
+{
+    "pk": 9, 
+    "model": "rotmic.proteinsample", 
+    "fields": {
+        "protein": 25, 
+        "provenance": []
+    }
+},
+{
+    "pk": 1, 
+    "model": "rotmic.project", 
+    "fields": {
+        "description": "__SynBio project__\r\n\r\nTest project", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-27T19:33:31.685Z", 
+        "modifiedBy": 1, 
+        "registeredAt": "2014-03-20T20:20:47.642Z", 
+        "name": "synbio_1"
+    }
+},
+{
+    "pk": 2, 
+    "model": "rotmic.project", 
+    "fields": {
+        "description": "__SynBio FRETEx implementation__\r\n\r\nStatus: on hold", 
+        "registeredBy": 0, 
+        "modifiedAt": "2014-03-21T00:57:55.399Z", 
+        "modifiedBy": null, 
+        "registeredAt": "2014-03-21T00:58:44.570Z", 
+        "name": "FretEx"
+    }
+}
+]
