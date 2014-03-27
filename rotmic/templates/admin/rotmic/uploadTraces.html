@@ -6,29 +6,61 @@
     <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
     <a href="{% url 'admin:index' %}">Rotmic</a> &rsaquo;
     <a href="{% url 'admin:rotmic_'|add:model_name|add:'_changelist' %}">{% block object-class1 %}{{verbose_name|capfirst}}s{% endblock %}</a> &rsaquo;
-    Upload Genbank
+    Upload Sequencing
 </div>
 {% endblock %}
 
 
 {% block content %}        
 
-    <p><br></p>
+    <h2>Attach Sequencing traces to Samples</h2>
+
     <ul class="object-tools">
         <li><a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/upload-xls" class="helplink">{% trans "Help!" %}</a></li>
     </ul>
 
-    <h2>Attach Genbank files to {{verbose_name}}s</h2>
     
     <!-- Upload form. Note enctype attribute! -->
     <form action="{% url "attach_"|add:model_name %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <p>{{ form.non_field_errors }}</p>
-        <p>{{ form.files.label_tag }} {{ form.files.help_text }}</p>
-        <p>
-                {{ form.files.errors }}
-                {{ form.files }}
-        </p>
+
+        <div class="module">
+            <h2>Select Files</h2>
+            <p>{{ form.non_field_errors }}</p>
+
+            <p>{{ form.files.errors }}</p>
+            <p>
+                <b>{{ form.files.label_tag }}</b> {{ form.files }} <br>
+                <small>{{ form.files.help_text }}</small>
+            </p>
+            
+            <h2>Sequencing properties</h2>
+            
+            <div class="section">
+                <p>{{ form.evaluation.errors }}</p>
+                <p>
+                    <b>{{ form.evaluation.label_tag }}</b> {{ form.evaluation }} <br>
+                    <small>{{ form.evaluation.help_text }}</small>
+                </p>
+            </div>
+
+            
+
+            <div class="section">
+                <p>{{ form.orderedAt.errors }}</p>
+                <p>
+                    <b>{{ form.orderedAt.label_tag }}</b> {{ form.orderedAt }} <br>
+                    <small>{{ form.orderedAt.help_text }}</small>
+                </p>
+
+                <p>{{ form.orderedBy.errors }}</p>
+                <p>
+                    <b>{{ form.orderedBy.label_tag }}</b> {{ form.orderedBy }} <br>
+                    <small>{{ form.orderedBy.help_text }}</small>
+                </p>
+            </div>
+        </div>
+
         <p><input type="submit" value="Upload" /></p>
     </form>
                 
