@@ -1,5 +1,6 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_static %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />{%endblock%}
 
 {% block breadcrumbs%}
 <div class="breadcrumbs">
@@ -44,7 +45,7 @@
                 </p>
             </div>
 
-            
+            <hr>
 
             <div class="section">
                 <p>{{ form.orderedAt.errors }}</p>
@@ -61,7 +62,9 @@
             </div>
         </div>
 
-        <p><input type="submit" value="Upload" /></p>
+        <div class="submit-row">        
+            <input type="submit" class="default" value="Upload">
+        </div>
     </form>
                 
 {% endblock %}
