@@ -2,10 +2,6 @@ from django.conf.urls import patterns, include, url
 
 import rotmic.views as V
 
-from rotmic.jsviews import getTypeDnaInfo, getCellTypes, nextDnaId, \
-     nextCellId, nextSampleId, nextOligoId, getChemicalTypes, nextChemicalId, \
-     getProteinTypes, nextProteinId
-
 import rotmicsite.settings as settings
 
 # Uncomment the next two lines to enable the admin:
@@ -13,28 +9,28 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^getTypeDnaInfo/(?P<maintype>.*)/$',getTypeDnaInfo,name='getTypeDnaInfo'),
-    url(r'^getCellTypes/(?P<maintype>.*)/$',getCellTypes,name='getCellTypes'),
-    url(r'^getChemicalTypes/(?P<maintype>.*)/$',getChemicalTypes,name='getChemicalTypes'),
-    url(r'^getProteinTypes/(?P<maintype>.*)/$',getProteinTypes,name='getProteinTypes'),
+    url(r'^getTypeDnaInfo/(?P<maintype>.*)/$',V.getTypeDnaInfo,name='getTypeDnaInfo'),
+    url(r'^getCellTypes/(?P<maintype>.*)/$',V.getCellTypes,name='getCellTypes'),
+    url(r'^getChemicalTypes/(?P<maintype>.*)/$',V.getChemicalTypes,name='getChemicalTypes'),
+    url(r'^getProteinTypes/(?P<maintype>.*)/$',V.getProteinTypes,name='getProteinTypes'),
 
     url(r'^rotmic/ajax/nextDnaId/(?P<category>.+)/$', 
-        nextDnaId, name='nextDnaId' ),
+        V.nextDnaId, name='nextDnaId' ),
 
     url(r'^rotmic/ajax/nextCellId/(?P<category>.+)/$', 
-        nextCellId, name='nextCellId' ),
+        V.nextCellId, name='nextCellId' ),
 
     url(r'^rotmic/ajax/nextOligoId/$', 
-        nextOligoId, name='nextOligoId' ),
+        V.nextOligoId, name='nextOligoId' ),
 
     url(r'^rotmic/ajax/nextChemicalId/(?P<category>.+)/$', 
-        nextChemicalId, name='nextChemicalId' ),
+        V.nextChemicalId, name='nextChemicalId' ),
 
     url(r'^rotmic/ajax/nextProteinId/(?P<category>.+)/$', 
-        nextProteinId, name='nextProteinId' ),
+        V.nextProteinId, name='nextProteinId' ),
 
     url(r'^rotmic/ajax/nextSampleId/(?P<container>.+)/$', 
-        nextSampleId, name='nextSampleId' ),
+        V.nextSampleId, name='nextSampleId' ),
 
     url(r'^selectable/', include('selectable.urls')),
 
