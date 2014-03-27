@@ -9,7 +9,10 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding field 'Sample.preparedBy'
-        default_user = orm['auth.User'].objects.all()[0].pk
+        if not db.dry_run and orm['auth.User'].objects.all().count():
+            default_user = orm['auth.User'].objects.all()[0].pk
+        else:
+            default_user = 0
         db.add_column(u'rotmic_sample', 'preparedBy',
                       self.gf('django.db.models.fields.related.ForeignKey')(default=default_user, 
                                                                             related_name='sample_prepared_by', to=orm['auth.User']),
