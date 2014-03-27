@@ -12,7 +12,7 @@ from django.db import transaction
 import django.db.utils as U
 
 import rotmic.models as M
-import rotmic.utils.importFiles as I
+import rotmic.utils.importExcel as I
 
 from rotmic.forms import TableUploadForm, FilesUploadForm, TracesUploadForm
 
