@@ -23,6 +23,8 @@ from django.contrib.auth.models import User
 import selectLookups as L
 import selectable.forms as sforms
 
+from .baseforms import ModelFormWithRequest
+
 import rotmic.models as M
 
 import rotmic.initialTypes as T
@@ -54,7 +56,7 @@ def getSampleWidgets( extra={} ):
     r.update( extra )
     return r
 
-class SampleForm(forms.ModelForm):
+class SampleForm(ModelFormWithRequest):
     """Customized Form for Sample add / change. 
     To be overridden rather than used directly."""
 

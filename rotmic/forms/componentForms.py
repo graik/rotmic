@@ -24,6 +24,8 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 import django.contrib.messages as messages
 
+from .baseforms import ModelFormWithRequest
+
 import rotmic.models as M
 
 import rotmic.initialTypes as T
@@ -68,7 +70,7 @@ def getComponentWidgets( extra={} ):
     return r
 
 
-class ComponentForm(forms.ModelForm, CleaningMixIn):
+class ComponentForm(ModelFormWithRequest, CleaningMixIn):
         
     def __init__(self, *args, **kwargs):
         """

@@ -21,10 +21,12 @@ from django.contrib.auth.models import User
 import selectLookups as L
 import selectable.forms as sforms
 
+from .baseforms import ModelFormWithRequest
+
 import rotmic.models as M
 
 
-class SequencingForm(forms.ModelForm):
+class SequencingForm(ModelFormWithRequest):
     """Customized Form for Sample add / change. 
     To be overridden rather than used directly."""
     

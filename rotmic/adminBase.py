@@ -45,12 +45,10 @@ class RequestFormMixin:
     """
     ModelAdmin mixin that adds a 'request' field to the form generated
     by the Admin. 
-
-    Note: ModelFormWithRequest.__init__ is *not* called in many cases.
     
-    If the Admin is using a customized form, and if this custom form class
-    is overriding __init__, then this custom constructor must ensure that the 
-    request parameter is removed before the classic constructor is called.
+    Note: The Admin class *must* use a custom form derrived from 
+    rotmic.baseforms.ModelFormWithRequest which removes the unexpected
+    'request' parameter from the constructor and pushes it to self.request.
     """
 
     def get_form(self, request, obj=None, **kwargs):
@@ -61,17 +59,11 @@ class RequestFormMixin:
         """
         ModelForm = ModelAdmin.get_form(self, request, obj, **kwargs)
 
-        class ModelFormWithRequest(ModelForm):
-            def __init__(self, *args, **kwargs):
-                """Remove request object from kwargs pushed in from Admin"""
-                self.request = kwargs.pop('request', None)
-                super(ModelFormWithRequest, self).__init__(*args, **kwargs)
-
-        class ModelFormWithRequestWrapper(ModelFormWithRequest):
+        class ModelFormWithRequestWrapper(ModelForm):
             """class wrapping actual model form class to capture request"""
             def __new__(cls, *args, **kwargs):
                 kwargs['request'] = request
-                return ModelFormWithRequest(*args, **kwargs)
+                return ModelForm(*args, **kwargs)
 
         return ModelFormWithRequestWrapper
 
