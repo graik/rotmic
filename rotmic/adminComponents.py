@@ -33,7 +33,7 @@ from .utils import adminFilters as filters
 from .utils import ids
 from .utils.customadmin import ViewFirstModelAdmin
 
-from .adminBase import BaseAdminMixin, export_csv
+from .adminBase import UserRecordMixin, RequestFormMixin, export_csv
 
 class ComponentAttachmentInline(admin.TabularInline):
     model = M.ComponentAttachment
@@ -42,7 +42,7 @@ class ComponentAttachmentInline(admin.TabularInline):
     extra = 1
     max_num = 5
 
-class ComponentAdmin( ViewFirstModelAdmin ):
+class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
     """
     Derived from ViewFirstModelAdmin -- Custom version of admin.ModelAdmin
     which shows a read-only View for a given object instead of the normal
@@ -56,6 +56,10 @@ class ComponentAdmin( ViewFirstModelAdmin ):
     
     Component-specific methods:
     * showDescription -- truncated description with html mouse-over full text for tables
+    * showStatus
+    * showFirstAuthor -- show first; indicate by '+' if there is additional authors
+    * showSampleStatus -- pretty symbols for availability of samples
+    * showType -- shortened text repr. of category/Type
     """
     
     ## custom class variable for table generation
@@ -184,7 +188,7 @@ class ComponentAdmin( ViewFirstModelAdmin ):
     showSampleStatus.short_description = '' 
 
 
-class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin):
+class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     """Admin interface description for DNA constructs."""
     inlines = [ ComponentAttachmentInline ]
     form = forms.DnaComponentForm
@@ -340,7 +344,7 @@ class DnaComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin)
 admin.site.register(M.DnaComponent, DnaComponentAdmin)
 
 
-class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
+class CellComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     """Admin interface description for DNA constructs."""
     inlines = [ ComponentAttachmentInline ]
     form = forms.CellComponentForm
@@ -436,7 +440,7 @@ class CellComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin
 admin.site.register(M.CellComponent, CellComponentAdmin)
 
 
-class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
+class OligoComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     """Admin interface description for DNA constructs."""
     inlines = [ ComponentAttachmentInline ]
     form = forms.OligoComponentForm
@@ -510,7 +514,7 @@ class OligoComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmi
 admin.site.register(M.OligoComponent, OligoComponentAdmin)
 
 
-class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
+class ChemicalComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     """Admin interface description for DNA constructs."""
     inlines = [ ComponentAttachmentInline ]
     form = forms.ChemicalComponentForm
@@ -567,7 +571,7 @@ class ChemicalComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentA
 admin.site.register(M.ChemicalComponent, ChemicalComponentAdmin)
 
 
-class ProteinComponentAdmin( BaseAdminMixin, reversion.VersionAdmin, ComponentAdmin ):
+class ProteinComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     """Admin interface description for DNA constructs."""
     inlines = [ ComponentAttachmentInline ]
     form = forms.ProteinComponentForm

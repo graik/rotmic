@@ -36,8 +36,10 @@ class SequencingForm(forms.ModelForm):
                                  label='')
     
     def __init__(self, *args, **kwargs):
-        """Rescue request object from kwargs pushed in from SampleAdmin"""
-        self.request = kwargs.pop('request', None)
+        """
+        Relies on self.request which is created by ModelFormWithRequest
+        via custom ModelAdmin.
+        """
         super(SequencingForm, self).__init__(*args, **kwargs)
 
         ## only execute for Add forms without existing instance

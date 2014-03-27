@@ -20,17 +20,11 @@ from django.contrib import admin
 import reversion
 
 from .utils.customadmin import ViewFirstModelAdmin
-from .adminBase import BaseAdminMixin, export_csv
+from .adminBase import UserRecordMixin, export_csv
 
 import models as M
 
-class ProjectAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
-    ## form = forms.LocationForm
-    
-    ## change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
-
-    ## change_list_template = "admin/rotmic/location/change_list.html"
-
+class ProjectAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     fieldsets = [
         (None, {
             'fields' : ((('name'),

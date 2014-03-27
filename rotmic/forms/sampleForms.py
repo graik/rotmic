@@ -88,8 +88,10 @@ class SampleForm(forms.ModelForm):
 
     
     def __init__(self, *args, **kwargs):
-        """Rescue request object from kwargs pushed in from SampleAdmin"""
-        self.request = kwargs.pop('request', None)
+        """
+        relies on self.request which is created by ModelFormWithRequest via
+        customized ModelAdmin.
+        """
         super(SampleForm, self).__init__(*args, **kwargs)
 
         ## only execute for Add forms without existing instance

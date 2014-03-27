@@ -19,25 +19,12 @@ import datetime, csv, collections
 from django.http import HttpResponse
 from django.contrib.admin import ModelAdmin
 
-class BaseAdminMixin:
+class UserRecordMixin:
     """
     Automatically save and assign house-keeping information like by whom and
     when a record was saved.
     Create self.request variable in form.
     """
-
-    def get_form(self, request, obj=None, **kwargs):
-        """
-        Push request into the ModelForm. Requires the form to override __init__
-        and remove request from the kwargs.
-        See: http://stackoverflow.com/questions/1057252/how-do-i-access-the-request-object-or-any-other-variable-in-a-forms-clean-met
-        """
-        ModelForm = ModelAdmin.get_form(self, request, obj, **kwargs)
-        class ModelFormWithRequest(ModelForm):
-            def __new__(cls, *args, **kwargs):
-                kwargs['request'] = request
-                return ModelForm(*args, **kwargs)
-        return ModelFormWithRequest
 
     def save_model(self, request, obj, form, change):
         """Override to save user who created this record"""
@@ -53,6 +40,40 @@ class BaseAdminMixin:
         obj.save()
 
     save_as = True  ## enable "Save as" button in all derrived classes.
+
+class RequestFormMixin:
+    """
+    ModelAdmin mixin that adds a 'request' field to the form generated
+    by the Admin. 
+
+    Note: ModelFormWithRequest.__init__ is *not* called in many cases.
+    
+    If the Admin is using a customized form, and if this custom form class
+    is overriding __init__, then this custom constructor must ensure that the 
+    request parameter is removed before the classic constructor is called.
+    """
+
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Push request into the ModelForm. Requires the form to override __init__
+        and remove request from the kwargs.
+        See: http://stackoverflow.com/questions/1057252/how-do-i-access-the-request-object-or-any-other-variable-in-a-forms-clean-met
+        """
+        ModelForm = ModelAdmin.get_form(self, request, obj, **kwargs)
+
+        class ModelFormWithRequest(ModelForm):
+            def __init__(self, *args, **kwargs):
+                """Remove request object from kwargs pushed in from Admin"""
+                self.request = kwargs.pop('request', None)
+                super(ModelFormWithRequest, self).__init__(*args, **kwargs)
+
+        class ModelFormWithRequestWrapper(ModelFormWithRequest):
+            """class wrapping actual model form class to capture request"""
+            def __new__(cls, *args, **kwargs):
+                kwargs['request'] = request
+                return ModelFormWithRequest(*args, **kwargs)
+
+        return ModelFormWithRequestWrapper
 
 
 def export_csv(request, queryset, fields):

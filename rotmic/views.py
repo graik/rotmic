@@ -14,7 +14,7 @@ import django.db.utils as U
 import rotmic.models as M
 import rotmic.utils.importFiles as I
 
-from rotmic.forms import TableUploadForm
+from rotmic.forms import TableUploadForm, FilesUploadForm, TracesUploadForm
 
 
 def view_genbankfile(request, pk):
@@ -46,7 +46,7 @@ def view_genbankfile_aa(request, pk):
 
 class XlsUploadView(TemplateView):
     """View for uploading Excel files into DnaComponent table"""
-    template_name = 'admin/rotmic/upload.html'
+    template_name = 'admin/rotmic/uploadXls.html'
    
     form_class = TableUploadForm
     
@@ -169,3 +169,91 @@ class CellSampleXlsUploadView(XlsUploadView):
 class ProteinSampleXlsUploadView(XlsUploadView):
     model = M.ProteinSample
     parser_class = I.ImportXlsProteinSample
+
+
+class TracesUploadView(TemplateView):
+    """Attach ABL sequencing trace files to existing Sequencing records"""
+    template_name = 'admin/rotmic/uploadTraces.html'
+   
+    form_class = TracesUploadForm
+    
+    model = M.Sequencing
+    
+    def get(self, request):
+        form = self.form_class()
+        return render( request, self.template_name, 
+                       {'form':form, 'verbose_name':self.model._meta.verbose_name,
+                        'model_name':self.model._meta.object_name.lower() })
+    
+    def returnto(self):
+        """
+        Name of view to serve after upload.
+        """
+        s = 'admin:%s_%s_changelist' % (self.model._meta.app_label,
+                                        self.model._meta.object_name.lower())
+        return s
+    
+    ## see: https://github.com/axelpale/minimal-django-file-upload-example/blob/master/src/for_django_1-5/myproject/myproject/myapp/views.py
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            
+            files = request.FILES.getlist('files')
+            
+            try:
+                with transaction.atomic():
+                    
+                    messages.success(request, 'found %i files.' % len(files), extra_tags='', 
+                                    fail_silently=False)
+                
+            except Exception, why:
+                messages.error(request, 'Some unforeseen error occured. All imports are reverted. Reason: ' + str(why))
+
+        else:
+            messages.error(request, 'No Excel file given.')
+                
+        return HttpResponseRedirect(reverse(self.returnto()))
+
+
+class GbkUploadView(TemplateView):
+    """Attach genbank files to existing dnacomponent records"""
+    template_name = 'admin/rotmic/uploadGbk.html'
+   
+    form_class = FilesUploadForm
+    
+    model = M.DnaComponent
+    
+    def get(self, request):
+        form = self.form_class()
+        return render( request, self.template_name, 
+                       {'form':form, 'verbose_name':self.model._meta.verbose_name,
+                        'model_name':self.model._meta.object_name.lower() })
+    
+    def returnto(self):
+        """
+        Name of view to serve after upload.
+        """
+        s = 'admin:%s_%s_changelist' % (self.model._meta.app_label,
+                                        self.model._meta.object_name.lower())
+        return s
+    
+    ## see: https://github.com/axelpale/minimal-django-file-upload-example/blob/master/src/for_django_1-5/myproject/myproject/myapp/views.py
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            
+            files = request.FILES.getlist('files')
+            
+            try:
+                with transaction.atomic():
+                    
+                    messages.success(request, 'found %i files.' % len(files), extra_tags='', 
+                                    fail_silently=False)
+                
+            except Exception, why:
+                messages.error(request, 'Some unforeseen error occured. All imports are reverted. Reason: ' + str(why))
+
+        else:
+            messages.error(request, 'No Excel file given.')
+                
+        return HttpResponseRedirect(reverse(self.returnto()))

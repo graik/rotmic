@@ -13,9 +13,15 @@
 ## GNU Affero General Public License for more details.
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
+from datetime import datetime
+
 import django.forms as forms
+from django.contrib.auth.models import User
 
 from rotmic.utils.filefields import DocumentFormField
+from rotmic.utils.multiFile import MultiFileField
+
+import rotmic.models as M
 
 
 class TableUploadForm(forms.Form):
@@ -25,4 +31,28 @@ class TableUploadForm(forms.Form):
                                   extensions=['xls','xlsx'])
     
     
+
+class FilesUploadForm(forms.Form):
+    """Form for uploading multiple files"""
     
+    files = MultiFileField(label='Now, having read all that, please select files:',)
+    
+
+class TracesUploadForm(forms.Form):
+    """Form for uploading multiple files"""
+    
+    files = MultiFileField(label='Trace files:',
+                           extensions=['abl', 'scf'],
+                           help_text='hold <CTRL> to select multiple files.')
+    
+    evaluation = forms.ChoiceField(label='evaluation',
+                                   choices=M.Sequencing.EVALUATIONS, 
+                                   initial='none',
+                                   required=True,
+                                   help_text='pre-set sequencing verdict with respect to target')
+    
+    orderedAt = forms.DateField(initial=datetime.now().date, label="ordered")
+
+    orderedBy = forms.ModelChoiceField(User.objects.all(), required=True, 
+                                       label='By',
+                                       help_text='User responsible for this sequencing')

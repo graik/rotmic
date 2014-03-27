@@ -35,7 +35,7 @@ import rotmic.initialTypes as T
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.ids as I
 
-from .adminBase import BaseAdminMixin, export_csv
+from .adminBase import UserRecordMixin, RequestFormMixin, export_csv
 
 from . import adminUser  ## trigger extension of User
 from . import adminComponents ## trigger registration of component admin interfaces
@@ -201,7 +201,7 @@ class SampleProvenanceInline(admin.StackedInline):
         }),
     )
 
-class SampleAdmin( BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
+class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
     form = forms.SampleForm     
     
     change_list_template = 'admin/rotmic/sample/change_list.html'  ## ReversionAdmin de-activated default template loading
@@ -561,7 +561,7 @@ admin.site.register( M.ProteinSample, ProteinSampleAdmin )
 
 
 
-class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+class LocationAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = forms.LocationForm
     
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
@@ -588,7 +588,7 @@ class LocationAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin)
 admin.site.register( M.Location, LocationAdmin )
 
 
-class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+class RackAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = forms.RackForm
 
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
@@ -627,7 +627,7 @@ class RackAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
 admin.site.register( M.Rack, RackAdmin )
 
 
-class ContainerAdmin(BaseAdminMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = forms.ContainerForm
 
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
@@ -698,7 +698,7 @@ class SequencingRunInline(admin.TabularInline):
            }),
     )
     
-class SequencingAdmin(BaseAdminMixin, reversion.VersionAdmin):
+class SequencingAdmin(UserRecordMixin, RequestFormMixin, reversion.VersionAdmin):
     form = forms.SequencingForm
     
     inlines = [ SequencingRunInline ]

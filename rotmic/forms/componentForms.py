@@ -71,8 +71,10 @@ def getComponentWidgets( extra={} ):
 class ComponentForm(forms.ModelForm, CleaningMixIn):
         
     def __init__(self, *args, **kwargs):
-        """capture request instance from modified Admin"""
-        self.request = kwargs.pop('request', None)
+        """
+        relies on self.request which is created by ModelFormWithRequest
+        via customized ModelAdmin
+        """
         super(ComponentForm, self).__init__(*args, **kwargs)
 
         if self.request:
