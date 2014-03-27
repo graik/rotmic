@@ -465,8 +465,8 @@ class OligoComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     )
 
     list_display = ('displayId', 'name', 'showStatus', 'registrationDate', 'showFirstAuthor',
-                    'componentType', 'showTm', 'showDescription',
-                    'showType',
+                    'showTm', 'showDescription',
+                    'componentType',
                     'showSampleStatus', 'showEdit')
     
     list_filter = ( 'componentType', 'status', 'projects', filters.SortedAuthorFilter)
