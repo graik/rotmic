@@ -1,2 +1,4 @@
 from .jsviews import *
-from .views import *
+from .downloads import *
+from .xlsUpload import *
+from .tracesUpload import *
