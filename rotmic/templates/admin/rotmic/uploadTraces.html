@@ -1,0 +1,35 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+
+{% block breadcrumbs%}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
+    <a href="{% url 'admin:index' %}">Rotmic</a> &rsaquo;
+    <a href="{% url 'admin:rotmic_'|add:model_name|add:'_changelist' %}">{% block object-class1 %}{{verbose_name|capfirst}}s{% endblock %}</a> &rsaquo;
+    Upload Genbank
+</div>
+{% endblock %}
+
+
+{% block content %}        
+
+    <p><br></p>
+    <ul class="object-tools">
+        <li><a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/upload-xls" class="helplink">{% trans "Help!" %}</a></li>
+    </ul>
+
+    <h2>Attach Genbank files to {{verbose_name}}s</h2>
+    
+    <!-- Upload form. Note enctype attribute! -->
+    <form action="{% url "attach_"|add:model_name %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ form.non_field_errors }}</p>
+        <p>{{ form.files.label_tag }} {{ form.files.help_text }}</p>
+        <p>
+                {{ form.files.errors }}
+                {{ form.files }}
+        </p>
+        <p><input type="submit" value="Upload" /></p>
+    </form>
+                
+{% endblock %}
