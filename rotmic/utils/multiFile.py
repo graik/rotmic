@@ -45,6 +45,7 @@ class MultiFileField(forms.FileField):
         num_files = len(data)
         if len(data) and not data[0]:
             num_files = 0
+            data = []
 
         if num_files < self.min_num:
             raise forms.ValidationError(self.error_messages['min_num'] % {'min_num': self.min_num, 'num_files': num_files})

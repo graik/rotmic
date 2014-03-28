@@ -66,7 +66,7 @@ class TracesUploadView(TemplateView):
                 messages.error(request, 'Some unforeseen error occured. All imports are reverted. Reason: ' + str(why))
 
         else:
-            messages.error(request, 'No Excel file given.')
+            messages.error(request, 'No files given.')
                 
         return HttpResponseRedirect(reverse(self.returnto()))
 
