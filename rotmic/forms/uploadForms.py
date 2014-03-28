@@ -42,7 +42,7 @@ class TracesUploadForm(forms.Form):
     """Form for uploading multiple files"""
     
     files = MultiFileField(label='Trace files:',
-                           extensions=['abl', 'scf'],
+                           extensions=['ab1', 'scf'],
                            help_text='hold <CTRL> to select multiple files.')
     
     evaluation = forms.ChoiceField(label='evaluation',
@@ -56,3 +56,9 @@ class TracesUploadForm(forms.Form):
     orderedBy = forms.ModelChoiceField(User.objects.all(), required=True, 
                                        label='By',
                                        help_text='User responsible for this sequencing')
+
+    def __init__(self, *arg, **kwarg):
+        self.request = kwarg.pop('request')
+        super(TracesUploadForm, self).__init__(*arg, **kwarg)
+
+        self.fields['orderedBy'].initial = self.request.user

@@ -11,5 +11,10 @@ class TracesUploadTest(TestCase):
         """uploadview get"""
         response = self.client.get('/rotmic/attach/sequencing/')
         self.assertEqual(response.status_code, 200)
-
+        
+    def test_post0files(self):
+        """uploadview post 0 files"""
+        response = self.client.post('/rotmic/attach/sequencing/', 
+                                    {'evaluation':'none'})
+        self.assertEqual(response.status_code, 302) # redirect
     

@@ -34,24 +34,27 @@ class TracesUploadView(TemplateView):
     form_class = TracesUploadForm
     
     model = M.Sequencing
-    
-    def get(self, request):
-        form = self.form_class()
+
+    def renderForm(self, request, form):
         return render( request, self.template_name, 
                        {'form':form, 'verbose_name':self.model._meta.verbose_name,
                         'model_name':self.model._meta.object_name.lower() })
+            
+    def get(self, request):
+        form = self.form_class(request=request)
+        return self.renderForm(request, form)
     
     def returnto(self):
-        """
-        Name of view to serve after upload.
-        """
+        """Name of view to serve after upload."""
         s = 'admin:%s_%s_changelist' % (self.model._meta.app_label,
                                         self.model._meta.object_name.lower())
         return s
+
     
     ## see: https://github.com/axelpale/minimal-django-file-upload-example/blob/master/src/for_django_1-5/myproject/myproject/myapp/views.py
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES)
+        form = self.form_class(request.POST, request.FILES, request=request)
+
         if form.is_valid():
             
             files = request.FILES.getlist('files')
@@ -66,7 +69,8 @@ class TracesUploadView(TemplateView):
                 messages.error(request, 'Some unforeseen error occured. All imports are reverted. Reason: ' + str(why))
 
         else:
-            messages.error(request, 'No files given.')
+            ## re-display with error messages
+            return self.renderForm(request, form)
                 
         return HttpResponseRedirect(reverse(self.returnto()))
 
