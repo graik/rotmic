@@ -17,6 +17,7 @@
 from django.contrib import admin
 import django.utils.html as html
 from django.utils.safestring import mark_safe
+from django.http import HttpResponseRedirect
 
 import reversion
 
@@ -246,10 +247,21 @@ class DnaSampleAdmin( SampleAdmin ):
     list_filter = ('status', filters.DnaSampleLocationFilter, 
                    filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter,
                    'dna__projects', filters.SortedUserFilter )
+    
+    actions = SampleAdmin.actions + ['make_sequencing']
         
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
         return super(SampleAdmin,self).queryset(request)
+
+    def make_sequencing(self, request, queryset):
+        """List view action to attach sequencing data to samples"""
+        ## see https://docs.djangoproject.com/en/dev/ref/contrib/admin/actions/#actions-that-provide-intermediate-pages
+
+        selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
+        return HttpResponseRedirect("/rotmic/upload/tracefiles/?samples=%s" % (",".join(selected)))
+
+    make_sequencing.short_description = 'Attach sequencing trace files'
     
 admin.site.register( M.DnaSample, DnaSampleAdmin )
 

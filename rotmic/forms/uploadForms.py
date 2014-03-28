@@ -41,6 +41,19 @@ class FilesUploadForm(forms.Form):
 class TracesUploadForm(forms.Form):
     """Form for uploading multiple files"""
     
+    sequencings = forms.ModelMultipleChoiceField(M.Sequencing.objects.all(),
+                                                 required=False,
+                                                 widget=forms.HiddenInput,
+                                                 label='')
+    
+    samples = forms.ModelMultipleChoiceField(M.DnaSample.objects.all(), 
+                                             cache_choices=False, 
+                                             required=True, 
+                                             widget=None, 
+                                             label='Samples', 
+                                             initial=None, 
+                                             help_text='Select the samples to which traces should be matched.')
+    
     files = MultiFileField(label='Trace files:',
                            extensions=['ab1', 'scf'],
                            help_text='hold <CTRL> to select multiple files.')
@@ -61,4 +74,4 @@ class TracesUploadForm(forms.Form):
         self.request = kwarg.pop('request')
         super(TracesUploadForm, self).__init__(*arg, **kwarg)
 
-        self.fields['orderedBy'].initial = self.request.user
+        self.fields['orderedBy'].initial = self.request.user        

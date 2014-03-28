@@ -25,20 +25,31 @@
 
     
     <!-- Upload form. Note enctype attribute! -->
-    <form action="{% url "attach_"|add:model_name %}" method="post" enctype="multipart/form-data">
+    <form action="{% url "upload_tracefiles" %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         <div class="module">
-            <h2>Select Files</h2>
+            <h2>1. Select Samples</h2>
             <p>{{ form.non_field_errors }}</p>
 
+            <p>{{ form.samples.errors }}</p>
+            <p>
+                <b>{{ form.samples.label_tag }}</b> {{ form.samples }} <br>
+                <small>{{ form.samples.help_text }}</small>
+            </p>
+     
+            <h2>2. Select Trace Files</h2>
             <p>{{ form.files.errors }}</p>
             <p>
                 <b>{{ form.files.label_tag }}</b> {{ form.files }} <br>
                 <small>{{ form.files.help_text }}</small>
             </p>
             
-            <h2>Sequencing properties</h2>
+            <h2>3. Adjust Sequencing properties</h2>
+            <p>
+                Trace files will be pooled into one new sequencing record for each sample.
+                You can adjust the properties of these new sequencing entries below.
+            </p>
             
             <div class="section">
                 <p>{{ form.evaluation.errors }}</p>

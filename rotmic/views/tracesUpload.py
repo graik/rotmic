@@ -33,7 +33,7 @@ class TracesUploadView(TemplateView):
    
     form_class = TracesUploadForm
     
-    model = M.Sequencing
+    model = M.DnaSample
 
     def renderForm(self, request, form):
         return render( request, self.template_name, 
@@ -41,7 +41,14 @@ class TracesUploadView(TemplateView):
                         'model_name':self.model._meta.object_name.lower() })
             
     def get(self, request):
-        form = self.form_class(request=request)
+        
+        ## extract sample ids from URL
+        initial = {}
+        samples = request.GET.get('samples', '')
+        if samples:
+            initial['samples'] = [ int(x) for x in  samples.split(',') ]
+
+        form = self.form_class(request=request, initial=initial )
         return self.renderForm(request, form)
     
     def returnto(self):
@@ -58,6 +65,7 @@ class TracesUploadView(TemplateView):
         if form.is_valid():
             
             files = request.FILES.getlist('files')
+            samples = form.cleaned_data['samples']
             
             try:
                 with transaction.atomic():
