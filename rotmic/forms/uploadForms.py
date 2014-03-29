@@ -43,6 +43,11 @@ class FilesUploadForm(forms.Form):
 class TracesUploadForm(forms.Form):
     """Form for uploading multiple files"""
     
+    MATCHCHOICES = (('sample', 'sample ID (e.g. A01_comment.ab1)'), 
+                    ('dna', 'construct ID (e.g. rg0011_comment.ab1)'),
+                    ('containersample', 'container + sample ID (e.g. D12_A01_comment.ab1)'),
+                    ('sampledna', 'sample ID + construct ID (e.g. A01_rg0011_comment.ab1)'))
+    
     samples = forms.ModelMultipleChoiceField(M.DnaSample.objects.all(), 
                                              cache_choices=False, 
                                              required=True, 
@@ -51,6 +56,13 @@ class TracesUploadForm(forms.Form):
                                              initial=None, 
                                              help_text='Select the samples to which traces should be matched.')
     
+    matchBy = forms.ChoiceField(label='match by',
+                                  choices=MATCHCHOICES,
+                                  initial='sample',
+                                  widget=forms.RadioSelect,
+                                  required=True,
+                                  help_text='select how trace file names are matched to samples.')
+
     files = MultiFileField(label='Trace files:',
                            min_num=2,
                            extensions=['ab', 'abi', 'ab1', 'scf', 'phd'],
@@ -79,7 +91,7 @@ class TracesUploadForm(forms.Form):
 
         self.fields['orderedBy'].initial = self.request.user
         
-    def normalizeId(self, s):
+    def normalize(self, s):
         """lower-case ID and remove leading zeros"""
         r = s.lower()
         r = re.sub('^0+', '', r, )
@@ -91,12 +103,27 @@ class TracesUploadForm(forms.Form):
         Convert into a dict indexed by sample ID.
         """
         data = self.cleaned_data['samples']
+        matchby = self.data['matchBy']
         
-        sdic = { self.normalizeId(s.displayId) : s for s in data }
+        if matchby == 'sample':
+            sdic = { self.normalize(s.displayId) : s for s in data }
+            
+        elif matchby == 'dna':
+            sdic = { s.content.displayId : s for s in data }
+            
+        elif matchby == 'containersample':
+            sdic = { (self.normalize(s.container.displayId), self.normalize(s.displayId)) : s for s in data }
+
+        elif matchby == 'sampledna':
+            sdic = { (self.normalize(s.displayId), s.content.displayId) : s for s in data }
+        
+        else:
+            raise forms.ValidationError('choice Error', code='error')
+
         ## verify that all sample ids are unique
         if len(sdic) < len(data):
             raise forms.ValidationError(\
-                'Sorry, there are samples with identical IDs (position) in the selected set.',
+                'Sorry, there are samples with identical IDs in the selected set.',
             code='invalid')
         
         return sdic
