@@ -59,6 +59,13 @@
      
         <fieldset class="module">
             <h2>2. Select Trace Files</h2>
+            
+            <p>Select trace files that should be attached to these samples.
+            Its file name will be used to match each trace to a sample. By default, 
+            file names are expected to start with the sample ID 
+            (the sample position within the container). You can change the 
+            matching below.
+            </p>
 
             <div class="form-row field-files">
 
@@ -66,6 +73,16 @@
                     {% if form.files.errors %}<p>{{ form.files.errors }}</p>{% endif %}
                     {{ form.files.label_tag }} {{ form.files }} <br>
                     <small>{{ form.files.help_text }}</small>
+                </div>
+
+            </div>
+
+            <div class="form-row field-matchBy">
+
+                <div class="field-box field-matchBy">
+                    {% if form.matchBy.errors %}<p>{{ form.matchBy.errors }}</p>{% endif %}
+                    {{ form.matchBy.label_tag }} {{ form.matchBy }} <br>
+                    <small>{{ form.matchBy.help_text }}</small>
                 </div>
 
             </div>
