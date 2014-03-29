@@ -18,6 +18,7 @@ import re
 
 import django.forms as forms
 from django.contrib.auth.models import User
+from django.contrib.admin.widgets import AdminDateWidget
 
 from rotmic.utils.filefields import DocumentFormField
 from rotmic.utils.multiFile import MultiFileField
@@ -61,7 +62,8 @@ class TracesUploadForm(forms.Form):
                                    required=True,
                                    help_text='pre-set sequencing verdict with respect to target')
     
-    orderedAt = forms.DateField(initial=datetime.now().date, label="ordered")
+    orderedAt = forms.DateField(initial=datetime.now().date, label="ordered",
+                                widget=AdminDateWidget)
 
     orderedBy = forms.ModelChoiceField(User.objects.all(), required=True, 
                                        label='By',
