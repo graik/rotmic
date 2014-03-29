@@ -18,6 +18,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.shortcuts import render
+from django.forms import ValidationError
 
 import django.contrib.messages as messages
 from django.db import transaction
@@ -25,7 +26,7 @@ import django.db.utils as U
 
 import rotmic.models as M
 
-from rotmic.forms import TableUploadForm, FilesUploadForm, TracesUploadForm
+from rotmic.forms import TracesUploadForm, FilesUploadForm
 
 class TracesUploadView(TemplateView):
     """Attach ABL sequencing trace files to existing Sequencing records"""
@@ -41,7 +42,7 @@ class TracesUploadView(TemplateView):
                         'model_name':self.model._meta.object_name.lower() })
             
     def get(self, request):
-        
+        """Create new form"""
         ## extract sample ids from URL
         initial = {}
         samples = request.GET.get('samples', '')
@@ -62,10 +63,15 @@ class TracesUploadView(TemplateView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES, request=request)
 
-        if form.is_valid():
+        try:
+            if not form.is_valid():
+                raise ValidationError('form-level validation error')
             
             files = request.FILES.getlist('files')
-            samples = form.cleaned_data['samples']
+
+            d = form.mapTracesToSamples(files)
+            if form._errors:
+                raise ValidationError('post-form mapping error')
             
             try:
                 with transaction.atomic():
@@ -76,7 +82,7 @@ class TracesUploadView(TemplateView):
             except Exception, why:
                 messages.error(request, 'Some unforeseen error occured. All imports are reverted. Reason: ' + str(why))
 
-        else:
+        except ValidationError, why:
             ## re-display with error messages
             return self.renderForm(request, form)
                 

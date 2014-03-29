@@ -22,8 +22,8 @@ class MultiFileField(forms.FileField):
     widget = MultiFileInput
 
     default_error_messages = {
-        'min_num': u"Ensure at least %(min_num)s files are uploaded (received %(num_files)s).",
-        'max_num': u"Ensure at most %(max_num)s files are uploaded (received %(num_files)s).",
+        'min_num': u"Please select at least %(min_num)s files (found %(num_files)s).",
+        'max_num': u"Please select at most %(max_num)s files (found %(num_files)s).",
         'file_size' : u"File: %(uploaded_file_name)s, exceeded maximum upload size."
     }
 

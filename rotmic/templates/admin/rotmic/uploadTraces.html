@@ -74,6 +74,17 @@
                     <small>{{ form.orderedBy.help_text }}</small>
                 </p>
             </div>
+
+            <hr>
+
+            <div class="section">
+                <p>{{ form.comments.errors }}</p>
+                <p>
+                    <b>{{ form.comments.label_tag }}</b> {{ form.comments }} <br>
+                    <small>{{ form.comments.help_text }}</small>
+                </p>
+            </div>
+
         </div>
 
         <div class="submit-row">        
