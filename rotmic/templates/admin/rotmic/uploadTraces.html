@@ -28,64 +28,84 @@
     <form action="{% url "upload_tracefiles" %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <div class="module">
+        {% if form.non_field_errors %}<p>{{ form.non_field_errors }}</p>{% endif %}
+        <fieldset class="module">
+        
             <h2>1. Select Samples</h2>
-            <p>{{ form.non_field_errors }}</p>
-
-            <p>{{ form.samples.errors }}</p>
-            <p>
-                <b>{{ form.samples.label_tag }}</b> {{ form.samples }} <br>
-                <small>{{ form.samples.help_text }}</small>
-            </p>
+            
+            <div class="form-row field-samples">
+    
+                <div class="field-box field-samples required">
+                    {% if form.samples.errors %}<p>{{ form.samples.errors }}</p>{% endif %}
+                    <b>{{ form.samples.label_tag }}</b> {{ form.samples }} <br>
+                    <small>{{ form.samples.help_text }}</small>
+                </div>
+                
+            </div>
+        </fieldset>
      
+        <fieldset class="module">
             <h2>2. Select Trace Files</h2>
-            <p>{{ form.files.errors }}</p>
-            <p>
-                <b>{{ form.files.label_tag }}</b> {{ form.files }} <br>
-                <small>{{ form.files.help_text }}</small>
-            </p>
+
+            <div class="form-row field-files">
+
+                <div class="field-box field-files required">
+                    {% if form.files.errors %}<p>{{ form.files.errors }}</p>{% endif %}
+                    {{ form.files.label_tag }} {{ form.files }} <br>
+                    <small>{{ form.files.help_text }}</small>
+                </div>
+
+            </div>
+
+        </fieldset>
+     
+        <fieldset class="module">
             
             <h2>3. Adjust Sequencing properties</h2>
+
             <p>
                 Trace files will be pooled into one new sequencing record for each sample.
                 You can adjust the properties of these new sequencing entries below.
             </p>
-            
-            <div class="section">
-                <p>{{ form.evaluation.errors }}</p>
-                <p>
-                    <b>{{ form.evaluation.label_tag }}</b> {{ form.evaluation }} <br>
+
+            <div class="form-row field-evaluation">
+                
+                <div class="field-box field-evaluation required">
+                    {% if form.evaluation.errors %}<p>{{ form.evaluation.errors }}</p>{% endif %}
+                    {{ form.evaluation.label_tag }} {{ form.evaluation }} <br>
                     <small>{{ form.evaluation.help_text }}</small>
-                </p>
+                </div>
             </div>
+    
+            <div class="form-row field-orderedAt field-orderedBy">
+ 
+                <div class="field-box field-orderedAt required">
+                    {% if form.orderedAt.errors %}<p>{{ form.orderedAt.errors }}</p>{% endif %}
 
-            <hr>
-
-            <div class="section">
-                <p>{{ form.orderedAt.errors }}</p>
-                <p>
-                    <b>{{ form.orderedAt.label_tag }}</b> {{ form.orderedAt }} <br>
+                    {{ form.orderedAt.label_tag }} {{ form.orderedAt }} <br>
                     <small>{{ form.orderedAt.help_text }}</small>
-                </p>
+                </div>
 
-                <p>{{ form.orderedBy.errors }}</p>
-                <p>
-                    <b>{{ form.orderedBy.label_tag }}</b> {{ form.orderedBy }} <br>
-                    <small>{{ form.orderedBy.help_text }}</small>
-                </p>
+                <div class="field-box field-orderedBy required">      
+                    {% if form.orderedBy.errors %}<p>{{ form.orderedBy.errors }}</p>{% endif %}
+                        {{ form.orderedBy.label_tag }} {{ form.orderedBy }} <br>
+                        <small>{{ form.orderedBy.help_text }}</small>
+                </div>
+            </div>
+    
+            <div class="form-row field-comments">
+
+                <div class="field-box field-comments">
+                    <p>{{ form.comments.errors }}</p>
+                    <p>
+                        <b>{{ form.comments.label_tag }}</b> {{ form.comments }} <br>
+                        <small>{{ form.comments.help_text }}</small>
+                    </p>
+                </div>
+
             </div>
 
-            <hr>
-
-            <div class="section">
-                <p>{{ form.comments.errors }}</p>
-                <p>
-                    <b>{{ form.comments.label_tag }}</b> {{ form.comments }} <br>
-                    <small>{{ form.comments.help_text }}</small>
-                </p>
-            </div>
-
-        </div>
+        </fieldset>
 
         <div class="submit-row">        
             <input type="submit" class="default" value="Upload">
