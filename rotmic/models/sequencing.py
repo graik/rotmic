@@ -32,7 +32,7 @@ class SequencingRun( A.Attachment ):
     file. Extends the custom attachment class; inheriting parameters f 
     (DocumentFileField) and description (CharField).
     """
-    valid_extensions = ('abl','scf')
+    valid_extensions = ('abi', 'ab', 'ab1','scf', 'phd')
     parent_class = 'Sequencing'
     
     parent = models.ForeignKey(parent_class, related_name='runs')

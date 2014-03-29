@@ -53,8 +53,8 @@ class TracesUploadForm(forms.Form):
     
     files = MultiFileField(label='Trace files:',
                            min_num=2,
-                           extensions=['ab1', 'scf'],
-                           help_text='hold <CTRL> to select multiple files.')
+                           extensions=['ab', 'abi', 'ab1', 'scf', 'phd'],
+                           help_text='hold <CTRL> to select multiple files. Expected formats are: *.ab, *.abi, *.ab1,*.scf, *.phd')
     
     evaluation = forms.ChoiceField(label='evaluation',
                                    choices=M.Sequencing.EVALUATIONS, 
