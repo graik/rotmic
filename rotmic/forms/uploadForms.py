@@ -43,10 +43,12 @@ class FilesUploadForm(forms.Form):
 class TracesUploadForm(forms.Form):
     """Form for uploading multiple files"""
     
-    MATCHCHOICES = (('sample', 'sample ID (e.g. A01_comment.ab1)'), 
-                    ('dna', 'construct ID (e.g. rg0011_comment.ab1)'),
-                    ('containersample', 'container + sample ID (e.g. D12_A01_comment.ab1)'),
-                    ('sampledna', 'sample ID + construct ID (e.g. A01_rg0011_comment.ab1)'))
+    ID_SEPARATORS = '[_\ \-\:;]+'
+    
+    MATCHCHOICES = (('s', 'sample ID (e.g. A01_comment.ab1)'), 
+                    ('s.dna', 'construct ID (e.g. rg0011_comment.ab1)'),
+                    ('s.container:s', 'container + sample ID (e.g. D12_A01_comment.ab1)'),
+                    ('s:s.dna', 'sample ID + construct ID (e.g. A01_rg0011_comment.ab1)'))
     
     samples = forms.ModelMultipleChoiceField(M.DnaSample.objects.all(), 
                                              cache_choices=False, 
@@ -58,7 +60,7 @@ class TracesUploadForm(forms.Form):
     
     matchBy = forms.ChoiceField(label='match by',
                                   choices=MATCHCHOICES,
-                                  initial='sample',
+                                  initial='s',
                                   widget=forms.RadioSelect,
                                   required=True,
                                   help_text='select how trace file names are matched to samples.')
@@ -94,36 +96,38 @@ class TracesUploadForm(forms.Form):
     def normalize(self, s):
         """lower-case ID and remove leading zeros"""
         r = s.lower()
-        r = re.sub('^0+', '', r, )
+        r = re.sub('^0+', '', r, ) #remove leading zeros
+        # remove leading zeros after letters
+        ## \g puts the named group from the pattern match back into the string
+        r = re.sub('(?P<letters>[a-z]+)0+(?P<number>[0-9]+)', '\g<letters>\g<number>', r)
         return r
+
+    def _matchitems(self, fields, sample):
+        """
+        Extract displayIds from sample or sample sub-fields specified in fields.
+        Normalize each ID to lower case and remove any leading zeros
+        @return [str] - list of one or two IDs 
+        """
+        s = sample  ## fields are supposed to be 's' or 's.container' etc.
+        r = [ eval(f+'.displayId') for f in fields ]
+        r = [ self.normalize(s) for s in r ] 
+        return tuple(r)
 
     def clean_samples(self):
         """
         Ensure unique sample IDs needed for file name matching
-        Convert into a dict indexed by sample ID.
+        Convert sample list into a dict indexed by the ID or IDs used for matching.
         """
         data = self.cleaned_data['samples']
-        matchby = self.data['matchBy']
+        fields = self.data['matchBy'].split(':')
         
-        if matchby == 'sample':
-            sdic = { self.normalize(s.displayId) : s for s in data }
-            
-        elif matchby == 'dna':
-            sdic = { s.content.displayId : s for s in data }
-            
-        elif matchby == 'containersample':
-            sdic = { (self.normalize(s.container.displayId), self.normalize(s.displayId)) : s for s in data }
+        sdic = { self._matchitems(fields, s) : s for s in data }
 
-        elif matchby == 'sampledna':
-            sdic = { (self.normalize(s.displayId), s.content.displayId) : s for s in data }
-        
-        else:
-            raise forms.ValidationError('choice Error', code='error')
-
-        ## verify that all sample ids are unique
+        ## verify that all sample ids are unique with the current match
         if len(sdic) < len(data):
             raise forms.ValidationError(\
-                'Sorry, there are samples with identical IDs in the selected set.',
+                'Sorry, there are samples with identical IDs in the selected set. '+\
+                'Select fewer samples or change the file name matching below.',
             code='invalid')
         
         return sdic
@@ -138,25 +142,42 @@ class TracesUploadForm(forms.Form):
         elif len( self._errors[field] ) == 3:
             self._errors[field].append('...skipping further errors.')
  
+
+    def _findsample(self, fname, sdic):
+        n_fields = len(sdic.keys()[0]) ## how many fragments are supposed to match?
+
+        sep = self.ID_SEPARATORS
+        frags = [ self.normalize(x) for x in re.split(sep, fname) ]
+
+        searchfrags = tuple(frags[:n_fields]) ## should be first 1 or 2 fragments
+        if searchfrags in sdic:
+            return sdic[searchfrags]
         
+        self.add_error('files',\
+            'Cannot match %s to any of the samples.' % fname +\
+            'No sample can be identified by %s.' % ' + '.join(searchfrags) )
+        return None
+        
+    
     def mapTracesToSamples(self, files):
         """map given InMemoryFileUpload files to samples by name"""
-        sampledic = self.cleaned_data['samples']
-        r = { s : [] for s in sampledic.values() }
+        sdic = self.cleaned_data['samples']
+        
+        r = { s : [] for s in sdic.values() }
         
         for f in files:
-            frags = re.split('[\W_\-\:;]+', f.name) ## split at white space or -, _, :, ;
-            frags = [ self.normalizeId(x) for x in frags ]
+            s = self._findsample(f.name, sdic)
+            if s:
+                r[s] += [f]
 
-            if frags[0] in sampledic:
-                s = sampledic[ frags[0] ]
-                r[s] += [ f ]
-            elif len(frags) > 1 and frags[1] in sampledic:
-                s = sampledic[ frags[1] ]
-                r[s] += [ f ]
-            else:
-                self.add_error('files',\
-                    'Cannot match file %s to any of the selected samples.' % f.name +\
-                    'There is no sample with ID %s.' % frags[0])
+        if [] in r.values():
+            missing = [ str(s) for s in r.keys() if r[s] == [] ]
+            self.add_error('files',
+                           'Could not find traces for the following samples: '+\
+                           ', '.join(missing))
         
         return r
+    
+    def createSeq(self, sample, traces, **kwargs):
+        r = M.Sequencing(sample=sample, **kwargs)
+        
