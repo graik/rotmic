@@ -1,0 +1,266 @@
+LOCUS       rg2130_TurCasp3Cit_control_ok       485 aa            linear   UNA 
+FEATURES             Location/Qualifiers
+     Region          2..229
+                     /label="FP barrel"
+     Domain          2..239
+                     /label=mTurquoise2
+     Sheet           153..171
+                     /label="sheet 7"
+     Mutation        175
+                     /label="174 circ. perm. site"
+     Sheet           177..188
+                     /label="sheet 8"
+     Mutation        207
+                     /label=A206K
+     Coiled_coil     230..239
+                     /label="independent tail"
+     Protease        245..249
+                     /label=Caspase-3
+     Mutation        245
+                     /label="P5 (see PMID 18780184)"
+     Domain          258..485
+                     /label=mCitrine
+     Mutation        431
+                     /label=G174
+     Mutation        463
+                     /label=A206K
+ORIGIN
+        1 MVSKGEELFT GVVPILVELD GDVNGHKFSV SGEGEGDATY GKLTLKFICT TGKLPVPWPT
+       61 LVTTLSWGVQ CFARYPDHMK QHDFFKSAMP EGYVQERTIF FKDDGNYKTR AEVKFEGDTL
+      121 VNRIELKGID FKEDGNILGH KLEYNYFSDN VYITADKQKN GIKANFKIRH NIEDGGVQLA
+      181 DHYQQNTPIG DGPVLLPDNH YLSTQSKLSK DPNEKRDHMV LLEFVTAAGI TLGMDELYKG
+      241 GSGSLDEVDG GSGSTGMVSK GEELFTGVVP ILVELDGDVN GHKFSVSGEG EGDATYGKLT
+      301 LKFICTTGKL PVPWPTLVTT FGYGLMCFAR YPDHMKQHDF FKSAMPEGYV QERTIFFKDD
+      361 GNYKTRAEVK FEGDTLVNRI ELKGIDFKED GNILGHKLEY NYNSHNVYIM ADKQKNGIKV
+      421 NFKIRHNIED GSVQLADHYQ QNTPIGDGPV LLPDNHYLSY QSKLSKDPNE KRDHMVLLEF
+      481 VTAAG
+//
+LOCUS       rg2131_WWTurCasp3CitPep2_ok       536 aa            linear   UNA 
+FEATURES             Location/Qualifiers
+     Domain          2..42
+                     /label="WW DeltaC"
+     Region          44..271
+                     /label="FP barrel"
+     Domain          44..281
+                     /label=mTurquoise2
+     Sheet           195..213
+                     /label="sheet 7"
+     Mutation        217
+                     /label="174 circ. perm. site"
+     Sheet           219..230
+                     /label="sheet 8"
+     Mutation        249
+                     /label=A206K
+     Coiled_coil     272..281
+                     /label="independent tail"
+     Protease        287..291
+                     /label=Caspase-3
+     Mutation        287
+                     /label="P5 (see PMID 18780184)"
+     Domain          300..527
+                     /label=mCitrine
+     Mutation        473
+                     /label=G174
+     Mutation        505
+                     /label=A206K
+     Domain          529..534
+                     /label="WW weak peptide"
+ORIGIN
+        1 MFEIPDDVPL PAGWEMAKTS SGQRYFKNHI DQTTTWQDPR KAMVSKGEEL FTGVVPILVE
+       61 LDGDVNGHKF SVSGEGEGDA TYGKLTLKFI CTTGKLPVPW PTLVTTLSWG VQCFARYPDH
+      121 MKQHDFFKSA MPEGYVQERT IFFKDDGNYK TRAEVKFEGD TLVNRIELKG IDFKEDGNIL
+      181 GHKLEYNYFS DNVYITADKQ KNGIKANFKI RHNIEDGGVQ LADHYQQNTP IGDGPVLLPD
+      241 NHYLSTQSKL SKDPNEKRDH MVLLEFVTAA GITLGMDELY KGGSGSLDEV DGGSGSTGMV
+      301 SKGEELFTGV VPILVELDGD VNGHKFSVSG EGEGDATYGK LTLKFICTTG KLPVPWPTLV
+      361 TTFGYGLMCF ARYPDHMKQH DFFKSAMPEG YVQERTIFFK DDGNYKTRAE VKFEGDTLVN
+      421 RIELKGIDFK EDGNILGHKL EYNYNSHNVY IMADKQKNGI KVNFKIRHNI EDGSVQLADH
+      481 YQQNTPIGDG PVLLPDNHYL SYQSKLSKDP NEKRDHMVLL EFVTAAGSPL PPYTTG
+//
+LOCUS       rg2132_CaspSensor_circular_control_ok       571 aa            linear   UNA 
+FEATURES             Location/Qualifiers
+     Domain          2..174
+                     /label=mTurquoise2_fragmentA
+     Sheet           153..171
+                     /label="sheet 7"
+     Domain          180..220
+                     /label=WW
+     Domain          223..287
+                     /label=mTurquoise2_fragmentB
+     Mutation        223
+                     /label="174 circ. perm. site"
+     Sheet           225..236
+                     /label="sheet 8"
+     Mutation        255
+                     /label=A206K
+     Coiled_coil     278..287
+                     /label="independent tail"
+     Protease        293..297
+                     /label=Caspase-3
+     Mutation        293
+                     /label="P5 (see PMID 18780184)"
+     Domain          306..478
+                     /label=mCitrine_fragmentA
+     Domain          481..486
+                     /label=non-binding
+     Domain          487..506
+                     /label="linker18 (25A)"
+     Domain          507..571
+                     /label=mCitrine_fragmentB
+     Mutation        507
+                     /label=G174
+     Mutation        539
+                     /label=A206K
+     Coiled_coil     562..571
+                     /label="independent tail"
+ORIGIN
+        1 MVSKGEELFT GVVPILVELD GDVNGHKFSV SGEGEGDATY GKLTLKFICT TGKLPVPWPT
+       61 LVTTLSWGVQ CFARYPDHMK QHDFFKSAMP EGYVQERTIF FKDDGNYKTR AEVKFEGDTL
+      121 VNRIELKGID FKEDGNILGH KLEYNYFSDN VYITADKQKN GIKANFKIRH NIEDGGSTGF
+      181 EIPDDVPLPA GWEMAKTSSG QRYFKNHIDQ TTTWQDPRKA GGGGVQLADH YQQNTPIGDG
+      241 PVLLPDNHYL STQSKLSKDP NEKRDHMVLL EFVTAAGITL GMDELYKGGS GSLDEVDGGS
+      301 GSTGMVSKGE ELFTGVVPIL VELDGDVNGH KFSVSGEGEG DATYGKLTLK FICTTGKLPV
+      361 PWPTLVTTFG YGLMCFARYP DHMKQHDFFK SAMPEGYVQE RTIFFKDDGN YKTRAEVKFE
+      421 GDTLVNRIEL KGIDFKEDGN ILGHKLEYNY NSHNVYIMAD KQKNGIKVNF KIRHNIEDGS
+      481 GSGSGTTGGS GSQSGSGTGS ESGSTGGSVQ LADHYQQNTP IGDGPVLLPD NHYLSYQSKL
+      541 SKDPNEKRDH MVLLEFVTAA GITLGMDELY K
+//
+LOCUS       rg2133_CaspSensor_circular_ok       571 aa            linear   UNA 
+FEATURES             Location/Qualifiers
+     Domain          2..174
+                     /label=mTurquoise2_fragmentA
+     Sheet           153..171
+                     /label="sheet 7"
+     Domain          180..220
+                     /label=WW
+     Domain          223..287
+                     /label=mTurquoise2_fragmentB
+     Mutation        223
+                     /label="174 circ. perm. site"
+     Sheet           225..236
+                     /label="sheet 8"
+     Mutation        255
+                     /label=A206K
+     Coiled_coil     278..287
+                     /label="independent tail"
+     Protease        293..297
+                     /label=Caspase-3
+     Mutation        293
+                     /label="P5 (see PMID 18780184)"
+     Domain          306..478
+                     /label=mCitrine_fragmentA
+     Domain          481..486
+                     /label="WW weak peptide"
+     Domain          487..506
+                     /label="linker18 (25A)"
+     Domain          507..571
+                     /label=mCitrine_fragmentB
+     Mutation        507
+                     /label=G174
+     Mutation        539
+                     /label=A206K
+     Coiled_coil     562..571
+                     /label="independent tail"
+ORIGIN
+        1 MVSKGEELFT GVVPILVELD GDVNGHKFSV SGEGEGDATY GKLTLKFICT TGKLPVPWPT
+       61 LVTTLSWGVQ CFARYPDHMK QHDFFKSAMP EGYVQERTIF FKDDGNYKTR AEVKFEGDTL
+      121 VNRIELKGID FKEDGNILGH KLEYNYFSDN VYITADKQKN GIKANFKIRH NIEDGGSTGF
+      181 EIPDDVPLPA GWEMAKTSSG QRYFKNHIDQ TTTWQDPRKA GGGGVQLADH YQQNTPIGDG
+      241 PVLLPDNHYL STQSKLSKDP NEKRDHMVLL EFVTAAGITL GMDELYKGGS GSLDEVDGGS
+      301 GSTGMVSKGE ELFTGVVPIL VELDGDVNGH KFSVSGEGEG DATYGKLTLK FICTTGKLPV
+      361 PWPTLVTTFG YGLMCFARYP DHMKQHDFFK SAMPEGYVQE RTIFFKDDGN YKTRAEVKFE
+      421 GDTLVNRIEL KGIDFKEDGN ILGHKLEYNY NSHNVYIMAD KQKNGIKVNF KIRHNIEDGS
+      481 PLPPYTTGGS GSQSGSGTGS ESGSTGGSVQ LADHYQQNTP IGDGPVLLPD NHYLSYQSKL
+      541 SKDPNEKRDH MVLLEFVTAA GITLGMDELY K
+//
+LOCUS       rg2134_TurWWCasp3Cit_control_ok       569 aa            linear   UNA 
+FEATURES             Location/Qualifiers
+     Domain          2..229
+                     /label=mCitrine
+     Mutation        175
+                     /label=G174
+     Mutation        207
+                     /label=A206K
+     Domain          231..236
+                     /label="nonbinding  peptide"
+     Region          239..258
+                     /label="B_20 random linker"
+     Protease        262..266
+                     /label=Caspase-3
+     Mutation        262
+                     /label="P5 (see PMID 18780184)"
+     Region          270..289
+                     /label="C_20 random linker"
+     Domain          290..330
+                     /label="WW DeltaC (1 nm end to end)"
+     Region          332..559
+                     /label="FP barrel"
+     Domain          332..569
+                     /label=mTurquoise2
+     Sheet           483..501
+                     /label="sheet 7"
+     Mutation        505
+                     /label="174 circ. perm. site"
+     Sheet           507..518
+                     /label="sheet 8"
+     Mutation        537
+                     /label=A206K
+     Coiled_coil     560..569
+                     /label="independent tail"
+ORIGIN
+        1 MVSKGEELFT GVVPILVELD GDVNGHKFSV SGEGEGDATY GKLTLKFICT TGKLPVPWPT
+       61 LVTTFGYGLM CFARYPDHMK QHDFFKSAMP EGYVQERTIF FKDDGNYKTR AEVKFEGDTL
+      121 VNRIELKGID FKEDGNILGH KLEYNYNSHN VYIMADKQKN GIKVNFKIRH NIEDGSVQLA
+      181 DHYQQNTPIG DGPVLLPDNH YLSYQSKLSK DPNEKRDHMV LLEFVTAAGS GSGSGTTGTQ
+      241 SGTGGTQSGT ETSTGSGESG SLDEVDGGSQ SGTGGTQSGT ETSTGSGETF EIPDDVPLPA
+      301 GWEMAKTSSG QRYFKNHIDQ TTTWQDPRKA MVSKGEELFT GVVPILVELD GDVNGHKFSV
+      361 SGEGEGDATY GKLTLKFICT TGKLPVPWPT LVTTLSWGVQ CFARYPDHMK QHDFFKSAMP
+      421 EGYVQERTIF FKDDGNYKTR AEVKFEGDTL VNRIELKGID FKEDGNILGH KLEYNYFSDN
+      481 VYITADKQKN GIKANFKIRH NIEDGGVQLA DHYQQNTPIG DGPVLLPDNH YLSTQSKLSK
+      541 DPNEKRDHMV LLEFVTAAGI TLGMDELYK
+//
+LOCUS       rg2135_TurWWCasp3Pep2Cit_ok       569 aa            linear   UNA 
+FEATURES             Location/Qualifiers
+     Domain          2..229
+                     /label=mCitrine
+     Mutation        175
+                     /label=G174
+     Mutation        207
+                     /label=A206K
+     Domain          231..236
+                     /label="WW weak peptide"
+     Region          239..258
+                     /label="B_20 random linker"
+     Protease        262..266
+                     /label=Caspase-3
+     Mutation        262
+                     /label="P5 (see PMID 18780184)"
+     Region          270..289
+                     /label="C_20 random linker"
+     Domain          290..330
+                     /label="WW DeltaC"
+     Region          332..559
+                     /label="FP barrel"
+     Domain          332..569
+                     /label=mTurquoise2
+     Sheet           483..501
+                     /label="sheet 7"
+     Mutation        505
+                     /label="174 circ. perm. site"
+     Sheet           507..518
+                     /label="sheet 8"
+     Mutation        537
+                     /label=A206K
+     Coiled_coil     560..569
+                     /label="independent tail"
+ORIGIN
+        1 MVSKGEELFT GVVPILVELD GDVNGHKFSV SGEGEGDATY GKLTLKFICT TGKLPVPWPT
+       61 LVTTFGYGLM CFARYPDHMK QHDFFKSAMP EGYVQERTIF FKDDGNYKTR AEVKFEGDTL
+      121 VNRIELKGID FKEDGNILGH KLEYNYNSHN VYIMADKQKN GIKVNFKIRH NIEDGSVQLA
+      181 DHYQQNTPIG DGPVLLPDNH YLSYQSKLSK DPNEKRDHMV LLEFVTAAGS PLPPYTTGTQ
+      241 SGTGGTQSGT ETSTGSGESG SLDEVDGGSQ SGTGGTQSGT ETSTGSGETF EIPDDVPLPA
+      301 GWEMAKTSSG QRYFKNHIDQ TTTWQDPRKA MVSKGEELFT GVVPILVELD GDVNGHKFSV
+      361 SGEGEGDATY GKLTLKFICT TGKLPVPWPT LVTTLSWGVQ CFARYPDHMK QHDFFKSAMP
+      421 EGYVQERTIF FKDDGNYKTR AEVKFEGDTL VNRIELKGID FKEDGNILGH KLEYNYFSDN
+      481 VYITADKQKN GIKANFKIRH NIEDGGVQLA DHYQQNTPIG DGPVLLPDNH YLSTQSKLSK
+      541 DPNEKRDHMV LLEFVTAAGI TLGMDELYK
+//
