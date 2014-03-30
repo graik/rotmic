@@ -61,8 +61,6 @@ class SequencingForm(ModelFormWithRequest):
                    }
 
 class SequencingRunForm(forms.ModelForm):
-    """Customized Form for Sample add / change. 
-    To be overridden rather than used directly."""
     
     class Meta:
         model = M.SequencingRun
