@@ -42,7 +42,7 @@ class SequencingRun( A.Attachment ):
                                 blank=True, null=True )
     
     def __unicode__(self):
-        return u'trace file %i' % self.id
+        return u'trace file %i' % self.pk
 
     class Meta:
         app_label='rotmic'
