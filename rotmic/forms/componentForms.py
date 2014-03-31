@@ -79,13 +79,15 @@ class ComponentForm(ModelFormWithRequest, CleaningMixIn):
         """
         super(ComponentForm, self).__init__(*args, **kwargs)
 
-        if self.request:
+        o = kwargs.get('instance', None)
+        ## only set initial if form is unbound (new entry)
+        if not o and self.request:
             self.fields['authors'].initial = [self.request.user]
         
         self.fields['projects'].widget.can_add_related = False
         self.fields['authors'].widget_can_add_related = False
 
-        o = kwargs.get('instance', None)
+        ## only set category if form is bound (edit existing entry)
         if o and 'componentCategory' in self.fields:
             self.fields['componentCategory'].initial = o.componentType.subTypeOf
     

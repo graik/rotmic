@@ -45,8 +45,8 @@ class SequencingForm(ModelFormWithRequest):
         super(SequencingForm, self).__init__(*args, **kwargs)
 
         ## only execute for Add forms without existing instance
-        ## o = kwargs.get('instance', None)
-        if self.request: 
+        o = kwargs.get('instance', None)
+        if not o and self.request: 
             self.initial['orderedBy'] = str(self.request.user.id)
 
     class Meta:
