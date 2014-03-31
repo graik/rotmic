@@ -144,7 +144,7 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
     def showType(self, obj):
         cat = unicode(obj.componentType.category())
         try:
-            cat = cat[:4].replace(' ', '')
+            cat = cat[0].upper()
         except:
             pass
         return cat + '/ ' + unicode(obj.componentType.name)
