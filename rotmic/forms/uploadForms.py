@@ -20,8 +20,11 @@ import django.forms as forms
 from django.contrib.auth.models import User
 from django.contrib.admin.widgets import AdminDateWidget
 
+import selectable.forms as sforms
+
 from rotmic.utils.filefields import DocumentFormField
 from rotmic.utils.multiFile import MultiFileField
+import selectLookups as L
 
 import rotmic.models as M
 
@@ -51,12 +54,12 @@ class TracesUploadForm(forms.Form):
                     ('s:s.dna', 'sample ID + construct ID (e.g. A01_rg0011_comment.ab1)'))
     
     samples = forms.ModelMultipleChoiceField(M.DnaSample.objects.all(), 
-                                             cache_choices=False, 
-                                             required=True, 
-                                             widget=None, 
-                                             label='Samples', 
-                                             initial=None, 
-                                             help_text='Select the samples to which traces should be matched.')
+                        cache_choices=False, 
+                        required=True, 
+                        widget=sforms.AutoComboboxSelectMultipleWidget(lookup_class=L.DnaSampleLookup),
+                        label='Samples', 
+                        initial=None, 
+                        help_text='Select the samples to which traces should be matched.')
     
     matchBy = forms.ChoiceField(label='match by',
                                   choices=MATCHCHOICES,
@@ -81,6 +84,9 @@ class TracesUploadForm(forms.Form):
 
     orderedBy = forms.ModelChoiceField(User.objects.all(), required=True, 
                                        label='By',
+                                       widget=sforms.AutoComboboxSelectWidget(lookup_class=L.UserLookup,
+                                                       allow_new=False,
+                                                       attrs={'size':15}),
                                        help_text='User responsible for this sequencing')
     
     comments = forms.CharField(label='Comments', required=False,
@@ -91,7 +97,8 @@ class TracesUploadForm(forms.Form):
         self.request = kwarg.pop('request')
         super(TracesUploadForm, self).__init__(*arg, **kwarg)
 
-        self.fields['orderedBy'].initial = self.request.user
+        ## Note: the 'self.fields['orderedBy'].initial =' syntax doesn't work with selectable fields
+        self.initial['orderedBy'] = str(self.request.user.id)
         
     def normalize(self, s):
         """lower-case ID and remove leading zeros"""

@@ -1,17 +1,18 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_urls admin_static admin_modify %}
 
+{# prepare for "select" autocomplete fields #}
 {% block extrahead %}
-        {# Note: the order of load and super is important #}
-        {# jquery.ui libraries need to be loaded before selectable scripts #}
-        {% load selectable_tags %}
-        {% include_ui_theme %}
-        {% include_jquery_libs %}
-        
-        {{ block.super }}
+    {# Note: the order of load and super is important #}
+    {# jquery.ui libraries need to be loaded before selectable scripts #}
+    {% load selectable_tags %}
+    {% include_ui_theme %}
+    {% include_jquery_libs %}
 
-        <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-        {{ media }}
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+    {{ form.media }}
+    
+    {{ block.super }}
 {% endblock %}
 
 {# copied from changeform template#}
