@@ -3,16 +3,26 @@
 
 {# prepare for "select" autocomplete fields #}
 {% block extrahead %}
-    {# Note: the order of load and super is important #}
-    {# jquery.ui libraries need to be loaded before selectable scripts #}
+
+    {# Note: selectable scripts and ressources: the order of load and super is important #}
     {% load selectable_tags %}
     {% include_ui_theme %}
     {% include_jquery_libs %}
 
+    {# needed for selectable and calendar widgets #}   
     <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-    {{ form.media }}
+        {{ form.media }}
     
-    {{ block.super }}
+    {# needed for selectable and calendar widgets #}   
+    <script type="text/javascript"
+        src="{% static 'admin/js/core.js' %}"></script>
+
+    {# needed for calendar widgets -- double-loading is for some ordering reason neccessary #}   
+    <script type="text/javascript"
+        src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
+    
+    {# In this case, super is actually empty #}
+    {{ block.super }} 
 {% endblock %}
 
 {# copied from changeform template#}
@@ -47,6 +57,13 @@
         
             <h2>1. Select Samples</h2>
             
+            <p>One new sequencing record will be created for each sample. 
+            All trace files matched to a given sample will be attached to this new
+            record. Existing sequencing
+            records will <em>not</em> be modified. You must upload, at least,
+            one trace file for each selected sample.
+            <p>
+            
             <div class="form-row field-samples">
     
                 <div class="field-box field-samples required">
@@ -61,11 +78,11 @@
         <fieldset class="module">
             <h2>2. Select Trace Files</h2>
             
-            <p>Select trace files that should be attached to these samples.
-            Its file name will be used to match each trace to a sample. By default, 
-            file names are expected to start with the sample ID 
-            (the sample position within the container). You can change the 
-            matching below.
+            <p>
+            The file name will be used to match each trace to a sample. 
+            By default, file names are expected to start with the sample ID 
+            (the sample position within the container). You can change this 
+            matching pattern below.
             </p>
 
             <div class="form-row field-files">
@@ -87,6 +104,20 @@
                 </div>
 
             </div>
+            
+            <p><small>
+            File names need to contain certain characters that separate the
+            different IDs from each other and from the rest of the name. Allowed separating
+            characters are: '_'(underscore), ' '(space), ':', ';', '-'.
+            IDs are converted to lower case and leading zeros are removed to make
+            the matching more robust.
+            
+            For example, let's assume you have a sample with ID 'A01' which contains the 
+            DNA construct with ID 'sb0001'. If you select sample ID + construct ID matching, 
+            the following file names are all correct and will match the trace to this sample:
+            </small>
+            <code>A1_sb0001_mysequencing.ab1 or a1-sb1-mysequencing.ab1 or A01:sb001_mysequencing.ab1</code>
+            </p>
 
         </fieldset>
      

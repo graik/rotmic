@@ -59,7 +59,7 @@ class TracesUploadForm(forms.Form):
                         widget=sforms.AutoComboboxSelectMultipleWidget(lookup_class=L.DnaSampleLookup),
                         label='Samples', 
                         initial=None, 
-                        help_text='Select the samples to which traces should be matched.')
+                        help_text='Start typing container, sample or construct ID to restrict the choice.')
     
     matchBy = forms.ChoiceField(label='match by',
                                   choices=MATCHCHOICES,
