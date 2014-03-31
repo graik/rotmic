@@ -70,14 +70,20 @@ class TracesUploadView(TemplateView):
             files = request.FILES.getlist('files')
 
             d = form.mapTracesToSamples(files)
+            
             if form._errors:
                 raise ValidationError('post-form mapping error')
             
             try:
                 with transaction.atomic():
                     
-                    messages.success(request, 'found %i files.' % len(files), extra_tags='', 
-                                    fail_silently=False)
+                    for sample, traces in d.items():
+                        form.createSeq(sample, traces)
+                        messages.success(request, 
+                            u'Attached new sequencing record with %i trace files to sample %s' \
+                            % (len(traces), unicode(sample)), 
+                            extra_tags='', 
+                            fail_silently=False)
                 
             except Exception, why:
                 messages.error(request, 'Some unforeseen error occured. All imports are reverted. Reason: ' + str(why))

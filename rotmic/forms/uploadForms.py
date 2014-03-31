@@ -179,5 +179,21 @@ class TracesUploadForm(forms.Form):
         return r
     
     def createSeq(self, sample, traces, **kwargs):
-        r = M.Sequencing(sample=sample, **kwargs)
+        """Create and save new sequencing and sequencingRun instances"""
+
+        for key in ['orderedBy', 'orderedAt', 'evaluation', 'comments']:
+            kwargs[key] = self.cleaned_data[key]
         
+        kwargs['registeredBy'] = self.request.user
+        kwargs['registeredAt'] = datetime.now()
+        
+        kwargs['comments'] += '\n(Created through trace file upload)'
+
+        r = M.Sequencing(sample=sample, **kwargs)
+        r.save()
+        
+        for t in traces:
+            run = M.SequencingRun(parent=r, f=t, description='multiple file upload')
+            run.save()
+
+   

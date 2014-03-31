@@ -34,6 +34,7 @@ class SequencingRun( A.Attachment ):
     """
     valid_extensions = ('abi', 'ab', 'ab1','scf', 'phd')
     parent_class = 'Sequencing'
+    upload_to = ''
     
     parent = models.ForeignKey(parent_class, related_name='runs')
     
