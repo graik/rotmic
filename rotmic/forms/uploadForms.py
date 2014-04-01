@@ -16,6 +16,8 @@
 from datetime import datetime
 import re
 
+from Bio import SeqIO
+
 import django.forms as forms
 from django.contrib.auth.models import User
 from django.contrib.admin.widgets import AdminDateWidget
@@ -38,16 +40,39 @@ class TableUploadForm(forms.Form):
     
     
 
-class FilesUploadForm(forms.Form):
-    """Form for uploading multiple files"""
+class UploadFormBase(forms.Form):
+    """Base class for bulk file upload forms"""
     
-    files = MultiFileField(label='Now, having read all that, please select files:',)
-    
+    ID_SEPARATORS = '[_\ \-\:;\.]+'
 
-class TracesUploadForm(forms.Form):
+    def __init__(self, *arg, **kwarg):
+        self.request = kwarg.pop('request')
+        super(UploadFormBase, self).__init__(*arg, **kwarg)
+
+    def normalize(self, s):
+        """lower-case ID and remove leading zeros"""
+        r = s.lower()
+        r = re.sub('^0+', '', r, ) #remove leading zeros
+        # remove leading zeros after letters
+        ## \g puts the named group from the pattern match back into the string
+        r = re.sub('(?P<letters>[a-z]+)0+(?P<number>[0-9]+)', '\g<letters>\g<number>', r)
+        return r
+
+    def add_error(self, field, msg):
+        """
+        This method exists in Form from django 1.7+ ; remove/rename after upgrade
+        """
+        self._errors[field] = self._errors.get( field, self.error_class([]) )
+        if len( self._errors[field] ) < 3:
+            self._errors[field].append(msg)
+        elif len( self._errors[field] ) == 3:
+            self._errors[field].append('...skipping further errors.')
+ 
+
+
+class TracesUploadForm(UploadFormBase):
     """Form for attaching multiple sequencing trace files to selected DNA samples"""
     
-    ID_SEPARATORS = '[_\ \-\:;]+'
     
     MATCHCHOICES = (('s', 'sample ID (e.g. A01_comment.ab1)'), 
                     ('s.dna', 'construct ID (e.g. rg0011_comment.ab1)'),
@@ -100,21 +125,11 @@ class TracesUploadForm(forms.Form):
                                help_text='This same comment will be put into every new sequencing record')
 
     def __init__(self, *arg, **kwarg):
-        self.request = kwarg.pop('request')
         super(TracesUploadForm, self).__init__(*arg, **kwarg)
 
         ## Note: the 'self.fields['orderedBy'].initial =' syntax doesn't work with selectable fields
         self.initial['orderedBy'] = str(self.request.user.id)
         
-    def normalize(self, s):
-        """lower-case ID and remove leading zeros"""
-        r = s.lower()
-        r = re.sub('^0+', '', r, ) #remove leading zeros
-        # remove leading zeros after letters
-        ## \g puts the named group from the pattern match back into the string
-        r = re.sub('(?P<letters>[a-z]+)0+(?P<number>[0-9]+)', '\g<letters>\g<number>', r)
-        return r
-
     def _matchitems(self, fields, sample):
         """
         Extract displayIds from sample or sample sub-fields specified in fields.
@@ -144,17 +159,6 @@ class TracesUploadForm(forms.Form):
             code='invalid')
         
         return sdic
-
-    def add_error(self, field, msg):
-        """
-        This method exists in Form from django 1.7+ ; remove/rename after upgrade
-        """
-        self._errors[field] = self._errors.get( field, self.error_class([]) )
-        if len( self._errors[field] ) < 3:
-            self._errors[field].append(msg)
-        elif len( self._errors[field] ) == 3:
-            self._errors[field].append('...skipping further errors.')
- 
 
     def _findsample(self, fname, sdic):
         n_fields = len(sdic.keys()[0]) ## how many fragments are supposed to match?
@@ -223,4 +227,106 @@ class TracesUploadForm(forms.Form):
                                   primer=primer)
             run.save()
 
-   
+
+class GenbankUploadForm(UploadFormBase):
+    
+    constructs = forms.ModelMultipleChoiceField(M.DnaComponent.objects.all(), 
+                        cache_choices=False, 
+                        required=True, 
+                        widget=sforms.AutoComboboxSelectMultipleWidget(lookup_class=L.DnaLookup),
+                        label='DNA constructs', 
+                        initial=None, 
+                        help_text='')
+    
+    genbank = MultiFileField(label='Genbank file(s)',
+                           min_num=2,
+                           extensions=['gb', 'gbk', 'genbank'],
+                           help_text='Hold <CTRL> to select multiple files.')
+
+    def clean_constructs(self):
+        """
+        Convert dna list into a dict indexed by the ID for matching.
+        """
+        data = self.cleaned_data['constructs']
+        
+        sdic = { self.normalize(s.displayId) : s for s in data }
+
+        ## verify that all construct ids are unique with the current match
+        if len(sdic) < len(data):
+            raise forms.ValidationError(\
+                'Sorry, there are constructs with (almost) identical IDs in the selected set. '+\
+                'For example: SB0001 would be considered the same as sb01',
+            code='invalid')
+        
+        return sdic
+    
+    def clean_genbank(self):
+        """Convert uploaded file(s) into list of genbank record objects"""
+        data = self.cleaned_data['genbank']
+        
+        r = []
+        try:
+            for f in data:
+                r += list( SeqIO.parse( f, 'gb' ) ) 
+
+        except StopIteration:
+            raise forms.ValidationError('Empty or corrupted genbank file')
+        except ValueError, why:
+            raise forms.ValidationError('Error parsing genbank record: %r' % why)
+            
+        return r
+
+
+    def findDna(self, name, sdic):
+
+        frag = self.normalize( re.split(self.ID_SEPARATORS, name)[0] )
+
+        if frag in sdic:
+            return sdic[frag]
+        
+        self.add_error('files',\
+            'Cannot match %s to any of the constructs.' % name +\
+            'No construct can be identified by %s.' % frag )
+        return None
+
+
+    def mapGenbankToDna(self):
+        """map given InMemoryFileUpload files to samples by name"""
+        sdic = self.cleaned_data['constructs']
+        records = self.cleaned_data['genbank']
+        
+        r = { s : None for s in sdic.values() }
+        
+        for gb in records:
+            dna = self.findDna(gb.name, sdic)
+
+            if dna:
+                if r[dna] != None:
+                    self.add_error('genbank',
+                        'Duplicate entries: records %s and %s both match to the same construct %s' %\
+                        (r[dna].name, gb.name, dna.displayId))
+
+                r[dna] = gb
+
+        if None in r.values():
+            missing = [ x.displayId for x in r.keys() if r[x] == None ]
+            self.add_error('genbank',
+                           'Could not find record for the following constructs: '+\
+                           ', '.join(missing))
+        
+        return r
+
+    def attachGenbank(self, dna, seqrecord):
+        """extract genbank file from upload field"""
+        try:
+            dna.sequence = seqrecord.seq.tostring()
+            dna.name = dna.name or seqrecord.name
+            dna.description = dna.description or seqrecord.description
+            
+            
+            
+            dna.save()
+            
+        except ValueError, why:
+            msg = 'Error attaching genbank record: %r' % why
+            self._errors['genbank'] = self.error_class([msg])       

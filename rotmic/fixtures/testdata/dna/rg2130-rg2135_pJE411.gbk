@@ -1,4 +1,4 @@
-LOCUS       rg2130_pJE411      5460 bp    DNA     circular UNA 
+LOCUS       rg2130b_pJE411     5460 bp    DNA     circular UNA 
 FEATURES             Location/Qualifiers
      Vector          join(1747..5460,1..234)
                      /label=pJExpress411
@@ -151,7 +151,7 @@ ORIGIN
      5341 ttaaataaga tacgttgctt tttcgattga tgaacaccta taattaaact attcatctat
      5401 tatttatgat tttttgtata tacaatattt ctagtttgtt aaagagaatt aagaaaataa
 //
-LOCUS       rg2131_pJE411      5613 bp    DNA     circular UNA 
+LOCUS       rg2131b_pJE411     5613 bp    DNA     circular UNA 
 FEATURES             Location/Qualifiers
      Vector          join(1900..5613,1..234)
                      /label=pJExpress411
@@ -303,7 +303,7 @@ ORIGIN
      5521 tgatgaacac ctataattaa actattcatc tattatttat gattttttgt atatacaata
      5581 tttctagttt gttaaagaga attaagaaaa taa
 //
-LOCUS       rg2132_pJE411      5718 bp    DNA     circular UNA 
+LOCUS       rg2132b_pJE411     5718 bp    DNA     circular UNA 
 FEATURES             Location/Qualifiers
      Vector          join(2005..5718,1..234)
                      /label=pJExpress411
@@ -461,7 +461,7 @@ ORIGIN
      5641 attaaactat tcatctatta tttatgattt tttgtatata caatatttct agtttgttaa
      5701 agagaattaa gaaaataa
 //
-LOCUS       rg2133_pJE411      5718 bp    DNA     circular UNA 
+LOCUS       rg2133b_pJE411     5718 bp    DNA     circular UNA 
 FEATURES             Location/Qualifiers
      Vector          join(2005..5718,1..234)
                      /label=pJExpress411
@@ -619,7 +619,7 @@ ORIGIN
      5641 attaaactat tcatctatta tttatgattt tttgtatata caatatttct agtttgttaa
      5701 agagaattaa gaaaataa
 //
-LOCUS       rg2134_pJE411      5712 bp    DNA     circular UNA 
+LOCUS       rg2134b_pJE411     5712 bp    DNA     circular UNA 
 FEATURES             Location/Qualifiers
      Vector          join(1999..5712,1..234)
                      /label=pJExpress411
@@ -771,7 +771,7 @@ ORIGIN
      5641 ctattcatct attatttatg attttttgta tatacaatat ttctagtttg ttaaagagaa
      5701 ttaagaaaat aa
 //
-LOCUS       rg2135_pJE411      5712 bp    DNA     circular UNA 
+LOCUS       rg2135b_pJE411     5712 bp    DNA     circular UNA 
 FEATURES             Location/Qualifiers
      Vector          join(1999..5712,1..234)
                      /label=pJExpress411

@@ -725,7 +725,7 @@
     "pk": 3, 
     "model": "rotmic.component", 
     "fields": {
-        "name": "pJEx411", 
+        "name": "pJEx411a", 
         "registeredBy": 1, 
         "modifiedAt": "2014-03-27T19:24:22.835Z", 
         "authors": [
@@ -1159,7 +1159,7 @@
     "pk": 54, 
     "model": "rotmic.component", 
     "fields": {
-        "name": "pJ603", 
+        "name": "pJ603c", 
         "registeredBy": 1, 
         "modifiedAt": "2014-03-27T17:56:41.976Z", 
         "authors": [

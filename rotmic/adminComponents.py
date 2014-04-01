@@ -21,6 +21,7 @@ from collections import OrderedDict
 from django.contrib import admin, messages
 from django.utils import safestring, html
 import django.contrib.staticfiles.templatetags.staticfiles as ST
+from django.http import HttpResponseRedirect
 
 import reversion
 from Bio import SeqIO
@@ -207,7 +208,7 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     
     ordering = ('displayId', 'name')
     
-    actions = ['make_csv']
+    actions = ['make_csv', 'make_genbank']
     
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
@@ -284,9 +285,6 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     showMarkerUrls.allow_tags = True
     showMarkerUrls.short_description = 'Markers'
 
-    def make_csv(self, request, queryset):
-        return export_csv( request, queryset, self.csv_fields)
-    make_csv.short_description = 'Export items as CSV'
 
     def showSampleStatus(self, obj):
         fyes = ST.static('admin/img/icon-yes.gif')
@@ -315,6 +313,19 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     showSampleStatus.allow_tags = True    
     showSampleStatus.short_description = 'Smpls' 
 
+
+    def make_csv(self, request, queryset):
+        return export_csv( request, queryset, self.csv_fields)
+    make_csv.short_description = 'Export items as CSV'
+
+    def make_genbank(self, request, queryset):
+        """List view action to attach sequencing data to samples"""
+        ## see https://docs.djangoproject.com/en/dev/ref/contrib/admin/actions/#actions-that-provide-intermediate-pages
+
+        selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
+        return HttpResponseRedirect("/rotmic/upload/genbank/?constructs=%s" % (",".join(selected)))
+
+    make_genbank.short_description = 'Attach genbank records'
 
 admin.site.register(M.DnaComponent, DnaComponentAdmin)
 

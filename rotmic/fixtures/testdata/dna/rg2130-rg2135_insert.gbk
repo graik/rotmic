@@ -1,5 +1,5 @@
-LOCUS       rg2130_linear_control      1455 bp    DNA     circular SYN 13/Jun/2012
-DEFINITION  rg2130_linear_control_optHs [cloned in pJ603]
+LOCUS       rg2130f_linear_control     1455 bp    DNA     circular SYN 13/Jun/2012
+DEFINITION  rg2130f_linear_control_optHs
 ACCESSION   DNA2.0 Id: 88072
 SOURCE      Synthetic (unknown)
   ORGANISM  Synthetic
@@ -48,8 +48,8 @@ ORIGIN
      1381 CAGTCGAAGT TGTCCAAAGA CCCCAACGAG AAGAGGGATC ACATGGTGCT TCTTGAATTT
      1441 GTCACAGCCG CTGGT
 //
-LOCUS       rg2131_linearWW      1605 bp    DNA     circular SYN 13/Jun/2012
-DEFINITION  rg2131_linear_optHs [cloned in pJ603]
+LOCUS       rg2131f_linearWW     1605 bp    DNA     circular SYN 13/Jun/2012
+DEFINITION  rg2131f_linear_optHs
 ACCESSION   DNA2.0 Id: 88073
 SOURCE      Synthetic (unknown)
   ORGANISM  Synthetic
@@ -98,8 +98,8 @@ ORIGIN
      1501 TACCAGTCGA AGTTGTCCAA AGACCCCAAC GAGAAGAGGG ATCACATGGT GCTTCTTGAA
      1561 TTTGTCACAG CCGCTGGTAG CCCTTTGCCG CCGTACACGA CAGGA
 //
-LOCUS       rg2132_circular_control      1710 bp    DNA     circular SYN 13/Jun/2012
-DEFINITION  rg2132_circular_control_optHs [cloned in pJ603]
+LOCUS       rg2132f_circular_control     1710 bp    DNA     circular SYN 13/Jun/2012
+DEFINITION  rg2132f_circular_control_optHs
 ACCESSION   DNA2.0 Id: 88074
 SOURCE      Synthetic (unknown)
   ORGANISM  Synthetic
@@ -156,8 +156,8 @@ ORIGIN
      1621 AAAGACCCCA ACGAGAAGAG GGATCACATG GTGCTTCTTG AATTTGTCAC AGCCGCTGGT
      1681 ATTACCCTCG GTATGGATGA ATTGTACAAA
 //
-LOCUS       rg2133_circularWW      1710 bp    DNA     circular SYN 13/Jun/2012
-DEFINITION  rg2133_circular_optHs [cloned in pJ603]
+LOCUS       rg2133f_circularWW     1710 bp    DNA     circular SYN 13/Jun/2012
+DEFINITION  rg2133f_circular_optHs
 ACCESSION   DNA2.0 Id: 88075
 SOURCE      Synthetic (unknown)
   ORGANISM  Synthetic
@@ -214,8 +214,8 @@ ORIGIN
      1621 AAAGACCCCA ACGAGAAGAG GGATCACATG GTGCTTCTTG AATTTGTCAC AGCCGCTGGT
      1681 ATTACCCTCG GTATGGATGA ATTGTACAAA
 //
-LOCUS       rg2134_long_control      1704 bp    DNA     circular SYN 13/Jun/2012
-DEFINITION  rg2134_TurWWCasp3Cit_control_optHs_v3 [cloned in pJ603]
+LOCUS       rg2134f_long_control     1704 bp    DNA     circular SYN 13/Jun/2012
+DEFINITION  rg2134f_TurWWCasp3Cit_control_optHs_v3
 ACCESSION   DNA2.0 Id: 88076
 SOURCE      Synthetic (unknown)
   ORGANISM  Synthetic
@@ -266,8 +266,8 @@ ORIGIN
      1621 CCCAATGAGA AACGGGACCA TATGGTCTTG CTGGAGTTCG TCACTGCCGC AGGCATCACA
      1681 CTGGGGATGG ACGAGCTTTA CAAG
 //
-LOCUS       rg2135_longWW      1704 bp    DNA     circular SYN 13/Jun/2012
-DEFINITION  rg2135_TurWWCasp3Pep2Cit_v2_optHs_v3 [cloned in pJ603]
+LOCUS       rg2135f_longWW     1704 bp    DNA     circular SYN 13/Jun/2012
+DEFINITION  rg2135f_TurWWCasp3Pep2Cit_v2_optHs_v3
 ACCESSION   DNA2.0 Id: 88077
 SOURCE      Synthetic (unknown)
   ORGANISM  Synthetic

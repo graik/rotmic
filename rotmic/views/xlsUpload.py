@@ -26,7 +26,7 @@ import django.db.utils as U
 import rotmic.models as M
 import rotmic.utils.importExcel as I
 
-from rotmic.forms import TableUploadForm, FilesUploadForm, TracesUploadForm
+from rotmic.forms import TableUploadForm
 
 
 class XlsUploadView(TemplateView):

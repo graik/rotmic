@@ -96,7 +96,40 @@ class ComponentForm(ModelFormWithRequest, CleaningMixIn):
         widgets = getComponentWidgets()
 
 
-class DnaComponentForm(ComponentForm):
+class GenbankMixin:
+
+    def extractGenbank(self, data):
+        """extract genbank file from upload field"""
+        try:
+            if data.get('genbankFile', None):
+                if self.errors:
+                    msg = 'Please correct the other error(s) and upload the file again.'
+                    self._errors['genbankFile'] = self.error_class([msg])
+                else:
+                    o = self.instance
+                    upload = data['genbankFile']
+                    o.genbank = ''.join(upload.readlines())
+    
+                    f = StringIO.StringIO( o.genbank )
+                    seqrecord = SeqIO.parse( f, 'gb' ).next()
+                    data['sequence'] = seqrecord.seq.tostring()
+                    if not data.get('name', ''):
+                        data['name'] = seqrecord.name
+                    if not data.get('description', ''):
+                        data['description'] = seqrecord.description
+                    
+                    return True
+        except StopIteration:
+            msg = 'Empty or corrupted genbank file'
+            self._errors['genbankFile'] = self.error_class([msg])
+        except ValueError, why:
+            msg = 'Error reading genbank file: %r' % why
+            self._errors['genbankFile'] = self.error_class([msg])
+
+        return False
+    
+
+class DnaComponentForm(ComponentForm, GenbankMixin):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
@@ -211,31 +244,8 @@ class DnaComponentForm(ComponentForm):
 
         self._validateLinkedMany(data['markers'], [T.dcMarker])
         
-        ## extract genbank file from upload field
-        try:
-            if data.get('genbankFile', None):
-                if self.errors:
-                    msg = 'Please correct the other error(s) and upload the file again.'
-                    self._errors['genbankFile'] = self.error_class([msg])
-                else:
-                    o = self.instance
-                    upload = data['genbankFile']
-                    o.genbank = ''.join(upload.readlines())
-    
-                    f = StringIO.StringIO( o.genbank )
-                    seqrecord = SeqIO.parse( f, 'gb' ).next()
-                    data['sequence'] = seqrecord.seq.tostring()
-                    if not data.get('name', ''):
-                        data['name'] = seqrecord.name
-                    if not data.get('description', ''):
-                        data['description'] = seqrecord.description
-        except StopIteration:
-            msg = 'Empty or corrupted genbank file'
-            self._errors['genbankFile'] = self.error_class([msg])
-        except ValueError, why:
-            msg = 'Error reading genbank file: %r' % why
-            self._errors['genbankFile'] = self.error_class([msg])
-
+        self.extractGenbank(data)
+        
         return data
       
                 
@@ -361,7 +371,7 @@ class ChemicalComponentForm(ComponentForm):
         widgets = getComponentWidgets( extra={} )
 
     
-class ProteinComponentForm(ComponentForm):
+class ProteinComponentForm(ComponentForm, GenbankMixin):
     """Customized Form for ProteinComponent add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
@@ -417,31 +427,7 @@ class ProteinComponentForm(ComponentForm):
         """
         data = super(ProteinComponentForm, self).clean()
         
-        ## extract genbank file from upload field
-        try:
-            if data.get('genbankFile', None):
-                if self.errors:
-                    msg = 'Please correct the other error(s) and upload the file again.'
-                    self._errors['genbankFile'] = self.error_class([msg])
-                else:
-                    o = self.instance
-                    upload = data['genbankFile']
-                    o.genbank = ''.join(upload.readlines())
-    
-                    f = StringIO.StringIO( o.genbank )
-                    seqrecord = SeqIO.parse( f, 'gb' ).next()
-                    data['sequence'] = seqrecord.seq.tostring()
-                    if not data.get('name', ''):
-                        data['name'] = seqrecord.name
-                    if not data.get('description', ''):
-                        data['description'] = seqrecord.description
-        except StopIteration:
-            msg = 'Empty or corrupted genbank file'
-            self._errors['genbankFile'] = self.error_class([msg])
-        except ValueError, why:
-            msg = 'Error reading genbank file: %r' % why
-            self._errors['genbankFile'] = self.error_class([msg])
-
+        self.extractGenbank(data)
         return data
     
     

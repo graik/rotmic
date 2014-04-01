@@ -1,35 +1,99 @@
 {% extends "admin/base_site.html" %}
-{% load i18n admin_static %}
+{% load i18n admin_urls admin_static admin_modify %}
+
+{# prepare for "select" autocomplete fields #}
+{% block extrahead %}
+
+    {# Note: selectable scripts and ressources: the order of load and super is important #}
+    {% load selectable_tags %}
+    {% include_ui_theme %}
+    {% include_jquery_libs %}
+
+    {# needed for selectable and calendar widgets #}   
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+        {{ form.media }}
+    
+    {# needed for selectable and calendar widgets #}   
+    <script type="text/javascript"
+        src="{% static 'admin/js/core.js' %}"></script>
+
+    {# needed for calendar widgets -- double-loading is for some ordering reason neccessary #}   
+    <script type="text/javascript"
+        src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
+    
+    {# In this case, super is actually empty #}
+    {{ block.super }} 
+{% endblock %}
+
+{# copied from changeform template#}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />{%endblock%}
+
 
 {% block breadcrumbs%}
 <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
     <a href="{% url 'admin:index' %}">Rotmic</a> &rsaquo;
     <a href="{% url 'admin:rotmic_'|add:model_name|add:'_changelist' %}">{% block object-class1 %}{{verbose_name|capfirst}}s{% endblock %}</a> &rsaquo;
-    Upload Genbank
+    Attach Genbank records
 </div>
 {% endblock %}
 
 
 {% block content %}        
 
-    <p><br></p>
+    <h2>Attach Genbank records to Constructs</h2>
+
     <ul class="object-tools">
         <li><a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/upload-xls" class="helplink">{% trans "Help!" %}</a></li>
     </ul>
 
-    <h2>Attach Genbank files to {{verbose_name}}s</h2>
     
     <!-- Upload form. Note enctype attribute! -->
-    <form action="{% url "attach_"|add:model_name %}" method="post" enctype="multipart/form-data">
+    <form action="{% url "upload_genbank" %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <p>{{ form.non_field_errors }}</p>
-        <p>{{ form.files.label_tag }} {{ form.files.help_text }}</p>
-        <p>
-                {{ form.files.errors }}
-                {{ form.files }}
-        </p>
-        <p><input type="submit" value="Upload" /></p>
+
+        {% if form.non_field_errors %}<p>{{ form.non_field_errors }}</p>{% endif %}
+        <fieldset class="module">
+        
+            <h2>1. Select Constructs</h2>
+            
+            <p><p>
+            
+            <div class="form-row field-constructs">
+    
+                <div class="field-box field-constructs required"
+                title="Start typing construct ID or name to restrict the choice.">
+                    {% if form.constructs.errors %}<p>{{ form.constructs.errors }}</p>{% endif %}
+                    <b>{{ form.constructs.label_tag }}</b> {{ form.constructs }} <br>
+                    <small>{{ form.constructs.help_text }}</small>
+                </div>
+                
+            </div>
+        </fieldset>
+     
+        <fieldset class="module">
+            <h2>2. Choose Genbank file</h2>
+            
+            <p>
+            The genbank record names will be used to match each entry to a construct. 
+            </p>
+
+            <div class="form-row field-genbank">
+
+                <div class="field-box field-genbank required">
+                    {% if form.genbank.errors %}<p>{{ form.genbank.errors }}</p>{% endif %}
+                    {{ form.genbank.label_tag }} {{ form.genbank }} <br>
+                    <small>{{ form.genbank.help_text }}</small>
+                </div>
+
+            </div>
+
+        </fieldset>
+     
+        <div class="submit-row">        
+            <input type="submit" class="default" value="Upload">
+        </div>
+ 
     </form>
                 
 {% endblock %}

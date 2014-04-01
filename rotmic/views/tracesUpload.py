@@ -26,7 +26,7 @@ import django.db.utils as U
 
 import rotmic.models as M
 
-from rotmic.forms import TracesUploadForm, FilesUploadForm
+from rotmic.forms import TracesUploadForm, GenbankUploadForm
 
 class TracesUploadView(TemplateView):
     """Attach ABL sequencing trace files to existing Sequencing records"""
@@ -100,15 +100,25 @@ class GbkUploadView(TemplateView):
     """Attach genbank files to existing dnacomponent records"""
     template_name = 'admin/rotmic/uploadGbk.html'
    
-    form_class = FilesUploadForm
+    form_class = GenbankUploadForm
     
     model = M.DnaComponent
     
-    def get(self, request):
-        form = self.form_class()
+    def renderForm(self, request, form):
         return render( request, self.template_name, 
                        {'form':form, 'verbose_name':self.model._meta.verbose_name,
                         'model_name':self.model._meta.object_name.lower() })
+
+    def get(self, request):
+        """Create new form"""
+        ## extract sample ids from URL
+        initial = {}
+        constructs = request.GET.get('constructs', '')
+        if constructs:
+            initial['constructs'] = [ int(x) for x in  constructs.split(',') ]
+
+        form = self.form_class(request=request, initial=initial )
+        return self.renderForm(request, form)
     
     def returnto(self):
         """
@@ -120,21 +130,33 @@ class GbkUploadView(TemplateView):
     
     ## see: https://github.com/axelpale/minimal-django-file-upload-example/blob/master/src/for_django_1-5/myproject/myproject/myapp/views.py
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES)
-        if form.is_valid():
+        form = self.form_class(request.POST, request.FILES, request=request)
+
+        try:
+            if not form.is_valid():
+                raise ValidationError('form-level validation error')
             
-            files = request.FILES.getlist('files')
+            d = form.mapGenbankToDna()
+            
+            if form._errors:
+                raise ValidationError('post-form mapping error')
             
             try:
                 with transaction.atomic():
                     
-                    messages.success(request, 'found %i files.' % len(files), extra_tags='', 
-                                    fail_silently=False)
+                    for dna, gb in d.items():
+                        form.attachGenbank(dna, gb)
+                        messages.success(request, 
+                            u'Attached genbank record to construct %s' \
+                            % unicode(dna), 
+                            extra_tags='', 
+                            fail_silently=False)
                 
             except Exception, why:
                 messages.error(request, 'Some unforeseen error occured. All imports are reverted. Reason: ' + str(why))
 
-        else:
-            messages.error(request, 'No Excel file given.')
+        except ValidationError, why:
+            ## re-display with error messages
+            return self.renderForm(request, form)
                 
         return HttpResponseRedirect(reverse(self.returnto()))

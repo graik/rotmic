@@ -27,4 +27,4 @@ from sampleForms import SampleForm, DnaSampleForm, CellSampleForm, \
 
 from sequencingForms import SequencingForm, SequencingRunForm
 
-from uploadForms import TableUploadForm, FilesUploadForm, TracesUploadForm
+from uploadForms import TableUploadForm, GenbankUploadForm, TracesUploadForm
