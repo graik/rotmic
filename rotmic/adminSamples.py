@@ -108,7 +108,7 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, Vi
     save_as = True
     save_on_top = True
 
-    search_fields = ('diplayId', 'name','description', 'experimentNr')
+    search_fields = ('displayId', 'name','description', 'experimentNr')
     
     list_filter = ('status', filters.SampleLocationFilter, 
                    filters.SampleRackFilter, filters.SampleContainerFilter,
