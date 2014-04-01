@@ -145,10 +145,11 @@ class GbkUploadView(TemplateView):
                 with transaction.atomic():
                     
                     for dna, gb in d.items():
-                        form.attachGenbank(dna, gb)
+                        replaced = form.replaceGenbank(dna, gb)
+                        msg = u'Replaced genbank record in' if replaced else u'Attached new genbank record to'
+                        
                         messages.success(request, 
-                            u'Attached genbank record to construct %s' \
-                            % unicode(dna), 
+                            msg + ' construct %s' % unicode(dna), 
                             extra_tags='', 
                             fail_silently=False)
                 

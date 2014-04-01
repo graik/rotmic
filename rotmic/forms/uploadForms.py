@@ -288,11 +288,14 @@ class GenbankUploadForm(UploadFormBase):
                     r += [ seqrecord ]
 
         except StopIteration, why:
-            raise forms.ValidationError('Empty or corrupted genbank file: %r' % why)
+            raise forms.ValidationError('Empty or corrupted genbank file %s: %r' % \
+                                        (f.name, why))
         except ValueError, why:
-            raise forms.ValidationError('Error parsing genbank record: %r' % why)
+            raise forms.ValidationError('Error parsing genbank record from %s: %r' % \
+                                        (f.name, why))
         except Exception, why:
-            raise forms.ValidationError("")
+            raise forms.ValidationError("Unknown error parsing %r: %r" % \
+                                        (f, why))
             
         return r
 
@@ -336,16 +339,24 @@ class GenbankUploadForm(UploadFormBase):
         
         return r
 
-    def attachGenbank(self, dna, seqrecord):
-        """extract genbank file from upload field"""
+    def replaceGenbank(self, dna, seqrecord):
+        """
+        extract genbank file from upload field
+        @return True if this replaces an existing record, False otherwise
+        """
+        replaced = False
         try:
             dna.sequence = seqrecord.seq.tostring()
             dna.name = dna.name or seqrecord.name
             dna.description = dna.description or seqrecord.description
 
+            replaced = bool(dna.genbank) ## empty? 
+            
             dna.genbank = seqrecord.original ## custom variable created in clean_genbank           
             dna.save()
             
         except ValueError, why:
             msg = 'Error attaching genbank record: %r' % why
-            self._errors['genbank'] = self.error_class([msg])       
+            self._errors['genbank'] = self.error_class([msg])
+
+        return replaced
