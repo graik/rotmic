@@ -114,7 +114,7 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, Vi
     
     list_filter = ('status', filters.SampleLocationFilter, 
                    filters.SampleRackFilter, filters.SampleContainerFilter,
-                   filters.SortedUserFilter)
+                   filters.SortedPreparedByFilter)
     
     actions = ['make_csv']
     
@@ -248,7 +248,7 @@ class DnaSampleAdmin( SampleAdmin ):
 
     list_filter = ('status', filters.DnaSampleLocationFilter, 
                    filters.DnaSampleRackFilter, filters.DnaSampleContainerFilter,
-                   'dna__projects', filters.SortedUserFilter )
+                   'dna__projects', filters.SortedPreparedByFilter )
     
     actions = SampleAdmin.actions + ['make_sequencing']
     
@@ -303,7 +303,7 @@ class CellSampleAdmin( SampleAdmin ):
     
     list_filter = ('status', filters.CellSampleLocationFilter, 
                    filters.CellSampleRackFilter, filters.CellSampleContainerFilter,
-                   'cell__projects', filters.SortedUserFilter)
+                   'cell__projects', filters.SortedPreparedByFilter)
 
     search_fields = SampleAdmin.search_fields + \
         ['cell__displayId', 'cell__name', 'cell__plasmid__displayId', 'cell__plasmid__name']
@@ -346,7 +346,7 @@ class OligoSampleAdmin( SampleAdmin ):
 
     list_filter = ('status', filters.OligoSampleLocationFilter, 
                    filters.OligoSampleRackFilter, filters.OligoSampleContainerFilter,
-                   'oligo__projects', filters.SortedUserFilter)
+                   'oligo__projects', filters.SortedPreparedByFilter)
         
     search_fields = SampleAdmin.search_fields + ['oligo__displayId', 'oligo__name']
 
@@ -388,7 +388,7 @@ class ChemicalSampleAdmin( SampleAdmin ):
 
     list_filter = ('status', filters.ChemicalSampleLocationFilter, 
                    filters.ChemicalSampleRackFilter, filters.ChemicalSampleContainerFilter,
-                   'chemical__projects', filters.SortedUserFilter)
+                   'chemical__projects', filters.SortedPreparedByFilter)
         
     search_fields = SampleAdmin.search_fields + ['chemical__displayId', 'chemical__name']
 
@@ -430,7 +430,7 @@ class ProteinSampleAdmin( SampleAdmin ):
 
     list_filter = ('status', filters.ProteinSampleLocationFilter, 
                    filters.ProteinSampleRackFilter, filters.ProteinSampleContainerFilter,
-                   'protein__projects', filters.SortedUserFilter)
+                   'protein__projects', filters.SortedPreparedByFilter)
         
     search_fields = SampleAdmin.search_fields + ['protein__displayId', 'protein__name']
 

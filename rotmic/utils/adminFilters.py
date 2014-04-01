@@ -542,3 +542,7 @@ class SortedAuthorFilter( SortedUserFilter ):
 class SortedOrderedByFilter( SortedUserFilter ):
     
     user_field = 'orderedBy'  ## override if needed
+    
+class SortedPreparedByFilter( SortedUserFilter ):
+    
+    user_field = 'preparedBy'  ## override if needed
