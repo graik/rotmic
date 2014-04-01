@@ -295,6 +295,8 @@ class SequencingRunInline(admin.TabularInline):
 class SequencingAdmin(UserRecordMixin, RequestFormMixin, reversion.VersionAdmin):
     form = forms.SequencingForm
     
+    change_list_template = "admin/rotmic/sequencing/change_list.html"
+
     inlines = [ SequencingRunInline ]
 
     fieldsets = (

@@ -1,0 +1,15 @@
+{% extends "reversion/change_list.html" %}
+
+{% load i18n admin_modify  %}
+
+          {% block object-tools-items %}
+            {{ block.super }}
+            <li>
+              <a href="{% url 'upload_tracefiles' %}{% if is_popup %}?_popup=1{% endif %}" 
+                 class="addlink"
+                 title="You can more conveniently access this feature from the DNA samples List / Actions dropdown which allows you to pre-select samples rather than typing them in."
+                 >
+                Bulk upload
+              </a>
+            </li>
+          {% endblock %}
