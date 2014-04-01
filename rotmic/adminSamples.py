@@ -108,7 +108,9 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, Vi
     save_as = True
     save_on_top = True
 
-    search_fields = ('displayId', 'name','description', 'experimentNr')
+    search_fields = ['displayId', 
+                     'preparedBy__username', 'preparedBy__first_name', 'preparedBy__last_name',
+                     'description', 'experimentNr','solvent']
     
     list_filter = ('status', filters.SampleLocationFilter, 
                    filters.SampleRackFilter, filters.SampleContainerFilter,
@@ -249,6 +251,8 @@ class DnaSampleAdmin( SampleAdmin ):
                    'dna__projects', filters.SortedUserFilter )
     
     actions = SampleAdmin.actions + ['make_sequencing']
+    
+    search_fields = SampleAdmin.search_fields + ['dna__displayId', 'dna__name']
         
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
@@ -300,6 +304,9 @@ class CellSampleAdmin( SampleAdmin ):
     list_filter = ('status', filters.CellSampleLocationFilter, 
                    filters.CellSampleRackFilter, filters.CellSampleContainerFilter,
                    'cell__projects', filters.SortedUserFilter)
+
+    search_fields = SampleAdmin.search_fields + \
+        ['cell__displayId', 'cell__name', 'cell__plasmid__displayId', 'cell__plasmid__name']
         
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
@@ -341,6 +348,8 @@ class OligoSampleAdmin( SampleAdmin ):
                    filters.OligoSampleRackFilter, filters.OligoSampleContainerFilter,
                    'oligo__projects', filters.SortedUserFilter)
         
+    search_fields = SampleAdmin.search_fields + ['oligo__displayId', 'oligo__name']
+
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
         return super(SampleAdmin,self).queryset(request)
@@ -381,6 +390,8 @@ class ChemicalSampleAdmin( SampleAdmin ):
                    filters.ChemicalSampleRackFilter, filters.ChemicalSampleContainerFilter,
                    'chemical__projects', filters.SortedUserFilter)
         
+    search_fields = SampleAdmin.search_fields + ['chemical__displayId', 'chemical__name']
+
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
         return super(SampleAdmin,self).queryset(request)
@@ -421,6 +432,8 @@ class ProteinSampleAdmin( SampleAdmin ):
                    filters.ProteinSampleRackFilter, filters.ProteinSampleContainerFilter,
                    'protein__projects', filters.SortedUserFilter)
         
+    search_fields = SampleAdmin.search_fields + ['protein__displayId', 'protein__name']
+
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
         return super(SampleAdmin,self).queryset(request)
