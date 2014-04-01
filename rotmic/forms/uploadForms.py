@@ -25,6 +25,7 @@ import selectable.forms as sforms
 from rotmic.utils.filefields import DocumentFormField
 from rotmic.utils.multiFile import MultiFileField
 import selectLookups as L
+import rotmic.initialTypes as T
 
 import rotmic.models as M
 
@@ -59,7 +60,7 @@ class TracesUploadForm(forms.Form):
                         widget=sforms.AutoComboboxSelectMultipleWidget(lookup_class=L.DnaSampleLookup),
                         label='Samples', 
                         initial=None, 
-                        help_text='Start typing container, sample or construct ID to restrict the choice.')
+                        help_text='')
     
     matchBy = forms.ChoiceField(label='match by',
                                   choices=MATCHCHOICES,
@@ -67,6 +68,11 @@ class TracesUploadForm(forms.Form):
                                   widget=forms.RadioSelect,
                                   required=True,
                                   help_text='select how trace file names are matched to samples.')
+
+    matchPrimer = forms.BooleanField(required=True, label='extract primer ID', 
+                                    initial=True, 
+                                    help_text='Try to find a sequencing primer ID within the file name.'
+                                    )
 
     files = MultiFileField(label='Trace files:',
                            min_num=2,
@@ -166,6 +172,13 @@ class TracesUploadForm(forms.Form):
         return None
         
     
+    def findprimer(self, fname, primers=[]):
+        """try identifying a sequencing primer ID in the filename"""
+        for p in primers:
+            if p.displayId in fname:
+                return p
+        return None
+    
     def mapTracesToSamples(self, files):
         """map given InMemoryFileUpload files to samples by name"""
         sdic = self.cleaned_data['samples']
@@ -198,9 +211,16 @@ class TracesUploadForm(forms.Form):
 
         r = M.Sequencing(sample=sample, **kwargs)
         r.save()
+
+        seqprimers = M.OligoComponent.objects.filter(componentType=T.ocSequencing)
         
-        for t in traces:
-            run = M.SequencingRun(parent=r, f=t, description='multiple file upload')
+        for f in traces:
+            
+            if self.cleaned_data['matchPrimer']:
+                primer = self.findprimer(f.name, seqprimers)
+
+            run = M.SequencingRun(parent=r, f=f, description='multiple file upload',
+                                  primer=primer)
             run.save()
 
    
