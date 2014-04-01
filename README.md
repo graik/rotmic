@@ -5,8 +5,7 @@ Rotten Microbes
 retrieve samples and sequences from laboratory chaos
 
 
-Setting up a test server
-------------------------
+__Setting up a test server__
 
 Out of the box, the project is configured for quick set up of a development server, which should only be used for testing purposes. The test server uses a SQLite database (created as rotmicdev.db) and the built-in django debugging web server. File attachments will be saved in the dev_uploads/ folder.
 
@@ -55,7 +54,7 @@ You can now create a super user for site administration -- please give it the us
         Username (leave blank to use 'raik'): admin
 
 If you want to start from an empty database, you can fire up the rotmic server now. 
-However, if you want to load some small example data set, do it now, '''before''' running the server for the first time:
+However, if you want to load some small example data set, do it now, **before** running the server for the first time:
 
     ./manage.py loaddata rotmic/fixtures/users_test.json
         Installed 123 object(s) from 1 fixture(s)
