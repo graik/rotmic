@@ -17,6 +17,7 @@ from datetime import datetime
 import re
 
 from Bio import SeqIO
+import StringIO
 
 import django.forms as forms
 from django.contrib.auth.models import User
@@ -265,14 +266,33 @@ class GenbankUploadForm(UploadFormBase):
         data = self.cleaned_data['genbank']
         
         r = []
+        concat = ''
         try:
+            ## BioPython genbank writing is sensitive to all kind of errors
+            ## we therefore first concatenate all genbank files into one big string
+            ## then parse it record by record which allows us to store
+            ## the **original** genbank string along with the Biopython object
             for f in data:
-                r += list( SeqIO.parse( f, 'gb' ) ) 
+                concat += ''.join(f.readlines()).strip()
+            
+            if concat:
+                
+                records = concat.split('//')[:-1]  ## skip '' split fragment after last //
+                records = [ s + '//' for s in records ]
+    
+                for s in records:
+                    f = StringIO.StringIO(s)
+                    seqrecord = SeqIO.parse( f, 'gb' ).next()
+    
+                    seqrecord.original = s
+                    r += [ seqrecord ]
 
-        except StopIteration:
-            raise forms.ValidationError('Empty or corrupted genbank file')
+        except StopIteration, why:
+            raise forms.ValidationError('Empty or corrupted genbank file: %r' % why)
         except ValueError, why:
             raise forms.ValidationError('Error parsing genbank record: %r' % why)
+        except Exception, why:
+            raise forms.ValidationError("")
             
         return r
 
@@ -322,9 +342,8 @@ class GenbankUploadForm(UploadFormBase):
             dna.sequence = seqrecord.seq.tostring()
             dna.name = dna.name or seqrecord.name
             dna.description = dna.description or seqrecord.description
-            
-            
-            
+
+            dna.genbank = seqrecord.original ## custom variable created in clean_genbank           
             dna.save()
             
         except ValueError, why:
