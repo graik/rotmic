@@ -285,6 +285,18 @@ class Sample( UserMixin ):
         return amount + ' '+ unit
     showAmount.short_description = 'Amount' 
     
+    def showStatus(self):
+        color = {u'ok': '088A08', # green
+                 u'bad': 'B40404', # red
+                 u'empty' : 'B40404', # red
+                 u'preparing':  '0000FF', # blue
+                 }
+        r = '<span style="color: #%s;">%s</span>' %\
+            (color.get(self.status, '000000'), self.get_status_display())
+        return html.mark_safe(r)
+    showStatus.allow_tags = True
+    showStatus.short_description = 'Status'
+
     class Meta:
         app_label = 'rotmic'
         verbose_name  = 'Sample'

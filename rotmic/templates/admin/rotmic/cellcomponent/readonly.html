@@ -222,7 +222,7 @@
                                     
                                     <td>{{x.description | truncateHTML:30}}</td>
                                     
-                                    <td>{{x.status}}</td>
+                                    <td>{{x.showStatus}}</td>
                                     
                                   </tr>
                     
@@ -267,7 +267,7 @@
         <div class="module" id="record-module">
             <h2>Record</h2>
             <ul>    
-                <li><B>Status</B>:<p>{{o.status}}</p></li>
+                <li><B>Status</B>:<p>{{o.showStatus}}</p></li>
                 <li><B>registered</B>: 
                     <p>
                     {% with o.registeredBy as U %}

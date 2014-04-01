@@ -132,6 +132,18 @@ class StatusMixinDna(models.Model):
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='planning')
     
+    def showStatus(self):
+        color = {u'available': '088A08', # green
+                 u'planning': '808080', # grey
+                 u'construction' : '0000FF', # blue
+                 u'abandoned': 'B40404', # red
+                 }
+        r = '<span style="color: #%s;">%s</span>' %\
+               (color.get(self.status, '000000'), self.get_status_display())
+        return html.mark_safe(r)
+    showStatus.allow_tags = True
+    showStatus.short_description = 'Status'
+    
     class Meta:
         abstract = True
     
@@ -437,6 +449,18 @@ class StatusMixinCommercial(models.Model):
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='available')
     
+    def showStatus(self):
+        color = {u'available': '088A08', # green
+                 u'planning': '808080', # grey
+                 u'construction' : '0000FF', # blue
+                 u'abandoned': 'B40404', # red
+                 }
+        r = '<span style="color: #%s;">%s</span>' %\
+               (color.get(self.status, '000000'), self.get_status_display())
+        return html.mark_safe(r)
+    showStatus.allow_tags = True
+    showStatus.short_description = 'Status'
+
     class Meta:
         abstract = True
     

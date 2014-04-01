@@ -168,18 +168,6 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, Vi
     showDescription.allow_tags = True
     showDescription.short_description = 'Description'
     
-    def showStatus(self, obj):
-        color = {u'ok': '088A08', # green
-                 u'bad': 'B40404', # red
-                 u'empty' : 'B40404', # red
-                 u'preparing':  '0000FF', # blue
-                 }
-        return '<span style="color: #%s;">%s</span>' %\
-               (color.get(obj.status, '000000'), obj.get_status_display())
-    showStatus.allow_tags = True
-    showStatus.short_description = 'Status'
-        
-
     def showEdit(self, obj):
         return mark_safe('<a href="%s"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a>'\
                          % (obj.get_absolute_url_edit() ) )

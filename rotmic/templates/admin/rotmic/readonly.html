@@ -70,7 +70,7 @@
             <div class="module" id="record-module">
                 <h2>Record</h2>
                 <ul>    
-                    {% if o.status %}<li><B>Status</B>:<p>{{o.status}}</p></li>{% endif %}
+                    {% if o.status %}<li><B>Status</B>: <b>{{o.showStatus}}</b><br><br></li>{% endif %}
                     <li><B>registered</B>: 
                         <p>
                         {% with o.registeredBy as U %}
