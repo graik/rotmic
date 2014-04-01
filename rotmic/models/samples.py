@@ -261,7 +261,7 @@ class Sample( UserMixin ):
         if not x:
             return u''
         url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
+        return html.mark_safe('<a href="%s" title="%s">%s</a> (%s)' \
                               % (url, x.description, x.displayId, x.name))
     showContent.allow_tags = True
     showContent.short_description = u'Content'
