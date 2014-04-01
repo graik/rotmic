@@ -5,11 +5,12 @@ Rotten Microbes
 retrieve samples and sequences from laboratory chaos
 
 
-= Setting up a test server =
+Setting up a test server
+------------------------
 
 Out of the box, the project is configured for quick set up of a development server, which should only be used for testing purposes. The test server uses a SQLite database (created as rotmicdev.db) and the built-in django debugging web server. File attachments will be saved in the dev_uploads/ folder.
 
-== Dependencies ==
+___Dependencies___
 
  * python 2.7
  * Django 1.6
@@ -27,13 +28,13 @@ Rotmic relies on additional third-party django apps and python modules. For conv
 
 As these packages are included in the project source, they do not need to be installed separately. This minimizes the risk of version conflicts but also means that rotmic may not always be using the latest available version of those packages.
 
-== Rotmic setup ==
+___Rotmic setup___
 
 Download / Checkout the rotmic project into a new folder:
 
-{{{
+<code>
 git clone https://github.com/graik/rotmic.git rotmicdjango
-}}}
+</code>
 This will create a new folder rotmicdjango in your current directory. The next commands will create a SQLite database, and create tables for django housekeeping tasks (user and session management). Syncdb will not yet create tables for rotmic and third-party packages like reversion and guardian, which are all under south data migration control.
 {{{
 cd rotmicdjango
