@@ -33,34 +33,34 @@ ___Rotmic setup___
 Download / Checkout the rotmic project into a new folder:
 
 
-  git clone https://github.com/graik/rotmic.git rotmicdjango
+    git clone https://github.com/graik/rotmic.git rotmicdjango
 
 
 This will create a new folder rotmicdjango in your current directory. The next commands will create a SQLite database, and create tables for django housekeeping tasks (user and session management). Syncdb will not yet create tables for rotmic and third-party packages like reversion and guardian, which are all under south data migration control.
 
-  cd rotmicdjango
-  ./manage.py syncdb
-    You just installed Django's auth system, which means you don't have any superusers defined.
-    Would you like to create one now? (yes/no): no
+    cd rotmicdjango
+    ./manage.py syncdb
+        You just installed Django's auth system, which means you don't have any superusers defined.
+        Would you like to create one now? (yes/no): no
 
 It is important to NOT create a super user at this point. The rotmic data model introduces a "userprofile" table for saving user-specific settings. This table is "hard-linked" to the django.contrib.auth.User table and can only be created as long as this User table is still empty.
 
 We use the django migration system to create rotmic, reversion, and guardian data structures:
 
-  ./manage.py migrate
+    ./manage.py migrate
 
 You can now create a super user for site administration -- please give it the username 'admin'.
 
-  ./manage.py createsuperuser
-    Username (leave blank to use 'raik'): admin
+    ./manage.py createsuperuser
+        Username (leave blank to use 'raik'): admin
 
 If you want to start from an empty database, you can fire up the rotmic server now. 
 However, if you want to load some small example data set, do it now, '''before''' running the server for the first time:
 
-  ./manage.py loaddata rotmic/fixtures/users_test.json
-    Installed 123 object(s) from 1 fixture(s)
-  ./manage.py loaddata rotmic/fixtures/rotmic_test.json
-    Installed 154 object(s) from 1 fixture(s)
+    ./manage.py loaddata rotmic/fixtures/users_test.json
+        Installed 123 object(s) from 1 fixture(s)
+    ./manage.py loaddata rotmic/fixtures/rotmic_test.json
+        Installed 154 object(s) from 1 fixture(s)
 
 This will create:
  * three users (a "normal" user raik, an anonymous user without any permissions, and a superuser admin)
@@ -73,14 +73,14 @@ Note: Some units and default categories are "hard-coded" into the rotmic softwar
 
 Now you are ready to run the development / debugging web server:
 
-  ./manage.py runserver
-    Validating models...
-  
-    0 errors found
-    March 31, 2014 - 13:22:49
-    Django version 1.6, using settings 'rotmicsite.settings'
-    Starting development server at http://127.0.0.1:8000/
-    Quit the server with CONTROL-C.
+    ./manage.py runserver
+        Validating models...
+        
+        0 errors found
+        March 31, 2014 - 13:22:49
+        Django version 1.6, using settings 'rotmicsite.settings'
+        Starting development server at http://127.0.0.1:8000/
+        Quit the server with CONTROL-C.
 
 Point your browser to http://127.0.0.1:8000 and start exploring the site.
 
