@@ -45,7 +45,7 @@ class FilesUploadForm(forms.Form):
     
 
 class TracesUploadForm(forms.Form):
-    """Form for uploading multiple files"""
+    """Form for attaching multiple sequencing trace files to selected DNA samples"""
     
     ID_SEPARATORS = '[_\ \-\:;]+'
     
