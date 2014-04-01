@@ -591,7 +591,7 @@ class ProteinComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     
     ordering = ('displayId', 'name')
     
-    actions = ['make_csv']
+    actions = ['make_csv', 'make_genbank']
 
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
@@ -609,6 +609,15 @@ class ProteinComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
         return export_csv( request, queryset, self.csv_fields)
     make_csv.short_description = 'Export items as CSV'
     
+    def make_genbank(self, request, queryset):
+        """List view action to attach sequencing data to samples"""
+        ## see https://docs.djangoproject.com/en/dev/ref/contrib/admin/actions/#actions-that-provide-intermediate-pages
+
+        selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
+        return HttpResponseRedirect("/rotmic/upload/genbankaa/?constructs=%s" % (",".join(selected)))
+
+    make_genbank.short_description = 'Attach genbank records'
+
     def save_model(self, request, obj, form, change):
         """
         Save DnaComponent.translatesTo relation to new Protein instance if

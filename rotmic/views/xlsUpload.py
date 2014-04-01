@@ -31,7 +31,7 @@ from rotmic.forms import TableUploadForm
 
 class XlsUploadView(TemplateView):
     """View for uploading Excel files into DnaComponent table"""
-    template_name = 'admin/rotmic/uploadXls.html'
+    template_name = 'admin/rotmic/upload/uploadXls.html'
    
     form_class = TableUploadForm
     

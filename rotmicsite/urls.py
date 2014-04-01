@@ -54,6 +54,7 @@ urlpatterns = patterns('',
     url(r'^rotmic/upload/proteinsample/$', V.ProteinSampleXlsUploadView.as_view(), name='upload_proteinsample'),
 
     url(r'^rotmic/upload/genbank/$', V.GbkUploadView.as_view(), name='upload_genbank'),
+    url(r'^rotmic/upload/genbankaa/$', V.GbkProteinUploadView.as_view(), name='upload_proteingenbank'),
     url(r'^rotmic/upload/tracefiles/$', V.TracesUploadView.as_view(), name='upload_tracefiles'),
 
     url(r'^', include(admin.site.urls)),

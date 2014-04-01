@@ -26,11 +26,11 @@ import django.db.utils as U
 
 import rotmic.models as M
 
-from rotmic.forms import TracesUploadForm, GenbankUploadForm
+from rotmic.forms import TracesUploadForm, GenbankUploadForm, GenbankProteinUploadForm
 
 class TracesUploadView(TemplateView):
     """Attach ABL sequencing trace files to existing Sequencing records"""
-    template_name = 'admin/rotmic/uploadTraces.html'
+    template_name = 'admin/rotmic/upload/uploadTraces.html'
    
     form_class = TracesUploadForm
     
@@ -98,7 +98,7 @@ class TracesUploadView(TemplateView):
 
 class GbkUploadView(TemplateView):
     """Attach genbank files to existing dnacomponent records"""
-    template_name = 'admin/rotmic/uploadGbk.html'
+    template_name = 'admin/rotmic/upload/uploadGbk.html'
    
     form_class = GenbankUploadForm
     
@@ -161,3 +161,12 @@ class GbkUploadView(TemplateView):
             return self.renderForm(request, form)
                 
         return HttpResponseRedirect(reverse(self.returnto()))
+
+
+class GbkProteinUploadView(GbkUploadView):
+
+    template_name = 'admin/rotmic/upload/uploadProteinGbk.html'
+
+    form_class = GenbankProteinUploadForm
+    
+    model = M.ProteinComponent

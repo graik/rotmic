@@ -360,3 +360,14 @@ class GenbankUploadForm(UploadFormBase):
             self._errors['genbank'] = self.error_class([msg])
 
         return replaced
+    
+    
+class GenbankProteinUploadForm(GenbankUploadForm):
+    
+    constructs = forms.ModelMultipleChoiceField(M.ProteinComponent.objects.all(), 
+                    cache_choices=False, 
+                    required=True, 
+                    widget=sforms.AutoComboboxSelectMultipleWidget(lookup_class=L.ProteinLookup),
+                    label='Protein constructs', 
+                    initial=None, 
+                    help_text='')
