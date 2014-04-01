@@ -57,7 +57,11 @@
         
             <h2>1. Select Constructs</h2>
             
-            <p><p>
+            <p>
+            One genbank record is expected for each selected construct. This new
+            record will replace any existing sequence and genbank records registered
+            for this construct.
+            <p>
             
             <div class="form-row field-constructs">
     
@@ -74,19 +78,40 @@
         <fieldset class="module">
             <h2>2. Choose Genbank file</h2>
             
-            <p>
-            The genbank record names will be used to match each entry to a construct. 
-            </p>
+            <p>Select one or several genbank files, each containing one or 
+            several genbank records.</p>
 
             <div class="form-row field-genbank">
 
-                <div class="field-box field-genbank required">
+                <div class="field-box field-genbank required"
+                title="
+The genbank record name (LOCUS) will be used to match the record to a construct. 
+This record name must start with the construct's rotmic ID (lower or upper case, 
+leading zeros can vary). The ID should be separated from the rest of the name 
+(if any) with one or several ' '(space), '-', '_', ':', or ';'.
+
+Example:
+   LOCUS SB020_testconstruct ...
+   
+   will be matched to a construct with ID sb0020.
+                ">
                     {% if form.genbank.errors %}<p>{{ form.genbank.errors }}</p>{% endif %}
                     {{ form.genbank.label_tag }} {{ form.genbank }} <br>
                     <small>{{ form.genbank.help_text }}</small>
                 </div>
-
+    
             </div>
+
+            <p>
+                Note: The genbank record name (LOCUS) will be used to match the record to a construct. 
+                This record name must start with the construct's rotmic ID.
+                The ID should be separated from the rest of the name 
+                (if any) with ' '(space), '-', '_', ':', or ';' character(s).
+            </p><p>
+                Example:
+                <code>LOCUS SB020_testconstruct ...</code>
+                will be matched to a construct with ID <code>sb0020</code>.
+            </p>
 
         </fieldset>
      
