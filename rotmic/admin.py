@@ -35,7 +35,7 @@ from . import adminProjects ## trigger registration of ProjectAdmin
 from . import adminSamples ## trigger registration of Sample-related admin interfaces
 
 
-class DnaComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
+class DnaComponentTypeAdmin( reversion.VersionAdmin ):
     
     fieldsets = (
         (None, {
@@ -57,7 +57,7 @@ class DnaComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
 admin.site.register(M.DnaComponentType, DnaComponentTypeAdmin)
 
 
-class CellComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
+class CellComponentTypeAdmin( reversion.VersionAdmin):
     
     fieldsets = (
         (None, {
@@ -80,7 +80,7 @@ class CellComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
 admin.site.register(M.CellComponentType, CellComponentTypeAdmin)
     
 
-class OligoComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
+class OligoComponentTypeAdmin( reversion.VersionAdmin):
     
     fieldsets = (
         (None, {
@@ -97,7 +97,7 @@ class OligoComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
 
 admin.site.register(M.OligoComponentType, OligoComponentTypeAdmin)
 
-class ChemicalTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
+class ChemicalTypeAdmin( reversion.VersionAdmin ):
     
     fieldsets = (
         (None, {
@@ -117,7 +117,7 @@ class ChemicalTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
 admin.site.register(M.ChemicalType, ChemicalTypeAdmin)
 
 
-class ProteinComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
+class ProteinComponentTypeAdmin( reversion.VersionAdmin ):
     
     fieldsets = (
         (None, {
@@ -137,7 +137,7 @@ class ProteinComponentTypeAdmin( reversion.VersionAdmin, admin.ModelAdmin ):
 admin.site.register(M.ProteinComponentType, ProteinComponentTypeAdmin)
 
 
-class UnitAdmin( admin.ModelAdmin ):
+class UnitAdmin( reversion.VersionAdmin ):
     
     fieldsets = (
         (None, {
@@ -272,7 +272,7 @@ class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmi
 admin.site.register( M.Container, ContainerAdmin )
 
 
-class SampleProvenanceTypeAdmin(admin.ModelAdmin):
+class SampleProvenanceTypeAdmin(reversion.VersionAdmin):
     
     list_display = ('name','isDefault', 'requiresSource', 'description')
     list_filter = ('requiresSource',)

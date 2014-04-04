@@ -13,7 +13,9 @@
     "pk": 2, 
     "model": "rotmic.proteincomponenttype", 
     "fields": {
-        "subTypeOf": 1, 
+        "subTypeOf": [
+            "Protein"
+        ], 
         "uri": null, 
         "name": "other protein", 
         "description": ""
@@ -33,7 +35,9 @@
     "pk": 4, 
     "model": "rotmic.proteincomponenttype", 
     "fields": {
-        "subTypeOf": 3, 
+        "subTypeOf": [
+            "Protein Part"
+        ], 
         "uri": "", 
         "name": "interaction peptide", 
         "description": "peptide involved in protein-protein interaction"
@@ -43,7 +47,9 @@
     "pk": 5, 
     "model": "rotmic.proteincomponenttype", 
     "fields": {
-        "subTypeOf": 3, 
+        "subTypeOf": [
+            "Protein Part"
+        ], 
         "uri": "", 
         "name": "peptide linker", 
         "description": "flexible peptide linker"
@@ -53,7 +59,9 @@
     "pk": 6, 
     "model": "rotmic.proteincomponenttype", 
     "fields": {
-        "subTypeOf": 1, 
+        "subTypeOf": [
+            "Protein"
+        ], 
         "uri": "", 
         "name": "native protein", 
         "description": "wt protein for biological studies"
@@ -63,7 +71,9 @@
     "pk": 7, 
     "model": "rotmic.proteincomponenttype", 
     "fields": {
-        "subTypeOf": 3, 
+        "subTypeOf": [
+            "Protein Part"
+        ], 
         "uri": "", 
         "name": "affinity tag", 
         "description": "purification or detection tag"
@@ -73,7 +83,9 @@
     "pk": 8, 
     "model": "rotmic.proteincomponenttype", 
     "fields": {
-        "subTypeOf": 3, 
+        "subTypeOf": [
+            "Protein Part"
+        ], 
         "uri": "", 
         "name": "interaction domain", 
         "description": "structured protein domain involved in protein-protein interaction"
@@ -83,7 +95,9 @@
     "pk": 9, 
     "model": "rotmic.proteincomponenttype", 
     "fields": {
-        "subTypeOf": 1, 
+        "subTypeOf": [
+            "Protein"
+        ], 
         "uri": "", 
         "name": "engineered protein", 
         "description": "heavily modified or synthetic protein"
@@ -93,7 +107,9 @@
     "pk": 10, 
     "model": "rotmic.proteincomponenttype", 
     "fields": {
-        "subTypeOf": 3, 
+        "subTypeOf": [
+            "Protein Part"
+        ], 
         "uri": "", 
         "name": "protease site", 
         "description": "protease cleavage peptide sequence"
@@ -103,7 +119,9 @@
     "pk": 11, 
     "model": "rotmic.proteincomponenttype", 
     "fields": {
-        "subTypeOf": 3, 
+        "subTypeOf": [
+            "Protein Part"
+        ], 
         "uri": "", 
         "name": "fluorescent protein", 
         "description": "fluorescent protein domain"
@@ -113,7 +131,9 @@
     "pk": 12, 
     "model": "rotmic.proteincomponenttype", 
     "fields": {
-        "subTypeOf": 3, 
+        "subTypeOf": [
+            "Protein Part"
+        ], 
         "uri": "", 
         "name": "other protein part", 
         "description": "unspecified protein fragment"

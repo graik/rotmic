@@ -1,0 +1,1955 @@
+[
+{
+    "pk": 1, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_permission", 
+        "name": "Can add permission", 
+        "content_type": [
+            "auth", 
+            "permission"
+        ]
+    }
+},
+{
+    "pk": 2, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_permission", 
+        "name": "Can change permission", 
+        "content_type": [
+            "auth", 
+            "permission"
+        ]
+    }
+},
+{
+    "pk": 3, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_permission", 
+        "name": "Can delete permission", 
+        "content_type": [
+            "auth", 
+            "permission"
+        ]
+    }
+},
+{
+    "pk": 4, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_group", 
+        "name": "Can add group", 
+        "content_type": [
+            "auth", 
+            "group"
+        ]
+    }
+},
+{
+    "pk": 5, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_group", 
+        "name": "Can change group", 
+        "content_type": [
+            "auth", 
+            "group"
+        ]
+    }
+},
+{
+    "pk": 6, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_group", 
+        "name": "Can delete group", 
+        "content_type": [
+            "auth", 
+            "group"
+        ]
+    }
+},
+{
+    "pk": 7, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_user", 
+        "name": "Can add user", 
+        "content_type": [
+            "auth", 
+            "user"
+        ]
+    }
+},
+{
+    "pk": 8, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_user", 
+        "name": "Can change user", 
+        "content_type": [
+            "auth", 
+            "user"
+        ]
+    }
+},
+{
+    "pk": 9, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_user", 
+        "name": "Can delete user", 
+        "content_type": [
+            "auth", 
+            "user"
+        ]
+    }
+},
+{
+    "pk": 10, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_contenttype", 
+        "name": "Can add content type", 
+        "content_type": [
+            "contenttypes", 
+            "contenttype"
+        ]
+    }
+},
+{
+    "pk": 11, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_contenttype", 
+        "name": "Can change content type", 
+        "content_type": [
+            "contenttypes", 
+            "contenttype"
+        ]
+    }
+},
+{
+    "pk": 12, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_contenttype", 
+        "name": "Can delete content type", 
+        "content_type": [
+            "contenttypes", 
+            "contenttype"
+        ]
+    }
+},
+{
+    "pk": 13, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_session", 
+        "name": "Can add session", 
+        "content_type": [
+            "sessions", 
+            "session"
+        ]
+    }
+},
+{
+    "pk": 14, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_session", 
+        "name": "Can change session", 
+        "content_type": [
+            "sessions", 
+            "session"
+        ]
+    }
+},
+{
+    "pk": 15, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_session", 
+        "name": "Can delete session", 
+        "content_type": [
+            "sessions", 
+            "session"
+        ]
+    }
+},
+{
+    "pk": 16, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_migrationhistory", 
+        "name": "Can add migration history", 
+        "content_type": [
+            "south", 
+            "migrationhistory"
+        ]
+    }
+},
+{
+    "pk": 17, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_migrationhistory", 
+        "name": "Can change migration history", 
+        "content_type": [
+            "south", 
+            "migrationhistory"
+        ]
+    }
+},
+{
+    "pk": 18, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_migrationhistory", 
+        "name": "Can delete migration history", 
+        "content_type": [
+            "south", 
+            "migrationhistory"
+        ]
+    }
+},
+{
+    "pk": 19, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_revision", 
+        "name": "Can add revision", 
+        "content_type": [
+            "reversion", 
+            "revision"
+        ]
+    }
+},
+{
+    "pk": 20, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_revision", 
+        "name": "Can change revision", 
+        "content_type": [
+            "reversion", 
+            "revision"
+        ]
+    }
+},
+{
+    "pk": 21, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_revision", 
+        "name": "Can delete revision", 
+        "content_type": [
+            "reversion", 
+            "revision"
+        ]
+    }
+},
+{
+    "pk": 22, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_version", 
+        "name": "Can add version", 
+        "content_type": [
+            "reversion", 
+            "version"
+        ]
+    }
+},
+{
+    "pk": 23, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_version", 
+        "name": "Can change version", 
+        "content_type": [
+            "reversion", 
+            "version"
+        ]
+    }
+},
+{
+    "pk": 24, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_version", 
+        "name": "Can delete version", 
+        "content_type": [
+            "reversion", 
+            "version"
+        ]
+    }
+},
+{
+    "pk": 25, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_userprofile", 
+        "name": "Can add user profile", 
+        "content_type": [
+            "rotmic", 
+            "userprofile"
+        ]
+    }
+},
+{
+    "pk": 26, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_userprofile", 
+        "name": "Can change user profile", 
+        "content_type": [
+            "rotmic", 
+            "userprofile"
+        ]
+    }
+},
+{
+    "pk": 27, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_userprofile", 
+        "name": "Can delete user profile", 
+        "content_type": [
+            "rotmic", 
+            "userprofile"
+        ]
+    }
+},
+{
+    "pk": 28, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_componentattachment", 
+        "name": "Can add Component Attachment", 
+        "content_type": [
+            "rotmic", 
+            "componentattachment"
+        ]
+    }
+},
+{
+    "pk": 29, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_componentattachment", 
+        "name": "Can change Component Attachment", 
+        "content_type": [
+            "rotmic", 
+            "componentattachment"
+        ]
+    }
+},
+{
+    "pk": 30, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_componentattachment", 
+        "name": "Can delete Component Attachment", 
+        "content_type": [
+            "rotmic", 
+            "componentattachment"
+        ]
+    }
+},
+{
+    "pk": 31, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_sampleattachment", 
+        "name": "Can add Sample Attachment", 
+        "content_type": [
+            "rotmic", 
+            "sampleattachment"
+        ]
+    }
+},
+{
+    "pk": 32, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_sampleattachment", 
+        "name": "Can change Sample Attachment", 
+        "content_type": [
+            "rotmic", 
+            "sampleattachment"
+        ]
+    }
+},
+{
+    "pk": 33, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_sampleattachment", 
+        "name": "Can delete Sample Attachment", 
+        "content_type": [
+            "rotmic", 
+            "sampleattachment"
+        ]
+    }
+},
+{
+    "pk": 34, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_unit", 
+        "name": "Can add unit", 
+        "content_type": [
+            "rotmic", 
+            "unit"
+        ]
+    }
+},
+{
+    "pk": 35, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_unit", 
+        "name": "Can change unit", 
+        "content_type": [
+            "rotmic", 
+            "unit"
+        ]
+    }
+},
+{
+    "pk": 36, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_unit", 
+        "name": "Can delete unit", 
+        "content_type": [
+            "rotmic", 
+            "unit"
+        ]
+    }
+},
+{
+    "pk": 37, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_dnacomponenttype", 
+        "name": "Can add DNA Type", 
+        "content_type": [
+            "rotmic", 
+            "dnacomponenttype"
+        ]
+    }
+},
+{
+    "pk": 38, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_dnacomponenttype", 
+        "name": "Can change DNA Type", 
+        "content_type": [
+            "rotmic", 
+            "dnacomponenttype"
+        ]
+    }
+},
+{
+    "pk": 39, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_dnacomponenttype", 
+        "name": "Can delete DNA Type", 
+        "content_type": [
+            "rotmic", 
+            "dnacomponenttype"
+        ]
+    }
+},
+{
+    "pk": 40, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_cellcomponenttype", 
+        "name": "Can add Cell Type", 
+        "content_type": [
+            "rotmic", 
+            "cellcomponenttype"
+        ]
+    }
+},
+{
+    "pk": 41, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_cellcomponenttype", 
+        "name": "Can change Cell Type", 
+        "content_type": [
+            "rotmic", 
+            "cellcomponenttype"
+        ]
+    }
+},
+{
+    "pk": 42, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_cellcomponenttype", 
+        "name": "Can delete Cell Type", 
+        "content_type": [
+            "rotmic", 
+            "cellcomponenttype"
+        ]
+    }
+},
+{
+    "pk": 43, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_oligocomponenttype", 
+        "name": "Can add Oligo Type", 
+        "content_type": [
+            "rotmic", 
+            "oligocomponenttype"
+        ]
+    }
+},
+{
+    "pk": 44, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_oligocomponenttype", 
+        "name": "Can change Oligo Type", 
+        "content_type": [
+            "rotmic", 
+            "oligocomponenttype"
+        ]
+    }
+},
+{
+    "pk": 45, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_oligocomponenttype", 
+        "name": "Can delete Oligo Type", 
+        "content_type": [
+            "rotmic", 
+            "oligocomponenttype"
+        ]
+    }
+},
+{
+    "pk": 46, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_chemicaltype", 
+        "name": "Can add Chemical Type", 
+        "content_type": [
+            "rotmic", 
+            "chemicaltype"
+        ]
+    }
+},
+{
+    "pk": 47, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_chemicaltype", 
+        "name": "Can change Chemical Type", 
+        "content_type": [
+            "rotmic", 
+            "chemicaltype"
+        ]
+    }
+},
+{
+    "pk": 48, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_chemicaltype", 
+        "name": "Can delete Chemical Type", 
+        "content_type": [
+            "rotmic", 
+            "chemicaltype"
+        ]
+    }
+},
+{
+    "pk": 49, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_proteincomponenttype", 
+        "name": "Can add Protein Type", 
+        "content_type": [
+            "rotmic", 
+            "proteincomponenttype"
+        ]
+    }
+},
+{
+    "pk": 50, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_proteincomponenttype", 
+        "name": "Can change Protein Type", 
+        "content_type": [
+            "rotmic", 
+            "proteincomponenttype"
+        ]
+    }
+},
+{
+    "pk": 51, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_proteincomponenttype", 
+        "name": "Can delete Protein Type", 
+        "content_type": [
+            "rotmic", 
+            "proteincomponenttype"
+        ]
+    }
+},
+{
+    "pk": 52, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_component", 
+        "name": "Can add component", 
+        "content_type": [
+            "rotmic", 
+            "component"
+        ]
+    }
+},
+{
+    "pk": 53, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_component", 
+        "name": "Can change component", 
+        "content_type": [
+            "rotmic", 
+            "component"
+        ]
+    }
+},
+{
+    "pk": 54, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_component", 
+        "name": "Can delete component", 
+        "content_type": [
+            "rotmic", 
+            "component"
+        ]
+    }
+},
+{
+    "pk": 55, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_dnacomponent", 
+        "name": "Can add DNA construct", 
+        "content_type": [
+            "rotmic", 
+            "dnacomponent"
+        ]
+    }
+},
+{
+    "pk": 56, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_dnacomponent", 
+        "name": "Can change DNA construct", 
+        "content_type": [
+            "rotmic", 
+            "dnacomponent"
+        ]
+    }
+},
+{
+    "pk": 57, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_dnacomponent", 
+        "name": "Can delete DNA construct", 
+        "content_type": [
+            "rotmic", 
+            "dnacomponent"
+        ]
+    }
+},
+{
+    "pk": 58, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_cellcomponent", 
+        "name": "Can add Cell", 
+        "content_type": [
+            "rotmic", 
+            "cellcomponent"
+        ]
+    }
+},
+{
+    "pk": 59, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_cellcomponent", 
+        "name": "Can change Cell", 
+        "content_type": [
+            "rotmic", 
+            "cellcomponent"
+        ]
+    }
+},
+{
+    "pk": 60, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_cellcomponent", 
+        "name": "Can delete Cell", 
+        "content_type": [
+            "rotmic", 
+            "cellcomponent"
+        ]
+    }
+},
+{
+    "pk": 61, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_proteincomponent", 
+        "name": "Can add Protein", 
+        "content_type": [
+            "rotmic", 
+            "proteincomponent"
+        ]
+    }
+},
+{
+    "pk": 62, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_proteincomponent", 
+        "name": "Can change Protein", 
+        "content_type": [
+            "rotmic", 
+            "proteincomponent"
+        ]
+    }
+},
+{
+    "pk": 63, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_proteincomponent", 
+        "name": "Can delete Protein", 
+        "content_type": [
+            "rotmic", 
+            "proteincomponent"
+        ]
+    }
+},
+{
+    "pk": 64, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_oligocomponent", 
+        "name": "Can add Oligo", 
+        "content_type": [
+            "rotmic", 
+            "oligocomponent"
+        ]
+    }
+},
+{
+    "pk": 65, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_oligocomponent", 
+        "name": "Can change Oligo", 
+        "content_type": [
+            "rotmic", 
+            "oligocomponent"
+        ]
+    }
+},
+{
+    "pk": 66, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_oligocomponent", 
+        "name": "Can delete Oligo", 
+        "content_type": [
+            "rotmic", 
+            "oligocomponent"
+        ]
+    }
+},
+{
+    "pk": 67, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_chemicalcomponent", 
+        "name": "Can add Chemical", 
+        "content_type": [
+            "rotmic", 
+            "chemicalcomponent"
+        ]
+    }
+},
+{
+    "pk": 68, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_chemicalcomponent", 
+        "name": "Can change Chemical", 
+        "content_type": [
+            "rotmic", 
+            "chemicalcomponent"
+        ]
+    }
+},
+{
+    "pk": 69, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_chemicalcomponent", 
+        "name": "Can delete Chemical", 
+        "content_type": [
+            "rotmic", 
+            "chemicalcomponent"
+        ]
+    }
+},
+{
+    "pk": 70, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_location", 
+        "name": "Can add Location", 
+        "content_type": [
+            "rotmic", 
+            "location"
+        ]
+    }
+},
+{
+    "pk": 71, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_location", 
+        "name": "Can change Location", 
+        "content_type": [
+            "rotmic", 
+            "location"
+        ]
+    }
+},
+{
+    "pk": 72, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_location", 
+        "name": "Can delete Location", 
+        "content_type": [
+            "rotmic", 
+            "location"
+        ]
+    }
+},
+{
+    "pk": 73, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_rack", 
+        "name": "Can add Rack", 
+        "content_type": [
+            "rotmic", 
+            "rack"
+        ]
+    }
+},
+{
+    "pk": 74, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_rack", 
+        "name": "Can change Rack", 
+        "content_type": [
+            "rotmic", 
+            "rack"
+        ]
+    }
+},
+{
+    "pk": 75, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_rack", 
+        "name": "Can delete Rack", 
+        "content_type": [
+            "rotmic", 
+            "rack"
+        ]
+    }
+},
+{
+    "pk": 76, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_container", 
+        "name": "Can add Container", 
+        "content_type": [
+            "rotmic", 
+            "container"
+        ]
+    }
+},
+{
+    "pk": 77, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_container", 
+        "name": "Can change Container", 
+        "content_type": [
+            "rotmic", 
+            "container"
+        ]
+    }
+},
+{
+    "pk": 78, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_container", 
+        "name": "Can delete Container", 
+        "content_type": [
+            "rotmic", 
+            "container"
+        ]
+    }
+},
+{
+    "pk": 79, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_sequencingrun", 
+        "name": "Can add Sequencing Trace", 
+        "content_type": [
+            "rotmic", 
+            "sequencingrun"
+        ]
+    }
+},
+{
+    "pk": 80, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_sequencingrun", 
+        "name": "Can change Sequencing Trace", 
+        "content_type": [
+            "rotmic", 
+            "sequencingrun"
+        ]
+    }
+},
+{
+    "pk": 81, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_sequencingrun", 
+        "name": "Can delete Sequencing Trace", 
+        "content_type": [
+            "rotmic", 
+            "sequencingrun"
+        ]
+    }
+},
+{
+    "pk": 82, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_sequencing", 
+        "name": "Can add Sequencing", 
+        "content_type": [
+            "rotmic", 
+            "sequencing"
+        ]
+    }
+},
+{
+    "pk": 83, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_sequencing", 
+        "name": "Can change Sequencing", 
+        "content_type": [
+            "rotmic", 
+            "sequencing"
+        ]
+    }
+},
+{
+    "pk": 84, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_sequencing", 
+        "name": "Can delete Sequencing", 
+        "content_type": [
+            "rotmic", 
+            "sequencing"
+        ]
+    }
+},
+{
+    "pk": 85, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_sampleprovenancetype", 
+        "name": "Can add Provenance Type", 
+        "content_type": [
+            "rotmic", 
+            "sampleprovenancetype"
+        ]
+    }
+},
+{
+    "pk": 86, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_sampleprovenancetype", 
+        "name": "Can change Provenance Type", 
+        "content_type": [
+            "rotmic", 
+            "sampleprovenancetype"
+        ]
+    }
+},
+{
+    "pk": 87, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_sampleprovenancetype", 
+        "name": "Can delete Provenance Type", 
+        "content_type": [
+            "rotmic", 
+            "sampleprovenancetype"
+        ]
+    }
+},
+{
+    "pk": 88, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_sampleprovenance", 
+        "name": "Can add Sample History", 
+        "content_type": [
+            "rotmic", 
+            "sampleprovenance"
+        ]
+    }
+},
+{
+    "pk": 89, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_sampleprovenance", 
+        "name": "Can change Sample History", 
+        "content_type": [
+            "rotmic", 
+            "sampleprovenance"
+        ]
+    }
+},
+{
+    "pk": 90, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_sampleprovenance", 
+        "name": "Can delete Sample History", 
+        "content_type": [
+            "rotmic", 
+            "sampleprovenance"
+        ]
+    }
+},
+{
+    "pk": 91, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_sample", 
+        "name": "Can add Sample", 
+        "content_type": [
+            "rotmic", 
+            "sample"
+        ]
+    }
+},
+{
+    "pk": 92, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_sample", 
+        "name": "Can change Sample", 
+        "content_type": [
+            "rotmic", 
+            "sample"
+        ]
+    }
+},
+{
+    "pk": 93, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_sample", 
+        "name": "Can delete Sample", 
+        "content_type": [
+            "rotmic", 
+            "sample"
+        ]
+    }
+},
+{
+    "pk": 94, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_dnasample", 
+        "name": "Can add DNA Sample", 
+        "content_type": [
+            "rotmic", 
+            "dnasample"
+        ]
+    }
+},
+{
+    "pk": 95, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_dnasample", 
+        "name": "Can change DNA Sample", 
+        "content_type": [
+            "rotmic", 
+            "dnasample"
+        ]
+    }
+},
+{
+    "pk": 96, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_dnasample", 
+        "name": "Can delete DNA Sample", 
+        "content_type": [
+            "rotmic", 
+            "dnasample"
+        ]
+    }
+},
+{
+    "pk": 97, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_cellsample", 
+        "name": "Can add Cell Sample", 
+        "content_type": [
+            "rotmic", 
+            "cellsample"
+        ]
+    }
+},
+{
+    "pk": 98, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_cellsample", 
+        "name": "Can change Cell Sample", 
+        "content_type": [
+            "rotmic", 
+            "cellsample"
+        ]
+    }
+},
+{
+    "pk": 99, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_cellsample", 
+        "name": "Can delete Cell Sample", 
+        "content_type": [
+            "rotmic", 
+            "cellsample"
+        ]
+    }
+},
+{
+    "pk": 100, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_oligosample", 
+        "name": "Can add Oligo Sample", 
+        "content_type": [
+            "rotmic", 
+            "oligosample"
+        ]
+    }
+},
+{
+    "pk": 101, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_oligosample", 
+        "name": "Can change Oligo Sample", 
+        "content_type": [
+            "rotmic", 
+            "oligosample"
+        ]
+    }
+},
+{
+    "pk": 102, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_oligosample", 
+        "name": "Can delete Oligo Sample", 
+        "content_type": [
+            "rotmic", 
+            "oligosample"
+        ]
+    }
+},
+{
+    "pk": 103, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_chemicalsample", 
+        "name": "Can add Chemical Sample", 
+        "content_type": [
+            "rotmic", 
+            "chemicalsample"
+        ]
+    }
+},
+{
+    "pk": 104, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_chemicalsample", 
+        "name": "Can change Chemical Sample", 
+        "content_type": [
+            "rotmic", 
+            "chemicalsample"
+        ]
+    }
+},
+{
+    "pk": 105, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_chemicalsample", 
+        "name": "Can delete Chemical Sample", 
+        "content_type": [
+            "rotmic", 
+            "chemicalsample"
+        ]
+    }
+},
+{
+    "pk": 106, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_proteinsample", 
+        "name": "Can add Protein Sample", 
+        "content_type": [
+            "rotmic", 
+            "proteinsample"
+        ]
+    }
+},
+{
+    "pk": 107, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_proteinsample", 
+        "name": "Can change Protein Sample", 
+        "content_type": [
+            "rotmic", 
+            "proteinsample"
+        ]
+    }
+},
+{
+    "pk": 108, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_proteinsample", 
+        "name": "Can delete Protein Sample", 
+        "content_type": [
+            "rotmic", 
+            "proteinsample"
+        ]
+    }
+},
+{
+    "pk": 109, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_project", 
+        "name": "Can add Project", 
+        "content_type": [
+            "rotmic", 
+            "project"
+        ]
+    }
+},
+{
+    "pk": 110, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_project", 
+        "name": "Can change Project", 
+        "content_type": [
+            "rotmic", 
+            "project"
+        ]
+    }
+},
+{
+    "pk": 111, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_project", 
+        "name": "Can delete Project", 
+        "content_type": [
+            "rotmic", 
+            "project"
+        ]
+    }
+},
+{
+    "pk": 112, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_logentry", 
+        "name": "Can add log entry", 
+        "content_type": [
+            "admin", 
+            "logentry"
+        ]
+    }
+},
+{
+    "pk": 113, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_logentry", 
+        "name": "Can change log entry", 
+        "content_type": [
+            "admin", 
+            "logentry"
+        ]
+    }
+},
+{
+    "pk": 114, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_logentry", 
+        "name": "Can delete log entry", 
+        "content_type": [
+            "admin", 
+            "logentry"
+        ]
+    }
+},
+{
+    "pk": 115, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_userobjectpermission", 
+        "name": "Can add user object permission", 
+        "content_type": [
+            "guardian", 
+            "userobjectpermission"
+        ]
+    }
+},
+{
+    "pk": 116, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_userobjectpermission", 
+        "name": "Can change user object permission", 
+        "content_type": [
+            "guardian", 
+            "userobjectpermission"
+        ]
+    }
+},
+{
+    "pk": 117, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_userobjectpermission", 
+        "name": "Can delete user object permission", 
+        "content_type": [
+            "guardian", 
+            "userobjectpermission"
+        ]
+    }
+},
+{
+    "pk": 118, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_groupobjectpermission", 
+        "name": "Can add group object permission", 
+        "content_type": [
+            "guardian", 
+            "groupobjectpermission"
+        ]
+    }
+},
+{
+    "pk": 119, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_groupobjectpermission", 
+        "name": "Can change group object permission", 
+        "content_type": [
+            "guardian", 
+            "groupobjectpermission"
+        ]
+    }
+},
+{
+    "pk": 120, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_groupobjectpermission", 
+        "name": "Can delete group object permission", 
+        "content_type": [
+            "guardian", 
+            "groupobjectpermission"
+        ]
+    }
+},
+{
+    "pk": 1, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "labmembers", 
+        "permissions": [
+            [
+                "add_cellcomponent", 
+                "rotmic", 
+                "cellcomponent"
+            ], 
+            [
+                "change_cellcomponent", 
+                "rotmic", 
+                "cellcomponent"
+            ], 
+            [
+                "delete_cellcomponent", 
+                "rotmic", 
+                "cellcomponent"
+            ], 
+            [
+                "add_cellsample", 
+                "rotmic", 
+                "cellsample"
+            ], 
+            [
+                "change_cellsample", 
+                "rotmic", 
+                "cellsample"
+            ], 
+            [
+                "delete_cellsample", 
+                "rotmic", 
+                "cellsample"
+            ], 
+            [
+                "add_chemicalcomponent", 
+                "rotmic", 
+                "chemicalcomponent"
+            ], 
+            [
+                "change_chemicalcomponent", 
+                "rotmic", 
+                "chemicalcomponent"
+            ], 
+            [
+                "delete_chemicalcomponent", 
+                "rotmic", 
+                "chemicalcomponent"
+            ], 
+            [
+                "add_chemicalsample", 
+                "rotmic", 
+                "chemicalsample"
+            ], 
+            [
+                "change_chemicalsample", 
+                "rotmic", 
+                "chemicalsample"
+            ], 
+            [
+                "delete_chemicalsample", 
+                "rotmic", 
+                "chemicalsample"
+            ], 
+            [
+                "add_component", 
+                "rotmic", 
+                "component"
+            ], 
+            [
+                "change_component", 
+                "rotmic", 
+                "component"
+            ], 
+            [
+                "delete_component", 
+                "rotmic", 
+                "component"
+            ], 
+            [
+                "add_componentattachment", 
+                "rotmic", 
+                "componentattachment"
+            ], 
+            [
+                "change_componentattachment", 
+                "rotmic", 
+                "componentattachment"
+            ], 
+            [
+                "delete_componentattachment", 
+                "rotmic", 
+                "componentattachment"
+            ], 
+            [
+                "add_container", 
+                "rotmic", 
+                "container"
+            ], 
+            [
+                "change_container", 
+                "rotmic", 
+                "container"
+            ], 
+            [
+                "delete_container", 
+                "rotmic", 
+                "container"
+            ], 
+            [
+                "add_dnacomponent", 
+                "rotmic", 
+                "dnacomponent"
+            ], 
+            [
+                "change_dnacomponent", 
+                "rotmic", 
+                "dnacomponent"
+            ], 
+            [
+                "delete_dnacomponent", 
+                "rotmic", 
+                "dnacomponent"
+            ], 
+            [
+                "add_dnasample", 
+                "rotmic", 
+                "dnasample"
+            ], 
+            [
+                "change_dnasample", 
+                "rotmic", 
+                "dnasample"
+            ], 
+            [
+                "delete_dnasample", 
+                "rotmic", 
+                "dnasample"
+            ], 
+            [
+                "add_oligocomponent", 
+                "rotmic", 
+                "oligocomponent"
+            ], 
+            [
+                "change_oligocomponent", 
+                "rotmic", 
+                "oligocomponent"
+            ], 
+            [
+                "delete_oligocomponent", 
+                "rotmic", 
+                "oligocomponent"
+            ], 
+            [
+                "add_oligosample", 
+                "rotmic", 
+                "oligosample"
+            ], 
+            [
+                "change_oligosample", 
+                "rotmic", 
+                "oligosample"
+            ], 
+            [
+                "delete_oligosample", 
+                "rotmic", 
+                "oligosample"
+            ], 
+            [
+                "add_project", 
+                "rotmic", 
+                "project"
+            ], 
+            [
+                "change_project", 
+                "rotmic", 
+                "project"
+            ], 
+            [
+                "delete_project", 
+                "rotmic", 
+                "project"
+            ], 
+            [
+                "add_proteincomponent", 
+                "rotmic", 
+                "proteincomponent"
+            ], 
+            [
+                "change_proteincomponent", 
+                "rotmic", 
+                "proteincomponent"
+            ], 
+            [
+                "delete_proteincomponent", 
+                "rotmic", 
+                "proteincomponent"
+            ], 
+            [
+                "add_proteinsample", 
+                "rotmic", 
+                "proteinsample"
+            ], 
+            [
+                "change_proteinsample", 
+                "rotmic", 
+                "proteinsample"
+            ], 
+            [
+                "delete_proteinsample", 
+                "rotmic", 
+                "proteinsample"
+            ], 
+            [
+                "add_sample", 
+                "rotmic", 
+                "sample"
+            ], 
+            [
+                "change_sample", 
+                "rotmic", 
+                "sample"
+            ], 
+            [
+                "delete_sample", 
+                "rotmic", 
+                "sample"
+            ], 
+            [
+                "add_sampleattachment", 
+                "rotmic", 
+                "sampleattachment"
+            ], 
+            [
+                "change_sampleattachment", 
+                "rotmic", 
+                "sampleattachment"
+            ], 
+            [
+                "delete_sampleattachment", 
+                "rotmic", 
+                "sampleattachment"
+            ], 
+            [
+                "add_sampleprovenance", 
+                "rotmic", 
+                "sampleprovenance"
+            ], 
+            [
+                "change_sampleprovenance", 
+                "rotmic", 
+                "sampleprovenance"
+            ], 
+            [
+                "delete_sampleprovenance", 
+                "rotmic", 
+                "sampleprovenance"
+            ], 
+            [
+                "add_sequencing", 
+                "rotmic", 
+                "sequencing"
+            ], 
+            [
+                "change_sequencing", 
+                "rotmic", 
+                "sequencing"
+            ], 
+            [
+                "delete_sequencing", 
+                "rotmic", 
+                "sequencing"
+            ], 
+            [
+                "add_sequencingrun", 
+                "rotmic", 
+                "sequencingrun"
+            ], 
+            [
+                "change_sequencingrun", 
+                "rotmic", 
+                "sequencingrun"
+            ], 
+            [
+                "delete_sequencingrun", 
+                "rotmic", 
+                "sequencingrun"
+            ], 
+            [
+                "change_userprofile", 
+                "rotmic", 
+                "userprofile"
+            ]
+        ]
+    }
+},
+{
+    "pk": 2, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "locationManager", 
+        "permissions": [
+            [
+                "add_location", 
+                "rotmic", 
+                "location"
+            ], 
+            [
+                "change_location", 
+                "rotmic", 
+                "location"
+            ], 
+            [
+                "delete_location", 
+                "rotmic", 
+                "location"
+            ], 
+            [
+                "add_rack", 
+                "rotmic", 
+                "rack"
+            ], 
+            [
+                "change_rack", 
+                "rotmic", 
+                "rack"
+            ], 
+            [
+                "delete_rack", 
+                "rotmic", 
+                "rack"
+            ]
+        ]
+    }
+},
+{
+    "pk": 3, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "categoryManager", 
+        "permissions": [
+            [
+                "add_cellcomponenttype", 
+                "rotmic", 
+                "cellcomponenttype"
+            ], 
+            [
+                "change_cellcomponenttype", 
+                "rotmic", 
+                "cellcomponenttype"
+            ], 
+            [
+                "delete_cellcomponenttype", 
+                "rotmic", 
+                "cellcomponenttype"
+            ], 
+            [
+                "add_chemicaltype", 
+                "rotmic", 
+                "chemicaltype"
+            ], 
+            [
+                "change_chemicaltype", 
+                "rotmic", 
+                "chemicaltype"
+            ], 
+            [
+                "delete_chemicaltype", 
+                "rotmic", 
+                "chemicaltype"
+            ], 
+            [
+                "add_dnacomponenttype", 
+                "rotmic", 
+                "dnacomponenttype"
+            ], 
+            [
+                "change_dnacomponenttype", 
+                "rotmic", 
+                "dnacomponenttype"
+            ], 
+            [
+                "delete_dnacomponenttype", 
+                "rotmic", 
+                "dnacomponenttype"
+            ], 
+            [
+                "add_oligocomponenttype", 
+                "rotmic", 
+                "oligocomponenttype"
+            ], 
+            [
+                "change_oligocomponenttype", 
+                "rotmic", 
+                "oligocomponenttype"
+            ], 
+            [
+                "delete_oligocomponenttype", 
+                "rotmic", 
+                "oligocomponenttype"
+            ], 
+            [
+                "add_proteincomponenttype", 
+                "rotmic", 
+                "proteincomponenttype"
+            ], 
+            [
+                "change_proteincomponenttype", 
+                "rotmic", 
+                "proteincomponenttype"
+            ], 
+            [
+                "delete_proteincomponenttype", 
+                "rotmic", 
+                "proteincomponenttype"
+            ], 
+            [
+                "add_sampleprovenancetype", 
+                "rotmic", 
+                "sampleprovenancetype"
+            ], 
+            [
+                "change_sampleprovenancetype", 
+                "rotmic", 
+                "sampleprovenancetype"
+            ], 
+            [
+                "delete_sampleprovenancetype", 
+                "rotmic", 
+                "sampleprovenancetype"
+            ], 
+            [
+                "add_unit", 
+                "rotmic", 
+                "unit"
+            ], 
+            [
+                "change_unit", 
+                "rotmic", 
+                "unit"
+            ], 
+            [
+                "delete_unit", 
+                "rotmic", 
+                "unit"
+            ]
+        ]
+    }
+},
+{
+    "pk": -1, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "AnonymousUser", 
+        "first_name": "", 
+        "last_name": "", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_staff": false, 
+        "last_login": "2014-04-04T20:39:37.692Z", 
+        "groups": [], 
+        "user_permissions": [], 
+        "password": "", 
+        "email": "", 
+        "date_joined": "2014-04-04T20:39:37.692Z"
+    }
+},
+{
+    "pk": 1, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "admin", 
+        "first_name": "Admin", 
+        "last_name": "Account", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_staff": true, 
+        "last_login": "2014-04-04T21:57:35.678Z", 
+        "groups": [], 
+        "user_permissions": [], 
+        "password": "pbkdf2_sha256$12000$7aK2YIlwoy89$kvKpPIkbnKy7JWp7iq7RYEgwrqrove+706k7ANSBdhs=", 
+        "email": "r@g.com", 
+        "date_joined": "2014-04-04T20:39:33Z"
+    }
+},
+{
+    "pk": 2, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "raik", 
+        "first_name": "Example", 
+        "last_name": "User", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_staff": true, 
+        "last_login": "2014-04-04T21:56:39.935Z", 
+        "groups": [
+            [
+                "labmembers"
+            ], 
+            [
+                "categoryManager"
+            ]
+        ], 
+        "user_permissions": [], 
+        "password": "pbkdf2_sha256$12000$xxXGfjKdSJ0L$5CjV5mED9ZhBwV06l3SNn/gHY25iBt95GLsCaBMD57s=", 
+        "email": "r@g.com", 
+        "date_joined": "2014-04-04T21:48:08Z"
+    }
+}
+]

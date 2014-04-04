@@ -3,13 +3,21 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
-
+class SerializeByNameManager(models.Manager):
+    """
+    De-serialize objects and relations using name field rather than DB primary key.
+    See https://docs.djangoproject.com/en/dev/topics/serialization/#topics-serialization-natural-keys
+    """
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
 
 class ComponentType( models.Model ):
     """
     Helper class for classifying parts.
     Following SBOL, each type should in theory correspond to a Sequence Ontology term.
     """
+    objects = SerializeByNameManager()
+
     name = models.CharField('Name', unique=True, max_length=200, 
                             help_text='Informative name')
     
@@ -21,6 +29,13 @@ class ComponentType( models.Model ):
 
     def __unicode__( self ):
         return unicode(self.name)
+
+    def natural_key(self):
+        """
+        Serialize relations to these objects using name field rather than DB primary key.
+        See https://docs.djangoproject.com/en/dev/topics/serialization/#topics-serialization-natural-keys
+        """
+        return (self.name,)
 
     def save(self, *args, **kwargs):
         ## enforce single parent?

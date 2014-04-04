@@ -15,10 +15,19 @@
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 from django.db import models
 
+class SerializeByNameManager(models.Manager):
+    """
+    De-serialize objects and relations using name field rather than DB primary key.
+    See https://docs.djangoproject.com/en/dev/topics/serialization/#topics-serialization-natural-keys
+    """
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
 class Unit(models.Model):
     """
     Unit for amount, concentration, volume
     """
+    objects = SerializeByNameManager()
 
     UNIT_TYPE = (('mass','mass'), 
                  ('volume','volume'), 
@@ -33,6 +42,14 @@ class Unit(models.Model):
 
     conversion = models.FloatField('Conversion Factor', blank=True, null=True,
                                    help_text='Factor for conversion to SI unit')
+
+
+    def natural_key(self):
+        """
+        Serialize relations to these objects using name field rather than DB primary key.
+        See https://docs.djangoproject.com/en/dev/topics/serialization/#topics-serialization-natural-keys
+        """
+        return (self.name,)
 
     def __unicode__(self):
         return self.name
