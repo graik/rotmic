@@ -37,7 +37,11 @@
     </p>
     
     <ul class="object-tools">
-        <li><a href="{% url 'admin:rotmic_dnasample_add'%}?container={{o.pk}}">Add DNA Sample</a></li>
+        <li><a href="{% url 'admin:rotmic_dnasample_add'%}?container={{o.pk}}" title='Add DNA Sample'>+ DNA</a></li>
+        <li><a href="{% url 'admin:rotmic_cellsample_add'%}?container={{o.pk}}" title='Add Cell Sample'>+ Cell</a></li>
+        <li><a href="{% url 'admin:rotmic_proteinsample_add'%}?container={{o.pk}}" title='Add Protein Sample'>+ Protein</a></li>
+        <li><a href="{% url 'admin:rotmic_oligosample_add'%}?container={{o.pk}}" title='Add Oligo Sample'>+ Oligo</a></li>
+        <li><a href="{% url 'admin:rotmic_chemicalsample_add'%}?container={{o.pk}}" title='Add Chemical Sample'>+ Chemical</a></li>
     </ul>
 
     <br>
