@@ -1,0 +1,28 @@
+{% load comments i18n %}
+<form action="{% comment_form_target %}" method="post">{% csrf_token %}
+  {# redirect back to default view for object; o is defined by rotmic context #}
+  {% if o %}<div><input type="hidden" name="next" value="{{ o.get_absolute_url }}" /></div>{% endif %}
+
+  {# render all hidden fields for spamming protection #}
+  {% for field in form %}
+    {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
+  {% endfor %}
+  
+  {% with form.honeypot as field %}
+    <p style="display:none;">{{field.label_tag}} {{field}}</p>
+  {% endwith %}
+ 
+  {% with form.comment as field %}
+    {% if field.errors %}{{ field.errors }}{% endif %}
+
+    <p
+      {% if field.errors %} class="error"{% endif %}
+      {{ field.label_tag }} {{ field }}
+    </p>
+
+  {% endwith %}
+  
+  <p class="submit">
+    <input type="submit" name="post" class="submit-post" value="{% trans "Post" %}" />
+  </p>
+</form>

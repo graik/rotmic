@@ -1,6 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_static admin_list admin_modify admin_urls %}
 {% load rotmicfilters %}
+{% load comments %}
 
 {% block extrastyle %}
     {{ block.super }}
@@ -49,6 +50,13 @@
         {% block content-middle %} {% endblock %} {#override #}
             
         {% block content-bottom %}{% endblock %} {# override #}
+        
+        {% block comments %}
+        <div class="module" id="comments">
+            {% render_comment_list for o %}
+            {% render_comment_form for o %}
+        </div>
+        {% endblock %}
             
     </div>
 
@@ -59,8 +67,11 @@
 
         {% block side-rating %}
             <div class="module" id="rating-module">
-                <h2>Rating</h2>
-                <p>Not implemented</p>
+                <h2>Feedback</h2>
+                <p>
+                {% get_comment_count for o as comment_count %}
+                <a href="#comments">{{comment_count}} comments.</a>
+                </p>
             </div>
         {% endblock %}
         
