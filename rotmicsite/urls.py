@@ -9,6 +9,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    ## custom javascript URLS
     url(r'^getTypeDnaInfo/(?P<maintype>.*)/$',V.getTypeDnaInfo,name='getTypeDnaInfo'),
     url(r'^getCellTypes/(?P<maintype>.*)/$',V.getCellTypes,name='getCellTypes'),
     url(r'^getChemicalTypes/(?P<maintype>.*)/$',V.getChemicalTypes,name='getChemicalTypes'),
@@ -32,11 +33,14 @@ urlpatterns = patterns('',
     url(r'^rotmic/ajax/nextSampleId/(?P<container>.+)/$', 
         V.nextSampleId, name='nextSampleId' ),
 
+    ## autocomplete fields javascript
     url(r'^selectable/', include('selectable.urls')),
 
+    ## genbankfile download
     url(r'^rotmic/dnacomponent/(?P<pk>.*)/genbank/$',V.view_genbankfile,name='genbankfile'),
     url(r'^rotmic/proteincomponent/(?P<pk>.*)/genbank/$',V.view_genbankfile_aa,name='genbankfile_aa'),
 
+    ## Excel upload
     url(r'^rotmic/upload/dna/$', V.DnaXlsUploadView.as_view(), name='upload_dnacomponent'),
     url(r'^rotmic/upload/cell/$', V.CellXlsUploadView.as_view(), name='upload_cellcomponent'),
     url(r'^rotmic/upload/oligo/$', V.OligoXlsUploadView.as_view(), name='upload_oligocomponent'),
@@ -53,9 +57,14 @@ urlpatterns = patterns('',
     url(r'^rotmic/upload/cellsample/$', V.CellSampleXlsUploadView.as_view(), name='upload_cellsample'),
     url(r'^rotmic/upload/proteinsample/$', V.ProteinSampleXlsUploadView.as_view(), name='upload_proteinsample'),
 
+    ## genbank and trace file bulk upload
     url(r'^rotmic/upload/genbank/$', V.GbkUploadView.as_view(), name='upload_genbank'),
     url(r'^rotmic/upload/genbankaa/$', V.GbkProteinUploadView.as_view(), name='upload_proteingenbank'),
     url(r'^rotmic/upload/tracefiles/$', V.TracesUploadView.as_view(), name='upload_tracefiles'),
+
+    ## other
+    url(r'^comments/delete_own/(?P<id>.*)/$',V.delete_own_comment, name='delete_own_comment'),
+    (r'^comments/', include('django_comments.urls')),
 
     url(r'^', include(admin.site.urls)),
 )
