@@ -1,10 +1,10 @@
 <dl id="comments">
   {% for comment in comment_list %}
     <dt id="c{{ comment.id }}">
-        {{ comment.submit_date }} - {{ comment.name }}
+        {{ comment.name }} - {{ comment.submit_date }}
     </dt>
-    <dd>
-        <p>{{ comment.comment }}
+    <dd  style="background-color:#eee">
+        <p><font>{{ comment.comment }}</font>
           <br>
           {% if user.is_authenticated and comment.user == user or request.user.is_superuser %}
             <a href="{% url 'delete_own_comment' comment.id %}">--delete this comment--</a>

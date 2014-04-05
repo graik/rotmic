@@ -1,4 +1,6 @@
 {% load comments i18n %}
+{% load rotmicfilters %}
+
 <form action="{% comment_form_target %}" method="post">{% csrf_token %}
   {# redirect back to default view for object; o is defined by rotmic context #}
   {% if o %}<div><input type="hidden" name="next" value="{{ o.get_absolute_url }}" /></div>{% endif %}
@@ -12,17 +14,16 @@
     <p style="display:none;">{{field.label_tag}} {{field}}</p>
   {% endwith %}
  
+  <p class="submit">
+
   {% with form.comment as field %}
     {% if field.errors %}{{ field.errors }}{% endif %}
 
-    <p
-      {% if field.errors %} class="error"{% endif %}
-      {{ field.label_tag }} {{ field }}
-    </p>
+      {% if field.errors %} class="error";{% endif %}
+      {{ field.label_tag }} {{ field  | restyle:"rows:2" }}
 
   {% endwith %}
   
-  <p class="submit">
     <input type="submit" name="post" class="submit-post" value="{% trans "Post" %}" />
   </p>
 </form>
