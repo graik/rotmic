@@ -168,12 +168,6 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, Vi
     showDescription.allow_tags = True
     showDescription.short_description = 'Description'
     
-    def showEdit(self, obj):
-        return mark_safe('<a href="%s"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a>'\
-                         % (obj.get_absolute_url_edit() ) )
-    showEdit.allow_tags = True    
-    showEdit.short_description = 'Edit'     
-
     def make_csv(self, request, queryset):
         from collections import OrderedDict
         

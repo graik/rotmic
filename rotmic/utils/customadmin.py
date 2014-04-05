@@ -27,6 +27,11 @@ from django.contrib.admin.util import quote
 from guardian.admin import GuardedModelAdmin
 from guardian.shortcuts import get_objects_for_user
 
+## comment handling
+import django_comments.models as CM
+import django.contrib.contenttypes.models as CT
+import django.contrib.staticfiles.templatetags.staticfiles as ST
+
 import rotmic.models as M
 import rotmic.templatetags.rotmicfilters as F
 
@@ -213,4 +218,25 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
                 or (obj is not None and request.user.has_perm(self.opts.get_delete_permission(), obj))
         
 
+
+    def showEdit(self, obj):
+        """Small Edit Button for a direct link to Change dialog"""
+        r = '<a href="%s" title="Jump to editing form"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a>'
+        
+        ct = CT.ContentType.objects.get_for_model(self.model)
+        comments = CM.Comment.objects.filter(content_type__pk=ct.id,
+                                             object_pk=obj.id,
+                                             is_removed=False
+                                             )
+        if comments.count():
+            title = '%i comments:\n\n' % comments.count()
+            title += '\n-------\n'.join([unicode(c.user_name) + ': ' + c.comment for c in comments])
+            
+            r += '<a href="%s"><img src="%s" title="%s"></a>' % \
+                (obj.get_absolute_url()+'#comments', 
+                 ST.static('img/textbubble.png'), title)
+        
+        return mark_safe(r % (obj.get_absolute_url_edit() ) )
+    showEdit.allow_tags = True    
+    showEdit.short_description = 'Edit'     
 

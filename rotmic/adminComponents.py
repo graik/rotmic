@@ -124,13 +124,6 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
     showDescription.allow_tags = True
     showDescription.short_description = 'Description'
     
-    def showEdit(self, obj):
-        """Small Edit Button for a direct link to Change dialog"""
-        return safestring.mark_safe('<a href="%s"><img src="http://icons.iconarchive.com/icons/custom-icon-design/office/16/edit-icon.png"/></a>'\
-                         % (obj.get_absolute_url_edit() ) )
-    showEdit.allow_tags = True    
-    showEdit.short_description = 'Edit'     
-
     def showType(self, obj):
         cat = unicode(obj.componentType.category())
         try:
