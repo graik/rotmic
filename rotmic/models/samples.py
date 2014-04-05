@@ -17,12 +17,11 @@ from datetime import datetime
 import re
 
 from django.db import models
-from django.core.urlresolvers import reverse
 from django.db.models import Q
 import django.utils.html as html
 from django.contrib.auth.models import User, Group
 
-from .usermixin import UserMixin
+from .usermixin import UserMixin, ReadonlyUrlMixin
 from .storage import Container
 from .sequencing import Sequencing
 import rotmic.utils.inheritance as I
@@ -85,7 +84,7 @@ class SampleProvenance(models.Model):
         ordering = ['sample']
 
 
-class Sample( UserMixin ):
+class Sample( UserMixin, ReadonlyUrlMixin ):
     """Base class for DNA, cell and protein samples."""
 
     displayId = models.CharField('Position', max_length=20,
@@ -217,17 +216,6 @@ class Sample( UserMixin ):
         """
         return self.subClass().objects.get(id=self.id)
 
-    def get_absolute_url(self):
-        """
-        Define standard URL for object views
-        see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
-        """
-        classname = self.__class__.__name__.lower()
-        return reverse('admin:rotmic_%s_readonly' % classname, args=(self.id,))
-    
-    def get_absolute_url_edit(self):
-        classname = self.__class__.__name__.lower()
-        return reverse('admin:rotmic_%s_change' % classname, args=(self.id,))
     
     def showVerbose(self):
         """display full chain location / rack / container / sample with links"""

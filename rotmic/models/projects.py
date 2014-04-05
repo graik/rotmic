@@ -16,15 +16,14 @@
 import re
 
 from django.db import models
-from django.core.urlresolvers import reverse
 from django.db.models import Q
 import django.utils.html as html
 
-from .usermixin import UserMixin
+from .usermixin import UserMixin, ReadonlyUrlMixin
 
 import rotmic.templatetags.rotmicfilters as F
 
-class Project(UserMixin):
+class Project(UserMixin, ReadonlyUrlMixin):
     """
     A project connecting users / groups to constructs
     """
@@ -39,9 +38,6 @@ class Project(UserMixin):
     def __unicode__(self):
         return unicode(self.name)
 
-    def get_absolute_url(self):
-        return reverse('admin:rotmic_project_readonly', args=(self.id,))
-    
     def descriptionText(self):
         """remove some formatting characters from text"""
         r = re.sub('--','', self.description)

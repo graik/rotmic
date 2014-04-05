@@ -173,7 +173,8 @@ class LocationAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin
         ]
 
     list_display = ('displayId', 'name', 'temperature', 'room',
-                    'showRackCount', 'showContainerCount', 'showSampleCount')
+                    'showRackCount', 'showContainerCount', 'showSampleCount', 
+                    'showEdit')
     list_filter = ('room', 'temperature')
     search_fields = ('displayId', 'name',)
 
@@ -199,7 +200,8 @@ class RackAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
         ]
 
     list_display = ('displayId', 'name', 'showLocationUrl', 
-                    'showContainerCount', 'showSampleCount')
+                    'showContainerCount', 'showSampleCount',
+                    'showEdit')
     list_filter = (filters.RackLocationFilter,)
     search_fields = ('displayId', 'name', 'location__displayId', 'location__name')
 
@@ -239,8 +241,12 @@ class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmi
          )
         ]
 
-    list_display = ('__unicode__', 'showRackUrl', 'showLocationUrl', 'containerType', 'showSampleCount')
-    list_filter =  ('containerType', filters.ContainerLocationFilter, filters.ContainerRackFilter)
+    list_display = ('__unicode__', 'showRackUrl', 'showLocationUrl', 'containerType', 
+                    'showSampleCount',
+                    'showEdit')
+                    
+    list_filter =  ('containerType', filters.ContainerLocationFilter, 
+                    filters.ContainerRackFilter)
     search_fields = ('displayId', 'name','description')
 
     save_as = True

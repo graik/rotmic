@@ -20,7 +20,6 @@ import re
 from django.db import models
 from django.utils.safestring import mark_safe
 import django.utils.html as html
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 import Bio.SeqUtils.ProtParam as PP
@@ -29,13 +28,13 @@ import Bio.SeqUtils as SeqUtils
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 
-from .usermixin import UserMixin
+from .usermixin import UserMixin, ReadonlyUrlMixin
 
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
 
 
-class Component(UserMixin):
+class Component(UserMixin, ReadonlyUrlMixin):
     """
     Base class for cells, nucleic acids, proteins, and chemicals.
     Not shown to the user (currently) but the table exists and collects
@@ -81,18 +80,6 @@ class Component(UserMixin):
         name = self.name or ''
         return u'%s (%s)' % (self.displayId, name)
 
-    def get_absolute_url(self):
-        """
-        Define standard URL for object views
-        see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
-        """
-        classname = self.__class__.__name__.lower()
-        return reverse('admin:rotmic_%s_readonly' % classname, args=(self.id,))
-    
-    def get_absolute_url_edit(self):
-        classname = self.__class__.__name__.lower()
-        return reverse('admin:rotmic_%s_change' % classname, args=(self.id,))
-   
     def descriptionText(self):
         """remove some formatting characters from text"""
         r = re.sub('--','', self.description)

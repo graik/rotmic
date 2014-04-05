@@ -21,9 +21,9 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 import django.utils.html as html
 
-from .usermixin import UserMixin
+from .usermixin import UserMixin, ReadonlyUrlMixin
 
-class Location(UserMixin):
+class Location(UserMixin, ReadonlyUrlMixin):
     """
     A location (fridge, freezer, shelf) where containers are stored
     """
@@ -47,9 +47,6 @@ class Location(UserMixin):
             r += ' (%s)' % self.name
         return r
 
-    def get_absolute_url(self):
-        return reverse('admin:rotmic_location_readonly', args=(self.id,))
-    
     def rackCount(self):
         return self.racks.count()
     
@@ -109,7 +106,7 @@ class Location(UserMixin):
 
 
 
-class Rack(UserMixin):
+class Rack(UserMixin, ReadonlyUrlMixin):
     """
     A Rack (box) where containers are stored
     """
@@ -128,9 +125,6 @@ class Rack(UserMixin):
         if self.name:
             r += ' (%s)' % self.name
         return r
-
-    def get_absolute_url(self):
-        return reverse('admin:rotmic_rack_readonly', args=(self.id,))
 
     def sampleCount(self):
         from rotmic.models import Sample
@@ -180,7 +174,7 @@ class Rack(UserMixin):
         unique_together = ('displayId', 'location')
 
 
-class Container( UserMixin ):
+class Container( UserMixin, ReadonlyUrlMixin ):
     """
     A container holding several physical samples of nucleic acids, proteins 
     or other stuff.
@@ -214,8 +208,6 @@ class Container( UserMixin ):
             r += ' (%s)' % self.name
         return r
 
-    def get_absolute_url(self):
-        return reverse('admin:rotmic_container_readonly', args=(self.id,))
 
     def showVerbose(self):
         """show full chain Location / Rack / Container with URL links"""

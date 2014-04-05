@@ -17,6 +17,8 @@ from datetime import datetime
 
 from django.db import models
 from django.contrib.auth.models import User, Group
+from django.core.urlresolvers import reverse
+
 
 class UserMixin(models.Model):
     """
@@ -62,3 +64,20 @@ class UserMixin(models.Model):
         app_label = 'rotmic'        
         abstract = True
 
+
+class ReadonlyUrlMixin:
+    """URL methods for models that use the ViewFirstModelAdmin"""
+    
+    def get_absolute_url(self):
+        """
+        Define standard URL for object views
+        see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
+        """
+        classname = self.__class__.__name__.lower()
+        return reverse('admin:rotmic_%s_readonly' % classname, args=(self.id,))
+    
+    def get_absolute_url_edit(self):
+        """link to Editing Field"""
+        classname = self.__class__.__name__.lower()
+        return reverse('admin:rotmic_%s_change' % classname, args=(self.id,))
+     
