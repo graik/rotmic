@@ -1,6 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_static %}
 {% load i18n admin_modify  %}
+{% load rotmicfilters %}
 
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />{% endblock %}
 
@@ -266,6 +267,22 @@
             {% endfor %}
             </ul>
             {% endif %}
+    </div>
+    
+    <div class="module" id="recent-comments">
+        <h2>Recent Comments</h2>
+        <ul class="actionlist">
+            {% recentcomments as comments %}
+            {% for c in comments %}   
+                <li><b>{{c.user_name}}</b> {{c.submit_date|date:"Y-m-d"}}:<br>
+                    <p>
+                        <a href="{{c.content_object.get_absolute_url}}#comments">
+                        {{c.comment|truncate:55}}
+                    </a></p>
+                    
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 {% endblock %}
