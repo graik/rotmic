@@ -272,7 +272,7 @@
     <div class="module" id="recent-comments">
         <h2>Recent Comments</h2>
         <ul class="actionlist">
-            {% recentcomments as comments %}
+            {% recentcomments 5 as comments %}
             {% for c in comments %}   
                 <li><b>{{c.user_name}}</b> {{c.submit_date|date:"Y-m-d"}}:<br>
                     <p>
