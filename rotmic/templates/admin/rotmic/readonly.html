@@ -1,7 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_static admin_list admin_modify admin_urls %}
 {% load rotmicfilters %}
-{% load comments %}
+{% load comments commenttags %}
 
 {% block extrastyle %}
     {{ block.super }}
@@ -69,8 +69,8 @@
             <div class="module" id="rating-module">
                 <h2>Feedback</h2>
                 <p>
-                {% get_comment_count for o as comment_count %}
-                <a href="#comments">{{comment_count}} comments.</a>
+                    {{ o | comment_vote_symbol:33 }}
+                    {{ o | comment_vote_score }}
                 </p>
             </div>
         {% endblock %}

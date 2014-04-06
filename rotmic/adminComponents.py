@@ -181,7 +181,8 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
          ),            
     )
 
-    list_display = ('displayId', 'name', 'showStatus', 'registrationDate', 'showFirstAuthor',
+    list_display = ('displayId', 'name', 'showStatus', 'showComments',
+                    'registrationDate', 'showFirstAuthor',
                     'showVectorUrl', 'showMarkerUrls', 
                     'showDescription', 'showType', 
                     'showSampleStatus', 'showEdit')
