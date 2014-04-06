@@ -14,6 +14,7 @@ from django.utils.encoding import force_text
 
 ## imports for show / display links
 from django.utils.safestring import mark_safe
+import django.utils.html as html
 
 from functools import update_wrapper, partial
 csrf_protect_m = method_decorator(csrf_protect)
@@ -135,7 +136,7 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
 ##            raise PermissionDenied
 
         if obj is None:
-            raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {'name': force_text(opts.verbose_name), 'key': escape(object_id)})
+            raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {'name': force_text(opts.verbose_name), 'key': html.escape(object_id)})
         
         context = {
 ##            'title': _('Read %s') % force_text(opts.verbose_name),
