@@ -1,92 +1,34 @@
-{% extends "admin/base_site.html" %}
-{% load i18n admin_static admin_list %}
-{% load admin_urls %}
+{% extends "admin/rotmic/component/readonly.html" %}
+{% load i18n admin_static admin_list admin_urls %}
 {% load rotmicfilters %}
 
-{% block extrastyle %}
-    {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static "dashboard.css" %}" />
-{% endblock %}
-
-{% if not is_popup %}
-    {% block breadcrumbs%}<div class="breadcrumbs">
-      <a href="../../../">Home</a> &rsaquo;
-      <a href="../../">Rotmic</a> &rsaquo;
-      <a href="../">Cells</a> &rsaquo;
-      {{ o.displayId }}
-    </div>
-    {% endblock %}
-{% endif %}
-
-{% block coltype %}colMS{% endblock %}
-{% block bodyclass %}change-list{% endblock %}  {# keeps center scalable #}
-
-{% block title %}Cell {{o.displayId}}{% endblock %} {# window title #}
-
-{% block content %}
 
     {%block title-image%}
         <img src="{% static "img/cells.jpg" %}" align="left" height="45" 
         style="padding-left:0px; padding-right:10px; padding-top:0px; padding-bottom:5px"> 
     {%endblock%}
 
-    <h3>modified Cell or Strain</h3><h1>{{o}}</h1>
-
-    {% block object-tools %}
-    {% if not is_popup %}
-      <ul class="object-tools">
-        {% block object-tools-items %}
-        <li><a href="{% url opts|admin_urlname:'history' o.pk|admin_urlquote %}" class="historylink">{% trans "History" %}</a></li>
-        <li><a href="edit">Edit</a></li>
-        {% endblock %}
-      </ul>
-    {% endif %}
-    {% endblock %}
-
-    <div id="content-main">
+    {% block super-title %}<h3>modified Cell or Strain</h3>{%endblock%}
     
-        <div class='module'>
-            <h2>Description</h2>
-            <div>
-                <p class='description'>
-                    {{o.description|markdown}}
-                    {% if not o.description %}
-                        <p>No description found.</p>
-                    {% endif %}
-                </p>
-
-
-            </div>
+    {% block content-title%}<h2>Description</h2>{% endblock %} 
     
-            <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;"><h4>Attachments</h4></div>
-            <p><br></p>
-    
-            <div>
-                {% if o.attachments.count != 0 %}
-                    <table border="0" rules="none">
-                        <tr>
-                            {% for a in o.attachments.all %}
-                                <th style="text-align: center;">
-                                    <a href="{{a.f.url}}">{{a}}</a> <br>
-                                </th>
-                                <th></th>
-                            {% endfor %}
-                        </tr>
-                        <tr>
-                            {% for a in o.attachments.all %}
-                                <td style="text-align: center;">{{a.description}} ({{a.f.size|filesizeformat}})</td> 
-                                <td></td>
-                            {% endfor %}
-                        </tr>
-                    </table>
-                {% else %}
-                    <div><p>No attachments found.</p></div>
+    {% block content-details %}{% endblock %}
+
+    {% block content-description %}
+        <div>
+            <p class='description'>
+                {{o.description|markdown}}
+                {% if not o.description %}
+                    <p>No description found.</p>
                 {% endif %}
-                <p></p>
-            </div>
+            </p>
         </div>
-
-
+    {% endblock %}
+        
+    {% block content-middle %}
+    
+        {# skip sequence display in parent block #}
+        
         <div class='module'>        
             <h2>DNA features & modifications</h2>
             <p></p>
@@ -177,119 +119,11 @@
             {% endif %}
         
         </div>
+    
+    {% endblock content-middle %}
         
-        <div class='module'>
-            <h2>Samples</h2>
-                <p><br></p>
-                <ul class="object-tools">
-                    <li><a href="{% url 'admin:rotmic_cellsample_add'%}?cell={{o.pk}}">Add Cell Sample</a></li>
-                </ul>
+    {% block add-sample-url %}
+        <a href="{% url 'admin:rotmic_cellsample_add'%}?cell={{o.pk}}">
+    {% endblock %}
 
-                {% with n=o.cell_samples.count %}
-                    {% if n > 0 %}
-                        <p>
-                            There are <b>{{n}} Cell samples</b> registered for this Cell or Strain.<br>
-                        </p>
-                        
-                        <div style="margin: 10px">
-                            <table cellspacing="1">
-                    
-                                <thead>
-                                <tr>
-                                    <th>location</th>
-                                    <th>ID/<br>Pos.</th><th>prepared</th><th>by</th>
-                                    <th>Type</th><th>Content</th>
-                                    <th>Description</th><th>Status</th>
-                                </tr>
-                                </thead>
-                    
-                                <tbody>
-                                {% for x in o.cell_samples.all %}
-                                
-                                  <tr class="{% cycle 'row1' 'row2' %}">
-                                  
-                                    <td>{{x.container.showVerbose}}</td>
-                                                         
-                                    <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
-                                    
-                                    <td>{{x.preparedAt}}</td>
-                                    
-                                    <td>{{x.registeredBy}}</td>
-                                    
-                                    <td>{{x.showType}}</td>
-                                    
-                                    <td>{{x.showContent}}</td>
-                                    
-                                    <td>{{x.description | truncateHTML:30}}</td>
-                                    
-                                    <td>{{x.showStatus}}</td>
-                                    
-                                  </tr>
-                    
-                              {% endfor %}
-                              </tbody>
-                            </table>
-                            <p></p>
-                            <small>
-                                Help: Move mouse over content link to see content description. 
-                                Move mouse over sample description to see full length description.
-                            </small>
-                        </div>
-                    
-                    {% else %}
-                        <p>There are no cell samples registered for this cell or strain.</p>
-                    {% endif %}
-                {% endwith %}
-        </div>
-
-    </div>
-
-{% endblock %}
-
-{% block sidebar %}
-    <div id="content-related">
-
-        <div class="module" id="rating-module">
-            <h2>Rating</h2>
-            <p>Not implemented</p>
-        </div>
-
-        <div class="module" id="classification-module">
-            <h2>Classification</h2>
-                <p> 
-                {% with o.componentType as T %}
-                    <a href="../?category={{T.category}}">{{T.category}}</a> /<br>
-                    &nbsp&nbsp<a href="../?category={{T.category}}&type={{T.name}}">{{T.name}}</a>
-                {% endwith %}
-                </p>
-        </div>
-
-        <div class="module" id="record-module">
-            <h2>Record</h2>
-            <ul>    
-                <li><B>Status</B>:<p>{{o.showStatus}}</p></li>
-                <li><B>registered</B>: 
-                    <p>
-                    {% with o.registeredBy as U %}
-                        {{o.registeredAt}}<br>
-                        by <a href="../?registeredBy__id__exact={{U.id}}">
-                            {{U.first_name}} {{U.last_name}} ({{U}})</a>
-                    {% endwith %}
-                    </p>
-                </li>
-                {% if o.modifiedBy %}
-                    <li><B>last modified</B>: 
-                        <p>
-                        {% with o.modifiedBy as U %}
-                            {{o.modifiedAt}}<br>
-                            by {{U.first_name}} {{U.last_name}} ({{U}})
-                        {% endwith %}
-                        </p>
-                    </li>
-                {% endif %}   
-            </ul>
-        </div> 
-
-    </div>
-{% endblock %}
 
