@@ -172,7 +172,8 @@ class LocationAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin
          )
         ]
 
-    list_display = ('displayId', 'name', 'temperature', 'room',
+    list_display = ('displayId', 'name', 'showComments',
+                    'temperature', 'room',
                     'showRackCount', 'showContainerCount', 'showSampleCount', 
                     'showEdit')
     list_filter = ('room', 'temperature')
@@ -199,7 +200,8 @@ class RackAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
          )
         ]
 
-    list_display = ('displayId', 'name', 'showLocationUrl', 
+    list_display = ('displayId', 'name', 'showComments',
+                    'showLocationUrl', 
                     'showContainerCount', 'showSampleCount',
                     'showEdit')
     list_filter = (filters.RackLocationFilter,)
@@ -241,7 +243,7 @@ class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmi
          )
         ]
 
-    list_display = ('__unicode__', 'showRackUrl', 'showLocationUrl', 'containerType', 
+    list_display = ('__unicode__', 'showComments', 'showRackUrl', 'showLocationUrl', 'containerType', 
                     'showSampleCount',
                     'showEdit')
                     

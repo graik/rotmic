@@ -346,7 +346,8 @@ class CellComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
          ),            
     )
 
-    list_display = ('displayId', 'name', 'showStatus', 'registrationDate', 'showFirstAuthor',
+    list_display = ('displayId', 'name', 'showStatus', 'showComments',
+                    'registrationDate', 'showFirstAuthor',
                     'showPlasmidUrl', 'showMarkerUrls', 'showDescription',
                     'showType',
                     'showSampleStatus', 'showEdit')
@@ -444,7 +445,8 @@ class OligoComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
          ),            
     )
 
-    list_display = ('displayId', 'name', 'showStatus', 'registrationDate', 'showFirstAuthor',
+    list_display = ('displayId', 'name', 'showStatus', 'showComments',
+                    'registrationDate', 'showFirstAuthor',
                     'showTm', 'showDescription',
                     'componentType',
                     'showSampleStatus', 'showEdit')
@@ -516,7 +518,8 @@ class ChemicalComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
          ),            
     )
 
-    list_display = ('displayId', 'name', 'showStatus', 'registrationDate', 'showFirstAuthor',
+    list_display = ('displayId', 'name', 'showStatus', 'showComments',
+                    'registrationDate', 'showFirstAuthor',
                     'cas', 'showDescription', 
                     'showType',
                     'showSampleStatus', 'showEdit')
@@ -573,7 +576,8 @@ class ProteinComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
          ),            
     )
 
-    list_display = ('displayId', 'name', 'showStatus', 'registrationDate', 'showFirstAuthor',
+    list_display = ('displayId', 'name', 'showStatus', 'showComments',
+                    'registrationDate', 'showFirstAuthor',
                     'showDescription','showSampleStatus','showEdit')
     
     list_filter = ( filters.ProteinCategoryListFilter, filters.ProteinTypeListFilter, 

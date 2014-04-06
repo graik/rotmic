@@ -98,7 +98,7 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, Vi
           
     ]
     list_display = ('showExtendedId', 'showRack', 'showLocation',
-                    'showStatus',
+                    'showStatus', 'showComments',
                     'preparedAt', 'preparedBy', 'showType',
                     'showContent', 'showConcentration', 'showAmount',
                     'showEdit')
@@ -222,7 +222,7 @@ class DnaSampleAdmin( SampleAdmin ):
     ]
 
     list_display = ('showExtendedId', 'showRack', 'showLocation',
-                    'showStatus',
+                    'showStatus', 'showComments',
                     'preparedAt', 'preparedBy',
                     'showContent', 'showConcentration', 'showAmount',
                     'showSequencing',
@@ -278,7 +278,7 @@ class CellSampleAdmin( SampleAdmin ):
     ]
 
     list_display = ('showExtendedId', 'showRack', 'showLocation',
-                    'showStatus',
+                    'showStatus', 'showComments',
                     'preparedAt', 'preparedBy',
                     'showContent', 'showAmount',
                     'showEdit')
@@ -321,7 +321,7 @@ class OligoSampleAdmin( SampleAdmin ):
     ]
 
     list_display = ('showExtendedId', 'showRack', 'showLocation',
-                    'showStatus',
+                    'showStatus', 'showComments',
                     'preparedAt', 'preparedBy', 
                     'showContent', 'showConcentration', 'showAmount',
                     'showEdit')
@@ -363,7 +363,7 @@ class ChemicalSampleAdmin( SampleAdmin ):
     ]
 
     list_display = ('showExtendedId', 'showRack', 'showLocation',
-                    'showStatus',
+                    'showStatus', 'showComments',
                     'preparedAt', 'preparedBy',
                     'showContent', 'showConcentration', 'showAmount',
                     'showEdit')
@@ -405,7 +405,7 @@ class ProteinSampleAdmin( SampleAdmin ):
     ]
 
     list_display = ('showExtendedId', 'showRack', 'showLocation',
-                    'showStatus',
+                    'showStatus', 'showComments',
                     'preparedAt', 'preparedBy',
                     'showContent', 'showConcentration', 'showAmount',
                     'showEdit')

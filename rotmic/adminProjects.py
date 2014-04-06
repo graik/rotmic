@@ -35,7 +35,7 @@ class ProjectAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin)
          )
         ]
 
-    list_display = ('name', 'showDescription')
+    list_display = ('name', 'showComments','showDescription')
     search_fields = ('name', 'description')
 
     save_as = True
