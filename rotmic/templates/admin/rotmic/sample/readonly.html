@@ -1,55 +1,27 @@
-{% extends "admin/base_site.html" %}
+{% extends "admin/rotmic/readonly.html" %}
 {% load i18n admin_static admin_list %}
 {% load admin_urls %}
 {% load rotmicfilters %}
 
-{% block extrastyle %}
-    {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static "dashboard.css" %}" />
-{% endblock %}
-
-{% if not is_popup %}
-    {% block breadcrumbs%}
-    <div class="breadcrumbs">
-      <a href="../../../">Home</a> &rsaquo;
-      <a href="../../">Rotmic</a> &rsaquo;
-      <a href="../">{{class_label}}s</a> &rsaquo;
-      {{ o.displayId }}
-    </div>
-    {% endblock %}
-{% endif %}
-
-{% block coltype %}colMS{% endblock %}
-{% block bodyclass %}change-list{% endblock %}  {# keeps center scalable #}
-
 {% block title %}Sample {{o.displayId}}{% endblock %} {# window title #}
-
-{% block content %}
 
     {%block title-image%}
         <img src="{% static "img/dnasample.jpg" %}" align="left" height="55" 
         style="padding-left:0px; padding-right:10px; padding-top:0px"> 
     {%endblock%}
-    {% block super-title %}<h3>Sample</h3>{% endblock %}<h1>{{o.showVerbose}}</h1>
-
-    {% block object-tools %}
-    {% if not is_popup %}
-      <ul class="object-tools">
-        {% block object-tools-items %}
-        <li><a href="{% url opts|admin_urlname:'history' o.pk|admin_urlquote %}" class="historylink">{% trans "History" %}</a></li>
-        <li><a href="edit">Edit</a></li>
-        {% endblock %}
-      </ul>
-    {% endif %}
-    {% endblock %}
-
-    <div id="content-main">
     
+    {% block page-title %}<h1>{{o.showVerbose}}</h1>{% endblock %}
+    
+    {% block content-top %}    
+
         {% block sample-content %}
         {%endblock%}
 
+    {% endblock content-top %}
+    
+    {% block content-middle %}
         <div class='module'>
-            
+    
             {% block descriptions %}
                 <h2>Sample Description</h2>
                 <div>
@@ -91,7 +63,7 @@
                     <p></p>
                     <div>
                         <p class='description'>
-
+    
                             <div style="margin: 10px">
                                 <table>
                                     <tr>
@@ -154,16 +126,19 @@
                                     </tr>
                                 </table>
                             </div>
-
+    
                         </p>
                     </div>
                 {% endif %}
     
             {% endblock %}
-                        
         </div>
 
-        
+    {% endblock content-middle %}
+                        
+
+    {% block content-bottom %}
+    
         {% block related-samples %}
         <div class='module'>
             <h2>Related Samples: {{o.sameSamples.all.count}}</h2>
@@ -220,91 +195,75 @@
             </div>
         </div>    
         {% endblock %}
-    </div>
+    
+    {% endblock content-bottom %}
 
 
-
-{% endblock %}
-
-{% block sidebar %}
-    <div id="content-related">
-
-        {% block side-rating %}
-            <div class="module" id="rating-module">
-                <h2>Rating</h2>
-                <p>Not implemented</p>
-            </div>
-        {% endblock %}
-
-        {% block side-concentration %}
-            <div class="module" id="concentration-module">
-                <h2>Specifications</h2>
-                {% if o.aliquotNr %}
-                    <p></p>
-                    <p>{{o.aliquotNr}} aliquotes of</p>
-                {% endif %}
-                <ul>    
-                    <li><B>Concentration</B>:
-                        {% if o.concentration %}
-                            {{o.concentration}}&nbsp{{o.concentrationUnit}}
-                        {% endif %}
+    {% block side-top %}
+        <div class="module" id="concentration-module">
+            <h2>Specifications</h2>
+            {% if o.aliquotNr %}
+                <p></p>
+                <p>{{o.aliquotNr}} aliquotes of</p>
+            {% endif %}
+            <ul>    
+                <li><B>Concentration</B>:
+                    {% if o.concentration %}
+                        {{o.concentration}}&nbsp{{o.concentrationUnit}}
+                    {% endif %}
+                </li>
+                <li><B>Amount</B>: 
+                    {% if o.amount %}
+                        {{o.amount}}&nbsp{{o.amountUnit}}
+                    {% endif %}
                     </li>
-                    <li><B>Amount</B>: 
-                        {% if o.amount %}
-                            {{o.amount}}&nbsp{{o.amountUnit}}
-                        {% endif %}
-                        </li>
-                    <li><B>Medium/Buffer</B>:
-                        {% if o.solvent %}
-                            <p>{{o.solvent}}</p>
-                        {% endif %}
-                    </li>
-                    <li><B>Experiment #</B>:
-                        {% if o.experimentNr %}
-                            {{o.experimentNr}}
-                        {% endif %}
-                    </li>
-                </u>
-            </div>
-        {% endblock %}
+                <li><B>Medium/Buffer</B>:
+                    {% if o.solvent %}
+                        <p>{{o.solvent}}</p>
+                    {% endif %}
+                </li>
+                <li><B>Experiment #</B>:
+                    {% if o.experimentNr %}
+                        {{o.experimentNr}}
+                    {% endif %}
+                </li>
+            </u>
+        </div>
+    {% endblock %}
 
-        {% block side-record %}
-            <div class="module" id="record-module">
-                <h2>Record</h2>
-                <ul>    
-                    <li><B>Status</B>: <b>{{o.showStatus}}</b><br><br></li>
-                    <li><B>prepared</B>: 
+    {% block side-record %}
+        <div class="module" id="record-module">
+            <h2>Record</h2>
+            <ul>    
+                <li><B>Status</B>: <b>{{o.showStatus}}</b><br><br></li>
+                <li><B>prepared</B>: 
+                    <p>
+                    {% with o.preparedBy as U %}
+                        {{o.preparedAt|date:"Y-m-d"}}<br>
+                        by <a href="../?preparedBy__id__exact={{U.id}}"> 
+                           {{U.first_name}} {{U.last_name}} ({{U}})</a>
+                    {% endwith %}
+                    </p>
+                </li>
+                <li><B>registered</B>: 
+                    <p>
+                    {% with o.registeredBy as U %}
+                        {{o.registeredAt}}<br>
+                        by <a href="../?registeredBy__id__exact={{U.id}}">
+                            {{U.first_name}} {{U.last_name}} ({{U}})</a>
+                    {% endwith %}
+                    </p>
+                </li>
+                {% if o.modifiedBy %}
+                    <li><B>last modified</B>: 
                         <p>
-                        {% with o.preparedBy as U %}
-                            {{o.preparedAt|date:"Y-m-d"}}<br>
-                            by <a href="../?preparedBy__id__exact={{U.id}}"> 
-                               {{U.first_name}} {{U.last_name}} ({{U}})</a>
+                        {% with o.modifiedBy as U %}
+                            {{o.modifiedAt}}<br>
+                            by {{U.first_name}} {{U.last_name}} ({{U}})
                         {% endwith %}
                         </p>
                     </li>
-                    <li><B>registered</B>: 
-                        <p>
-                        {% with o.registeredBy as U %}
-                            {{o.registeredAt}}<br>
-                            by <a href="../?registeredBy__id__exact={{U.id}}">
-                                {{U.first_name}} {{U.last_name}} ({{U}})</a>
-                        {% endwith %}
-                        </p>
-                    </li>
-                    {% if o.modifiedBy %}
-                        <li><B>last modified</B>: 
-                            <p>
-                            {% with o.modifiedBy as U %}
-                                {{o.modifiedAt}}<br>
-                                by {{U.first_name}} {{U.last_name}} ({{U}})
-                            {% endwith %}
-                            </p>
-                        </li>
-                    {% endif %}   
-                </ul>
-            </div> 
-        {% endblock %}
-
-
-    </div>
-{% endblock %}
+                {% endif %}   
+            </ul>
+        </div> 
+    {% endblock %}
