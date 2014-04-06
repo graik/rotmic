@@ -1,5 +1,5 @@
 {% load comments i18n %}
-{% load rotmicfilters %}
+{% load commenttags %}
 
 <form action="{% comment_form_target %}" method="post">{% csrf_token %}
   {# redirect back to default view for object; o is defined by rotmic context #}
