@@ -277,9 +277,13 @@
             {% for c in comments %}   
                 <li><b>{{c.user_name}}</b> {{c.submit_date|date:"Y-m-d"}}:<br>
                     <p>
+                        {{ c.get_icon_html }}
                         <a href="{{c.content_object.get_absolute_url}}#comments">
                         {{c.comment|truncate:55}}
-                    </a></p>
+                        </a><br>
+                        <span class="mini quiet">{{ c.content_object }}</span>
+                    </p>
+                        
                     
                 </li>
             {% endfor %}

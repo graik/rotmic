@@ -94,10 +94,7 @@ def comment_vote_symbol(obj, height=0, iconset=None, mouseover=''):
     Image summary of comment ratings associated with an object.
     Image annotated with % of fresh votes in title(mouseover)
     """
-    icons = iconset or {'rotten': 'rotten.png',
-                        'fresh': 'fresh.png', 
-                        'mixed': 'mixed.png',
-                        'neutral': 'comment.png'}
+    icons = iconset or CM.RatedComment.ICONS
     
     votes = comment_vote_stats(obj)
     verdict = votes['verdict']
