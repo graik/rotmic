@@ -255,6 +255,11 @@ class CellSampleForm( SampleForm ):
                                         name = plasmid.name + '@' + ctype.name,
                                         )
                 newcell.save()
+                ## Many2Many relationships can only be created after save
+                newcell.authors = [self.request.user]
+                newcell.projects = plasmid.projects.all()
+                newcell.save()
+                
                 data['cell'] = newcell
                 messages.success(self.request,
                                  'Created new cell record %s (%s)' %\
