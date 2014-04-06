@@ -4,10 +4,10 @@
     {% for comment in comment_list %}
         <dt id="c{{ comment.id }}">
             {% if comment.rating == 1 %}
-                <img src="{% static 'fresh.png'%}" height="25" >
+                <img src="{% static 'fresh.png'%}" height="22" >
                 {{comment.get_rating_display}}!
             {% elif comment.rating == -1 %}
-                <img src="{% static 'rotten.png'%}" height="25">
+                <img src="{% static 'rotten.png'%}" height="22">
                 {{comment.get_rating_display}}!
             {% else %}
                 <img src="{% static 'comment.png'%}">
