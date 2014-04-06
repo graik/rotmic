@@ -24,6 +24,15 @@
 
   {% endwith %}
   
+  {% with form.rating as field %}
+    {% if field.errors %}{{ field.errors }}{% endif %}
+
+      {% if field.errors %} class="error";{% endif %}
+      {{ field.label_tag }} {{ field }}
+
+  {% endwith %}
+  
+  
     <input type="submit" name="post" class="submit-post" value="{% trans "Post" %}" />
   </p>
 </form>

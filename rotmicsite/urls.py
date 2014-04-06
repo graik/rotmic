@@ -63,8 +63,7 @@ urlpatterns = patterns('',
     url(r'^rotmic/upload/tracefiles/$', V.TracesUploadView.as_view(), name='upload_tracefiles'),
 
     ## other
-    url(r'^comments/delete_own/(?P<id>.*)/$',V.delete_own_comment, name='delete_own_comment'),
-    (r'^comments/', include('django_comments.urls')),
+    (r'^comments/', include('ratedcomments.urls')),
 
     url(r'^', include(admin.site.urls)),
 )

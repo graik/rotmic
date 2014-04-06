@@ -151,7 +151,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    
     'django_comments',
+    'ratedcomments',
     'south',
     'guardian',
     'selectable',
@@ -159,6 +161,8 @@ INSTALLED_APPS = (
     'rotmic',
     'django.contrib.admin',  ## last for lowest priority in template loading
 )
+
+COMMENTS_APP = 'ratedcomments'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

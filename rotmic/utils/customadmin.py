@@ -28,7 +28,7 @@ from guardian.admin import GuardedModelAdmin
 from guardian.shortcuts import get_objects_for_user
 
 ## comment handling
-import django_comments.models as CM
+import ratedcomments.models as CM
 import django.contrib.contenttypes.models as CT
 import django.contrib.staticfiles.templatetags.staticfiles as ST
 

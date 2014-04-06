@@ -21,7 +21,7 @@ from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 
 from rotmic.models import DnaComponentType
-import django_comments
+import ratedcomments
 
 register = template.Library()
 
@@ -152,7 +152,7 @@ def restyle(field, css):
 
 @register.assignment_tag
 def recentcomments(n=10):
-    qs = django_comments.get_model().objects.filter(
+    qs = ratedcomments.get_model().objects.filter(
             is_removed = False,
         )
     return qs.order_by('-submit_date')[:n]

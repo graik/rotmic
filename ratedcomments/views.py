@@ -3,10 +3,10 @@
 from django.shortcuts import get_object_or_404
 import django.http as http
 from django_comments.views.moderation import perform_delete
-from django_comments.models import Comment
+from models import RatedComment
 
 def delete_own_comment(request, id):
-    comment = get_object_or_404(Comment, id=id)
+    comment = get_object_or_404(RatedComment, id=id)
     if comment.user.id != request.user.id and not request.user.is_superuser:
         raise http.Http404('Permission denied')
     perform_delete(request, comment)
