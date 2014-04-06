@@ -5,10 +5,14 @@
         <dt id="c{{ comment.id }}">
             {% if comment.rating == 1 %}
                 <img src="{% static 'fresh.png'%}" height="25" >
+                {{comment.get_rating_display}}!
             {% elif comment.rating == -1 %}
                 <img src="{% static 'rotten.png'%}" height="25">
+                {{comment.get_rating_display}}!
+            {% else %}
+                <img src="{% static 'comment.png'%}">
             {% endif %}
-            {{comment.get_rating_display}}! {{ comment.name }} - {{ comment.submit_date }}
+            {{ comment.name }} - {{ comment.submit_date }}
         </dt>
         <dd  style="background-color:#eee">
             <p><font>{{ comment.comment }}</font>
