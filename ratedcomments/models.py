@@ -7,3 +7,5 @@ class RatedComment(Comment):
                (-1, 'rotten'))
     
     rating = models.IntegerField(choices=CHOICES, default=0)
+    
+    
