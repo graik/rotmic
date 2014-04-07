@@ -157,3 +157,23 @@ class ViewFirstModelAdmin( ModelAdmin ):
             post_url = reverse('admin:index',
                                current_app=self.admin_site.name)
         return HttpResponseRedirect(post_url)
+
+    def showEdit(self, obj):
+        """Small Edit Button for a direct link to Change dialog"""
+        url = obj.get_absolute_url_edit()
+        r = '<a href="%s" title="Jump to editing form"><img src="%s"/></a>'\
+            % (url, ST.static('img/edit-icon.png'))
+        return mark_safe(r)
+
+    showEdit.allow_tags = True
+    showEdit.short_description = ''
+
+
+    def showComments(self, obj):
+        """Show comment icon (or nothing if none) depending on rating."""
+        url = obj.get_absolute_url() + '#comments'
+        r = commenttags.comment_info_icon(obj, url=url)
+        return mark_safe(r)
+    
+    showComments.allow_tags = True
+    showComments.short_description = ''
