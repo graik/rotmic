@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.contrib.admin import widgets, helpers
+from django.contrib.admin import widgets, helpers, ModelAdmin
 from django.template import loader, Context, RequestContext
 from django.template.response import TemplateResponse
 from django.contrib.admin.util import unquote, flatten_fieldsets, get_deleted_objects, model_format_dict
@@ -23,10 +23,6 @@ csrf_protect_m = method_decorator(csrf_protect)
 from django.contrib.admin.views.main import ChangeList
 from django.core.urlresolvers import reverse
 from django.contrib.admin.util import quote
-
-## Objec-level permission integration in Admin
-from guardian.admin import GuardedModelAdmin
-from guardian.shortcuts import get_objects_for_user
 
 ## comment handling
 import ratedcomments.models as CM
@@ -52,20 +48,12 @@ class ViewFirstChangeList( ChangeList ):
                        current_app=self.model_admin.admin_site.name)
     
 
-class ViewFirstModelAdmin( GuardedModelAdmin ):
+class ViewFirstModelAdmin( ModelAdmin ):
     """
     Custom version of admin.ModelAdmin which shows a read-only
     View for a given object instead of the normal ChangeForm. The changeForm
     is accessed by admin/ModelName/id/edit
-    
-    Also has custom code to filter admin for django-guardian permissions. However,
-    this is still incomplete and needs to be re-written. E.g. a user is not given
-    access to it's own objects and groups don't seem to be supported. The only
-    thing that works out of the box is the assigmnent of row-level permissions.
     """
-    
-    ## reset to ModelAdmin default (de-activates Guardian template)
-    change_form_template = None
     
     def get_urls(self):
         from django.conf.urls import patterns, url
@@ -94,20 +82,7 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
             url(r'^(.+)/edit/$',
                 wrap(self.change_view),
                 name='%s_%s_change' % info),
-            
-            # django-guardian views
-            url(r'^(?P<object_pk>.+)/edit/permissions/$',
-                view=self.admin_site.admin_view(self.obj_perms_manage_view),
-                name='%s_%s_permissions' % info),
-            url(r'^(?P<object_pk>.+)/edit/permissions/user-manage/(?P<user_id>\-?\d+)/$',
-                view=self.admin_site.admin_view(
-                    self.obj_perms_manage_user_view),
-                name='%s_%s_permissions_manage_user' % info),
-            url(r'^(?P<object_pk>.+)/edit/permissions/group-manage/(?P<group_id>\-?\d+)/$',
-                view=self.admin_site.admin_view(
-                    self.obj_perms_manage_group_view),
-                name='%s_%s_permissions_manage_group' % info),
-            
+                        
             # new default view is readonly
             url(r'^(.+)/$',
                 wrap(self.readonly_view),
@@ -182,60 +157,3 @@ class ViewFirstModelAdmin( GuardedModelAdmin ):
             post_url = reverse('admin:index',
                                current_app=self.admin_site.name)
         return HttpResponseRedirect(post_url)
-
-
-    ## following code taken from 
-    ## http://stackoverflow.com/questions/10928860/objects-with-permissions-assigned-by-django-guardian-not-visible-in-admin
-    def queryset(self, request):
-        qs = super(ViewFirstModelAdmin, self).queryset(request)
-        # Check global permission
-        if super(ViewFirstModelAdmin, self).has_change_permission(request) \
-            or (not self.list_editable and self.has_view_permission(request)):
-                return qs
-        # No global, filter by row-level permissions. also use view permission if the changelist is not editable
-        if self.list_editable:
-            return get_objects_for_user(request.user, [self.opts.get_change_permission()], qs)
-        else:
-            return get_objects_for_user(request.user, [self.opts.get_change_permission(), self.get_view_permission(
-)], qs, any_perm=True)
-
-    def has_change_permission(self, request, obj=None):
-        if super(ViewFirstModelAdmin, self).has_change_permission(request, obj):
-            return True
-        if obj is None:
-            # Here check global 'view' permission or if there is any changeable items
-            return self.has_view_permission(request) or self.queryset(request).exists()
-        else:
-            # Row-level checking
-            return request.user.has_perm(self.opts.get_change_permission(), obj)
-
-    def get_view_permission(self):
-        return 'view_%s' % self.opts.object_name.lower()
-
-    def has_view_permission(self, request, obj=None):
-        return request.user.has_perm(self.opts.app_label + '.' + self.get_view_permission(), obj)
-
-    def has_delete_permission(self, request, obj=None):
-        return super(ViewFirstModelAdmin, self).has_delete_permission(request, obj) \
-                or (obj is not None and request.user.has_perm(self.opts.get_delete_permission(), obj))
-        
-
-    def showEdit(self, obj):
-        """Small Edit Button for a direct link to Change dialog"""
-        url = obj.get_absolute_url_edit()
-        r = '<a href="%s" title="Jump to editing form"><img src="%s"/></a>'\
-            % (url, ST.static('img/edit-icon.png'))
-        return mark_safe(r)
-
-    showEdit.allow_tags = True    
-    showEdit.short_description = ''     
-
-
-    def showComments(self, obj):
-        """Show comment icon (or nothing if none) depending on rating."""
-        url = obj.get_absolute_url() + '#comments'
-        r = commenttags.comment_info_icon(obj, url=url)
-        return mark_safe(r)
-    
-    showComments.allow_tags = True    
-    showComments.short_description = ''     
