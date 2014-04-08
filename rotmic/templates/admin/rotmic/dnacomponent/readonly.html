@@ -3,6 +3,11 @@
 {% load admin_urls %}
 {% load rotmicfilters %}
 
+{% block extrahead %}{{ block.super }}
+{# include benchling js#}
+<script src='https://benchling.com/static/build/api.js?v=1.0' type='text/javascript'></script>
+{% endblock %}
+
     {%block title-image%}
         <img src="{% static "img/dnaconstruct.png" %}" align="left" height="45" 
         style="padding-left:0px; padding-right:10px; padding-top:0px; padding-bottom:5px"> 
@@ -88,7 +93,30 @@
     
     {% block content-middle %}
     
-        {{block.super}} {# dispay sequence #}
+        {% block sequence %}
+            <div class='module'> 
+                <h2>Sequence</h2>
+                {% if o.sequence %}
+                    <div id="widget-sequence"/>
+                        <script>
+                            widget = new benchling.Widget(document.getElementById('widget-sequence'));
+                            var params = {
+                                "sequence": {
+                                    "name": "{{o.displayId}}",
+                                    "bases": "{{o.sequence}}",
+                                    },
+                                    "options": {}
+                                }
+                            widget.load(params);
+                        </script>
+                    </div>
+
+                {% else %}
+                    <p>There is no sequence registered.</p>
+                {% endif %}
+            </div>        
+        {% endblock sequence %}
+
         
         <div class='module'>
             <h2>Related Entries: {{o.allProteins|length|add:o.relatedDnaCount|add:o.as_plasmid_in_cell.count}}</h2>
