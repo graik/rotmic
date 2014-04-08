@@ -2,6 +2,12 @@
 {% load i18n admin_static admin_list admin_modify admin_urls %}
 {% load rotmicfilters %}
 
+{% block extrahead %}{{ block.super }}
+{# include benchling js#}
+<script src='https://benchling.com/static/build/api.js?v=1.0' type='text/javascript'></script>
+{% endblock %}
+
+
     {% block content-top %}
         <div class='module'>
                         
@@ -73,11 +79,22 @@
         
         {% block sequence %}
             <div class='module'> 
-                <h2>Raw Sequence</h2>
+                <h2>Sequence</h2>
                 {% if o.sequence %}
-                    <div {%block seqstyle%}style="height:70px;overflow:auto"{%endblock%}>
-                    <p style='font-family:monospace;word-wrap:break-word'>&gt;{{o.displayId}}<br>{{o.sequence}}</p>
+                    <div id="widget-sequence"/>
+                        <script>
+                            widget = new benchling.Widget(document.getElementById('widget-sequence'));
+                            var params = {
+                                "sequence": {
+                                    "name": "{{o.displayId}}",
+                                    "bases": "{{o.sequence}}",
+                                    },
+                                    "options": {}
+                                }
+                            widget.load(params);
+                        </script>
                     </div>
+
                 {% else %}
                     <p>There is no sequence registered.</p>
                 {% endif %}
