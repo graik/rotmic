@@ -240,7 +240,7 @@ class GenbankUploadForm(UploadFormBase):
                         help_text='')
     
     genbank = MultiFileField(label='Genbank file(s)',
-                           min_num=2,
+                           min_num=1,
                            extensions=['gb', 'gbk', 'genbank'],
                            help_text='Hold <CTRL> to select multiple files.')
 
