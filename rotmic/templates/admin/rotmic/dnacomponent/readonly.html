@@ -1,11 +1,10 @@
 {% extends "admin/rotmic/component/readonly.html" %}
 {% load i18n admin_static admin_list %}
 {% load admin_urls %}
-{% load rotmicfilters %}
+{% load rotmicfilters benchling %}
 
 {% block extrahead %}{{ block.super }}
-{# include benchling js#}
-<script src='https://benchling.com/static/build/api.js?v=1.0' type='text/javascript'></script>
+    {% benchling_libs %}
 {% endblock %}
 
     {%block title-image%}
@@ -96,24 +95,7 @@
         {% block sequence %}
             <div class='module'> 
                 <h2>Sequence</h2>
-                {% if o.sequence %}
-                    <div id="widget-sequence"/>
-                        <script>
-                            widget = new benchling.Widget(document.getElementById('widget-sequence'));
-                            var params = {
-                                "sequence": {
-                                    "name": "{{o.displayId}}",
-                                    "bases": "{{o.sequence}}",
-                                    },
-                                    "options": {}
-                                }
-                            widget.load(params);
-                        </script>
-                    </div>
-
-                {% else %}
-                    <p>There is no sequence registered.</p>
-                {% endif %}
+                {% benchling o %}
             </div>        
         {% endblock sequence %}
 
