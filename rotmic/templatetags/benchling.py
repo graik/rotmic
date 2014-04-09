@@ -33,6 +33,8 @@ from django.utils.safestring import mark_safe
 from django import template
 import django.utils.html as html
 
+import rotmic.utils.genbank as genbank
+
 register = template.Library()
 
 benchling_script=\
@@ -56,6 +58,17 @@ benchling_script=\
 </div>
 """
 
+benchling_annotation=\
+"""
+{
+   'name': "%(name)s",
+   'color': "%(color)s",
+   'start': %(start)i,
+   'end': %(end)i,
+   'strand' : %(strand)i,
+},
+"""
+
 @register.simple_tag
 def benchling_libs():
     """benchling javascript import statement"""
@@ -69,10 +82,16 @@ def benchling(dc, element='sequence-box'):
     if not sequence:
         return mark_safe("<p>There is no sequence registered.</p>")
     
+    annotations = ''
+    if dc.genbank:
+        p = genbank.GenbankInMemory(dc.genbank)
+        for feature in p.features:
+            annotations += benchling_annotation % feature + '\n'
+    
     d = {'element': element,
          'name': dc.displayId,
          'sequence' : sequence,
-         'annotations' : ''}
+         'annotations' : annotations }
     r = benchling_script % d
 
     return mark_safe(r)
