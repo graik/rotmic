@@ -100,7 +100,6 @@ class GenbankInMemory:
         r['end'] = feature.location.end.position
         r['name'] = self.extractName(feature)
         r['type'] = feature.type
-        print r
         return r
 
     def colorSpectrum(self, n):

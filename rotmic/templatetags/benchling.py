@@ -56,6 +56,22 @@ benchling_script=\
   widget.load(params);
   </script>
 </div>
+<div>
+  <p class='help'>Click to highlight a feature, then type CRTL + C to copy
+  the sequence of this feature into the clipboard. Click upper right corner
+  to import sequence into Benchling.
+  </p>
+</div>
+"""
+
+seq_warning=\
+"""
+<div>
+    <p>
+       <b>Warning:</b> The registered sequence does not match the registered genbank record.
+       Displaying the sequence extracted from the genbank record.
+    </p>
+</div>
 """
 
 benchling_annotation=\
@@ -79,19 +95,24 @@ def benchling(dc, element='sequence-box'):
     """display Benchling Sequence widget"""
 
     sequence = dc.sequence
-    if not sequence:
-        return mark_safe("<p>There is no sequence registered.</p>")
+    if not sequence and not dc.genbank:
+        return mark_safe("<p>There is no sequence registered. Upload a genbank file to show annotations.</p>")
     
     annotations = ''
+    errors = ''
     if dc.genbank:
         p = genbank.GenbankInMemory(dc.genbank)
         for feature in p.features:
-            annotations += benchling_annotation % feature + '\n'
+            annotations += benchling_annotation % feature
+
+        if sequence and sequence != p.sequence:
+            errors += seq_warning
+            sequence = p.sequence
     
     d = {'element': element,
          'name': dc.displayId,
          'sequence' : sequence,
          'annotations' : annotations }
-    r = benchling_script % d
+    r = benchling_script % d + errors
 
     return mark_safe(r)
