@@ -1,4 +1,4 @@
-## Rotten Microbes (rotmic) -- Laboratory Sequence and Sample Management
+
 ## Copyright 2013 - 2014 Raik Gruenberg
 
 ## This file is part of the rotmic project (https://github.com/graik/rotmic).
@@ -109,8 +109,17 @@ class GenbankComponentForm(ComponentForm):
                                      extensions=['gbk','gb','genebank'])
     
     genbankClear = forms.BooleanField(label='Clear attached genBank record', 
-                                      required=False,
-                                     initial=False)
+                        required=False,
+                        help_text='Manually clear sequence field to also remove raw sequence.',
+                        initial=False)
+
+    def __init__(self, *args, **kwargs):
+        super(GenbankComponentForm, self).__init__(*args, **kwargs)
+        
+        if self.instance:
+            if not self.instance.genbank:
+                self.fields['genbankClear'].widget.attrs['readonly'] = True
+                self.fields['genbankClear'].help_text = 'No genbank record currently attached'
 
     def extractGenbank(self, data):
         """extract genbank file from upload field"""
@@ -145,9 +154,25 @@ class GenbankComponentForm(ComponentForm):
     def clean(self):
         """extract sequence from genbank record and copy record into textfield"""
         data = super(GenbankComponentForm, self).clean()
+        
+        if data.get('genbankClear',False):
+            data['genbankFile'] = None
+            
         self.extractGenbank(data)
         
         return data
+    
+    def save(self, commit=True):
+        m = super(GenbankComponentForm, self).save(commit=False)
+
+        if self.cleaned_data.get('genbankClear', False):
+            m.genbank = None
+        
+        if commit:
+            m.save()
+            self.save_m2m()
+
+        return m
      
 
 class DnaComponentForm(GenbankComponentForm):
