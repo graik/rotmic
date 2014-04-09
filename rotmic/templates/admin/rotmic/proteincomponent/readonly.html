@@ -1,8 +1,11 @@
 {% extends "admin/rotmic/component/readonly.html" %}
 {% load i18n admin_static admin_list %}
 {% load admin_urls %}
-{% load rotmicfilters %}
+{% load rotmicfilters benchling %}
 
+{% block extrahead %}{{ block.super }}
+    {% benchling_libs %}
+{% endblock %}
 
     {%block title-image%}
         <img src="{% static "img/protein.jpg" %}" align="left" height="45" 
@@ -23,7 +26,12 @@
 
     {% block content-middle %}
         
-        {{block.super}}
+        {% block sequence %}
+            <div class='module'> 
+                <h2>Sequence</h2>
+                {% benchling o %}
+            </div>        
+        {% endblock sequence %}
 
         <div class='module'>
             <h2>encoding DNA</h2>
