@@ -307,7 +307,7 @@ class GenbankUploadForm(UploadFormBase):
         if frag in sdic:
             return sdic[frag]
         
-        self.add_error('files',\
+        self.add_error('genbank',\
             'Cannot match %s to any of the constructs.' % name +\
             'No construct can be identified by %s.' % frag )
         return None
