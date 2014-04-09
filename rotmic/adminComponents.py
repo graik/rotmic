@@ -570,7 +570,7 @@ class ProteinComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
          ),
         ('Details', {
             'fields' : (('authors', 'projects'), ('description',),
-                        ('sequence', 'genbankFile', 'encodedBy'),
+                        ('sequence', 'genbankFile', 'genbankClear', 'encodedBy'),
                         )
         }
          ),            

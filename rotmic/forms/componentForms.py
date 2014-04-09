@@ -116,6 +116,8 @@ class GenbankComponentForm(ComponentForm):
     def __init__(self, *args, **kwargs):
         super(GenbankComponentForm, self).__init__(*args, **kwargs)
         
+##        self.fields['sequence'].help_text=\
+        
         if self.instance:
             if not self.instance.genbank:
                 self.fields['genbankClear'].widget.attrs['readonly'] = True
