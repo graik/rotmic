@@ -175,7 +175,7 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
         ('Details', {
             'fields' : (
                         ('authors', 'projects'), ('description',),
-                        ('sequence', 'genbankFile'),
+                        ('genbankFile', 'genbankClear', 'sequence',),
                         ),
         }
          ),            

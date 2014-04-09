@@ -22,7 +22,7 @@ Use:
    {% block extrahead %}{{ block.super }}
     {% benchling_libs %}
    {% endblock %}
-   
+   ...
    {% benchling o %}
 
 Where 'o' is a Dna/ProteinComponent object from the template context.

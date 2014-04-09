@@ -96,7 +96,21 @@ class ComponentForm(ModelFormWithRequest, CleaningMixIn):
         widgets = getComponentWidgets()
 
 
-class GenbankMixin:
+class GenbankComponentForm(ComponentForm):
+    """
+    Extend the form with a GenBank file upload field which is used by
+    both DNA and ProteinComponent. The underlying model is assumed to have
+    a field 'genbank' which will receive a text copy of the genbank content
+    and a field 'sequence' which will receive the DNA / Protein sequence.
+    """
+
+    genbankFile = DocumentFormField(label='GenBank file', required=False,
+                                    help_text='This will replace the current sequence.',
+                                     extensions=['gbk','gb','genebank'])
+    
+    genbankClear = forms.BooleanField(label='Clear attached genBank record', 
+                                      required=False,
+                                     initial=False)
 
     def extractGenbank(self, data):
         """extract genbank file from upload field"""
@@ -128,8 +142,15 @@ class GenbankMixin:
 
         return False
     
+    def clean(self):
+        """extract sequence from genbank record and copy record into textfield"""
+        data = super(GenbankComponentForm, self).clean()
+        self.extractGenbank(data)
+        
+        return data
+     
 
-class DnaComponentForm(ComponentForm, GenbankMixin):
+class DnaComponentForm(GenbankComponentForm):
     """Customized Form for DnaComponent (DNA construct) add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
@@ -138,10 +159,6 @@ class DnaComponentForm(ComponentForm, GenbankMixin):
                             empty_label=None,
                             initial=T.dcPlasmid)
     
-    ## genbankFile upload into textfield 'genbank' is handled by ModelAdmin.save_model
-    genbankFile = DocumentFormField(label='GenBank file', required=False,
-                                    help_text='This will replace the current sequence.',
-                                     extensions=['gbk','gb','genebank'])
     
 
     def __init__(self, *args, **kwargs):
@@ -243,8 +260,6 @@ class DnaComponentForm(ComponentForm, GenbankMixin):
         self._validateLinked(data['translatesTo'], [T.pcProtein])
 
         self._validateLinkedMany(data['markers'], [T.dcMarker])
-        
-        self.extractGenbank(data)
         
         return data
       
@@ -371,7 +386,7 @@ class ChemicalComponentForm(ComponentForm):
         widgets = getComponentWidgets( extra={} )
 
     
-class ProteinComponentForm(ComponentForm, GenbankMixin):
+class ProteinComponentForm(GenbankComponentForm):
     """Customized Form for ProteinComponent add / change"""
     
     componentCategory = forms.ModelChoiceField(label='Category',
@@ -380,11 +395,7 @@ class ProteinComponentForm(ComponentForm, GenbankMixin):
                             empty_label=None,
                             initial=T.pcProtein)
     
-    ## genbankFile upload into textfield 'genbank' is handled by ModelAdmin.save_model
-    genbankFile = DocumentFormField(label='GenBank file', required=False,
-                                    help_text='This will replace the current sequence.',
-                                     extensions=['gbk','gb','genebank'])
-    
+   
     ## hidden field which can be set through URL parameter
     encodedBy = forms.CharField(label='', 
                                 widget=forms.HiddenInput,
@@ -421,14 +432,6 @@ class ProteinComponentForm(ComponentForm, GenbankMixin):
         except M.DnaComponent.DoesNotExist:
             raise forms.ValidationError()
         return ''
-    
-    def clean(self):
-        """
-        """
-        data = super(ProteinComponentForm, self).clean()
-        
-        self.extractGenbank(data)
-        return data
     
     
     class Meta:
