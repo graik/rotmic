@@ -36,6 +36,9 @@ from .utils.customadmin import ViewFirstModelAdmin
 
 from .adminBase import UserRecordMixin, RequestFormMixin, export_csv
 
+##import profilehooks
+##import cProfile as profile
+
 class ComponentAttachmentInline(admin.TabularInline):
     model = M.ComponentAttachment
     form = forms.AttachmentForm
@@ -181,11 +184,18 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
          ),            
     )
 
-    list_display = ('displayId', 'name', 'showStatus', 'showComments',
-                    'registrationDate', 'showFirstAuthor',
-                    'showVectorUrl', 'showMarkerUrls', 
-                    'showDescription', 'showType', 
-                    'showSampleStatus', 'showEdit')
+    list_display = ('displayId', #2
+                    'name', #2
+                    'showStatus', #3
+                    'showComments', #4
+                    'registrationDate', #4
+                    'showFirstAuthor', #5
+                    'showVectorUrl', 'showMarkerUrls', #9 ## Time sink!!
+                    'showDescription', #9
+                    'showType', #9
+                    'showSampleStatus', #12 Time sink!!
+                    'showEdit' #13
+                   )
     
     list_filter = ( filters.DnaCategoryListFilter, filters.DnaTypeListFilter, 
                     'status', 
@@ -215,6 +225,7 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
                                ('Sequence','sequence') 
                               ] )
     
+    SMPL_ICON = ST.static('admin/img/icon-yes.gif')
     
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""
@@ -266,27 +277,34 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     showVectorUrl.allow_tags = True
     showVectorUrl.short_description = 'Base Vector'
     
+    ## profiles to 0.030 s  * 100 for a full table; culprite is allMarkers
+    ##@profilehooks.profile(filename='/tmp/djangoprofile.out', immediate=True)
     def showMarkerUrls(self, obj):
         """Table display of Vector Backbone markers"""
         assert isinstance(obj, M.DnaComponent), 'object missmatch'
         urls = []
+        
         for m in obj.allMarkers():
             u = m.get_absolute_url()
-            urls += [ html.mark_safe('<a href="%s" title="%s">%s</a>' \
-                                % (u, m.description, m.name))]
-        return ', '.join(urls)
+            urls += [ '<a href="%s" title="%s">%s</a>' \
+                                % (u, m.description, m.name)]
+        return html.mark_safe(', '.join(urls))
     
     showMarkerUrls.allow_tags = True
     showMarkerUrls.short_description = 'Markers'
 
-
     def showSampleStatus(self, obj):
-        fyes = ST.static('admin/img/icon-yes.gif')
-        ##fno  = ST.static('admin/img/icon-no.gif')
-        
         n_dna = obj.samples.count()
         n_cells = obj.cellSamples.count()
 
+        ## don't show icons for non-plasmid constructs unless there are
+        ## samples registered.
+        if obj.componentType.category() != I.dcPlasmid:
+            if not (n_dna or n_cells):
+                return ''
+
+        fyes = self.SMPL_ICON
+            
         x_dna = 's' if n_dna > 1 else ''
         x_cells = 's' if n_cells > 1 else ''
 
@@ -295,12 +313,6 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
 
         r1 = r1 if n_dna else '<span title="no DNA samples">&mdash;</span>'
         r2 = r2 if n_cells else '<span title="no cell samples">&mdash;</span>'
-
-        ## don't show icons for non-plasmid constructs unless there are
-        ## samples registered.
-        if obj.componentType.category() != I.dcPlasmid:
-            if not (n_dna or n_cells):
-                return ''
         
         return html.mark_safe('%s / %s' % (r1, r2))
 

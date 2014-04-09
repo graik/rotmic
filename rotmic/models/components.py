@@ -248,17 +248,17 @@ class DnaComponent(Component, StatusMixinDna):
 
     def allMarkers( self ):
         """
-        @return: [DnaComponent]
+        @return: QuerySet(DnaComponent)
         All markers contained in this DC directly or within a linked
         insert or vector backbone.
+        Note: using queryset combination and limiting count() etc is speeding
+        up this code
         """
-        r = []
-        if self.markers.count():
-            r += self.markers.all()
+        r = self.markers.all()  ## queryset
         if self.vectorBackbone:
-            r += [ m for m in self.vectorBackbone.allMarkers() if not m in r ]
+            r = r | self.vectorBackbone.allMarkers() ## combine querysets
         if self.insert:
-            r += [ m for m in self.insert.allMarkers() if not m in r ]
+            r = r | self.insert.allMarkers()
         return r
     
     def allProteins( self ):
@@ -268,9 +268,8 @@ class DnaComponent(Component, StatusMixinDna):
         """
         r = [ self.translatesTo ] if self.translatesTo else []
 
-        if self.markers.count():
-            for m in self.markers.all():
-                r += m.allProteins()
+        for m in self.markers.all():
+            r += m.allProteins()
         if self.insert:
             r += self.insert.allProteins()
         if self.vectorBackbone:
@@ -357,11 +356,9 @@ class CellComponent(Component, StatusMixinDna):
         All markers contained in this cell directly or within a linked
         plasmid.
         """
-        r = []
-        if self.markers.count():
-            r += [ m for m in self.markers.all() if not m in r ]
+        r = self.markers.all() ## potentially empty queryset
         if self.plasmid:
-            r += [ m for m in self.plasmid.allMarkers() if not m in r ]
+            r = r | self.plasmid.allMarkers()  ## combine queryset, more efficient than [] + []
         return r
 
     class Meta:
