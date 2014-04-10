@@ -90,6 +90,19 @@ class ComponentForm(ModelFormWithRequest, CleaningMixIn):
         ## only set category if form is bound (edit existing entry)
         if o and 'componentCategory' in self.fields:
             self.fields['componentCategory'].initial = o.componentType.subTypeOf
+            
+    def clean_authors(self):
+        """Prevent non-authors from changing authorship"""
+        r = self.cleaned_data['authors']
+        u = self.request.user
+        
+        if self.instance and self.instance.id and ('authors' in self.changed_data):
+            if not self.instance.authors.filter(id=u.id).exists()\
+               and not u == self.instance.registeredBy\
+               and not u.is_superuser:
+                raise ValidationError, 'Sorry, only authors or creators can change this field.'
+        
+        return r
     
     class Meta:
         model = M.Component
