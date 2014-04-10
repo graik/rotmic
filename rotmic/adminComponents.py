@@ -66,6 +66,8 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
     * showType -- shortened text repr. of category/Type
     """
     
+    permit_delete = ['registeredBy', 'authors']
+    
     ## custom class variable for table generation
     csv_fields = OrderedDict( [('ID', 'displayId'),
                                ('Name', 'name'),

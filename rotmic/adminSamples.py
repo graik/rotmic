@@ -74,6 +74,8 @@ class SampleProvenanceInline(admin.StackedInline):
 class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
     form = forms.SampleForm     
     
+    permit_delete = ['registeredBy', 'preparedBy'] ## creator, author or superuser can delete
+
     change_list_template = 'admin/rotmic/sample/change_list.html'  ## ReversionAdmin de-activated default template loading
     
     template = 'admin/rotmic/change_form_viewfirst.html'

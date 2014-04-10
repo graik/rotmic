@@ -158,6 +158,8 @@ admin.site.register( M.Unit, UnitAdmin )
 class LocationAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = forms.LocationForm
     
+    permit_delete = [] ## de-activate author-only delete permission
+
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
 
     change_list_template = "admin/rotmic/location/change_list.html"
@@ -180,12 +182,14 @@ class LocationAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin
     search_fields = ('displayId', 'name',)
 
     save_as = True
-
+    
 admin.site.register( M.Location, LocationAdmin )
 
 
 class RackAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = forms.RackForm
+
+    permit_delete = [] ## de-activate author-only delete permission
 
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
     
@@ -228,6 +232,8 @@ admin.site.register( M.Rack, RackAdmin )
 class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
     form = forms.ContainerForm
 
+    permit_delete = [] ## de-activate author-only delete permission
+    
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
 
     change_list_template = "admin/rotmic/container/change_list.html"
@@ -302,6 +308,8 @@ class SequencingRunInline(admin.TabularInline):
     
 class SequencingAdmin(UserRecordMixin, RequestFormMixin, reversion.VersionAdmin):
     form = forms.SequencingForm
+    
+    permit_delete = [] ## de-activate author-only delete permission
     
     change_list_template = "admin/rotmic/sequencing/change_list.html"
 

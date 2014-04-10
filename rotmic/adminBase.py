@@ -18,13 +18,18 @@
 import datetime, csv, collections
 from django.http import HttpResponse
 from django.contrib.admin import ModelAdmin
+import django.contrib.messages as messages
+import django.contrib.auth.models as authmodels
+import django.db.models as models
 
 class UserRecordMixin:
     """
-    Automatically save and assign house-keeping information like by whom and
-    when a record was saved.
-    Create self.request variable in form.
+    * Automatically save and assign house-keeping information like by whom and
+      when a record was saved.
+    * Create self.request variable in form.
     """
+
+    permit_delete = ['registeredBy',]
 
     def save_model(self, request, obj, form, change):
         """Override to save user who created this record"""
@@ -40,6 +45,52 @@ class UserRecordMixin:
         obj.save()
 
     save_as = True  ## enable "Save as" button in all derrived classes.
+    
+
+    def is_authorized(self, user, obj, fields=None):
+        """@return True, if user is listed in any of the given fields"""
+        fields = fields or self.permit_delete
+        userpk = user.pk
+        
+        if user.is_superuser:
+            return True
+        
+        for fieldname in fields:
+            f = eval('obj.%s' % fieldname)
+          
+            if isinstance(f, authmodels.User):
+                if f.pk == userpk:
+                    return True
+
+            elif isinstance(f, models.Manager):
+                if f.filter(id=userpk).exists():
+                    return True
+            else:
+                raise models.ImproperlyConfigured(\
+                    'Cannot match %s to any field of %r' % (fieldname, obj) )
+        
+        return False
+        
+
+    def has_delete_permission(self, request, obj=None):
+        """
+        Returns True if the given request has permission to change the given
+        Django model instance, the default implementation doesn't examine the
+        `obj` parameter.
+
+        Can be overridden by the user in subclasses. In such case it should
+        return True if the given request has permission to delete the `obj`
+        model instance. If `obj` is None, this should return True if the given
+        request has permission to delete *any* object of the given type.
+        """
+        r = ModelAdmin.has_delete_permission(self, request, obj)
+        
+        if obj and r:
+            r = self.is_authorized(request.user, obj)
+
+        return r
+
+                    
 
 class RequestFormMixin:
     """

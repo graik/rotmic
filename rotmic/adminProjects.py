@@ -25,6 +25,9 @@ from .adminBase import UserRecordMixin, export_csv
 import models as M
 
 class ProjectAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+
+    permit_delete = ['registeredBy'] ## only creator or superuser can delete
+    
     fieldsets = [
         (None, {
             'fields' : ((('name'),
