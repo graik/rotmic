@@ -116,7 +116,19 @@ class SampleForm(ModelFormWithRequest):
         number = '%02i' % number
         return letter + number
     
-    
+    def clean_preparedBy(self):
+        """Prevent non-authors from changing authorship"""
+        r = self.cleaned_data['preparedBy']
+        u = self.request.user
+        
+        if self.instance and self.instance.id and ('preparedBy' in self.changed_data):
+            if not self.instance.preparedBy == u\
+               and not u == self.instance.registeredBy\
+               and not u.is_superuser:
+                raise ValidationError, 'Sorry, only the creator or current author can change this field.'
+        
+        return r
+     
     def clean(self):
         """
         Verify that units are given if concentration and/or amount is given.
