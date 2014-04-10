@@ -105,18 +105,18 @@ class GenbankComponentForm(ComponentForm):
     """
 
     genbankFile = DocumentFormField(label='GenBank file', required=False,
-                                    help_text='This will replace the current sequence.',
+                                    help_text='This will replace the current raw sequence.',
                                      extensions=['gbk','gb','genebank'])
     
     genbankClear = forms.BooleanField(label='Clear attached genBank record', 
                         required=False,
-                        help_text='Manually clear sequence field to also remove raw sequence.',
+                        help_text='Note: this will not remove the raw sequence.',
                         initial=False)
 
     def __init__(self, *args, **kwargs):
         super(GenbankComponentForm, self).__init__(*args, **kwargs)
         
-##        self.fields['sequence'].help_text=\
+        self.fields['sequence'].label = 'Raw Sequence'
         
         if self.instance:
             if not self.instance.genbank:
