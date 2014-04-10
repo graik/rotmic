@@ -118,7 +118,7 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, Vi
                    filters.SampleRackFilter, filters.SampleContainerFilter,
                    filters.SortedPreparedByFilter)
     
-    actions = ['make_csv']
+    actions = ['make_csv', 'delete_selected']  ## activate author-only delete protection
     
     def __init__(self, *args, **kwargs):
         """Disable automatic link generation"""

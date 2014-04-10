@@ -82,6 +82,8 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
                                ('Type', 'componentType.name'),
                                ])
     
+    actions = ['delete_selected']  ## This is needed to activate non-author delete protection
+    
     def queryset(self, request):
         """
         Return actual sub-class instances instead of generic Component super-class
@@ -214,7 +216,7 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     
     ordering = ('displayId', 'name')
     
-    actions = ['make_csv', 'make_genbank']
+    actions = ['make_csv', 'make_genbank'] + ComponentAdmin.actions
     
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
@@ -375,7 +377,7 @@ class CellComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     
     ordering = ('displayId', 'name',)
     
-    actions = ['make_csv']
+    actions = ['make_csv'] + ComponentAdmin.actions
     
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
@@ -473,8 +475,8 @@ class OligoComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     
     ordering = ('displayId', 'name',)
     
-    actions = ['make_csv']
-    
+    actions = ['make_csv'] + ComponentAdmin.actions
+
     ## custom class variable for table generation
     csv_fields = OrderedDict( [('ID', 'displayId'),
                                ('Name', 'name'),
@@ -547,7 +549,7 @@ class ChemicalComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     
     ordering = ('displayId', 'name')
     
-    actions = ['make_csv']
+    actions = ['make_csv'] + ComponentAdmin.actions
 
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
@@ -603,7 +605,7 @@ class ProteinComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     
     ordering = ('displayId', 'name')
     
-    actions = ['make_csv', 'make_genbank']
+    actions = ['make_csv', 'make_genbank'] + ComponentAdmin.actions
 
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 

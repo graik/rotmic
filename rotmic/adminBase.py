@@ -17,19 +17,37 @@
 
 import datetime, csv, collections
 from django.http import HttpResponse
+
 from django.contrib.admin import ModelAdmin
+from django.contrib import admin
+import django.contrib.admin.actions as actions
+import django.core.exceptions as core
+
 import django.contrib.messages as messages
 import django.contrib.auth.models as authmodels
 import django.db.models as models
+
+from django.contrib.admin.util import NestedObjects
+from django.db import DEFAULT_DB_ALIAS
+from django.template.response import TemplateResponse
+import django.utils.html as html
+import django.utils.text as text
+
 
 class UserRecordMixin:
     """
     * Automatically save and assign house-keeping information like by whom and
       when a record was saved.
+    
     * Create self.request variable in form.
+    
+    * Block deletion of objects via delete_selected action if any of the selected
+      or any related object are not listing the user as an author.
     """
 
     permit_delete = ['registeredBy',]
+    
+    actions = ['delete_selected']
 
     def save_model(self, request, obj, form, change):
         """Override to save user who created this record"""
@@ -48,7 +66,10 @@ class UserRecordMixin:
     
 
     def is_authorized(self, user, obj, fields=None):
-        """@return True, if user is listed in any of the given fields"""
+        """
+        @return True, if user is listed in any of the given fields or 
+        if user is superuser
+        """
         fields = fields or self.permit_delete
         userpk = user.pk
         
@@ -90,7 +111,87 @@ class UserRecordMixin:
 
         return r
 
-                    
+    def related_not_authorized(self, user, objs):
+        """
+        Find all objects related to ``objs`` that should also be deleted. ``objs``
+        must be a homogenous iterable of objects (e.g. a QuerySet).
+        """
+        collector = NestedObjects(using=DEFAULT_DB_ALIAS)
+        collector.collect(objs)
+
+        blocked = []
+        
+        for model, obj in collector.instances_with_model():
+            admin_instance = admin.site._registry.get(obj.__class__, None)
+
+            if admin_instance and hasattr(admin_instance, 'is_authorized'):
+                if not admin_instance.is_authorized(user, obj):
+                    blocked += [obj]
+
+        return blocked
+    
+
+    def delete_selected(self, request, queryset):
+        """
+        Override the built-in admin.site.delete_selected action to check
+        each object against the is_authorized method.
+
+        Note: this admin-specific action is only used if 'delete_selected'
+        is explicitely included in actions=[...]. Otherwise, the site-wide
+        default method is used.
+        """
+        blocked = []
+        blocked_related = []
+        
+        for obj in queryset:
+            if not self.is_authorized(request.user, obj):
+                blocked += [ obj ]        
+        
+        if not blocked:
+            
+            blocked_related = self.related_not_authorized(request.user, queryset)
+            
+            if not blocked_related:
+                ## Call default admin delete_selected action
+                return actions.delete_selected(self, request, queryset)
+        
+        ## the following code is a simplification of the original delete_selected display code
+        opts = self.model._meta
+        app_label = opts.app_label
+        objects_name = opts.verbose_name
+        if len(queryset) > 1:
+            objects_name += 's'
+        title = "Cannot delete %(name)s" % {"name": objects_name}
+        
+        def format_obj(obj):
+            return html.format_html('{0}: <a href="{1}">{2}</a>',
+                               text.capfirst(obj._meta.verbose_name),
+                               obj.get_absolute_url(),
+                               obj)
+
+        blocked = [format_obj(o) for o in blocked]
+        blocked_related = [format_obj(o) for o in blocked_related]
+
+        context = {
+            "title": title,
+            "objects_name": objects_name,
+            "deletable_objects": [],
+            'queryset': queryset,
+            "blocked_related": blocked_related,
+            "blocked": blocked,
+            "opts": opts,
+            "app_label": app_label,
+            'action_checkbox_name': 'delete_selected',
+        }
+        
+        return TemplateResponse(request, [
+            "admin/%s/%s/delete_selected_blocked.html" % (app_label, opts.model_name),
+            "admin/%s/delete_selected_blocked.html" % app_label,
+            "admin/delete_selected_blocked.html"
+        ], context, current_app=self.admin_site.name)
+        
+    delete_selected.short_description = "Delete selected %(verbose_name_plural)s"
+
 
 class RequestFormMixin:
     """
