@@ -32,6 +32,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.template.response import TemplateResponse
 import django.utils.html as html
 import django.utils.text as text
+from django.views.decorators.csrf import csrf_protect
 
 
 class UserRecordMixin:
@@ -130,6 +131,28 @@ class UserRecordMixin:
 
         return blocked
     
+##    @csrf_protect_m
+##    @transaction.atomic
+    def delete_view(self, request, object_id, extra_context=None):
+        "The 'delete' admin view for this model."
+        blocked = []
+        blocked_related = []
+        obj = self.model.objects.get(id=object_id)
+        
+        if not self.is_authorized(request.user, obj):
+            blocked = [ obj ]
+        
+        if not blocked:
+            blocked_related = self.related_not_authorized(request.user, [obj])
+            
+            if not blocked_related:
+                ## let default Admin delete_view handle all other cases
+                return ModelAdmin.delete_view(self, request, object_id, 
+                                              extra_context=extra_context)
+            
+        return self.delete_blocked_response(request, [obj], blocked, blocked_related,
+                                            template='delete_blocked.html')
+
 
     def delete_selected(self, request, queryset):
         """
@@ -154,12 +177,28 @@ class UserRecordMixin:
             if not blocked_related:
                 ## Call default admin delete_selected action
                 return actions.delete_selected(self, request, queryset)
+    
+        return self.delete_blocked_response(request, queryset, blocked, blocked_related)
         
+    delete_selected.short_description = "Delete selected %(verbose_name_plural)s"
+
+
+    def delete_blocked_response(self, request, deleteset, 
+                                blocked=[], blocked_related=[],
+                                template='delete_selected_blocked.html'):        
+        """
+        @param deleteset: queryset or [], the objects for which deletion is requested
+        @param blocked: queryset or [], those from deleteset for which user has no delete permission
+        @param blocked_related: queryset or [], related objects for which permission is missing
+
+        @return TemplateResponse, a response object for the view that shows up if the user is 
+        blocked from deleting one or several objects.
+        """
         ## the following code is a simplification of the original delete_selected display code
         opts = self.model._meta
         app_label = opts.app_label
         objects_name = opts.verbose_name
-        if len(queryset) > 1:
+        if len(deleteset) > 1:
             objects_name += 's'
         title = "Cannot delete %(name)s" % {"name": objects_name}
         
@@ -175,23 +214,23 @@ class UserRecordMixin:
         context = {
             "title": title,
             "objects_name": objects_name,
+            "object": deleteset[0],
             "deletable_objects": [],
-            'queryset': queryset,
+            'queryset': deleteset,
             "blocked_related": blocked_related,
             "blocked": blocked,
             "opts": opts,
             "app_label": app_label,
+            'preserved_filters': [],           
             'action_checkbox_name': 'delete_selected',
         }
-        
-        return TemplateResponse(request, [
-            "admin/%s/%s/delete_selected_blocked.html" % (app_label, opts.model_name),
-            "admin/%s/delete_selected_blocked.html" % app_label,
-            "admin/delete_selected_blocked.html"
-        ], context, current_app=self.admin_site.name)
-        
-    delete_selected.short_description = "Delete selected %(verbose_name_plural)s"
 
+        return TemplateResponse(request, [
+            "admin/%s/%s/%s" % (app_label, opts.model_name, template),
+            "admin/%s/%s.html" % (app_label, template),
+            "admin/%s" % template,
+            ], context, current_app=self.admin_site.name)
+        
 
 class RequestFormMixin:
     """
