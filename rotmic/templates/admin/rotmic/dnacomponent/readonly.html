@@ -21,7 +21,7 @@
     {% block content-details %}{% endblock %}
         
     {% block content-description %}
-        <div>
+        <div id="description">
             <p class='description'>
                 {{o.description|markdown}}
             </p>
@@ -230,7 +230,8 @@
 
     {% block samples %} {# replacing default sample block because we display DNA and Cell Samples#}
         <div class='module'>
-            <h2>Samples</h2>
+            <h2>Samples <a href="#" onclick="toggle_visibility('samples');">(Show/Hide)</a></h2>
+            <div id='samples'>
                 <p><br></p>
                 <ul class="object-tools">
                     <li><a href="{% url 'admin:rotmic_dnasample_add'%}?dna={{o.pk}}">Add DNA Sample</a></li>
@@ -295,6 +296,7 @@
                         <p>There are no samples registered for this DNA construct.</p>
                     {% endif %}
                 {% endwith %}
+            </div>
         </div>
     
     {% endblock samples %}

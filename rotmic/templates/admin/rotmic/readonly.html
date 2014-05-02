@@ -19,6 +19,21 @@
     {% endblock %}
 {% endif %}
 
+{% block extrahead %}
+    <script type="text/javascript">
+    <!---see: http://blog.movalog.com/a/javascript-toggle-visibility/ ->
+    <!--
+        function toggle_visibility(id) {
+           var e = document.getElementById(id);
+           if((e.style.display == 'block') || (e.style.display == ''))
+              e.style.display = 'none';
+           else
+              e.style.display = 'block';
+        }
+    //-->
+    </script>    
+{% endblock %}
+
 {% block coltype %}colMS{% endblock %}
 {% block bodyclass %}change-list{% endblock %}  {# keeps center scalable #}
 
