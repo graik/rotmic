@@ -89,7 +89,8 @@
     {% block content-bottom %}
     
         {% block samples %}
-            <h2>Samples <a href="#" onclick="toggle_visibility('samples');">(Show/Hide)</a></h2>
+        <div class='module'>
+            <h2>Samples <a href="#" onclick="toggle_visibility('samples');">(Hide/Show)</a></h2>
             <div class='module' id='samples'>
                 <p><br></p>
                 <ul class="object-tools">
@@ -157,6 +158,7 @@
                     {% endif %}
                 {% endwith %}
             </div>
+        </div>
         {% endblock samples %}
     
     {% endblock %}

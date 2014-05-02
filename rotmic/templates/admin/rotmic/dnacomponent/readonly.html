@@ -101,136 +101,141 @@
 
         
         <div class='module'>
-            <h2>Related Entries: {{o.allProteins|length|add:o.relatedDnaCount|add:o.as_plasmid_in_cell.count}}</h2>
-            {% if o.componentType.category.name == 'Plasmid' %}
-                <p><br></p>
-                <ul class="object-tools">
-                    <li><a href="{% url 'admin:rotmic_cellcomponent_add'%}?plasmid={{o.pk}}">Add Cell</a></li>
-                </ul>
-            {% endif %}
-            {% if o.componentType.category.name == 'Fragment' %}
-                <p><br></p>
-                <ul class="object-tools">
-                    <li><a href="{% url 'admin:rotmic_dnacomponent_add'%}?insert={{o.pk}}">Insert in Plasmid</a></li>
-                    <li><a href="{% url 'admin:rotmic_proteincomponent_add'%}?name={{o.name}}&sequence={{o.seq2aa}}&encodedBy={{o.pk}}">Translate to Protein</a></li>
-                </ul>
-            {% endif %}
+            <h2>Related Entries: 
+                {{o.allProteins|length|add:o.relatedDnaCount|add:o.as_plasmid_in_cell.count}}
+                <a href="#" onclick="toggle_visibility('related-entries');">(Hide/Show)</a>
+            </h2>
+            <div id='related-entries'>
             
-           
-            {% if o.relatedDnaCount > 0 %}
-                <p>
-                    <b>{{o.componentType.name}}</b> {{o.displayId}} is used <b>within</b> the following other <b>DNA constructs</b>:
-                </p>
-                <div style="margin: 10px">
-                    <table cellspacing="1">
-            
-                        <thead>
-                        <tr>
-                            <th>used as</th>
-                            <th>in</th><th>Description</th>
-                            <th>Samples</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for key, models in o.relatedDnaDict.items %}
-                                {% for x in models %}
+                {% if o.componentType.category.name == 'Plasmid' %}
+                    <p><br></p>
+                    <ul class="object-tools">
+                        <li><a href="{% url 'admin:rotmic_cellcomponent_add'%}?plasmid={{o.pk}}">Add Cell</a></li>
+                    </ul>
+                {% endif %}
+                {% if o.componentType.category.name == 'Fragment' %}
+                    <p><br></p>
+                    <ul class="object-tools">
+                        <li><a href="{% url 'admin:rotmic_dnacomponent_add'%}?insert={{o.pk}}">Insert in Plasmid</a></li>
+                        <li><a href="{% url 'admin:rotmic_proteincomponent_add'%}?name={{o.name}}&sequence={{o.seq2aa}}&encodedBy={{o.pk}}">Translate to Protein</a></li>
+                    </ul>
+                {% endif %}
+                
+               
+                {% if o.relatedDnaCount > 0 %}
+                    <p>
+                        <b>{{o.componentType.name}}</b> {{o.displayId}} is used <b>within</b> the following other <b>DNA constructs</b>:
+                    </p>
+                    <div style="margin: 10px">
+                        <table cellspacing="1">
+                
+                            <thead>
+                            <tr>
+                                <th>used as</th>
+                                <th>in</th><th>Description</th>
+                                <th>Samples</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, models in o.relatedDnaDict.items %}
+                                    {% for x in models %}
+                                        <tr class="{% cycle 'row1' 'row2' %}">
+                                        
+                                        <td>{{key}}</td>
+                                        <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                                        <td>{{x.showDescription}}</td>
+                                        <td style="text-align: center;">{{x.dna_samples.count}}</td>
+        
+                                        </tr>
+                                    {% endfor %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                
+                {% if o.as_plasmid_in_cell.count > 0 %}
+                    <p>
+                        {{o.displayId}} is used within the following <b>Cells</b>:
+                    </p>
+                    <div style="margin: 10px">
+                        <table cellspacing="1">
+                
+                            <thead>
+                            <tr>
+                                <th>used as</th>
+                                <th>in</th>
+                                <th>Species</th>
+                                <th>Description</th>
+                                <th>Samples</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for x in o.as_plasmid_in_cell.all %}
                                     <tr class="{% cycle 'row1' 'row2' %}">
                                     
-                                    <td>{{key}}</td>
+                                    <td>plasmid</td>
                                     <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                                    <td>{{x.componentType}}</td>
                                     <td>{{x.showDescription}}</td>
-                                    <td style="text-align: center;">{{x.dna_samples.count}}</td>
+                                    <td style="text-align: center;">{{x.cell_samples.count}}</td>
     
                                     </tr>
                                 {% endfor %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-            
-            {% if o.as_plasmid_in_cell.count > 0 %}
-                <p>
-                    {{o.displayId}} is used within the following <b>Cells</b>:
-                </p>
-                <div style="margin: 10px">
-                    <table cellspacing="1">
-            
-                        <thead>
-                        <tr>
-                            <th>used as</th>
-                            <th>in</th>
-                            <th>Species</th>
-                            <th>Description</th>
-                            <th>Samples</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for x in o.as_plasmid_in_cell.all %}
-                                <tr class="{% cycle 'row1' 'row2' %}">
-                                
-                                <td>plasmid</td>
-                                <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
-                                <td>{{x.componentType}}</td>
-                                <td>{{x.showDescription}}</td>
-                                <td style="text-align: center;">{{x.cell_samples.count}}</td>
-
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-            
-            {% if o.allProteins %}
-                <br>
-                <p>
-                    {{o.displayId}} <b>encodes</b> the following <b>Proteins</b> or protein fragments:
-                </p>
-                <div style="margin: 10px">
-                    <table cellspacing="1">
-            
-                        <thead>
-                        <tr>
-                            <th>ID (name)</th>
-                            <th>Type</th>
-                            <th>Description</th>
-                            <th>Samples</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for x in o.allProteins %}
-                                <tr class="{% cycle 'row1' 'row2' %}">
-                                
-                                <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
-                                <td>{{x.componentType}}</td>
-                                <td>{{x.showDescription}}</td>
-                                <td style="text-align: center;">{{0}}</td>
-
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                {% if o.componentType.category.name == 'Fragment' %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                
+                {% if o.allProteins %}
                     <br>
                     <p>
-                        No <b>protein translations</b> found for this DNA fragment.
-                        You can either use the "Translate to Protein" button to create a new protein
-                        record or press "Edit" and connect this DNA to an already existing protein record
-                        with the "translates To" field within the Edit form.
+                        {{o.displayId}} <b>encodes</b> the following <b>Proteins</b> or protein fragments:
                     </p>
+                    <div style="margin: 10px">
+                        <table cellspacing="1">
+                
+                            <thead>
+                            <tr>
+                                <th>ID (name)</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Samples</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for x in o.allProteins %}
+                                    <tr class="{% cycle 'row1' 'row2' %}">
+                                    
+                                    <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
+                                    <td>{{x.componentType}}</td>
+                                    <td>{{x.showDescription}}</td>
+                                    <td style="text-align: center;">{{0}}</td>
+    
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    {% if o.componentType.category.name == 'Fragment' %}
+                        <br>
+                        <p>
+                            No <b>protein translations</b> found for this DNA fragment.
+                            You can either use the "Translate to Protein" button to create a new protein
+                            record or press "Edit" and connect this DNA to an already existing protein record
+                            with the "translates To" field within the Edit form.
+                        </p>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
-
+            </div>
         </div>
     
     {% endblock content-middle %}
 
     {% block samples %} {# replacing default sample block because we display DNA and Cell Samples#}
         <div class='module'>
-            <h2>Samples <a href="#" onclick="toggle_visibility('samples');">(Show/Hide)</a></h2>
+            <h2>Samples <a href="#" onclick="toggle_visibility('samples');">(Hide/Show)</a></h2>
             <div id='samples'>
                 <p><br></p>
                 <ul class="object-tools">
