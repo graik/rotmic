@@ -30,7 +30,6 @@ var seqdisplay = function(){
         h = e.clientHeight; // canvas height
         
         nrows = Math.floor( (h - 2*padding - haxis) / (fh + fgap) );
-        console.log('nrows: ' + nrows);
 
         // create canvas
         svg = d3.select('#'+container_id).append('svg');
@@ -73,7 +72,7 @@ var seqdisplay = function(){
     
     // requires seq being set in module namespace    
     function assign_rows(features, n_rows){
-        var occupied = _zeros(n_rows, seq.length);
+        var occupied = _zeros(n_rows+1, seq.length);
         
         for (var i=0; i < features.length; i++){
             row = 0;
@@ -82,7 +81,9 @@ var seqdisplay = function(){
             while ((row < n_rows) && _nonzero(occupied, row, s, e)){
                 row++;
             }
+            //if (row == n_rows){ row = 0 }; // hack: shift last comming to first row.
             features[i].row = row;
+            console.log('current row: ' + row);
             for (var j=s; j < e; j++ ){
                 occupied[row][j] = 1;
             }
@@ -114,10 +115,14 @@ var seqdisplay = function(){
                         return scale(d.start);
                     })
                     .attr('y', function(d,i){
-                        d.ypos = h - fh - fgap - padding - haxis - d.row * (fh+fgap);
+                        var row = (d.row < nrows ) ? d.row : 0.3 // offset flow-over annotations
+                        d.ypos = h - fh - fgap - padding - haxis - row * (fh+fgap);
                         return d.ypos;
                     })
-                    .attr('height', fh)
+                    .attr('height', function(d){
+                        if (d.row == nrows){ return 0.5 * fh ;}
+                        return fh;
+                    })
                     .attr('width', function(d){
                         return scale(d.end-d.start+1) - scale(1);
                     })
