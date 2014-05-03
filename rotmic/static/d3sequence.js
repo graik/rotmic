@@ -78,15 +78,19 @@ var seqdisplay = function(){
         // put labels centered within annotation bars
         var labels = svg.selectAll('text').data(features).enter().append('text')
             .text(function(d){
-                return d.name;
+                var estimated_size = d.name.length * 6;
+                if ( estimated_size < scale(d.end-d.start) ){ 
+                    return d.name;
+                }
             })
             .attr('x', function(d){
-                return (scale(d.end-d.start+1) - scale(1) + scale(d.start))/2;
+                var r = d.start + (d.end - d.start)/2
+                return scale(r);
             })
             .attr('y', function(d,i){
                 return d.ypos + fh - 2;
             })
-            .classed("feature-label", true)
+            .classed("feature-label", true)  // apply text style from CSS
             .attr("text-anchor", "middle")
             .attr("fill", "black");
 
