@@ -12,6 +12,9 @@ var seqdisplay = function(){
     var w = 100; // canvas width, will be taken from parent container    
     var h = 100; // canvas height in pixels
     var fh= 12;  // feature bar height in pixles
+    var fgap= 4; // gap or padding between feature bars
+    var haxis= 20; // assumed axis height in pixels
+    var nrows = 4; // number of rows available for placing annotations; will be calculated
     var padding = 5;  // right and left margin in pixels
     var container = '' // container element ID
     var svg= null;     // will hold svg component
@@ -25,6 +28,9 @@ var seqdisplay = function(){
         var e = document.getElementById(container_id);
         w = e.clientWidth; // canvas width in pixels
         h = e.clientHeight; // canvas height
+        
+        nrows = Math.floor( (h - 2*padding - haxis) / (fh + fgap) );
+        console.log('nrows: ' + nrows);
 
         // create canvas
         svg = d3.select('#'+container_id).append('svg');
@@ -93,7 +99,7 @@ var seqdisplay = function(){
         scale.range([padding, w-2*padding]);    // normalize to pixel output range
         
         features = features.sort(_cmp_feature_len); // sort features by length
-        assign_rows(features, 5);
+        assign_rows(features, nrows);
 
         // map each data entry to a *new* (enter.append) rect
         var bars = svg.selectAll('rect')       //empty selection of not yet existing <p> in div
@@ -106,7 +112,7 @@ var seqdisplay = function(){
                         return scale(d.start);
                     })
                     .attr('y', function(d,i){
-                        d.ypos = fh + d.row * (fh+4);
+                        d.ypos = h - fh - fgap - padding - haxis - d.row * (fh+fgap);
                         return d.ypos;
                     })
                     .attr('height', fh)
@@ -142,7 +148,7 @@ var seqdisplay = function(){
         xAxis.scale(scale);
         svg.append("g")
             .attr("class", "axis")  //Assign "axis" class from custom CSS
-            .attr("transform", "translate(0," + (h - (20 +padding)) + ")") // move from top to bottom
+            .attr("transform", "translate(0," + (h - (haxis +padding)) + ")") // move from top to bottom
             .call(xAxis);
     }
 
