@@ -41,7 +41,47 @@ var seqdisplay = function(){
     function _cmp_feature_len(a, b){
         len_a = a.end - a.start;
         len_b = b.end - b.start;
-        return len_a < len_b ? -1 : len_a > len_b ? 1 : 0;
+        return len_a < len_b ? 1 : len_a > len_b ? -1 : 0;
+    }    
+
+    // create 2-D array of zeros    
+    function _zeros(x,y){
+        var r = new Array(x);
+        for (var i=0; i < x; i++){
+            var yarray = new Array(y);
+            for (var j=0; j < y; j++){
+                yarray[j] = 0;
+            }
+            r[i] = yarray;
+        }
+        return r;
+    } 
+    
+    //return true if there is any non-zero value in a[row, start..end]
+    function _nonzero(a, row, start, end){
+        for (var j=start; j < end; j++){
+            if ( a[row][j] > 0 ){ return true; };
+        }
+        return false;
+    }
+    
+    // requires seq being set in module namespace    
+    function assign_rows(features, n_rows){
+        var occupied = _zeros(n_rows, seq.length);
+        
+        for (var i=0; i < features.length; i++){
+            row = 0;
+            s = features[i].start - 1;
+            e = features[i].end;
+            while ((row < n_rows) && _nonzero(occupied, row, s, e)){
+                row++;
+            }
+            features[i].row = row;
+            for (var j=s; j < e; j++ ){
+                occupied[row][j] = 1;
+            }
+        }
+        return occupied;
     }    
     
     function load(sequence, seqfeatures){
@@ -53,6 +93,7 @@ var seqdisplay = function(){
         scale.range([padding, w-2*padding]);    // normalize to pixel output range
         
         features = features.sort(_cmp_feature_len); // sort features by length
+        assign_rows(features, 5);
 
         // map each data entry to a *new* (enter.append) rect
         var bars = svg.selectAll('rect')       //empty selection of not yet existing <p> in div
@@ -65,7 +106,7 @@ var seqdisplay = function(){
                         return scale(d.start);
                     })
                     .attr('y', function(d,i){
-                        d.ypos = fh + i*(fh+4);
+                        d.ypos = fh + d.row * (fh+4);
                         return d.ypos;
                     })
                     .attr('height', fh)
@@ -77,10 +118,13 @@ var seqdisplay = function(){
         
         // put labels centered within annotation bars
         var labels = svg.selectAll('text').data(features).enter().append('text')
-            .text(function(d){
-                var estimated_size = d.name.length * 6;
+            .text(function(d){  // create text label with strand info unless too long
+                var r = d.name;
+                if (d.strand == 1){ r = '>'+r};
+                if (d.strand == -1){r = r + '<'};
+                var estimated_size = r.length * 6.5;
                 if ( estimated_size < scale(d.end-d.start) ){ 
-                    return d.name;
+                    return r;
                 }
             })
             .attr('x', function(d){
