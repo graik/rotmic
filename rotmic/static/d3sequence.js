@@ -118,9 +118,12 @@ var seqdisplay = function(){
                     .attr('height', fh)
                     .attr('width', function(d){
                         return scale(d.end-d.start+1) - scale(1);
-                    });
-        // now look at layouts:   https://github.com/mbostock/d3/wiki/SVG-Shapes
-        // or constraint relaxation: http://grokbase.com/t/gg/d3-js/139k13sm0v/force-layout-for-static-chart-label-placement
+                    })
+                    .append('title')        // assign mouse-over tooltip
+                        .text(function (d){
+                            r = d.type + ': ' + d.name;
+                            return r;
+                        });
         
         // put labels centered within annotation bars
         var labels = svg.selectAll('text').data(features).enter().append('text')

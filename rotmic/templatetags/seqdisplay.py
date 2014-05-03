@@ -73,6 +73,7 @@ benchling_annotation=\
    'start': %(start)i,
    'end': %(end)i,
    'strand' : %(strand)i,
+   'type' : "%(type)s",
 },
 """
 
