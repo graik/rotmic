@@ -16,6 +16,7 @@ var seqdisplay = function(){
     var haxis= 20; // assumed axis height in pixels
     var nrows = 4; // number of rows available for placing annotations; will be calculated
     var padding = 5;  // right and left margin in pixels
+    var arrowhead = 5; // length of arrow-head tip of annotations 
     var container = '' // container element ID
     var svg= null;     // will hold svg component
     
@@ -83,13 +84,39 @@ var seqdisplay = function(){
             }
             //if (row == n_rows){ row = 0 }; // hack: shift last comming to first row.
             features[i].row = row;
-            console.log('current row: ' + row);
             for (var j=s; j < e; j++ ){
                 occupied[row][j] = 1;
             }
         }
         return occupied;
-    }    
+    }
+    
+    // create svg:polygon point string for a rectangle with sharp tip
+    // see: http://stackoverflow.com/questions/13204562/proper-format-for-drawing-polygon-data-in-d3
+    function _polygon_points(x,y,height, width, strand){
+        var tip = (width >= arrowhead) ? arrowhead : 0;
+        var points;
+        if (strand==1){
+            points = [  {'x': x,           'y':y},
+                        {'x': x+width-tip, 'y':y},
+                        {'x': x+width,     'y':y + height/2},
+                        {'x': x+width-tip, 'y':y + height},
+                        {'x': x,           'y':y + height}
+                     ]
+        } else {
+            points = [  {'x': x+tip,       'y':y},
+                        {'x': x+width,     'y':y},
+                        {'x': x+width,     'y':y + height},
+                        {'x': x+tip,       'y':y + height},
+                        {'x': x,           'y':y + height/2}
+                     ]
+        }
+        console.log('polygon');
+        var p_str = points.map( function(d){ 
+                        return [Math.round(d.x), Math.round(d.y)].join(','); 
+                    } ).join(' ');
+        return p_str;
+    }
     
     function load(sequence, seqfeatures){
         seq = sequence;
@@ -104,27 +131,21 @@ var seqdisplay = function(){
 
         // map each data entry to a *new* (enter.append) rect
         var bars = svg.selectAll('rect')       //empty selection of not yet existing <p> in div
-            .data(features)         // connect data
-                .enter().append('rect')         // create new rect for each data point
+            .data(features)                    // connect data
+                .enter().append('polygon')     // create new polygon for each data point
                     .attr('fill', function(d){
                         return d.color;
                     })
                     .attr('stroke-width', 0.3)
                     .attr('stroke', 'grey')
-                    .attr('x', function(d){
-                        return scale(d.start);
-                    })
-                    .attr('y', function(d,i){
+                    .attr('points', function(d){
+                        x = scale(d.start);
                         var row = (d.row < nrows ) ? d.row : 0.3 // offset flow-over annotations
                         d.ypos = h - fh - fgap - padding - haxis - row * (fh+fgap);
-                        return d.ypos;
-                    })
-                    .attr('height', function(d){
-                        if (d.row == nrows){ return 0.5 * fh ;}
-                        return fh;
-                    })
-                    .attr('width', function(d){
-                        return scale(d.end-d.start+1) - scale(1);
+                        y = d.ypos;
+                        height = (d.row == nrows) ? 0.5 * fh : fh;
+                        width = scale(d.end-d.start+1) - scale(1);
+                        return _polygon_points(x, y, height, width, d.strand);
                     })
                     .append('title')        // assign mouse-over tooltip
                         .text(function (d){
@@ -137,8 +158,6 @@ var seqdisplay = function(){
         var labels = svg.selectAll('text').data(features).enter().append('text')
             .text(function(d){  // create text label with strand info unless too long
                 var r = d.name;
-                if (d.strand == 1){ r = '>'+r};
-                if (d.strand == -1){r = r + '<'};
                 var estimated_size = r.length * 6.5;
                 if ( estimated_size < scale(d.end-d.start) ){ 
                     return r;
