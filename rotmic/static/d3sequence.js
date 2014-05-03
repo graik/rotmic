@@ -44,6 +44,7 @@ var seqdisplay = function(){
         init(container);
     }
     
+    // comparison function for sorting features by length (decending)
     function _cmp_feature_len(a, b){
         len_a = a.end - a.start;
         len_b = b.end - b.start;
@@ -118,6 +119,27 @@ var seqdisplay = function(){
         return p_str;
     }
     
+    // from: http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+    // hex - str with HTML color code    
+    function _hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            red:   parseInt(result[1], 16),
+            green: parseInt(result[2], 16),
+            blue:  parseInt(result[3], 16)
+        } : null;
+    }
+    
+    // return black or white text color depending on background color hue.
+    // http://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
+    function _text_color(bgcolor){
+        c = _hexToRgb(bgcolor);
+        if ((c.red*0.299 + c.green*0.587 + c.blue*0.114) > 186) { return '#000000';};
+        return '#ffffff';
+    }
+    
+    // sequence - str, raw sequence
+    // seqfeatures - [ {} ], list of feature records with start, end, color, type, name
     function load(sequence, seqfeatures){
         seq = sequence;
         features = seqfeatures;
@@ -173,7 +195,9 @@ var seqdisplay = function(){
             })
             .classed("feature-label", true)  // apply text style from CSS
             .attr("text-anchor", "middle")
-            .attr("fill", "black");
+            .attr("fill", function(d){
+                return _text_color(d.color);
+            });
 
         var xAxis = d3.svg.axis();
         xAxis.scale(scale);
