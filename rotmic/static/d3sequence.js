@@ -11,8 +11,8 @@ var seqdisplay = function(){
     
     var w = 100; // canvas width, will be taken from parent container    
     var h = 100; // canvas height in pixels
-    var fh= 12;  // feature bar height in pixles
-    var fgap= 4; // gap or padding between feature bars
+    var fh= 13;  // feature bar height in pixles
+    var fgap= 8; // gap or padding between feature bars
     var haxis= 20; // assumed axis height in pixels
     var nrows = 4; // number of rows available for placing annotations; will be calculated
     var padding = 5;  // right and left margin in pixels
@@ -108,6 +108,8 @@ var seqdisplay = function(){
                     .attr('fill', function(d){
                         return d.color;
                     })
+                    .attr('stroke-width', 0.3)
+                    .attr('stroke', 'grey')
                     .attr('x', function(d){
                         return scale(d.start);
                     })
@@ -122,6 +124,7 @@ var seqdisplay = function(){
                     .append('title')        // assign mouse-over tooltip
                         .text(function (d){
                             r = d.type + ': ' + d.name;
+                            r += '\n[' + d.start + ' - ' + d.end + ']';
                             return r;
                         });
         
@@ -141,7 +144,7 @@ var seqdisplay = function(){
                 return scale(r);
             })
             .attr('y', function(d,i){
-                return d.ypos + fh - 2;
+                return d.ypos + fh - 3;
             })
             .classed("feature-label", true)  // apply text style from CSS
             .attr("text-anchor", "middle")
