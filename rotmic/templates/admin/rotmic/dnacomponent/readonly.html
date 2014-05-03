@@ -5,7 +5,132 @@
 
 {% block extrahead %}{{ block.super }}
     {% benchling_libs %}
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    
+    <!--seq display axis styles-->
+    <style>
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke-width: 2;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+        
+        .axis text {
+            font-family: sans-serif;
+            font-size: 11px;
+        }
+    </style>
 {% endblock %}
+
+    {% block footer %} {{block.super}} {#defined by admin/base.html at end of <body>#}
+        <script type="text/javascript">
+            
+            function _cmp_feature_len(a, b){
+                len_a = a.end - a.start;
+                len_b = b.end - b.start;
+                return len_a < len_b ? -1 : len_a > len_b ? 1 : 0;
+            }    
+            
+            // see also: http://alignedleft.com/tutorials/d3/
+            function sequence_display(seq, features){
+            
+                features = features.sort(_cmp_feature_len); // sort features by length
+
+                e = document.getElementById('sequence');
+                var w = e.clientWidth; // canvas width in pixels
+                
+                var h = 100; // canvas height in pixels
+                var fh= 12;  // feature bar height in pixles
+                var padding = 10; // right and left padding in pixels
+                
+                // remove old svg if any -- otherwise resizing adds a second one
+                d3.select('svg').remove();
+
+                // create canvas
+                var svg = d3.select('#sequence').append('svg');
+                svg.attr('height', h)
+                   .attr('width', w);
+                   
+                var scale = d3.scale.linear();
+                scale.domain([1, seq.length])           // input domain
+                scale.range([padding, w-2*padding]);    // normalize to pixel output range
+                
+                // map each data entry to a *new* (enter.append) rect
+                var bars = svg.selectAll('rect')       //empty selection of not yet existing <p> in div
+                    .data(features)         // connect data
+                        .enter().append('rect')         // create new rect for each data point
+                            .attr('fill', function(d){
+                                return d.color;
+                            })
+                            .attr('x', function(d){
+                                return scale(d.start);
+                            })
+                            .attr('y', function(d,i){
+                                d.ypos = fh + i*(fh+4);
+                                return d.ypos;
+                            })
+                            .attr('height', fh)
+                            .attr('width', function(d){
+                                return scale(d.end-d.start+1) - scale(1);
+                            });
+                // now look at layouts:   https://github.com/mbostock/d3/wiki/SVG-Shapes
+                // or constraint relaxation: http://grokbase.com/t/gg/d3-js/139k13sm0v/force-layout-for-static-chart-label-placement
+                
+                // put labels centered within annotation bars
+                var labels = svg.selectAll('text').data(features).enter().append('text')
+                    .text(function(d){
+                        return d.name;
+                    })
+                    .attr('x', function(d){
+                        return (scale(d.end-d.start+1) - scale(1) + scale(d.start))/2;
+                    })
+                    .attr('y', function(d,i){
+                        return d.ypos + fh - 2;
+                    })
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", "11px")  
+                    .attr("text-anchor", "middle")
+                    .attr("fill", "black");
+
+                var xAxis = d3.svg.axis();
+                xAxis.scale(scale);
+                svg.append("g")
+                    .attr("class", "axis")  //Assign "axis" class from custom CSS
+                    .attr("transform", "translate(0," + (h - 2*padding) + ")") // move from top to bottom
+                    .call(xAxis);
+                
+            };
+            
+            var sequence = "{{o.sequence}}";
+            var features = [
+                    {
+                       'name': "rg2130",
+                       'color': "#FF0000",
+                       'start': 1,
+                       'end': 1452,
+                       'strand' : 1,
+                    },    
+                    {
+                       'name': "mTurquoise2",
+                       'color': "#CBFF00",
+                       'start': 1,
+                       'end': 714,
+                       'strand' : 1,
+                    },
+                ];
+            
+            // call on page load
+            sequence_display(sequence, features);
+            
+            // call again when resizing
+            window.addEventListener('resize', function(event){
+                sequence_display(sequence, features);
+            });
+
+        </script>
+    {% endblock %}
 
     {%block title-image%}
         <img src="{% static "img/dnaconstruct.png" %}" align="left" height="45" 
@@ -21,6 +146,7 @@
     {% block content-details %}{% endblock %}
         
     {% block content-description %}
+
         <div id="description">
             <p class='description'>
                 {{o.description|markdown}}
@@ -93,7 +219,7 @@
     {% block content-middle %}
     
         {% block sequence %}
-            <div class='module'> 
+            <div id='sequence' class='module'> 
                 <!--Link to js function for toggling view of benchling or text div-->    
                 <h2>Sequence 
                     (<a href='#' onclick="toggle_between('seq-benchling','seq-text');">Benchling</a> |
@@ -110,6 +236,7 @@
                         &gt;{{o.displayId}}<br>{{o.sequence}}
                     </p>
                 </div>
+                
             </div>        
         {% endblock sequence %}
 
