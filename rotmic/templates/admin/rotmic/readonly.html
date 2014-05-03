@@ -19,28 +19,8 @@
     {% endblock %}
 {% endif %}
 
-{% block extrahead %}
-    <script type="text/javascript">
-    <!---see: http://blog.movalog.com/a/javascript-toggle-visibility/ ->
-    <!--
-        //toggle visibility of one HTML element    
-        function toggle_visibility(id) {
-           var e = document.getElementById(id);
-           if((e.style.display == 'block') || (e.style.display == ''))
-              e.style.display = 'none';
-           else
-              e.style.display = 'block';
-        }
-        
-        //switch visibility between two HTML elements
-        function toggle_between(id_on, id_off) {
-           var e_on = document.getElementById(id_on);
-           var e_off= document.getElementById(id_off);
-           e_on.style.display = 'block';
-           e_off.style.display= 'none';
-        }
-    //-->
-    </script>    
+{% block extrahead %}{{block.super}}
+    <script src="{% static 'rotmic.js' %}" type='text/javascript' charset="utf-8"></script>
 {% endblock %}
 
 {% block coltype %}colMS{% endblock %}

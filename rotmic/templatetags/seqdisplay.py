@@ -14,54 +14,45 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 """
-Django template tags for benchling sequence display widget
+Django template tags for built-in D3 sequence display widget
 
 Use:
-   {% load benchling %}
+   {% load seqdisplay %}
    ...
-   {% block extrahead %}{{ block.super }}
-    {% benchling_libs %}
+   {% block extrastyles %}{{ block.super }}
+       {% seqdisplay_css %}
    {% endblock %}
    ...
-   {% benchling o %}
+   {% block extrahead %}{{ block.super }}
+       {% seqdisplay_libs %}
+   {% endblock %}
+   ...
+   <div id='seqdisplaybox'></div>
+   {% seqdisplay o 'seqdisplaybox' %}
 
 Where 'o' is a Dna/ProteinComponent object from the template context.
-See: https://benchling.com/help/widget
 """
 
 from django.utils.safestring import mark_safe
 from django import template
 import django.utils.html as html
+import django.contrib.staticfiles.templatetags.staticfiles as ST
 
 import rotmic.utils.genbank as genbank
 
 register = template.Library()
 
-benchling_script=\
+seqdisplay_script=\
 """
-<div id="%(element)s"/>
   <script>
-  widget = new benchling.Widget(document.getElementById('%(element)s'));
-  var params = {
-        "sequence": {
-            "name": "%(name)s",
-            "bases": "%(sequence)s",
-            "circular": false,
-            "annotations": [
-            %(annotations)s
-            ]
-        },
-        "options": {}
-    };
-  widget.load(params);
+  var sequence = '%(sequence)s';
+  var features = [
+  %(annotations)s
+  ]
+
+  seqdisplay.init('%(element)s');
+  seqdisplay.load(sequence, features);
   </script>
-</div>
-<div>
-  <p class='help'>Click to highlight a feature, then type CRTL + C to copy
-  the sequence of this feature into the clipboard. Click upper right corner
-  to import sequence into Benchling.
-  </p>
-</div>
 """
 
 seq_warning=\
@@ -86,13 +77,21 @@ benchling_annotation=\
 """
 
 @register.simple_tag
-def benchling_libs():
+def seqdisplay_libs():
     """benchling javascript import statement"""
-    return "<script src='https://benchling.com/static/build/api.js?v=1.0' type='text/javascript'></script>"
+    f = ST.static('d3sequence.js')
+    r = "<script src='http://d3js.org/d3.v3.min.js' charset='utf-8'></script>\n"
+    r += "<script src='%s' type='text/javascript'></script>" % f
+    return r
 
 @register.simple_tag
-def benchling(dc, element='benchlingbox'):
-    """display Benchling Sequence widget"""
+def seqdisplay_css():
+    f = ST.static('d3sequence.css')
+    return "<link rel=stylesheet' type='text/css' href='%s'/>" % f
+
+@register.simple_tag
+def seqdisplay(dc, element='seqdisplay'):
+    """display D3 Sequence widget"""
 
     sequence = dc.sequence
     if not sequence and not dc.genbank:
@@ -113,6 +112,6 @@ def benchling(dc, element='benchlingbox'):
          'name': dc.displayId,
          'sequence' : sequence,
          'annotations' : annotations }
-    r = benchling_script % d + errors
+    r = seqdisplay_script % d + errors
 
     return mark_safe(r)
