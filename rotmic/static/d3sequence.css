@@ -1,0 +1,18 @@
+/* Styles for Sequence Display Widget */
+
+.axis path, .axis line {
+    fill: none;
+    stroke-width: 2;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+.feature-label {
+    font-family : sans-serif;
+    font-size: 11px;
+}
