@@ -134,21 +134,38 @@ var seqdisplay = function(){
     // http://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
     function _text_color(bgcolor){
         c = _hexToRgb(bgcolor);
-        if ((c.red*0.299 + c.green*0.587 + c.blue*0.114) > 186) { return '#000000';};
+        // note: real midline is 186 but I prefer black in the middle color range
+        if ((c.red*0.299 + c.green*0.587 + c.blue*0.114) > 140) { return '#000000';};
         return '#ffffff';
+    }
+    
+    // requires sequence variable set
+    // split end-spanning features in two and sort features by length
+    function clean_features(seqfeatures){
+        for (var i=0; i<seqfeatures.length; i++){
+            d = seqfeatures[i];
+            if (d.start > d.end){
+                var fnew  = {'start':1, 'end':d.end, 'name': '...'+d.name,
+                    'type': d.type, 'strand':d.strand, 'color':d.color};
+                d.end = sequence.length;
+                d.name = d.name + '...';
+                seqfeatures.push( fnew ); // append second half of end-spanning feature
+            }
+        }
+        seqfeatures = seqfeatures.sort(_cmp_feature_len); // sort features by length
+        return seqfeatures;    
     }
     
     // sequence - str, raw sequence
     // seqfeatures - [ {} ], list of feature records with start, end, color, type, name
     function load(sequence, seqfeatures){
         seq = sequence;
-        features = seqfeatures;
+        features = clean_features( seqfeatures );
         
         var scale = d3.scale.linear();
         scale.domain([1, seq.length])           // input domain
         scale.range([padding, w-2*padding]);    // normalize to pixel output range
         
-        features = features.sort(_cmp_feature_len); // sort features by length
         assign_rows(features, nrows);
 
         // map each data entry to a *new* (enter.append) rect
