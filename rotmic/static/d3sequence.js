@@ -150,6 +150,7 @@ var seqdisplay = function(){
                     .append('title')        // assign mouse-over tooltip
                         .text(function (d){
                             r = d.type + ': ' + d.name;
+                            r += (d.strand==1) ? '\n---->' : '\n<----';
                             r += '\n[' + d.start + ' - ' + d.end + ']';
                             return r;
                         });
