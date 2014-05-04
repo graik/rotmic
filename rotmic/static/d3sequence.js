@@ -35,7 +35,7 @@
 ]
 **/
 
-
+// D3 crash course: http://www.cc.gatech.edu/~stasko/7450/Chad-D3-Crash-Course-Slides.pdf
 // module layout inspired by http://christianheilmann.com/2008/05/23/script-configuration/
 // D3 code adapted from: http://alignedleft.com/tutorials/d3
 var seqdisplay = function(){
@@ -48,33 +48,61 @@ var seqdisplay = function(){
     var nrows = 4; // number of rows available for placing annotations; will be calculated
     var padding = 5;  // right and left margin in pixels
     var arrowhead = 5; // length of arrow-head tip of annotations 
-    var container = '' // container element ID
-    var svg= null;     // will hold svg component
+    var e_id = ''; // container element ID
+    var econtainer;         // container element
+
+    var svg;        // will hold svg component
+
+    var scale = d3.scale.linear(); // x-dimension scaling; set in load()
     
     var seq= ''         // last sequence passed in via load()
     var features = []   // last list of features passed in
        
     // initialization
     function init(container_id){
-        container = container_id;
-        var e = document.getElementById(container_id);
-        w = e.clientWidth; // canvas width in pixels
-        h = e.clientHeight; // canvas height
+        e_id = container_id;
+        econtainer = document.getElementById(container_id);
+        // create canvas
+        svg = d3.select('#'+container_id).append('svg');
+        
+        //zoomListener.x(scale);
+        svg.call(zoomListener);
+        
+        dimensions();
+    }
+    
+    // (re-) assign canvas dimensions after re-size    
+    function dimensions(){
+        w = econtainer.clientWidth; // canvas width in pixels
+        h = econtainer.clientHeight; // canvas height
         
         nrows = Math.floor( (h - 2*padding - haxis) / (fh + fgap) );
 
-        // create canvas
-        svg = d3.select('#'+container_id).append('svg');
         svg.attr('height', h)
            .attr('width', w);
+        
+        console.log('client-dimensions: ' + w + ' : ' + h);
     }
 
     // delete and re-instantiate SVG (if any) -- otherwise resizing adds a second one
     function reset(){
-        d3.select('svg').remove();
-        init(container);
+        svg.selectAll('*').remove();
+        dimensions();
     }
     
+    var zoomListener = d3.behavior.zoom()  // zoom "behaviour"
+        .scaleExtent([1.0, 5.0])
+        .on("zoom", zoomHandler);
+
+    // function for handling zoom event
+    function zoomHandler() {
+        console.log('zooming');
+        reset();
+        scale.domain([1, seq.length / zoomListener.scale() ]);
+        redraw();
+        //svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
+
     // comparison function for sorting features by length (decending)
     function _cmp_feature_len(a, b){
         len_a = a.end - a.start;
@@ -143,7 +171,6 @@ var seqdisplay = function(){
                         {'x': x,           'y':y + height/2}
                      ]
         }
-        console.log('polygon');
         var p_str = points.map( function(d){ 
                         return [Math.round(d.x), Math.round(d.y)].join(','); 
                     } ).join(' ');
@@ -190,15 +217,23 @@ var seqdisplay = function(){
     // sequence - str, raw sequence
     // seqfeatures - [ {} ], list of feature records with start, end, color, type, name
     function load(sequence, seqfeatures){
-        seq = sequence;
-        features = clean_features( seqfeatures );
+        seq = sequence || seq;
         
-        var scale = d3.scale.linear();
-        scale.domain([1, seq.length])           // input domain
+        if (seqfeatures){    
+            features = clean_features( seqfeatures );
+        }
+        
         scale.range([padding, w-2*padding]);    // normalize to pixel output range
+        scale.domain([1, seq.length])           // input domain !!
         
         assign_rows(features, nrows);
+        
+        redraw();
+    }
 
+    function redraw(){
+
+        console.log('bars...')
         // map each data entry to a *new* (enter.append) rect
         var bars = svg.selectAll('rect')       //empty selection of not yet existing <p> in div
             .data(features)                    // connect data
@@ -224,6 +259,7 @@ var seqdisplay = function(){
                             r += '\n[' + d.start + ' - ' + d.end + ']';
                             return r;
                         });
+        console.log('bars: ' + bars);
         
         // put labels centered within annotation bars
         var labels = svg.selectAll('text').data(features).enter().append('text')
@@ -247,18 +283,19 @@ var seqdisplay = function(){
                 return _text_color(d.color);
             });
 
-        var xAxis = d3.svg.axis();
-        xAxis.scale(scale);
+        var xAxis = d3.svg.axis()           // xAxis is NOT an object or selection but a function
+                            .scale(scale);  // ...creating an axis for whatever is passed in as it's argument
         svg.append("g")
             .attr("class", "axis")  //Assign "axis" class from custom CSS
             .attr("transform", "translate(0," + (h - (haxis +padding)) + ")") // move from top to bottom
-            .call(xAxis);
+            .call(xAxis);           // call xAxis function and pass selection as parameter
     }
 
     // call again when resizing
     window.addEventListener('resize', function(event){
         reset();
-        seqdisplay.load(seq, features);
+        dimensions();
+        seqdisplay.load();
     });
 
 
