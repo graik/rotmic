@@ -88,7 +88,7 @@ def seqdisplay_libs():
 @register.simple_tag
 def seqdisplay_css():
     f = ST.static('d3sequence.css')
-    return "<link rel=stylesheet' type='text/css' href='%s'/>" % f
+    return "<link rel='stylesheet' type='text/css' href='%s'/>" % f
 
 @register.simple_tag
 def seqdisplay(dc, element='seqdisplay'):
