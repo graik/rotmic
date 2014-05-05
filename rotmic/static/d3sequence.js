@@ -254,6 +254,11 @@ var seqdisplay = function(){
         
         assign_rows(features, nrows);
         
+        //adapt max zoom factor to sequence length versus canvas width assuming max 10 pixel per letter
+        var maxscale = seq.length / ((w - 2* padding)/10) ;
+        var minscale = (maxscale > 1) ? 1 : maxscale;
+        zoomX.scaleExtent([minscale, maxscale]);
+        
         redraw();
     }
 
