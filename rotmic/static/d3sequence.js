@@ -46,7 +46,7 @@ var seqdisplay = function(){
     var fgap= 8; // gap or padding between feature bars
     var haxis= 20; // assumed axis height in pixels
     var nrows = 4; // number of rows available for placing annotations; will be calculated
-    var padding = 5;  // right and left margin in pixels
+    var padding = 0;  // right and left margin in pixels
     var arrowhead = 5; // length of arrow-head tip of annotations 
     var e_id = ''; // container element ID
     var econtainer;         // container element
@@ -55,8 +55,17 @@ var seqdisplay = function(){
 
     var scale = d3.scale.linear(); // x-dimension scaling; set in load()
     
-    var seq= ''         // last sequence passed in via load()
-    var features = []   // last list of features passed in
+    var seq= '';         // last sequence passed in via load()
+    var features = [];   // last list of features passed in
+    
+    var z_scale = 1;      // current zoom scale
+    var z_trans = 0;      // current panning move in x direction
+
+    var zoomX = d3.behavior.zoom()  // zoom "behaviour"
+        .scaleExtent([1.0, 100.0])
+        .on("zoom", zoomHandler);
+
+
        
     // initialization
     function init(container_id){
@@ -65,8 +74,7 @@ var seqdisplay = function(){
         // create canvas
         svg = d3.select('#'+container_id).append('svg');
         
-        //zoomListener.x(scale);
-        svg.call(zoomListener);
+        svg.call(zoomX);
         
         dimensions();
     }
@@ -80,25 +88,37 @@ var seqdisplay = function(){
 
         svg.attr('height', h)
            .attr('width', w);
-        
-        console.log('client-dimensions: ' + w + ' : ' + h);
     }
 
-    // delete and re-instantiate SVG (if any) -- otherwise resizing adds a second one
+    // clear all content of SVG; re-assign box dimensions
     function reset(){
         svg.selectAll('*').remove();
         dimensions();
-    }
+    }    
     
-    var zoomListener = d3.behavior.zoom()  // zoom "behaviour"
-        .scaleExtent([1.0, 5.0])
-        .on("zoom", zoomHandler);
-
     // function for handling zoom event
     function zoomHandler() {
-        console.log('zooming');
+        var x = zoomX.translate()[0];
+        var z = zoomX.scale();
+        var weff = w - padding*2
+        
+        var maxdelta = (weff*z - weff); // maximal shift in x before hitting end
+        
+        if (x > 0){ zoomX.translate([0,0]) }
+        if (x < -maxdelta ){ zoomX.translate([-maxdelta, 0]) }
+        
+        x = zoomX.translate()[0];
+
+        var seqwindow = Math.ceil( seq.length / z) // new length of sequence segment to show
+
+        var seqdelta = 0;
+        if (maxdelta != 0){
+            seqdelta = -1 * x / maxdelta * (seq.length - seqwindow);
+        }
+        scale.domain([1 + seqdelta, 1 + seqdelta + seqwindow ]);
+        
+        //http://stackoverflow.com/questions/15069959/d3-js-scatter-plot-zoom-drag-boundaries-zoom-buttons-reset-zoom-calculate-m
         reset();
-        scale.domain([1, seq.length / zoomListener.scale() ]);
         redraw();
         //svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
@@ -224,7 +244,7 @@ var seqdisplay = function(){
         }
         
         scale.range([padding, w-2*padding]);    // normalize to pixel output range
-        scale.domain([1, seq.length])           // input domain !!
+        scale.domain([1, seq.length + 1])           // input domain !!
         
         assign_rows(features, nrows);
         
@@ -233,7 +253,6 @@ var seqdisplay = function(){
 
     function redraw(){
 
-        console.log('bars...')
         // map each data entry to a *new* (enter.append) rect
         var bars = svg.selectAll('rect')       //empty selection of not yet existing <p> in div
             .data(features)                    // connect data
@@ -248,8 +267,8 @@ var seqdisplay = function(){
                         var row = (d.row < nrows ) ? d.row : 0.3 // offset flow-over annotations
                         d.ypos = h - fh - fgap - padding - haxis - row * (fh+fgap);
                         y = d.ypos;
-                        height = (d.row == nrows) ? 0.5 * fh : fh;
-                        width = scale(d.end-d.start+1) - scale(1);
+                        height = (d.row == nrows) ? 0.5 * fh : fh; // half-height for overflow features
+                        width = scale(d.end+1)-scale(d.start) //- scale(1);
                         return _polygon_points(x, y, height, width, d.strand);
                     })
                     .append('title')        // assign mouse-over tooltip
@@ -259,14 +278,13 @@ var seqdisplay = function(){
                             r += '\n[' + d.start + ' - ' + d.end + ']';
                             return r;
                         });
-        console.log('bars: ' + bars);
         
         // put labels centered within annotation bars
         var labels = svg.selectAll('text').data(features).enter().append('text')
             .text(function(d){  // create text label with strand info unless too long
                 var r = d.name;
                 var estimated_size = r.length * 6.5;
-                if ( estimated_size < scale(d.end-d.start) ){ 
+                if ( estimated_size < (scale(d.end) - scale(d.start)) ){ 
                     return r;
                 }
             })
