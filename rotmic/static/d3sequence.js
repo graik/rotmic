@@ -115,7 +115,7 @@ var seqdisplay = function(){
         if (maxdelta != 0){
             seqdelta = -1 * x / maxdelta * (seq.length - seqwindow);
         }
-        scale.domain([1 + seqdelta, 1 + seqdelta + seqwindow ]);
+        scale.domain([1 + seqdelta, seqdelta + seqwindow ]);
         
         //http://stackoverflow.com/questions/15069959/d3-js-scatter-plot-zoom-drag-boundaries-zoom-buttons-reset-zoom-calculate-m
         reset();
@@ -244,7 +244,7 @@ var seqdisplay = function(){
         }
         
         scale.range([padding, w-2*padding]);    // normalize to pixel output range
-        scale.domain([1, seq.length + 1])           // input domain !!
+        scale.domain([1, seq.length])           // input domain !!
         
         assign_rows(features, nrows);
         
@@ -268,7 +268,7 @@ var seqdisplay = function(){
                         d.ypos = h - fh - fgap - padding - haxis - row * (fh+fgap);
                         y = d.ypos;
                         height = (d.row == nrows) ? 0.5 * fh : fh; // half-height for overflow features
-                        width = scale(d.end+1)-scale(d.start) //- scale(1);
+                        width = scale(d.end)-scale(d.start) //- scale(1);
                         return _polygon_points(x, y, height, width, d.strand);
                     })
                     .append('title')        // assign mouse-over tooltip
