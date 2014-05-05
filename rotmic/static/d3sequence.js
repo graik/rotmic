@@ -46,7 +46,7 @@ var seqdisplay = function(){
     var fgap= 8; // gap or padding between feature bars
     var haxis= 20; // assumed axis height in pixels
     var nrows = 4; // number of rows available for placing annotations; will be calculated
-    var padding = 0;  // right and left margin in pixels
+    var padding = 5;  // right and left margin in pixels
     var arrowhead = 5; // length of arrow-head tip of annotations 
     var e_id = ''; // container element ID
     var econtainer;         // container element
@@ -79,6 +79,10 @@ var seqdisplay = function(){
         dimensions();
     }
     
+    // move this closer to load so that dimensions are decided just before
+    // drawing ... otherwise too broad dimension is assumed if page built-up
+    // hasn't yet introduced scroll bar. Putting the method into the page
+    // footer or register a resize event listener on parent element?
     // (re-) assign canvas dimensions after re-size    
     function dimensions(){
         w = econtainer.clientWidth; // canvas width in pixels
@@ -115,7 +119,7 @@ var seqdisplay = function(){
         if (maxdelta != 0){
             seqdelta = -1 * x / maxdelta * (seq.length - seqwindow);
         }
-        scale.domain([1 + seqdelta, seqdelta + seqwindow ]);
+        scale.domain([1 + seqdelta - 0.5, seqdelta + seqwindow + 0.5]);
         
         //http://stackoverflow.com/questions/15069959/d3-js-scatter-plot-zoom-drag-boundaries-zoom-buttons-reset-zoom-calculate-m
         reset();
@@ -243,8 +247,8 @@ var seqdisplay = function(){
             features = clean_features( seqfeatures );
         }
         
-        scale.range([padding, w-2*padding]);    // normalize to pixel output range
-        scale.domain([1, seq.length])           // input domain !!
+        scale.range([padding, w-padding]);    // normalize to pixel output range
+        scale.domain([1 - 0.5, seq.length + 0.5])         // input domain !!
         
         assign_rows(features, nrows);
         
@@ -252,6 +256,8 @@ var seqdisplay = function(){
     }
 
     function redraw(){
+
+        var show_sequence = ((scale(2) - scale(1)) > 7);
 
         // map each data entry to a *new* (enter.append) rect
         var bars = svg.selectAll('rect')       //empty selection of not yet existing <p> in div
@@ -263,12 +269,13 @@ var seqdisplay = function(){
                     .attr('stroke-width', 0.3)
                     .attr('stroke', 'grey')
                     .attr('points', function(d){
-                        x = scale(d.start);
+                        var margin = 0.5; // move half letter left and right as start and end are included in feature
+                        var x = scale(d.start - margin);
                         var row = (d.row < nrows ) ? d.row : 0.3 // offset flow-over annotations
-                        d.ypos = h - fh - fgap - padding - haxis - row * (fh+fgap);
-                        y = d.ypos;
-                        height = (d.row == nrows) ? 0.5 * fh : fh; // half-height for overflow features
-                        width = scale(d.end)-scale(d.start) //- scale(1);
+                        d.ypos = h - fh - fgap - padding - haxis - 10 - row * (fh+fgap);
+                        var y = d.ypos;
+                        var height = (d.row == nrows) ? 0.5 * fh : fh; // half-height for overflow features
+                        var width = scale(d.end+margin)-scale(d.start-margin);
                         return _polygon_points(x, y, height, width, d.strand);
                     })
                     .append('title')        // assign mouse-over tooltip
@@ -280,7 +287,8 @@ var seqdisplay = function(){
                         });
         
         // put labels centered within annotation bars
-        var labels = svg.selectAll('text').data(features).enter().append('text')
+        var labels = svg.append('g').selectAll('text').data(features)
+            .enter().append('text')
             .text(function(d){  // create text label with strand info unless too long
                 var r = d.name;
                 var estimated_size = r.length * 6.5;
@@ -300,7 +308,21 @@ var seqdisplay = function(){
             .attr("fill", function(d){
                 return _text_color(d.color);
             });
-
+        
+        if (show_sequence){    
+            var seqletters = svg.append('g').selectAll('text').data(seq.split(''))
+                .enter().append('text')
+                    .text(function(d){
+                        return d;
+                    })
+                    .attr('x', function(d,i){
+                        return scale(i+1);
+                    })
+                    .attr('y', h -fgap/2 - padding - haxis )
+                    .attr('text-anchor', 'middle')
+                    .attr('fill', 'black');
+        }
+        
         var xAxis = d3.svg.axis()           // xAxis is NOT an object or selection but a function
                             .scale(scale);  // ...creating an axis for whatever is passed in as it's argument
         svg.append("g")
