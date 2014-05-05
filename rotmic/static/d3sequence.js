@@ -255,7 +255,7 @@ var seqdisplay = function(){
         assign_rows(features, nrows);
         
         //adapt max zoom factor to sequence length versus canvas width assuming max 10 pixel per letter
-        var maxscale = seq.length / ((w - 2* padding)/10) ;
+        var maxscale = seq.length / ((w - 2* padding)/11) ;
         var minscale = (maxscale > 1) ? 1 : maxscale;
         zoomX.scaleExtent([minscale, maxscale]);
         
@@ -335,8 +335,11 @@ var seqdisplay = function(){
                         return scale(s_start + i + 1);
                     })
                     .attr('y', h -fgap/2 - padding - haxis )
+                    .classed('sequence-text', true)
                     .attr('text-anchor', 'middle')
                     .attr('fill', 'black');
+
+            console.log(seqletters[0][0]);
         }
         
         var xAxis = d3.svg.axis()           // xAxis is NOT an object or selection but a function
