@@ -107,6 +107,7 @@ var seqdisplay = function(){
         var weff = w - padding*2
         
         var maxdelta = (weff*z - weff); // maximal shift in x before hitting end
+        if (maxdelta <0){ maxdelta = 0; }
         
         if (x > 0){ zoomX.translate([0,0]) }
         if (x < -maxdelta ){ zoomX.translate([-maxdelta, 0]) }
@@ -114,6 +115,7 @@ var seqdisplay = function(){
         x = zoomX.translate()[0];
 
         var seqwindow = Math.ceil( seq.length / z) // new length of sequence segment to show
+        if (seqwindow > seq.length){ seqwindow = seq.length } // in case of z < 1
 
         var seqdelta = 0;
         if (maxdelta != 0){
@@ -249,15 +251,17 @@ var seqdisplay = function(){
             features = clean_features( seqfeatures );
         }
         
-        scale.range([padding, w-padding]);    // normalize to pixel output range
-        scale.domain([1 - 0.5, seq.length + 0.5])         // input domain !!
-        
         assign_rows(features, nrows);
         
-        //adapt max zoom factor to sequence length versus canvas width assuming max 10 pixel per letter
+        //adapt max zoom factor to sequence length versus canvas width assuming max 11 pixel per letter
         var maxscale = seq.length / ((w - 2* padding)/11) ;
-        var minscale = (maxscale > 1) ? 1 : maxscale;
-        zoomX.scaleExtent([minscale, maxscale]);
+        
+        zoomX.scaleExtent([1, (maxscale > 1)? maxscale : 1]); 
+
+        scale.domain([1 - 0.5, seq.length + 0.5])         // input domain !!
+
+        var width = (maxscale >= 1)? w-padding : Math.round((w-padding) * maxscale);
+        scale.range([padding, width]);    // normalize to pixel output range
         
         redraw();
     }
@@ -338,8 +342,6 @@ var seqdisplay = function(){
                     .classed('sequence-text', true)
                     .attr('text-anchor', 'middle')
                     .attr('fill', 'black');
-
-            console.log(seqletters[0][0]);
         }
         
         var xAxis = d3.svg.axis()           // xAxis is NOT an object or selection but a function
