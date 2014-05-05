@@ -52,7 +52,6 @@ var seqdisplay = function(){
     var econtainer;         // container element
 
     var svg;        // will hold svg component
-    var bars;       // will hold feature polygones
 
     var scale = d3.scale.linear(); // x-dimension scaling; set in load()
     
@@ -121,13 +120,11 @@ var seqdisplay = function(){
             seqdelta = -1 * x / maxdelta * (seq.length - seqwindow);
         }
 
-            scale.domain([1 + seqdelta - 0.5, seqdelta + seqwindow + 0.5]);
+        scale.domain([1 + seqdelta - 0.5, seqdelta + seqwindow + 0.5]);
             
-            //http://stackoverflow.com/questions/15069959/d3-js-scatter-plot-zoom-drag-boundaries-zoom-buttons-reset-zoom-calculate-m
-            reset();
-            redraw();
-//            bars.attr('transform', 'translate(' + x + ',0)');
-//            svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        reset();
+        redraw();
+
         z_scale = z;
         z_trans = x;
     }
@@ -271,7 +268,7 @@ var seqdisplay = function(){
             });
 
         // map each data entry to a *new* (enter.append) rect
-        bars = svg.append('g').selectAll('rect')       //empty selection of not yet existing <p> in div
+        var bars = svg.append('g').selectAll('rect')       //empty selection of not yet existing <p> in div
             .data(visible_features)                    // connect data
                 .enter().append('polygon')     // create new polygon for each data point
                     .attr('fill', function(d){
