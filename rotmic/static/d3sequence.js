@@ -52,6 +52,7 @@ var seqdisplay = function(){
     var econtainer;         // container element
 
     var svg;        // will hold svg component
+    var bars;       // will hold feature polygones
 
     var scale = d3.scale.linear(); // x-dimension scaling; set in load()
     
@@ -119,12 +120,16 @@ var seqdisplay = function(){
         if (maxdelta != 0){
             seqdelta = -1 * x / maxdelta * (seq.length - seqwindow);
         }
-        scale.domain([1 + seqdelta - 0.5, seqdelta + seqwindow + 0.5]);
-        
-        //http://stackoverflow.com/questions/15069959/d3-js-scatter-plot-zoom-drag-boundaries-zoom-buttons-reset-zoom-calculate-m
-        reset();
-        redraw();
-        //svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+
+            scale.domain([1 + seqdelta - 0.5, seqdelta + seqwindow + 0.5]);
+            
+            //http://stackoverflow.com/questions/15069959/d3-js-scatter-plot-zoom-drag-boundaries-zoom-buttons-reset-zoom-calculate-m
+            reset();
+            redraw();
+//            bars.attr('transform', 'translate(' + x + ',0)');
+//            svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        z_scale = z;
+        z_trans = x;
     }
 
     // comparison function for sorting features by length (decending)
@@ -258,10 +263,16 @@ var seqdisplay = function(){
     function redraw(){
 
         var show_sequence = ((scale(2) - scale(1)) > 7);
+        var s_start = Math.floor(scale.domain()[0]);
+        var s_end = Math.ceil(scale.domain()[1]);
+        
+        var visible_features = features.filter(function(d){
+                return ((d.start <= s_end) && (d.end >= s_start))
+            });
 
         // map each data entry to a *new* (enter.append) rect
-        var bars = svg.selectAll('rect')       //empty selection of not yet existing <p> in div
-            .data(features)                    // connect data
+        bars = svg.append('g').selectAll('rect')       //empty selection of not yet existing <p> in div
+            .data(visible_features)                    // connect data
                 .enter().append('polygon')     // create new polygon for each data point
                     .attr('fill', function(d){
                         return d.color;
@@ -277,8 +288,9 @@ var seqdisplay = function(){
                         var height = (d.row == nrows) ? 0.5 * fh : fh; // half-height for overflow features
                         var width = scale(d.end+margin)-scale(d.start-margin);
                         return _polygon_points(x, y, height, width, d.strand);
-                    })
-                    .append('title')        // assign mouse-over tooltip
+                    });
+                    
+        var tooltips = bars.append('title')        // assign mouse-over tooltip
                         .text(function (d){
                             r = d.type + ': ' + d.name;
                             r += (d.strand==1) ? '\n---->' : '\n<----';
@@ -287,7 +299,7 @@ var seqdisplay = function(){
                         });
         
         // put labels centered within annotation bars
-        var labels = svg.append('g').selectAll('text').data(features)
+        var labels = svg.append('g').selectAll('text').data(visible_features)
             .enter().append('text')
             .text(function(d){  // create text label with strand info unless too long
                 var r = d.name;
@@ -309,14 +321,16 @@ var seqdisplay = function(){
                 return _text_color(d.color);
             });
         
-        if (show_sequence){    
-            var seqletters = svg.append('g').selectAll('text').data(seq.split(''))
+        if (show_sequence){
+            // only show letters that are within visible range (large speedup)
+            seq_array = seq.slice( s_start, s_end ).split('');
+            var seqletters = svg.append('g').selectAll('text').data(seq_array)
                 .enter().append('text')
                     .text(function(d){
                         return d;
                     })
                     .attr('x', function(d,i){
-                        return scale(i+1);
+                        return scale(s_start + i + 1);
                     })
                     .attr('y', h -fgap/2 - padding - haxis )
                     .attr('text-anchor', 'middle')
