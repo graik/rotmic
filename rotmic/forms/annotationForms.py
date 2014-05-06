@@ -1,5 +1,5 @@
 ## Rotten Microbes (rotmic) -- Laboratory Sequence and Sample Management
-## Copyright 2013 - 2014 Raik Gruenberg
+## Copyright 2013 Raik Gruenberg
 
 ## This file is part of the rotmic project (https://github.com/graik/rotmic).
 ## rotmic is free software: you can redistribute it and/or modify
@@ -13,22 +13,24 @@
 ## GNU Affero General Public License for more details.
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
+import django.forms as forms
+from django.forms.models import inlineformset_factory
+from django.http import HttpResponseRedirect
 
-from componentForms import DnaComponentForm, CellComponentForm, \
-     ChemicalComponentForm, OligoComponentForm, ProteinComponentForm
+from rotmic.models import DnaAnnotation, DnaComponent
 
-from attachmentForms import AttachmentForm
+class SingleDnaAnnotationForm(forms.ModelForm):
+    """Form for a single annotation -- to be used within a ModelFormset"""
+    
+    class Meta:
+        model = DnaAnnotation
+        fields = ['subComponent', 'bioStart', 'bioEnd', 'hardLink', 'strand']
 
-from locationForms import LocationForm, RackForm, ContainerForm
 
-from sampleForms import SampleForm, DnaSampleForm, CellSampleForm, \
-     OligoSampleForm, ChemicalSampleForm, SampleProvenanceForm, \
-     ProteinSampleForm
-
-from sequencingForms import SequencingForm, SequencingRunForm
-
-from uploadForms import TableUploadForm, GenbankUploadForm, TracesUploadForm,\
-     GenbankProteinUploadForm
-
-from annotationForms import DnaAnnotationFormSet
+DnaAnnotationFormSet = inlineformset_factory(
+    DnaComponent, DnaAnnotation, 
+    fk_name='parentComponent',
+    form=SingleDnaAnnotationForm,
+    extra=2,
+    )
 

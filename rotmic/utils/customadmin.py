@@ -11,6 +11,7 @@ from django.template.response import TemplateResponse
 from django.contrib.admin.util import unquote, flatten_fieldsets, get_deleted_objects, model_format_dict
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
+import django.utils.html as html
 
 ## imports for show / display links
 from django.utils.safestring import mark_safe

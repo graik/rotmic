@@ -1,0 +1,39 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+
+{% block breadcrumbs%}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
+    <a href="{% url 'admin:index' %}">Rotmic</a> &rsaquo;
+    <a href="{% url 'admin:rotmic_'|add:'dnacomponent'|add:'_changelist' %}">{% block object-class1 %}{{verbose_name|capfirst}}s{% endblock %}</a> &rsaquo;
+    <a href="../">{{component.displayId}}</a> &rsaquo;
+    Edit Annotations
+</div>
+{% endblock %}
+
+
+{% block content %}        
+
+    <p><br></p>
+    <ul class="object-tools">
+        <li><a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/upload-xls" class="helplink">{% trans "Help!" %}</a></li>
+    </ul>
+
+    <h2>Edit annotations of {{component}}</h2>
+    
+    <p>
+    This form allows you to ...
+
+    <!-- Form. -->
+    <form action="{% url "dna_annotations" pk=component.id %}" method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <table>
+            {% for form in formset %}
+                {{ form }}
+            {% endfor %}
+        </table>
+        <p><input type="submit" value="Save" /></p>
+    </form>
+                
+{% endblock %}

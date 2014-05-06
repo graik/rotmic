@@ -4,7 +4,6 @@ Rotten Microbes
 "Your sample is out there." (tm)
 retrieve samples and sequences from laboratory chaos
 
-
 __Setting up a test server__
 
 Out of the box, the project is configured for quick set up of a development server, which should only be used for testing purposes. The test server uses a SQLite database (created as rotmicdev.db) and the built-in django debugging web server. File attachments will be saved in the dev_uploads/ folder.
@@ -84,3 +83,4 @@ Now you are ready to run the development / debugging web server:
 Point your browser to http://127.0.0.1:8000 and start exploring the site.
 
 Note: While you can get quite far with emacs and vi, for development and debugging, I highly recommend a professional Python development IDE. I have made good experiences with WingIDE.
+

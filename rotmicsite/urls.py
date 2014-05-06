@@ -40,6 +40,9 @@ urlpatterns = patterns('',
     url(r'^rotmic/dnacomponent/(?P<pk>.*)/genbank/$',V.view_genbankfile,name='genbankfile'),
     url(r'^rotmic/proteincomponent/(?P<pk>.*)/genbank/$',V.view_genbankfile_aa,name='genbankfile_aa'),
 
+    url(r'^rotmic/dnacomponent/(?P<pk>.*)/annotations/$',V.AnnotationEditView.as_view(),
+        name='dna_annotations'),
+
     ## Excel upload
     url(r'^rotmic/upload/dna/$', V.DnaXlsUploadView.as_view(), name='upload_dnacomponent'),
     url(r'^rotmic/upload/cell/$', V.CellXlsUploadView.as_view(), name='upload_cellcomponent'),

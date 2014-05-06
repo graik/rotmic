@@ -17,7 +17,7 @@ from django.core.urlresolvers import reverse
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 
 import django.contrib.messages as messages
 from django.db import transaction
@@ -26,8 +26,32 @@ import django.db.utils as U
 import rotmic.models as M
 import rotmic.utils.importExcel as I
 
-from rotmic.forms import TableUploadForm
+from rotmic.forms import TableUploadForm, DnaAnnotationFormSet
 
+
+class AnnotationEditView(TemplateView):
+    """View for editing several annotations for a given DnaComponent"""
+    template_name = 'admin/rotmic/annotations.html'
+    
+    def get(self, request, *args, **kwargs):
+        dna = M.DnaComponent.objects.get(pk=kwargs['pk'])
+        formset = DnaAnnotationFormSet(instance=dna)
+        
+        return render( request, self.template_name, 
+                       {'formset':formset, 
+                        'verbose_name':M.DnaComponent._meta.verbose_name,
+                        'component':dna })
+
+    def post(self, request, *args, **kwargs):
+        dna = M.DnaComponent.objects.get(pk=kwargs['pk'])
+        formset = DnaAnnotationFormSet(request.POST, request.FILES,
+                                       instance=dna)
+        
+        if formset.is_valid():
+            formset.save()
+        
+            return HttpResponseRedirect(dna.get_absolute_url())
+        
 
 class XlsUploadView(TemplateView):
     """View for uploading Excel files into DnaComponent table"""
