@@ -35,38 +35,39 @@
 ]
 **/
 
+// D3 brush selection example: http://bl.ocks.org/musically-ut/4747894
+
 // D3 crash course: http://www.cc.gatech.edu/~stasko/7450/Chad-D3-Crash-Course-Slides.pdf
 // module layout inspired by http://christianheilmann.com/2008/05/23/script-configuration/
 // D3 code adapted from: http://alignedleft.com/tutorials/d3
 var seqdisplay = function(){
     
-    var w = 100; // canvas width, will be taken from parent container    
-    var h = 100; // canvas height in pixels
-    var fh= 13;  // feature bar height in pixles
-    var fgap= 8; // gap or padding between feature bars
-    var haxis= 20; // assumed axis height in pixels
-    var nrows = 4; // number of rows available for placing annotations; will be calculated
-    var padding = 5;  // right and left margin in pixels
-    var arrowhead = 5; // length of arrow-head tip of annotations 
-    var e_id = ''; // container element ID
-    var econtainer;         // container element
+    var w = 100,        // canvas width, will be taken from parent container    
+        h = 100,        // canvas height in pixels
+        fh= 13,         // feature bar height in pixles
+        fgap= 8,        // gap or padding between feature bars
+        haxis= 20,      // assumed axis height in pixels
+        nrows = 4,      // number of rows available for placing annotations; will be calculated
+        padding = 5,    // right and left margin in pixels
+        arrowhead = 5;  // length of arrow-head tip of annotations 
+    var e_id = '';      // container element ID
+    var econtainer;     // container element
 
     var svg;        // will hold svg component
 
     var scale = d3.scale.linear(); // x-dimension scaling; set in load()
     
-    var seq= '';         // last sequence passed in via load()
-    var features = [];   // last list of features passed in
+    var seq= '',         // last sequence passed in via load()
+        features = [];   // last list of features passed in
     
-    var z_scale = 1;      // current zoom scale
-    var z_trans = 0;      // current panning move in x direction
+    var z_scale = 1,      // current zoom scale
+        z_trans = 0;      // current panning move in x direction
 
     var zoomX = d3.behavior.zoom()  // zoom "behaviour"
         .scaleExtent([1.0, 100.0])
         .on("zoom", zoomHandler);
 
 
-       
     // initialization
     function init(container_id){
         e_id = container_id;
@@ -79,10 +80,9 @@ var seqdisplay = function(){
         dimensions();
     }
     
-    // move this closer to load so that dimensions are decided just before
-    // drawing ... otherwise too broad dimension is assumed if page built-up
+    // Too wide dimension is assumed if page built-up
     // hasn't yet introduced scroll bar. Putting the method into the page
-    // footer or register a resize event listener on parent element?
+    // footer helps;
     // (re-) assign canvas dimensions after re-size    
     function dimensions(){
         w = econtainer.clientWidth; // canvas width in pixels
@@ -345,7 +345,8 @@ var seqdisplay = function(){
         }
         
         var xAxis = d3.svg.axis()           // xAxis is NOT an object or selection but a function
-                            .scale(scale);  // ...creating an axis for whatever is passed in as it's argument
+                            .scale(scale)   // ...creating an axis for whatever is passed in as it's argument
+                            .orient("bottom");
         svg.append("g")
             .attr("class", "axis")  //Assign "axis" class from custom CSS
             .attr("transform", "translate(0," + (h - (haxis +padding)) + ")") // move from top to bottom

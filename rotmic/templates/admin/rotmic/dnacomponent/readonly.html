@@ -13,9 +13,9 @@
 {% endblock %}
 
 {% block footer %}{{ block.super }}
-    {# place D3 javascript container at the end of the page so that
-       scrollbar has already appeared. Otherwise a silent resizing of the page
-       makes the SVG container violate the DIV boundaries.#}
+<!--    place D3 javascript container at the end of the page so that-->
+<!--    scrollbar has already appeared. Otherwise a silent resizing of the page-->
+<!--    makes the SVG container violate the DIV boundaries.-->
     {% seqdisplay o 'seq-d3' %}
 {% endblock %}
 
