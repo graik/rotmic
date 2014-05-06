@@ -21,8 +21,8 @@ from django.db import models
 from .components import UserMixin, DnaComponent
 from .componentTypes import DnaComponentType
 
-class SequenceAnnotation(models.Model):
-    """Base class for annotations between different kind of components"""
+class Annotation(models.Model):
+    """Base class for part annotations (links) between different kind of components"""
 
     bioStart = models.PositiveIntegerField('from position', blank=True, null=True,
                                         help_text='starting position (beginning with 1)')
@@ -42,15 +42,15 @@ class SequenceAnnotation(models.Model):
         abstract = True
     
 
-class DnaAnnotation(SequenceAnnotation):
+class DnaLink(Annotation):
     """Annotation of sequence regions in Components"""
 
     parentComponent = models.ForeignKey(DnaComponent, blank=False,
-                                        related_name='annotations')
+                                        related_name='partLinks')
     
     subComponent = models.ForeignKey(DnaComponent, verbose_name='Target DNA', blank=True, null=True )
 
-    preceedes = models.ForeignKey('DnaAnnotation', verbose_name='Next', blank=True, null=True)
+    preceedes = models.ForeignKey('DnaLink', verbose_name='Next', blank=True, null=True)
 
     class Meta:
         app_label = 'rotmic'        

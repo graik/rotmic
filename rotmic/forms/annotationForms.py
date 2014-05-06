@@ -17,18 +17,18 @@ import django.forms as forms
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 
-from rotmic.models import DnaAnnotation, DnaComponent
+from rotmic.models import DnaLink, DnaComponent
 
 class SingleDnaAnnotationForm(forms.ModelForm):
     """Form for a single annotation -- to be used within a ModelFormset"""
     
     class Meta:
-        model = DnaAnnotation
+        model = DnaLink
         fields = ['subComponent', 'bioStart', 'bioEnd', 'hardLink', 'strand']
 
 
 DnaAnnotationFormSet = inlineformset_factory(
-    DnaComponent, DnaAnnotation, 
+    DnaComponent, DnaLink, 
     fk_name='parentComponent',
     form=SingleDnaAnnotationForm,
     extra=2,
