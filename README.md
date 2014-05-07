@@ -98,19 +98,19 @@ it will be easy to update the server source code. Updating then consists of thre
 
 The 'collectstatic' command will update the folder from which static file content is served 
 (javascript, icons, css) by synchronizing it with rotmic/static. 'migrate' will perform
-south database migrations, if the git pull command has created any additional migration
-files in rotmic/migrations/.
+south database migrations (only if the git pull command has created any additional migration
+files in rotmic/migrations/).
 
-/rotmicsite/settings.py is checked in as a symbolic link to settings_dev.py
-Make a copy of settings_dev.py, adapt it to production needs, save it under a different name,
-e.g., settings_prod.py and then point settings.py -> settings_prod.py.
+`/rotmicsite/settings.py` is checked in as a symbolic link to `settings_dev.py`.
+Make a copy of `settings_dev.py`, adapt it to production needs, save it under a different name,
+e.g., `settings_prod.py` and then point `settings.py -> settings_prod.py`.
 
-**Important:** Re-generate the private SSH key -- the one in settings_dev.py is public on github!!
+**Important:** Re-generate the private SSH key -- the one in `settings_dev.py` is public on github!!
 
 Other things you will want to change are the database engine used (we are using postgresql). 
-/rotmicsite/ also contains django's default wsgi.py configuration module for using wsgi / apache. 
+`rotmicsite/` also contains django's default` wsgi.py` configuration module for using wsgi / apache. 
 
-If you are using apache, you have to adapt the setting for the $LANG environment variable in 
-/etc/apache2/envvars. Change `LANG=C` to `LANG="en_US.UTF-8"` or another unicode-compatible encoding. 
+If you are using apache, you have to adapt the setting for the `$LANG` environment variable in 
+`/etc/apache2/envvars`. Change `LANG=C` to `LANG="en_US.UTF-8"` or another unicode-compatible encoding. 
 Otherwise, you will likely run into UniCode encoding errors as soon a user tries to upload a file 
 with non-ascii characters in its file name.
