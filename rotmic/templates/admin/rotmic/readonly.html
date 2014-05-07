@@ -72,6 +72,7 @@
         {% block side-rating %}
             <div class="module" id="rating-module">
                 <h2>Feedback</h2>
+                {% if o.status %}<p>Status: <b>{{o.showStatus}}</b></p>{% endif %}
                 <p>
                     {{ o | comment_vote_symbol:33 }}
                     {{ o | comment_vote_score }}
@@ -85,7 +86,6 @@
             <div class="module" id="record-module">
                 <h2>Record</h2>
                 <ul>    
-                    {% if o.status %}<li><B>Status</B>: <b>{{o.showStatus}}</b><br><br></li>{% endif %}
                     <li><B>registered</B>: 
                         <p>
                         {% with o.registeredBy as U %}
