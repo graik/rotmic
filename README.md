@@ -84,7 +84,7 @@ Point your browser to http://127.0.0.1:8000 and start exploring the site.
 
 Note: While you can get quite far with emacs and vi, for development and debugging, I highly recommend a professional Python development IDE. I have made good experiences with WingIDE.
 
-___Production server setup___
+__Production server setup__
 
 ... is better documented by the Django developers. Some notes:
 
