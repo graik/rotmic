@@ -23,8 +23,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rotmicsite.settings")
 
 # support user upload of files with non-ascii file names
 # see: https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/modwsgi/#if-you-get-a-unicodeencodeerror
-os.environ.setdefault("LANG", "en_US.UTF-8")
-os.environ.setdefault("LC_ALL", "en_US.UTF-8")
+# os.environ.setdefault("LANG", "en_US.UTF-8")
+# os.environ.setdefault("LC_ALL", "en_US.UTF-8")
+os.environ['LANG'] = "en_US.UTF-8"  ## hard override of APACHE settings in /etc/apache2/envvars
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
