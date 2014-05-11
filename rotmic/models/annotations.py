@@ -18,7 +18,7 @@ from datetime import datetime
 
 from django.db import models
 
-from .components import UserMixin, DnaComponent
+from .components import UserMixin, Component
 from .componentTypes import DnaComponentType
 
 class Annotation(models.Model):
@@ -30,27 +30,57 @@ class Annotation(models.Model):
     bioEnd = models.PositiveIntegerField('to position', blank=True, null=True,
                                       help_text='ending position (including)')
     
+    preceedes = models.ForeignKey('self', verbose_name='Next', blank=True, null=True)
+
     strand = models.CharField('strand', max_length=1, choices=(('+',u'+'),('-',u'\u2013')), 
                               blank=False,
                               help_text='on strand (+...coding, -...anticoding)')
     
-    hardLink = models.BooleanField('hard link sequence', default=False, null=False, 
-                                   help_text='modify this sequence if target sequence changes')
-
+    @property
+    def parent(self):
+        """@return properly type-cast parent component to which this annotation is assigned"""
+        raise NotImplemented
+    
     class Meta:
         app_label = 'rotmic'        
         abstract = True
     
 
-class DnaLink(Annotation):
-    """Annotation of sequence regions in Components"""
-
-    parentComponent = models.ForeignKey(DnaComponent, blank=False,
-                                        related_name='partLinks')
+class SequenceFeature(Annotation):
+    """
+    Purely descriptive annotation without linking to any other component,
+    typically coming from genbank entry.
+    """
     
-    subComponent = models.ForeignKey(DnaComponent, verbose_name='Target DNA', blank=True, null=True )
+    parentComponent = models.ForeignKey(Component, blank=False,
+                                        related_name='sequenceFeatures')
+    
+    name = models.CharField('Name', max_length=200, blank=False, 
+                            help_text='short descriptive name')
+    
+    featureType = models.CharField('Type', max_length=200, blank=True, 
+                                   help_text='genbank feature type')
+    
+    description = models.TextField('Description', blank=True,
+                                   help_text='more detailed description')
 
-    preceedes = models.ForeignKey('DnaLink', verbose_name='Next', blank=True, null=True)
+    class Meta:
+        app_label = 'rotmic'        
+        abstract = False
+
+
+class SequenceLink(Annotation):
+    """Link a sequence region to another Component"""
+
+    parentComponent = models.ForeignKey(Component, blank=False,
+                                        related_name='sequenceLinks')
+    
+    subComponent = models.ForeignKey(Component, verbose_name='Target',
+                                     related_name='parentLinks',
+                                     blank=True, null=True )
+
+    hardLink = models.BooleanField('hard link sequence', default=False, null=False, 
+                                   help_text='modify this sequence if target sequence changes')
 
     class Meta:
         app_label = 'rotmic'        

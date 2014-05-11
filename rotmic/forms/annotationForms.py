@@ -19,18 +19,18 @@ from django.http import HttpResponseRedirect
 
 from rotmic.models import DnaLink, DnaComponent
 
-class SingleDnaAnnotationForm(forms.ModelForm):
+class SingleSequenceLinkForm(forms.ModelForm):
     """Form for a single annotation -- to be used within a ModelFormset"""
     
     class Meta:
-        model = DnaLink
+        model = SequenceLink
         fields = ['subComponent', 'bioStart', 'bioEnd', 'hardLink', 'strand']
 
 
 DnaAnnotationFormSet = inlineformset_factory(
-    DnaComponent, DnaLink, 
+    DnaComponent, SequenceLink, 
     fk_name='parentComponent',
-    form=SingleDnaAnnotationForm,
+    form=SingleSequenceLinkForm,
     extra=2,
     )
 
