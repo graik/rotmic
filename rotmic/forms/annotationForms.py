@@ -17,7 +17,7 @@ import django.forms as forms
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 
-from rotmic.models import DnaLink, DnaComponent
+from rotmic.models import SequenceLink, DnaComponent
 
 class SingleSequenceLinkForm(forms.ModelForm):
     """Form for a single annotation -- to be used within a ModelFormset"""

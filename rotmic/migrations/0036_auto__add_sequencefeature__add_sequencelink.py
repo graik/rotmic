@@ -8,23 +8,40 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'DnaLink'
-        db.create_table(u'rotmic_dnalink', (
+        # Adding model 'SequenceFeature'
+        db.create_table(u'rotmic_sequencefeature', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('bioStart', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
             ('bioEnd', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
+            ('preceedes', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rotmic.SequenceFeature'], null=True, blank=True)),
             ('strand', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('hardLink', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('parentComponent', self.gf('django.db.models.fields.related.ForeignKey')(related_name='partLinks', to=orm['rotmic.DnaComponent'])),
-            ('subComponent', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rotmic.DnaComponent'], null=True, blank=True)),
-            ('preceedes', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rotmic.DnaLink'], null=True, blank=True)),
+            ('parentComponent', self.gf('django.db.models.fields.related.ForeignKey')(related_name='sequenceFeatures', to=orm['rotmic.Component'])),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=200)),
+            ('featureType', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
         ))
-        db.send_create_signal('rotmic', ['DnaLink'])
+        db.send_create_signal('rotmic', ['SequenceFeature'])
+
+        # Adding model 'SequenceLink'
+        db.create_table(u'rotmic_sequencelink', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('bioStart', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
+            ('bioEnd', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
+            ('preceedes', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['rotmic.SequenceLink'], null=True, blank=True)),
+            ('strand', self.gf('django.db.models.fields.CharField')(max_length=1)),
+            ('parentComponent', self.gf('django.db.models.fields.related.ForeignKey')(related_name='sequenceLinks', to=orm['rotmic.Component'])),
+            ('subComponent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='parentLinks', null=True, to=orm['rotmic.Component'])),
+            ('hardLink', self.gf('django.db.models.fields.BooleanField')(default=False)),
+        ))
+        db.send_create_signal('rotmic', ['SequenceLink'])
 
 
     def backwards(self, orm):
-        # Deleting model 'DnaLink'
-        db.delete_table(u'rotmic_dnalink')
+        # Deleting model 'SequenceFeature'
+        db.delete_table(u'rotmic_sequencefeature')
+
+        # Deleting model 'SequenceLink'
+        db.delete_table(u'rotmic_sequencelink')
 
 
     models = {
@@ -113,11 +130,11 @@ class Migration(SchemaMigration):
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'displayId': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '20'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'component_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'projects': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'components'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['rotmic.Project']"}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'component_created_by'", 'to': u"orm['auth.User']"})
         },
         'rotmic.componentattachment': {
@@ -133,11 +150,11 @@ class Migration(SchemaMigration):
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'displayId': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '20'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'container_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'rack': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'containers'", 'to': "orm['rotmic.Rack']"}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'container_created_by'", 'to': u"orm['auth.User']"})
         },
         'rotmic.dnacomponent': {
@@ -161,17 +178,6 @@ class Migration(SchemaMigration):
             'subTypeOf': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'subTypes'", 'null': 'True', 'to': "orm['rotmic.DnaComponentType']"}),
             'uri': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'})
         },
-        'rotmic.dnalink': {
-            'Meta': {'object_name': 'DnaLink'},
-            'bioEnd': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'bioStart': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'hardLink': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'parentComponent': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'partLinks'", 'to': "orm['rotmic.DnaComponent']"}),
-            'preceedes': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rotmic.DnaLink']", 'null': 'True', 'blank': 'True'}),
-            'strand': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
-            'subComponent': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rotmic.DnaComponent']", 'null': 'True', 'blank': 'True'})
-        },
         'rotmic.dnasample': {
             'Meta': {'ordering': "['container', 'displayId']", 'object_name': 'DnaSample', '_ormbases': ['rotmic.Sample']},
             'dna': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'dna_samples'", 'to': "orm['rotmic.DnaComponent']"}),
@@ -181,10 +187,10 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "('displayId',)", 'object_name': 'Location'},
             'displayId': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '20'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'location_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'location_created_by'", 'to': u"orm['auth.User']"}),
             'room': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'temperature': ('django.db.models.fields.FloatField', [], {'default': '25.0', 'null': 'True', 'blank': 'True'})
@@ -216,10 +222,10 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "('name',)", 'object_name': 'Project'},
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'project_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '200'}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'project_created_by'", 'to': u"orm['auth.User']"})
         },
         'rotmic.proteincomponent': {
@@ -248,10 +254,10 @@ class Migration(SchemaMigration):
             'displayId': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'location': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'racks'", 'null': 'True', 'to': "orm['rotmic.Location']"}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'rack_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'rack_created_by'", 'to': u"orm['auth.User']"})
         },
         'rotmic.sample': {
@@ -266,12 +272,12 @@ class Migration(SchemaMigration):
             'displayId': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'experimentNr': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sample_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
-            'preparedAt': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'preparedAt': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'preparedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sample_prepared_by'", 'to': u"orm['auth.User']"}),
             'provenance': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'samples+'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['rotmic.SampleProvenance']"}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sample_created_by'", 'to': u"orm['auth.User']"}),
             'solvent': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'default': "'ok'", 'max_length': '30'})
@@ -299,16 +305,39 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '200', 'blank': 'True'}),
             'requiresSource': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
         },
+        'rotmic.sequencefeature': {
+            'Meta': {'object_name': 'SequenceFeature'},
+            'bioEnd': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'bioStart': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'featureType': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'parentComponent': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sequenceFeatures'", 'to': "orm['rotmic.Component']"}),
+            'preceedes': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rotmic.SequenceFeature']", 'null': 'True', 'blank': 'True'}),
+            'strand': ('django.db.models.fields.CharField', [], {'max_length': '1'})
+        },
+        'rotmic.sequencelink': {
+            'Meta': {'object_name': 'SequenceLink'},
+            'bioEnd': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'bioStart': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'hardLink': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'parentComponent': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sequenceLinks'", 'to': "orm['rotmic.Component']"}),
+            'preceedes': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['rotmic.SequenceLink']", 'null': 'True', 'blank': 'True'}),
+            'strand': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            'subComponent': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'parentLinks'", 'null': 'True', 'to': "orm['rotmic.Component']"})
+        },
         'rotmic.sequencing': {
             'Meta': {'ordering': "('sample', 'id')", 'object_name': 'Sequencing'},
             'comments': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'evaluation': ('django.db.models.fields.CharField', [], {'default': "'none'", 'max_length': '30'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sequencing_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
-            'orderedAt': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'orderedAt': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'orderedBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sequencing'", 'to': u"orm['auth.User']"}),
-            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 6, 0, 0)'}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 11, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sequencing_created_by'", 'to': u"orm['auth.User']"}),
             'sample': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sequencing'", 'to': "orm['rotmic.DnaSample']"})
         },
