@@ -34,3 +34,6 @@ DnaAnnotationFormSet = inlineformset_factory(
     extra=2,
     )
 
+# Note: instruction for JS adding extra formsets on the fly:
+# http://www.lab305.com/news/2012/jul/19/django-inline-formset-underscore/
+# http://stackoverflow.com/questions/21260987/add-a-dynamic-form-to-a-django-formset-using-javascript-in-a-right-way
