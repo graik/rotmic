@@ -30,7 +30,7 @@ from rotmic.forms import TracesUploadForm, GenbankUploadForm, GenbankProteinUplo
 
 class TracesUploadView(TemplateView):
     """Attach ABL sequencing trace files to existing Sequencing records"""
-    template_name = 'admin/rotmic/upload/uploadTraces.html'
+    template_name = 'rotmic/upload/uploadTraces.html'
    
     form_class = TracesUploadForm
     
@@ -98,7 +98,7 @@ class TracesUploadView(TemplateView):
 
 class GbkUploadView(TemplateView):
     """Attach genbank files to existing dnacomponent records"""
-    template_name = 'admin/rotmic/upload/uploadGbk.html'
+    template_name = 'rotmic/upload/uploadGbk.html'
    
     form_class = GenbankUploadForm
     
@@ -165,7 +165,7 @@ class GbkUploadView(TemplateView):
 
 class GbkProteinUploadView(GbkUploadView):
 
-    template_name = 'admin/rotmic/upload/uploadProteinGbk.html'
+    template_name = 'rotmic/upload/uploadProteinGbk.html'
 
     form_class = GenbankProteinUploadForm
     
