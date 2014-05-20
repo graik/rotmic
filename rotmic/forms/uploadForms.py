@@ -36,7 +36,7 @@ import rotmic.models as M
 class TableUploadForm(forms.Form):
     """Form for uploading Excel Tables"""
     
-    tableFile = DocumentFormField(label='Now, having read all that, please select an Excel file:',
+    tableFile = DocumentFormField(label='Excel file',
                                   extensions=['xls','xlsx'])
     
     
