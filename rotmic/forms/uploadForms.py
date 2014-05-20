@@ -258,12 +258,22 @@ class GenbankUploadForm(UploadFormBase):
                         widget=sforms.AutoComboboxSelectMultipleWidget(lookup_class=L.DnaLookup),
                         label='DNA constructs', 
                         initial=None, 
-                        help_text='')
+                        help_text='\nStart typing construct ID or name to restrict the choice')
     
     genbank = MultiFileField(label='Genbank file(s)',
                            min_num=1,
                            extensions=['gb', 'gbk', 'genbank'],
-                           help_text='Hold <CTRL> to select multiple files.')
+                           help_text="""Hold <CTRL> to select multiple files.
+The genbank record name (LOCUS) will be used to match the record to a construct. 
+This record name must start with the construct's rotmic ID (lower or upper case, 
+leading zeros can vary). The ID should be separated from the rest of the name 
+(if any) with one or several ' '(space), '-', '_', ':', or ';'.
+
+Example:
+   LOCUS SB020_testconstruct ...
+   
+   will be matched to a construct with ID sb0020.
+""")
 
     def clean_constructs(self):
         """
@@ -391,4 +401,4 @@ class GenbankProteinUploadForm(GenbankUploadForm):
                     widget=sforms.AutoComboboxSelectMultipleWidget(lookup_class=L.ProteinLookup),
                     label='Protein constructs', 
                     initial=None, 
-                    help_text='')
+                    help_text='\nStart typing construct ID or name to restrict the choice')

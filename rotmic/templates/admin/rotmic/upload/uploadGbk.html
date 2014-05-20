@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n admin_urls admin_static admin_modify %}
+{% load i18n admin_urls admin_static admin_modify rotmicforms %}
 
 {# prepare for "select" autocomplete fields #}
 {% block extrahead %}
@@ -63,16 +63,8 @@
             for this construct.
             <p>
             
-            <div class="form-row field-constructs">
-    
-                <div class="field-box field-constructs required"
-                title="Start typing construct ID or name to restrict the choice.">
-                    {% if form.constructs.errors %}<p>{{ form.constructs.errors }}</p>{% endif %}
-                    <b>{{ form.constructs.label_tag }}</b> {{ form.constructs }} <br>
-                    <small>{{ form.constructs.help_text }}</small>
-                </div>
-                
-            </div>
+            {% formrow form.constructs %}
+            
         </fieldset>
      
         <fieldset class="module">
@@ -80,27 +72,8 @@
             
             <p>Select one or several genbank files, each containing one or 
             several genbank records.</p>
-
-            <div class="form-row field-genbank">
-
-                <div class="field-box field-genbank required"
-                title="
-The genbank record name (LOCUS) will be used to match the record to a construct. 
-This record name must start with the construct's rotmic ID (lower or upper case, 
-leading zeros can vary). The ID should be separated from the rest of the name 
-(if any) with one or several ' '(space), '-', '_', ':', or ';'.
-
-Example:
-   LOCUS SB020_testconstruct ...
-   
-   will be matched to a construct with ID sb0020.
-                ">
-                    {% if form.genbank.errors %}<p>{{ form.genbank.errors }}</p>{% endif %}
-                    {{ form.genbank.label_tag }} {{ form.genbank }} <br>
-                    <small>{{ form.genbank.help_text }}</small>
-                </div>
-    
-            </div>
+            
+            {% formrow form.genbank %}
 
             <p>
                 Note: The genbank record name (LOCUS) will be used to match the record to a construct. 
