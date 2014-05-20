@@ -26,7 +26,10 @@
 {% endblock %}
 
 {# copied from changeform template#}
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />{%endblock%}
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
+{%endblock%}
 
 
 {% block breadcrumbs%}
@@ -34,17 +37,21 @@
     <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
     <a href="{% url 'admin:index' %}">Rotmic</a> &rsaquo;
     <a href="{% url 'admin:rotmic_'|add:model_name|add:'_changelist' %}">{% block object-class1 %}{{verbose_name|capfirst}}s{% endblock %}</a> &rsaquo;
-    Attach Genbank records
+    {% block last-breadcrumb %}Attach Genbank records{% endblock %}
 </div>
 {% endblock %}
 
 
 {% block content %}        
 
-    <h2>Attach Genbank records to Constructs</h2>
+    {% block form-title %}<h2>Attach Genbank records to Constructs</h2>{% endblock %}
 
     <ul class="object-tools">
-        <li><a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/upload-xls" class="helplink">{% trans "Help!" %}</a></li>
+        <li>
+            {% block help-links %}
+                <a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/upload-xls" class="helplink">{% trans "Help!" %}</a>
+            {% endblock %}
+        </li>
     </ul>
 
     
@@ -53,44 +60,47 @@
         {% csrf_token %}
 
         {% if form.non_field_errors %}<p>{{ form.non_field_errors }}</p>{% endif %}
-        <fieldset class="module">
-        
-            <h2>1. Select Constructs</h2>
-            
-            <p>
-            One genbank record is expected for each selected construct. This new
-            record will replace any existing sequence and genbank records registered
-            for this construct.
-            <p>
-            
-            {% formrow form.constructs %}
-            
-        </fieldset>
-     
-        <fieldset class="module">
-            <h2>2. Choose Genbank file</h2>
-            
-            <p>Select one or several genbank files, each containing one or 
-            several genbank records.</p>
-            
-            {% formrow form.genbank %}
 
-            <p>
-                Note: The genbank record name (LOCUS) will be used to match the record to a construct. 
-                This record name must start with the construct's rotmic ID.
-                The ID should be separated from the rest of the name 
-                (if any) with ' '(space), '-', '_', ':', or ';' character(s).
-            </p><p>
-                Example:
-                <code>LOCUS SB020_testconstruct ...</code>
-                will be matched to a construct with ID <code>sb0020</code>.
-            </p>
-
-        </fieldset>
-     
-        <div class="submit-row">        
-            <input type="submit" class="default" value="Upload">
-        </div>
+        {% block form-fieldsets %}
+            <fieldset class="module">
+            
+                <h2>1. Select Constructs</h2>
+                
+                <p>
+                One genbank record is expected for each selected construct. This new
+                record will replace any existing sequence and genbank records registered
+                for this construct.
+                <p>
+                
+                {% formrow form.constructs %}
+                
+            </fieldset>
+         
+            <fieldset class="module">
+                <h2>2. Choose Genbank file</h2>
+                
+                <p>Select one or several genbank files, each containing one or 
+                several genbank records.</p>
+                
+                {% formrow form.genbank %}
+    
+                <p>
+                    Note: The genbank record name (LOCUS) will be used to match the record to a construct. 
+                    This record name must start with the construct's rotmic ID.
+                    The ID should be separated from the rest of the name 
+                    (if any) with ' '(space), '-', '_', ':', or ';' character(s).
+                </p><p>
+                    Example:
+                    <code>LOCUS SB020_testconstruct ...</code>
+                    will be matched to a construct with ID <code>sb0020</code>.
+                </p>
+    
+            </fieldset>
+         
+            <div class="submit-row">        
+                <input type="submit" class="default" value="Upload">
+            </div>
+        {% endblock %}
  
     </form>
                 

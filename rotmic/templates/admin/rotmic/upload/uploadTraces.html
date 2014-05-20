@@ -1,115 +1,67 @@
-{% extends "admin/base_site.html" %}
+{% extends "admin/rotmic/upload/uploadGbk.html" %}
 {% load i18n admin_urls admin_static admin_modify rotmicforms %}
 
-{# prepare for "select" autocomplete fields #}
-{% block extrahead %}
+{% block last-breadcrumb %}Upload Sequencing{% endblock %}
 
-    {# Note: selectable scripts and ressources: the order of load and super is important #}
-    {% load selectable_tags %}
-    {% include_ui_theme %}
-    {% include_jquery_libs %}
+{% block actionurl %}{% url "upload_tracefiles" %}{% endblock %}
 
-    {# needed for selectable and calendar widgets #}   
-    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-        {{ form.media }}
-    
-    {# needed for selectable and calendar widgets #}   
-    <script type="text/javascript"
-        src="{% static 'admin/js/core.js' %}"></script>
 
-    {# needed for calendar widgets -- double-loading is for some ordering reason neccessary #}   
-    <script type="text/javascript"
-        src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
-    
-    {# In this case, super is actually empty #}
-    {{ block.super }} 
+{%block form-title%}<h2>Attach Sequencing traces to Samples</h2>{%endblock%}
+
+{%block help-link%}
+    <a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/upload-xls" class="helplink">{% trans "Help!" %}</a>
 {% endblock %}
-
-{# copied from changeform template#}
-{% block extrastyle %}
-    {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
-{%endblock%}
-
-
-{% block breadcrumbs%}
-<div class="breadcrumbs">
-    <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
-    <a href="{% url 'admin:index' %}">Rotmic</a> &rsaquo;
-    <a href="{% url 'admin:rotmic_'|add:model_name|add:'_changelist' %}">{% block object-class1 %}{{verbose_name|capfirst}}s{% endblock %}</a> &rsaquo;
-    Upload Sequencing
-</div>
-{% endblock %}
-
-
-{% block content %}        
-
-    <h2>Attach Sequencing traces to Samples</h2>
-
-    <ul class="object-tools">
-        <li><a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/upload-xls" class="helplink">{% trans "Help!" %}</a></li>
-    </ul>
-
-    
-    <!-- Upload form. Note enctype attribute! -->
-    <form action="{% url "upload_tracefiles" %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        {% if form.non_field_errors %}<p>{{ form.non_field_errors }}</p>{% endif %}
-        <fieldset class="module">
         
-            <h2>1. Select Samples</h2>
-            
-            <p>One new sequencing record will be created for each sample. 
-            All trace files matched to a given sample will be attached to this new
-            record. Existing sequencing
-            records will <em>not</em> be modified. You must upload, at least,
-            one trace file for each selected sample.
-            <p>
-
-            {% formrow form.samples tooltip=True %}
-            
-        </fieldset>
-     
-        <fieldset class="module">
-            <h2>2. Select Trace Files</h2>
-            
-            <p>
-            The file name will be used to match each trace to a sample. 
-            By default, file names are expected to start with the sample ID 
-            (the sample position within the container). You can change this 
-            matching pattern below.
-            </p>
-            
-            {% formrow form.files %}
-
-            {% formrow form.matchBy ignoreRequired=True %}
-
-            {% formrow form.matchPrimer ignoreRequired=True %}
-  
-        </fieldset>
-     
-        <fieldset class="module">
-            
-            <h2>3. Adjust Sequencing properties</h2>
-
-            <p>
-                Trace files will be pooled into one new sequencing record for each sample.
-                You can adjust the properties of these new sequencing entries below.
-            </p>
-            
-            {% formrow form.evaluation %}
-            
-            {% formrow form.orderedAt form.orderedBy %}
-            
-            {% formrow form.comments %}
-
-        </fieldset>
-
-        <div class="submit-row">        
-            <input type="submit" class="default" value="Upload">
-        </div>
- 
-    </form>
-                
+{% block form-fieldsets %}
+    
+    <fieldset class="module">
+    
+        <h2>1. Select Samples</h2>
+        
+        <p>One new sequencing record will be created for each sample. 
+        All trace files matched to a given sample will be attached to this new
+        record. Existing sequencing
+        records will <em>not</em> be modified. You must upload, at least,
+        one trace file for each selected sample.
+        <p>
+    
+        {% formrow form.samples tooltip=True %}
+        
+    </fieldset>
+    
+    <fieldset class="module">
+        <h2>2. Select Trace Files</h2>
+        
+        <p>
+        The file name will be used to match each trace to a sample. 
+        By default, file names are expected to start with the sample ID 
+        (the sample position within the container). You can change this 
+        matching pattern below.
+        </p>
+        
+        {% formrow form.files %}
+    
+        {% formrow form.matchBy ignoreRequired=True %}
+    
+        {% formrow form.matchPrimer ignoreRequired=True %}
+    
+    </fieldset>
+    
+    <fieldset class="module">
+        
+        <h2>3. Adjust Sequencing properties</h2>
+    
+        <p>
+            Trace files will be pooled into one new sequencing record for each sample.
+            You can adjust the properties of these new sequencing entries below.
+        </p>
+        
+        {% formrow form.evaluation %}
+        
+        {% formrow form.orderedAt form.orderedBy %}
+        
+        {% formrow form.comments %}
+    
+    </fieldset>
+        
 {% endblock %}
