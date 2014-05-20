@@ -33,15 +33,7 @@ from .usermixin import UserMixin, ReadonlyUrlMixin
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
 
-
-class Component(UserMixin, ReadonlyUrlMixin):
-    """
-    Base class for cells, nucleic acids, proteins, and chemicals.
-    Not shown to the user (currently) but the table exists and collects
-    all fields that are common to all types of Components.
-    
-    See Meta.abstract
-    """
+class ComponentBase(UserMixin):
     upload_to = 'attachments/Component'
 
     displayId = models.CharField('ID', max_length=20, unique=True, 
@@ -63,18 +55,6 @@ class Component(UserMixin, ReadonlyUrlMixin):
 
     description = models.TextField('Description', blank=True,
                 help_text='You can format your text and include links. See: <a href="http://daringfireball.net/projects/markdown/basics">Markdown Quick Reference</a>')
-    
-    ## return child classes in queries using select_subclasses()
-    objects = I.InheritanceManager()  
-
-    @property
-    def samples(self):
-        """
-        return subtype-specific django RelatedManager pointing to all samples
-        for this specific component.
-        Needs to be overriden
-        """
-        raise NotImplemented, 'samples method must be implemented by sub-classes.'
 
     def __unicode__(self):
         name = self.name or ''
@@ -102,6 +82,33 @@ class Component(UserMixin, ReadonlyUrlMixin):
         return r
     showDescription.allow_tags = True
     showDescription.short_description = 'Description'
+
+    class Meta:
+        abstract = True
+        ordering = ['displayId']   
+    
+
+
+class Component(ComponentBase, ReadonlyUrlMixin):
+    """
+    Base class for cells, nucleic acids, proteins, and chemicals.
+    Not shown to the user (currently) but the table exists and collects
+    all fields that are common to all types of Components.
+    
+    See Meta.abstract
+    """
+    
+    ## return child classes in queries using select_subclasses()
+    objects = I.InheritanceManager()  
+
+    @property
+    def samples(self):
+        """
+        return subtype-specific django RelatedManager pointing to all samples
+        for this specific component.
+        Needs to be overriden
+        """
+        raise NotImplemented, 'samples method must be implemented by sub-classes.'
 
     class Meta:
         app_label = 'rotmic'
