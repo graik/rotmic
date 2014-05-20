@@ -86,19 +86,40 @@ class TracesUploadForm(UploadFormBase):
                         widget=sforms.AutoComboboxSelectMultipleWidget(lookup_class=L.DnaSampleLookup),
                         label='Samples', 
                         initial=None, 
-                        help_text='')
+                        help_text='Start typing container, sample or construct ID to restrict the choice.')
     
     matchBy = forms.ChoiceField(label='match by',
                                   choices=MATCHCHOICES,
                                   initial='s',
                                   widget=forms.RadioSelect,
                                   required=True,
-                                  help_text='select how trace file names are matched to samples.')
+                                  help_text="""Select how trace file names are matched to samples.
+File names need to contain certain characters that separate the different IDs 
+from each other and from the rest of the name. Allowed separating characters 
+are: 
+
+'_'(underscore), ' '(space), ':'(colon), ';'(semicolon), '-'(minus).
+
+IDs are converted to lower case and leading zeros are removed to make the 
+matching more robust. For example, let's assume you have a sample with ID 
+'A01' which contains the DNA construct with ID 'sb0001'. If you select sample 
+ID + construct ID matching, the following file names are all correct and will 
+match the trace to this sample:
+
+A1_sb0001_mysequencing.ab1 or 
+a1-sb1-mysequencing.ab1 or 
+A01:sb001_mysequencing.ab1
+""")
 
     matchPrimer = forms.BooleanField(required=True, label='extract primer ID', 
                                     initial=True, 
-                                    help_text='Try to find a sequencing primer ID within the file name.'
-                                    )
+                                    help_text="""Try to find a sequencing primer ID within the file name.
+The trace file name may contain the ID of a sequencing primer. This ID has to
+be an exact match (including capitalization/case and leading zeros) with the 
+primer ID. The primer name does <em>not</em> work. The import will proceed 
+even if there is no match, in which case the primer field is left empty for 
+this trace.
+""")
 
     files = MultiFileField(label='Trace files:',
                            min_num=2,
@@ -119,7 +140,7 @@ class TracesUploadForm(UploadFormBase):
                                        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.UserLookup,
                                                        allow_new=False,
                                                        attrs={'size':15}),
-                                       help_text='User responsible for this sequencing')
+                                       help_text='User responsible for this sequencing\nStart typing user name to restrict choices.')
     
     comments = forms.CharField(label='Comments', required=False,
                                widget=forms.Textarea(attrs={'rows': 4,'cols': 80}),

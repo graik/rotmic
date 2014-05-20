@@ -1,0 +1,15 @@
+{# template fragment used by rotmicforms/formrow #}
+    <div class="form-row {%for f in fields%}field-{{f.name}}{%endfor%}">
+    
+        {%for f in fields %}
+            <div class="field-box field-{{f.name}} {%if f.required%}required{%endif%}"
+            {%if f.mouseover%} title="{{f.mouseover}}" {%endif%}>
+                {% if f.errors %}<p>{{ f.errors }}</p>{% endif %}
+                {{ f.label_tag }}
+                {{ f }} <br>
+                <small>{{ f.help_text }}</small>
+            </div>
+            
+        {%endfor%}
+    
+    </div>
