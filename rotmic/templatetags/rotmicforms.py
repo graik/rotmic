@@ -13,19 +13,14 @@
 ## GNU Affero General Public License for more details.
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
-
-import markdown2
 from django import template
-from django.template.defaultfilters import stringfilter
-from django.utils.encoding import force_unicode
-from django.utils.safestring import mark_safe
 
 register = template.Library()
 
 @register.inclusion_tag('rotmic/rotmic_formrow.html')
 def formrow(*formfields, **kwargs):
     """
-    Display single or multiple (grouped) form field input with help text, 
+    Display single or multiple (grouped) form field inputs with help text, 
     label, mouseover etc mirroring the way Admin is doing it.
     
     Note -- Special tooltip behavior:
