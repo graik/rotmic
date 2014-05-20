@@ -77,7 +77,7 @@ class TracesUploadForm(UploadFormBase):
     
     MATCHCHOICES = (('s', 'sample ID (e.g. A01_comment.ab1)'), 
                     ('s.dna', 'construct ID (e.g. rg0011_comment.ab1)'),
-                    ('s.container:s', 'container + sample ID (e.g. D12_A01_comment.ab1)'),
+                    ('s.container:s', 'container + sample ID (e.g. Dna20_A01_comment.ab1)'),
                     ('s:s.dna', 'sample ID + construct ID (e.g. A01_rg0011_comment.ab1)'))
     
     samples = forms.ModelMultipleChoiceField(M.DnaSample.objects.all(), 
