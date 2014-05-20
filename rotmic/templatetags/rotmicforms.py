@@ -22,7 +22,7 @@ from django.utils.safestring import mark_safe
 
 register = template.Library()
 
-@register.inclusion_tag('admin/rotmic/rotmic_formrow.html')
+@register.inclusion_tag('rotmic/rotmic_formrow.html')
 def formrow(*formfields, **kwargs):
     """
     Display single or multiple (grouped) form field input with help text, 
