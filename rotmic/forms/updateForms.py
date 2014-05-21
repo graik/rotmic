@@ -14,11 +14,12 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 from datetime import datetime
-import re
+import re, copy
 
 import django.forms as forms
 from django.contrib.auth.models import User
 from django.contrib.admin.widgets import AdminDateWidget
+from django.contrib import admin, messages
 
 import selectable.forms as sforms
 
@@ -38,7 +39,7 @@ class UpdateManyForm(forms.Form):
                         cache_choices=False, 
                         required=True, 
                         initial=None, 
-                        help_text='Start typing ID to restrict the choice.\n')
+                        help_text='Start typing ID or name to restrict the choice.\n')
     
     def __init__(self, *arg, **kwarg):
         self.request = kwarg.pop('request')
@@ -51,6 +52,43 @@ class UpdateManyForm(forms.Form):
         f.widget = sforms.AutoComboboxSelectMultipleWidget(lookup_class=self.lookups[self.model])
         f.label = self.model._meta.verbose_name + 's'
         
+        self.build_fields(self.model)
+        self.populate_fields()
+        
+    def build_fields(self, model):
+        """add fields according to model admin"""
+        a = admin.site._registry[model]
+        form = a.form
+        
+        for fs in a.fieldsets:
+            title, d = fs
+            for fieldrow in d['fields']:
+                for fieldname in fieldrow:
+                    if not fieldname in a.no_update:
+                        self.fields[fieldname] = copy.copy(form.base_fields[fieldname])
+
+    def populate_fields(self):
+        """Fill in values that are the same in all entries"""
+        entries = self.model.objects.filter(pk__in=self.initial['entries'])
+
+        for fieldname in self.fields:
+            if fieldname != 'entries':
+                ## check for all-equal values and, if yes, copy value -> initial
+                values = entries.values_list(fieldname, flat=True)
+
+                if len(values) == entries.count() and len(set(values)) <= 1:                   
+                    self.fields[fieldname].all_equal = True
+                    self.fields[fieldname].required = True
+                    v = values[0]
+                    
+                    ## don't set empty empty fields;
+                    if v:
+                        self.initial[fieldname] = v
+                else:
+                    self.fields[fieldname].all_equal = False
+                    self.fields[fieldname].required = False
+
+
     def add_error(self, field, msg):
         """
         This method exists in Form from django 1.7+ ; remove/rename after upgrade

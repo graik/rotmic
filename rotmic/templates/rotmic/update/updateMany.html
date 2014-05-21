@@ -11,22 +11,33 @@
 {%block help-link%}
     <a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/update" class="helplink">{% trans "Help!" %}</a>
 {% endblock %}
-        
+
 {% block form-fieldsets %}
-    
+
     <fieldset class="module">
-    
+
         <h2>1. Select Entries</h2>
-        
-        <p>
-        {% url "update_many" model=model_name %}
-        {{model_name}}
-        </p>
+    
+        <p>Select the entries that you want to edit in parallel.</p>
     
         {% formrow form.entries %}
-        
+
     </fieldset>
-        
+
+    <fieldset class="module">
+
+        <h2>2. Modify data</h2>
+    
+        <p>Any changes to any of the fields below will be applied to all the selected entries.</p>
+    
+        {% for field in form %}
+            {% if field.name != 'entries' %}
+                {% formrow field ignoreRequired=False%}
+            {% endif %}
+        {% endfor%}
+
+    </fieldset>
+
 {% endblock %}
 
 {%block submit-button%}Update All{%endblock%}

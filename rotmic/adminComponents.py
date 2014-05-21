@@ -83,6 +83,9 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
     actions = ['delete_selected',  ## This is needed to activate non-author delete protection
                'make_update']  
     
+    ## list field names that should be excluded from the bulk update dialog
+    no_update = ['displayId', 'name', 'category', 'componentCategory']
+    
     def queryset(self, request):
         """
         Return actual sub-class instances instead of generic Component super-class
@@ -226,7 +229,7 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     
     ordering = ('displayId', 'name')
     
-    actions = ['make_csv', 'make_genbank'] + ComponentAdmin.actions
+    actions = ComponentAdmin.actions + ['make_csv', 'make_genbank']
     
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
@@ -238,6 +241,9 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
                                ('Description','description'),
                                ('Sequence','sequence') 
                               ] )
+    
+    no_update = ComponentAdmin.no_update + ['genbankFile', 'genbankClear', 
+                                            'sequence']
     
     SMPL_ICON = ST.static('admin/img/icon-yes.gif')
     
