@@ -29,3 +29,5 @@ from sequencingForms import SequencingForm, SequencingRunForm
 
 from uploadForms import TableUploadForm, GenbankUploadForm, TracesUploadForm,\
      GenbankProteinUploadForm
+
+from updateForms import UpdateManyForm

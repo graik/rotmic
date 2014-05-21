@@ -36,8 +36,6 @@ from .utils.customadmin import ViewFirstModelAdmin
 
 from .adminBase import UserRecordMixin, RequestFormMixin, export_csv
 
-##import profilehooks
-##import cProfile as profile
 
 class ComponentAttachmentInline(admin.TabularInline):
     model = M.ComponentAttachment
@@ -81,8 +79,9 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
                                ('Category', 'componentType.category()'),
                                ('Type', 'componentType.name'),
                                ])
-    
-    actions = ['delete_selected']  ## This is needed to activate non-author delete protection
+
+    actions = ['delete_selected',  ## This is needed to activate non-author delete protection
+               'make_update']  
     
     def queryset(self, request):
         """
@@ -162,6 +161,17 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
 
     showSampleStatus.allow_tags = True    
     showSampleStatus.short_description = '' 
+
+    def make_update(self, request, queryset):
+        """List view action for bulk update dialog"""
+        ## see https://docs.djangoproject.com/en/dev/ref/contrib/admin/actions/#actions-that-provide-intermediate-pages
+
+        selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
+        modelname = self.model._meta.object_name.lower()
+        return HttpResponseRedirect("/rotmic/update/%s/?entries=%s" \
+                                    % (modelname, ",".join(selected)))
+
+    make_update.short_description = 'Update many records at once'
 
 
 class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):

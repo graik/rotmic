@@ -65,6 +65,9 @@ urlpatterns = patterns('',
     ## other
     (r'^comments/', include('ratedcomments.urls')),
 
+    ## bulk update dialog
+    url(r'^rotmic/update/(?P<model>.+)/$', V.UpdateManyView.as_view(), name='update_many'),  
+
     url(r'^', include(admin.site.urls)),
 )
 

@@ -1,0 +1,32 @@
+{% extends "rotmic/rotmic_form.html" %}
+{% load i18n admin_urls admin_static admin_modify rotmicforms %}
+
+{% block last-breadcrumb %}Update {{verbose_name|add:'s'}}{% endblock %}
+
+{% block actionurl %}{% url "update_many" model=model_name %}{% endblock %}
+
+
+{%block form-title%}<h2>Update {{verbose_name}}s</h2>{%endblock%}
+
+{%block help-link%}
+    <a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/update" class="helplink">{% trans "Help!" %}</a>
+{% endblock %}
+        
+{% block form-fieldsets %}
+    
+    <fieldset class="module">
+    
+        <h2>1. Select Entries</h2>
+        
+        <p>
+        {% url "update_many" model=model_name %}
+        {{model_name}}
+        </p>
+    
+        {% formrow form.entries %}
+        
+    </fieldset>
+        
+{% endblock %}
+
+{%block submit-button%}Update All{%endblock%}
