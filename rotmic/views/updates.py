@@ -64,32 +64,37 @@ class UpdateManyView(TemplateView):
         model = kwargs.pop('model', '')
         modelclass = ContentType.objects.get(app_label='rotmic',model=model).model_class()
         
+##        initial={}
+##        entries = request.POST.get('entries', '')
+##        if entries:
+##            initial['entries'] = [ int(x) for x in  entries.split(',') ]
+        
         form = self.form_class(request.POST, request.FILES, request=request,
-                               model=modelclass)
+                               model=modelclass )
 
         try:
             if not form.is_valid():
                 raise ValidationError('form-level validation error')
             
             ## create individual forms
-            entry_forms = []
+            entry_forms = form.get_forms()
             
             if form._errors:
                 raise ValidationError('post-form mapping error')
             
-            try:
-                with transaction.atomic():
-                    
-                    for f in entry_forms:
-                        f.save()
-                        messages.success(request, 
-                            u'Updated record %s' \
-                            % (unicode(f.instance)), 
-                            extra_tags='', 
-                            fail_silently=False)
+##            try:
+            with transaction.atomic():
                 
-            except Exception, why:
-                messages.error(request, 'Some unforeseen error occured. All updates are reverted. Reason: ' + str(why))
+                for f in entry_forms:
+                    f.save()
+                    messages.success(request, 
+                        u'Updated record %s' \
+                        % (unicode(f.instance)), 
+                        extra_tags='', 
+                        fail_silently=False)
+                
+##            except Exception, why:
+##                messages.error(request, 'Some unforeseen error occured. All updates are reverted. Reason: ' + str(why))
 
         except ValidationError, why:
             ## re-display with error messages

@@ -31,6 +31,7 @@ import rotmic.models as M
 class UpdateManyForm(forms.Form):
     
     lookups = {M.DnaComponent : L.DnaLookup,
+               M.CellComponent : L.SampleCellLookup,
                M.OligoComponent : L.OligoLookup,
                M.ChemicalComponent : L.ChemicalLookup,
                M.ProteinComponent : L.ProteinLookup }
@@ -45,35 +46,38 @@ class UpdateManyForm(forms.Form):
         self.request = kwarg.pop('request')
         self.model = kwarg.pop('model', None)
 
+        self.model_admin = admin.site._registry[self.model]
+        self.model_form = self.model_admin.form
+
         super(UpdateManyForm, self).__init__(*arg, **kwarg)
-        
+
         f = self.fields['entries']
         
+        f.queryset = self.model.objects.all()
         f.widget = sforms.AutoComboboxSelectMultipleWidget(lookup_class=self.lookups[self.model])
         f.label = self.model._meta.verbose_name + 's'
         
-        self.build_fields(self.model)
+        self.build_fields()
         
-        if self.request.GET:
-            self.entries = self.model.objects.select_related().filter(pk__in=self.initial['entries'])
-            self.populate_fields()
+        if self.request.method == 'GET':
+            entries = self.model.objects.select_related().filter(pk__in=self.initial['entries'])
+            self.populate_fields(entries)
             
-        if self.request.POST:
-            self.entries = []
+        if self.request.method == 'POST':
+            pass
+
         
-    def build_fields(self, model):
-        """add fields according to model admin"""
-        a = admin.site._registry[model]
-        form = a.form
+    def build_fields(self):
+        """add fields according to model admin definitions"""
+        a = self.model_admin
         
         for fs in a.fieldsets:
             title, d = fs
             for fieldrow in d['fields']:
                 for fieldname in fieldrow:
                     if not fieldname in a.no_update:
-                        self.fields[fieldname] = copy.copy(form.base_fields[fieldname])
+                        self.fields[fieldname] = copy.copy(a.form.base_fields[fieldname])
                         self.fields[fieldname].required = False
-
 
     def __deduplicate(self, values):
         return [values[i] for i in range(len(values)) if i == 0 or values[i] != values[i-1]]
@@ -90,10 +94,9 @@ class UpdateManyForm(forms.Form):
         values = [ list(v.order_by('id').values_list('id', flat=True)) for v in values ]
         return values
         
-    def populate_fields(self):
+    def populate_fields(self, entries):
         """Fill in values that are the same in all entries"""
         ## get selected entries and already pre-fetch all ForeignKey related objects
-        entries = self.entries
 
         for fieldname in self.fields:
             if fieldname != 'entries':
@@ -127,3 +130,35 @@ class UpdateManyForm(forms.Form):
         elif len( self._errors[field] ) == 3:
             self._errors[field].append('...skipping further errors.')
  
+
+    def get_forms(self):
+        """create a single input form for every entry, to be called *after* clean"""
+        entries = self.cleaned_data['entries']
+        
+        if 'entries' in self.changed_data:
+            self.changed_data.remove('entries')
+            
+        cleaned = self.cleaned_data
+
+        d = { k : self.fields[k].prepare_value(cleaned[k]) for k in self.changed_data }
+        
+        entry_forms = []
+        for e in entries:
+            
+            try:
+                data = forms.model_to_dict(e)
+                data.update(d)
+                
+                form = self.model_form( data, instance=e )
+                form.request = self.request  ##This is actually only required for forms derrived from SampleForm
+                
+                if not form.is_valid(): raise ValueError('single form validation')
+
+                entry_forms += [form]
+
+            except ValueError as error:
+                for field, msg in form.errors.items():
+                    s = unicode(form.instance) + ': ' + msg[0]
+                    self.add_error(field, s)
+        
+        return entry_forms
