@@ -64,7 +64,9 @@ class UpdateManyForm(forms.Form):
             self.populate_fields(entries)
             
         if self.request.method == 'POST':
-            pass
+            entries = f.widget.value_from_datadict(self.data, self.files, 'entries')
+            entries = self.model.objects.filter(pk__in=entries)
+            self.populate_fields(entries)
 
         
     def build_fields(self):
@@ -83,16 +85,28 @@ class UpdateManyForm(forms.Form):
         return [values[i] for i in range(len(values)) if i == 0 or values[i] != values[i-1]]
 
     def extract_values(self, entries, fieldname):
-        """Helper function, get all values of given field from list of objects"""
+        """
+        Helper function, get all values of given field from list of objects
+        """
+        if isinstance( self.model_form.base_fields[fieldname], forms.models.ModelMultipleChoiceField):
+            ## the more tricky case of RelatedManagers populated with
+            ## more than one reference
+            values = [ getattr(e, fieldname) for e in entries ]
+            values = [ list(v.order_by('id').values_list('id', flat=True)) for v in values ]
+            return values
+        
+        if isinstance( self.model_form.base_fields[fieldname], forms.fields.MultipleChoiceField):
+            ## untested!!!
+            values = [ getattr(e, fieldname) for e in entries ]
+            values = [ ordered(v) for v in values ]
+            return values
+            
         values = entries.values_list(fieldname, flat=True)
         if len(values) == entries.count():
             return values
         
-        ## OK, now for the more tricky case of RelatedManagers populated with
-        ## more than one reference
-        values = [ eval('e.'+fieldname) for e in entries ]
-        values = [ list(v.order_by('id').values_list('id', flat=True)) for v in values ]
-        return values
+        raise LookupError, 'Cannot extract values for field ' + fieldname
+
         
     def populate_fields(self, entries):
         """Fill in values that are the same in all entries"""
@@ -130,6 +144,8 @@ class UpdateManyForm(forms.Form):
         elif len( self._errors[field] ) == 3:
             self._errors[field].append('...skipping further errors.')
  
+    def delta(self, data, entries):
+        pass
 
     def get_forms(self):
         """create a single input form for every entry, to be called *after* clean"""
@@ -139,6 +155,8 @@ class UpdateManyForm(forms.Form):
             self.changed_data.remove('entries')
             
         cleaned = self.cleaned_data
+
+        fields_changed = self.delta(cleaned, entries)
 
         d = { k : self.fields[k].prepare_value(cleaned[k]) for k in self.changed_data }
         

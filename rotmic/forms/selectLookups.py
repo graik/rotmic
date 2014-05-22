@@ -35,11 +35,11 @@ class FixedSelectMultipleWidget( sforms.AutoComboboxSelectMultipleWidget ):
     This should, in theory, be obsolete since Django 1.6
     (The _has_changed method has moved from widget to FormField)
     """    
-    def _has_changed(self,initial, data):
-        """override buggy method from SelectWidget"""
-        old_values = [ unicode(i) for i in (initial or [u''])]
-        new_values = [ unicode(i) for i in (data or [u''])]
-        return not set(new_values) == set(old_values)
+##    def _has_changed(self,initial, data):
+##        """override buggy method from SelectWidget"""
+##        old_values = [ unicode(i) for i in (initial or [u''])]
+##        new_values = [ unicode(i) for i in (data or [u''])]
+##        return not set(new_values) == set(old_values)
 
 
 class DnaLookup(ModelLookup):
