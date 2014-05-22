@@ -53,7 +53,13 @@ class UpdateManyForm(forms.Form):
         f.label = self.model._meta.verbose_name + 's'
         
         self.build_fields(self.model)
-        self.populate_fields()
+        
+        if self.request.GET:
+            self.entries = self.model.objects.select_related().filter(pk__in=self.initial['entries'])
+            self.populate_fields()
+            
+        if self.request.POST:
+            self.entries = []
         
     def build_fields(self, model):
         """add fields according to model admin"""
@@ -66,27 +72,49 @@ class UpdateManyForm(forms.Form):
                 for fieldname in fieldrow:
                     if not fieldname in a.no_update:
                         self.fields[fieldname] = copy.copy(form.base_fields[fieldname])
+                        self.fields[fieldname].required = False
 
+
+    def __deduplicate(self, values):
+        return [values[i] for i in range(len(values)) if i == 0 or values[i] != values[i-1]]
+
+    def extract_values(self, entries, fieldname):
+        """Helper function, get all values of given field from list of objects"""
+        values = entries.values_list(fieldname, flat=True)
+        if len(values) == entries.count():
+            return values
+        
+        ## OK, now for the more tricky case of RelatedManagers populated with
+        ## more than one reference
+        values = [ eval('e.'+fieldname) for e in entries ]
+        values = [ list(v.order_by('id').values_list('id', flat=True)) for v in values ]
+        return values
+        
     def populate_fields(self):
         """Fill in values that are the same in all entries"""
-        entries = self.model.objects.filter(pk__in=self.initial['entries'])
+        ## get selected entries and already pre-fetch all ForeignKey related objects
+        entries = self.entries
 
         for fieldname in self.fields:
             if fieldname != 'entries':
                 ## check for all-equal values and, if yes, copy value -> initial
-                values = entries.values_list(fieldname, flat=True)
+                values = self.extract_values(entries, fieldname)
+                f = self.fields[fieldname]
 
-                if len(values) == entries.count() and len(set(values)) <= 1:                   
-                    self.fields[fieldname].all_equal = True
-                    self.fields[fieldname].required = True
+                if len(values) == entries.count() and\
+                   len(self.__deduplicate(values)) <= 1:                   
+                    f.all_equal = True
+                    f.help_text = 'This field seems to have the same (or no) value in all %i entries.\n' % len(values)\
+                        + f.help_text
                     v = values[0]
                     
                     ## don't set empty empty fields;
                     if v:
                         self.initial[fieldname] = v
                 else:
-                    self.fields[fieldname].all_equal = False
-                    self.fields[fieldname].required = False
+                    f.all_equal = False
+                    f.help_text = 'Attention! This field currently has different values in the selected entries. Only change if you are sure.\n'\
+                        + f.help_text
 
 
     def add_error(self, field, msg):

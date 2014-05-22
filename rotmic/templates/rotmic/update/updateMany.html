@@ -32,7 +32,7 @@
     
         {% for field in form %}
             {% if field.name != 'entries' %}
-                {% formrow field ignoreRequired=False%}
+                {% formrow field ignoreRequired=True%}
             {% endif %}
         {% endfor%}
 
