@@ -53,9 +53,11 @@ class UpdateManyForm(forms.Form):
         super(UpdateManyForm, self).__init__(*arg, **kwarg)
 
         f = self.fields['entries']
+        lookup = self.lookups.get(self.model, None) \
+            or getattr(self.model_admin, 'model_lookup', None)
         
         f.queryset = self.model.objects.all()
-        f.widget = sforms.AutoComboboxSelectMultipleWidget(lookup_class=self.lookups[self.model])
+        f.widget = sforms.AutoComboboxSelectMultipleWidget(lookup_class=lookup)
         f.label = self.model._meta.verbose_name + 's'
         
         self.build_fields()
@@ -80,7 +82,7 @@ class UpdateManyForm(forms.Form):
             for fieldrow in d['fields']:
                 for fieldname in fieldrow:
 
-                    if not fieldname in a.no_update:
+                    if not fieldname in a.exclude_from_update:
                         self.fields[fieldname] = copy.copy(a.form.base_fields[fieldname])
                         f = self.fields[fieldname]
                         f.required = False
@@ -160,9 +162,6 @@ class UpdateManyForm(forms.Form):
         elif len( self._errors[field] ) == 3:
             self._errors[field].append('...skipping further errors.')
  
-    def delta(self, data, entries):
-        pass
-
     def get_forms(self):
         """create a single input form for every entry, to be called *after* clean"""
         entries = self.cleaned_data['entries']
@@ -171,8 +170,6 @@ class UpdateManyForm(forms.Form):
             self.changed_data.remove('entries')
             
         cleaned = self.cleaned_data
-
-        fields_changed = self.delta(cleaned, entries)
 
         d = { k : self.fields[k].prepare_value(cleaned[k]) for k in self.changed_data }
         

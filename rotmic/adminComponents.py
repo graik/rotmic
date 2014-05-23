@@ -34,7 +34,7 @@ from .utils import adminFilters as filters
 from .utils import ids
 from .utils.customadmin import ViewFirstModelAdmin
 
-from .adminBase import UserRecordMixin, RequestFormMixin, export_csv
+from .adminBase import UserRecordMixin, RequestFormMixin, export_csv, UpdateManyMixin
 
 
 class ComponentAttachmentInline(admin.TabularInline):
@@ -44,7 +44,7 @@ class ComponentAttachmentInline(admin.TabularInline):
     extra = 1
     max_num = 5
 
-class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
+class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, UpdateManyMixin ):
     """
     Derived from ViewFirstModelAdmin -- Custom version of admin.ModelAdmin
     which shows a read-only View for a given object instead of the normal
@@ -80,11 +80,12 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
                                ('Type', 'componentType.name'),
                                ])
 
-    actions = ['delete_selected',  ## This is needed to activate non-author delete protection
-               'make_update']  
+    actions = ['make_update',
+               'delete_selected',  ## This is needed to activate non-author delete protection               
+               ]  
     
     ## list field names that should be excluded from the bulk update dialog
-    no_update = ['displayId', 'name', 'category', 'componentCategory']
+    exclude_from_update = ['displayId', 'name', 'category', 'componentCategory']
     
     def queryset(self, request):
         """
@@ -165,17 +166,6 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
     showSampleStatus.allow_tags = True    
     showSampleStatus.short_description = '' 
 
-    def make_update(self, request, queryset):
-        """List view action for bulk update dialog"""
-        ## see https://docs.djangoproject.com/en/dev/ref/contrib/admin/actions/#actions-that-provide-intermediate-pages
-
-        selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
-        modelname = self.model._meta.object_name.lower()
-        return HttpResponseRedirect("/rotmic/update/%s/?entries=%s" \
-                                    % (modelname, ",".join(selected)))
-
-    make_update.short_description = 'Update many records at once'
-
 
 class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     """Admin interface description for DNA constructs."""
@@ -242,8 +232,8 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
                                ('Sequence','sequence') 
                               ] )
     
-    no_update = ComponentAdmin.no_update + ['genbankFile', 'genbankClear', 
-                                            'sequence']
+    exclude_from_update = ComponentAdmin.exclude_from_update +\
+        ['genbankFile', 'genbankClear', 'sequence']
     
     SMPL_ICON = ST.static('admin/img/icon-yes.gif')
     
@@ -509,6 +499,8 @@ class OligoComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
                                ('Description','description'),
                                ('Sequence','sequence')])
 
+    exclude_from_update = ComponentAdmin.exclude_from_update + ['sequence']
+
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""
         return super(ComponentAdmin,self).queryset(request)
@@ -630,6 +622,9 @@ class ProteinComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
                                ('Description','description'),
                                ('Sequence', 'sequence'),                               
                               ])
+ 
+    exclude_from_update = ComponentAdmin.exclude_from_update +\
+        ['sequence', 'genbankFile', 'genbankClear', 'encodedBy']
     
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""

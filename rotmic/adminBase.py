@@ -16,7 +16,8 @@
 """Base Admin extensions used by many ModelAdmins"""
 
 import datetime, csv, collections
-from django.http import HttpResponse
+
+import django.http as http
 
 from django.contrib.admin import ModelAdmin
 from django.contrib import admin
@@ -259,13 +260,29 @@ class RequestFormMixin:
         return ModelFormWithRequestWrapper
 
 
+class UpdateManyMixin:
+    """ModelAdmin mixin adding an action method for the multi-object update dialog"""
+
+    def make_update(self, request, queryset):
+        """List view action for bulk update dialog"""
+        ## see https://docs.djangoproject.com/en/dev/ref/contrib/admin/actions/#actions-that-provide-intermediate-pages
+
+        selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
+        modelname = self.model._meta.object_name.lower()
+        return http.HttpResponseRedirect("/rotmic/update/%s/?entries=%s" \
+                                    % (modelname, ",".join(selected)))
+
+    make_update.short_description = 'Edit all selected records at once'
+
+    
+
 def export_csv(request, queryset, fields):
     """
     Helper method for Admin make_csv action. Exports selected objects as 
     CSV file.
     fields - OrderedDict of name / field pairs, see Item.make_csv for example
     """
-    response = HttpResponse(mimetype='text/csv')
+    response = http.HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=rotmic.csv'
     
     writer = csv.writer(response)
