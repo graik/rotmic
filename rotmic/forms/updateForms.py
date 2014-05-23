@@ -20,6 +20,7 @@ import django.forms as forms
 from django.contrib.auth.models import User
 from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib import admin, messages
+from django.db.models.query import QuerySet
 
 import selectable.forms as sforms
 
@@ -75,11 +76,30 @@ class UpdateManyForm(forms.Form):
         
         for fs in a.fieldsets:
             title, d = fs
+            
             for fieldrow in d['fields']:
                 for fieldname in fieldrow:
+
                     if not fieldname in a.no_update:
                         self.fields[fieldname] = copy.copy(a.form.base_fields[fieldname])
-                        self.fields[fieldname].required = False
+                        f = self.fields[fieldname]
+                        f.required = False
+                        
+                        # special choice field treatment:
+                        ## replace(/create) '---' by '---no change--' and ensure
+                        ## it is selected instead of any default value declared by the field
+                        choices = getattr(f, 'choices', None)
+                        if choices and type(choices) is list:
+                            firstchoice = ('','---no change---')
+                            if choices[0][0]:
+                                f.choices = [firstchoice] + choices
+                            else:
+                                f.choices[0] = firstchoice
+                            f.initial = None
+
+                        if choices and isinstance(choices, QuerySet):
+                            pass
+                    
 
     def __deduplicate(self, values):
         return [values[i] for i in range(len(values)) if i == 0 or values[i] != values[i-1]]
