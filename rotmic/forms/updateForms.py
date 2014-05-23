@@ -90,16 +90,12 @@ class UpdateManyForm(forms.Form):
                         ## it is selected instead of any default value declared by the field
                         choices = getattr(f, 'choices', None)
                         if choices and type(choices) is list:
-                            firstchoice = ('','---no change---')
+                            firstchoice = ('','--- no change ---')
                             if choices[0][0]:
                                 f.choices = [firstchoice] + choices
                             else:
                                 f.choices[0] = firstchoice
                             f.initial = None
-
-                        if choices and isinstance(choices, QuerySet):
-                            pass
-                    
 
     def __deduplicate(self, values):
         return [values[i] for i in range(len(values)) if i == 0 or values[i] != values[i-1]]
