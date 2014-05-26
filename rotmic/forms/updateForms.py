@@ -87,6 +87,10 @@ class UpdateManyForm(forms.Form):
                         f = self.fields[fieldname]
                         f.required = False
                         
+##                        if fieldname in a.exclude_from_update:
+##                            f.label = ''
+##                            f.widget = forms.HiddenInput()
+                            
                         # special choice field treatment:
                         ## replace(/create) '---' by '---no change--' and ensure
                         ## it is selected instead of any default value declared by the field
@@ -131,7 +135,7 @@ class UpdateManyForm(forms.Form):
         ## get selected entries and already pre-fetch all ForeignKey related objects
 
         for fieldname in self.fields:
-            if fieldname != 'entries':
+            if fieldname not in ['entries'] + self.model_admin.exclude_from_update:
                 ## check for all-equal values and, if yes, copy value -> initial
                 values = self.extract_values(entries, fieldname)
                 f = self.fields[fieldname]
@@ -162,7 +166,7 @@ class UpdateManyForm(forms.Form):
         elif len( self._errors[field] ) == 3:
             self._errors[field].append('...skipping further errors.')
  
-    def get_forms(self):
+    def get_forms(self, request=None):
         """create a single input form for every entry, to be called *after* clean"""
         entries = self.cleaned_data['entries']
         
@@ -180,8 +184,8 @@ class UpdateManyForm(forms.Form):
                 data = forms.model_to_dict(e)
                 data.update(d)
                 
-                form = self.model_form( data, instance=e )
-                form.request = self.request  ##This is actually only required for forms derrived from SampleForm
+                form = self.model_form( data, instance=e, request=request )
+                ##form.request = self.request  ##This is actually only required for customized forms
                 
                 if not form.is_valid(): raise ValueError('single form validation')
 

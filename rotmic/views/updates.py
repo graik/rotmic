@@ -67,36 +67,36 @@ class UpdateManyView(TemplateView):
         form = self.form_class(request.POST, request.FILES, request=request,
                                model=modelclass )
 
+##        try:
+        if not form.is_valid():
+            raise ValidationError('form-level validation error')
+        
+        ## create individual forms
+        entry_forms = form.get_forms(request=request)
+        
+        if form._errors:
+            raise ValidationError('post-form mapping error')
+        
         try:
-            if not form.is_valid():
-                raise ValidationError('form-level validation error')
-            
-            ## create individual forms
-            entry_forms = form.get_forms()
-            
-            if form._errors:
-                raise ValidationError('post-form mapping error')
-            
-            try:
-                with transaction.atomic():
-                    
-                    for f in entry_forms:
-                        f.save()
-                        changed = [ f.base_fields[name].label for name in f.changed_data ]
-                        changed = 'changed: ' + ', '.join(changed) \
-                            if changed else 'nothing changed.'
-                        
-                        messages.success(request, 
-                            u'Updated record %s -- %s' % (unicode(f.instance), changed), 
-                            extra_tags='', 
-                            fail_silently=False)
+            with transaction.atomic():
                 
-            except Exception, why:
-                messages.error(request, 'Some unforeseen error occured. All updates are reverted. Reason: ' + str(why))
+                for f in entry_forms:
+                    f.save()
+                    changed = [ f.base_fields[name].label for name in f.changed_data ]
+                    changed = 'changed: ' + ', '.join(changed) \
+                        if changed else 'nothing changed.'
+                    
+                    messages.success(request, 
+                        u'Updated record %s -- %s' % (unicode(f.instance), changed), 
+                        extra_tags='', 
+                        fail_silently=False)
+            
+        except Exception, why:
+            messages.error(request, 'Some unforeseen error occured. All updates are reverted. Reason: ' + str(why))
 
-        except ValidationError, why:
-            ## re-display with error messages
-            return self.renderForm(request, form, modelclass=modelclass)
+##        except ValidationError, why:
+##            ## re-display with error messages
+##            return self.renderForm(request, form, modelclass=modelclass)
                 
         return HttpResponseRedirect(reverse(self.returnto(modelclass=modelclass)))
 

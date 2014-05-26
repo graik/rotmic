@@ -242,24 +242,24 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
         return super(ComponentAdmin,self).queryset(request)
  
         
-    def get_form(self, request, obj=None, **kwargs):
-        """
-        Override queryset of ForeignKey fields without overriding the field itself.
-        This preserves the "+" Button which is otherwise lost.
-        See http://djangosnippets.org/snippets/1558/#c4674
-        """
-        form = super(DnaComponentAdmin,self).get_form(request, obj,**kwargs)
-
-        ## suggest ID
-        category = form.base_fields['componentCategory'].initial
-        category = category.name[0].lower()
-        prefix = request.user.profile.dcPrefix or request.user.profile.prefix
-        prefix += category
-        
-        field = form.base_fields['displayId']
-        field.initial = ids.suggestDnaId(request.user.id, prefix=prefix)
-            
-        return form
+##    def get_form(self, request, obj=None, **kwargs):
+##        """
+##        Override queryset of ForeignKey fields without overriding the field itself.
+##        This preserves the "+" Button which is otherwise lost.
+##        See http://djangosnippets.org/snippets/1558/#c4674
+##        """
+##        form = super(DnaComponentAdmin,self).get_form(request, obj,**kwargs)
+##
+##        ## suggest ID
+##        category = form.base_fields['componentCategory'].initial
+##        category = category.name[0].lower()
+##        prefix = request.user.profile.dcPrefix or request.user.profile.prefix
+##        prefix += category
+##        
+##        field = form.base_fields['displayId']
+##        field.initial = ids.suggestDnaId(request.user.id, prefix=prefix)
+##            
+##        return form
 
     def showInsertUrl(self, obj):
         """Table display of linked insert or ''"""
@@ -398,18 +398,18 @@ class CellComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
         """Revert modification made by ComponentModelAdmin"""
         return super(ComponentAdmin,self).queryset(request)
 
-    def get_form(self, request, obj=None, **kwargs):
-        """
-        Override queryset of ForeignKey fields without overriding the field itself.
-        This preserves the "+" Button which is otherwise lost.
-        See http://djangosnippets.org/snippets/1558/#c4674
-        """
-        form = super(CellComponentAdmin,self).get_form(request, obj,**kwargs)
-        
-        field = form.base_fields['markers']
-        field.queryset = field.queryset.filter(componentType__subTypeOf=I.dcMarker)
-        field.help_text = ''
-        return form
+##    def get_form(self, request, obj=None, **kwargs):
+##        """
+##        Override queryset of ForeignKey fields without overriding the field itself.
+##        This preserves the "+" Button which is otherwise lost.
+##        See http://djangosnippets.org/snippets/1558/#c4674
+##        """
+##        form = super(CellComponentAdmin,self).get_form(request, obj,**kwargs)
+##        
+##        field = form.base_fields['markers']
+##        field.queryset = field.queryset.filter(componentType__subTypeOf=I.dcMarker)
+##        field.help_text = ''
+##        return form
     
     def showPlasmidUrl(self, obj):
         """Table display of linked insert or ''"""
