@@ -9,6 +9,8 @@
 
     <script language=javascript type='text/javascript'>
     
+        var selected_type_pk = {% if original %}{{original.componentType.pk}}{%else%} -1{%endif%};
+        
         function updateTypes(){
             $.ajax({
                 url : "{% url 'categoryTypes' typeclass=opts.verbose_name|guessComponentType %}",
@@ -21,7 +23,9 @@
                             if(data){
                                 var d = '<select id="id_componentType" name="Type">';
                                 $.each(data, function(i, v){
-                                    d += '<option value="' + v.id + '">' + v.fields.name +'</option>';
+                                    selected = ''
+                                    if (v.pk == selected_type_pk){selected='selected'}
+                                    d += '<option value="' + v.pk + '" ' + selected +'>' + v.fields.name +'</option>';
                                 });
                                 d += '</select>';
                                 $('#id_componentType').html(d);
