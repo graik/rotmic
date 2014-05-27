@@ -19,42 +19,6 @@ def categoryTypes(request, typeclass, **kwargs):
     return HttpResponse(json_models, mimetype="application/javascript") 
 
 
-def getTypeDnaInfo(request, maintype):
-    if maintype == -1:
-        subtypes = M.DnaComponentType.objects.all()
-    else:    
-        subtypes = M.DnaComponentType.objects.filter(subTypeOf__name=maintype)
-    
-    json_models = serializers.serialize("json", subtypes)
-    return HttpResponse(json_models, mimetype="application/javascript") 
-
-def getCellTypes(request, maintype):
-    if maintype.isdigit():  ## support identification by primary key
-        subtypes = M.CellComponentType.objects.filter(subTypeOf__id=int(maintype))
-    else:
-        subtypes = M.CellComponentType.objects.filter(subTypeOf__name=maintype)
-    
-    json_models = serializers.serialize("json", subtypes)
-    return HttpResponse(json_models, mimetype="application/javascript") 
-
-def getChemicalTypes(request, maintype):
-    if maintype.isdigit():  ## support identification by primary key
-        subtypes = M.ChemicalComponentType.objects.filter(subTypeOf__id=int(maintype))
-    else:
-        subtypes = M.ChemicalType.objects.filter(subTypeOf__name=maintype)
-    
-    json_models = serializers.serialize("json", subtypes)
-    return HttpResponse(json_models, mimetype="application/javascript") 
-
-def getProteinTypes(request, maintype):
-    if maintype.isdigit():  ## support identification by primary key
-        subtypes = M.ProteinComponentType.objects.filter(subTypeOf__id=int(maintype))
-    else:
-        subtypes = M.ProteinComponentType.objects.filter(subTypeOf__name=maintype)
-    
-    json_models = serializers.serialize("json", subtypes)
-    return HttpResponse(json_models, mimetype="application/javascript") 
-
 
 def getParentTypeDnaInfo(request, subtype):
     currentSubType = M.DnaComponentType.objects.get(id=subtype)
