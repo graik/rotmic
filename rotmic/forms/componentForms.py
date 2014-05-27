@@ -87,9 +87,9 @@ class ComponentForm(ModelFormWithRequest, CleaningMixIn):
         
         o = kwargs.get('instance', None)
         
-##        # GET or POST with existing instance
-##        if o and 'componentCategory' in self.fields:
-##            self.fields['componentCategory'].initial = o.componentType.subTypeOf
+        # GET or POST with existing instance
+        if o and 'componentCategory' in self.fields:
+            self.fields['componentCategory'].initial = o.componentType.subTypeOf
         
         # POST with data attached to previously existing instance
         ## Note: by calling has_changed here, we populate the _changed_data dict
@@ -217,8 +217,8 @@ class DnaComponentForm(GenbankComponentForm):
 
         ## Add New form
         if not o:
-            self.initial['componentCategory'] = unicode(T.dcPlasmid.pk)
-            self.initial['componentType'] = unicode(T.dcPlasmidGeneric.pk)
+            self.fields['componentCategory'].initial = T.dcPlasmid
+            self.fields['componentType'].initial = T.dcPlasmidGeneric
 
             ## pre-set category if 'translatesTo' is given as URL parameter
             ## currently this doesn't seem to work
@@ -395,7 +395,10 @@ class OligoComponentForm(ComponentForm):
     def __init__(self, *args, **kwargs):
         super(OligoComponentForm, self).__init__(*args, **kwargs)
         
-        self.fields['componentType'].initial = T.ocStandard
+        o = kwargs.get('instance', None)
+        ## "Add New" Form
+        if not o:
+            self.fields['componentType'].initial = T.ocStandard
     
     def clean_sequence(self):
         """Enforce DNA sequence."""
@@ -431,8 +434,11 @@ class ChemicalComponentForm(ComponentForm):
 
     def __init__(self, *args, **kwargs):
         super(ChemicalComponentForm, self).__init__(*args, **kwargs)
-
-        self.fields['status'].initial = 'available'
+        
+        o = kwargs.get('instance', None)
+        ## "Add New" Form
+        if not o:
+            self.fields['status'].initial = 'available'
         
 
     class Meta:
@@ -459,15 +465,13 @@ class ProteinComponentForm(GenbankComponentForm):
     def __init__(self, *args, **kwargs):
         super(ProteinComponentForm, self).__init__(*args, **kwargs)
 
-        self.fields['status'].initial = 'available'
-        self.fields['componentType'].initial = T.pcOther
-        self.fields['componentCategory'].initial = T.pcProtein
-        
         o = kwargs.get('instance', None)
-        ## Edit existing form
-        if o:
-            self.fields['componentCategory'].initial = o.componentType.category()
-        
+        ## "Add New" Form
+        if not o:
+            self.fields['status'].initial = 'available'
+            self.fields['componentType'].initial = T.pcOther
+            self.fields['componentCategory'].initial = T.pcProtein
+                
     def clean_sequence(self):
         """Enforce Protein sequence."""
         r = self.cleaned_data['sequence']
