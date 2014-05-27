@@ -79,18 +79,26 @@ class ComponentForm(ModelFormWithRequest, CleaningMixIn):
         """
         super(ComponentForm, self).__init__(*args, **kwargs)
 
-        o = kwargs.get('instance', None)
-        ## only set initial if form is unbound (new entry)
-        if not o and self.request:
-            self.fields['authors'].initial = [self.request.user]
-        
+        # general field modifications
         self.fields['projects'].widget.can_add_related = False
         self.fields['authors'].widget_can_add_related = False
-
-        ## only set category if form is bound (edit existing entry)
-        if o and 'componentCategory' in self.fields:
-            self.fields['componentCategory'].initial = o.componentType.subTypeOf
+        if self.request:
+            self.fields['authors'].initial = [self.request.user]
+        
+        o = kwargs.get('instance', None)
+        
+##        # GET or POST with existing instance
+##        if o and 'componentCategory' in self.fields:
+##            self.fields['componentCategory'].initial = o.componentType.subTypeOf
+        
+        # POST with data attached to previously existing instance
+        ## Note: by calling has_changed here, we populate the _changed_data dict
+        ## any further modifications go under the radar.
+        if o and self.data and self.request and self.has_changed():        
+            self.data['modifiedBy'] = self.request.user.id
+            self.data['modifiedAt'] = datetime.datetime.now()
             
+
     def clean_authors(self):
         """Prevent non-authors from changing authorship"""
         r = self.cleaned_data['authors']
@@ -103,6 +111,7 @@ class ComponentForm(ModelFormWithRequest, CleaningMixIn):
                 raise ValidationError, 'Sorry, only authors or creators can change this field.'
         
         return r
+    
     
     class Meta:
         model = M.Component
@@ -195,9 +204,9 @@ class DnaComponentForm(GenbankComponentForm):
     
     componentCategory = forms.ModelChoiceField(label='Category',
                             queryset=M.DnaComponentType.objects.filter(subTypeOf=None),
-                            required=True, 
-                            empty_label=None,
-                            initial=T.dcPlasmid)
+                            required=False, 
+                            empty_label=None)
+##                            initial=T.dcPlasmid)
     
     
 
@@ -205,9 +214,14 @@ class DnaComponentForm(GenbankComponentForm):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
 
         o = kwargs.get('instance', None)
+
         ## Add New form
         if not o:
+            self.initial['componentCategory'] = unicode(T.dcPlasmid.pk)
+            self.initial['componentType'] = unicode(T.dcPlasmidGeneric.pk)
+
             ## pre-set category if 'translatesTo' is given as URL parameter
+            ## currently this doesn't seem to work
             if 'translatesTo' in self.initial:
                 self.initial['componentType'] = unicode(T.dcFragmentCDS.pk)
                 self.initial['componentCategory'] = unicode(T.dcFragment.pk)
@@ -331,9 +345,9 @@ class CellComponentForm(ComponentForm):
     
     componentCategory = forms.ModelChoiceField(label='Species',
                             queryset=M.CellComponentType.objects.filter(subTypeOf=None),
-                            required=True, 
-                            empty_label=None,
-                            initial=T.ccEcoli)
+                            required=False, 
+                            empty_label=None)
+##                            initial=T.ccEcoli)
     
 
     def clean_plasmid(self):
@@ -410,9 +424,9 @@ class ChemicalComponentForm(ComponentForm):
     
     componentCategory = forms.ModelChoiceField(label='Category',
                             queryset=M.ChemicalType.objects.filter(subTypeOf=None),
-                            required=True, 
-                            empty_label=None,
-                            initial=T.chemOther)
+                            required=False, 
+                            empty_label=None)
+##                            initial=T.chemOther)
     
 
     def __init__(self, *args, **kwargs):
@@ -431,9 +445,9 @@ class ProteinComponentForm(GenbankComponentForm):
     
     componentCategory = forms.ModelChoiceField(label='Category',
                             queryset=M.ProteinComponentType.objects.filter(subTypeOf=None),
-                            required=True, 
-                            empty_label=None,
-                            initial=T.pcProtein)
+                            required=False, 
+                            empty_label=None)
+##                            initial=T.pcProtein)
     
    
     ## hidden field which can be set through URL parameter
@@ -447,7 +461,12 @@ class ProteinComponentForm(GenbankComponentForm):
 
         self.fields['status'].initial = 'available'
         self.fields['componentType'].initial = T.pcOther
+        self.fields['componentCategory'].initial = T.pcProtein
         
+        o = kwargs.get('instance', None)
+        ## Edit existing form
+        if o:
+            self.fields['componentCategory'].initial = o.componentType.category()
         
     def clean_sequence(self):
         """Enforce Protein sequence."""

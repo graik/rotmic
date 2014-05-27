@@ -10,10 +10,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     ## custom javascript URLS
-    url(r'^getTypeDnaInfo/(?P<maintype>.*)/$',V.getTypeDnaInfo,name='getTypeDnaInfo'),
-    url(r'^getCellTypes/(?P<maintype>.*)/$',V.getCellTypes,name='getCellTypes'),
-    url(r'^getChemicalTypes/(?P<maintype>.*)/$',V.getChemicalTypes,name='getChemicalTypes'),
-    url(r'^getProteinTypes/(?P<maintype>.*)/$',V.getProteinTypes,name='getProteinTypes'),
+
+    url(r'^rotmic/ajax/categoryTypes/(?P<typeclass>.+)/$', 
+        V.categoryTypes, name='categoryTypes' ),
 
     url(r'^rotmic/ajax/nextDnaId/(?P<category>.+)/$', 
         V.nextDnaId, name='nextDnaId' ),
@@ -32,7 +31,7 @@ urlpatterns = patterns('',
 
     url(r'^rotmic/ajax/nextSampleId/(?P<container>.+)/$', 
         V.nextSampleId, name='nextSampleId' ),
-
+    
     ## autocomplete fields javascript
     url(r'^selectable/', include('selectable.urls')),
 

@@ -1,6 +1,6 @@
 {% extends "admin/rotmic/change_form_viewfirst.html" %}
 
-{% load i18n admin_modify %}
+{% load i18n admin_modify rotmicfilters %}
 
 
 {% block after_field_sets %}
@@ -8,301 +8,36 @@
     {{ block.super }}
 
     <script language=javascript type='text/javascript'>
-    {% block javascript %}
-
-        // Assign IDs to fields that should be hideable (complete <div> with Label and help text)
-        // By default, input elements themselves are accessible by, for example:
-        // "id_marker" and "add_id_marker" (the Plus symbol for sub-forms). 
-        {% block func_initDiv %}
-        function initIdDiv(){
-            try{
-            } catch (e) {
-                log(e.message);
-            }
-        }
-        {% endblock func_initDiv%}
-        
-        // get (name of) currently selected Category
-        function getCurrentCategory(){
-            var categoryElement = document.getElementById('id_componentCategory');
-            return categoryElement.options[categoryElement.selectedIndex].label
-        }
-        
-        // returns 1 if all items are sucessfully removed
-        // otherwise returns zero.
-        function clearTypeBox(){
-            var box = document.getElementById('id_componentType');
-            if(box == null)
-                return 0;        
-            while(box.length > 0){
-                box.remove(0);
-            }
-            return 1;
-        }
-        
-        // update content of Type ChoiceField depending on Category selection
-        // this could propably be replaced by a django template fill-in
-        function updateListBox(){            
-            clearTypeBox();
-            var selectedCategory = getCurrentCategory();
-            var elementId = 'id_componentType'
-            var cachedTypeIndex = lastTypeSelection(selectedCategory);
-            var url = {% block ajax-typeinfo %}"/getTypeInfo/"{% endblock ajax-typeinfo%}+selectedCategory+"/"
     
+        function updateTypes(){
             $.ajax({
-                    async: false,
-                    type: 'GET',
-                    url: url,
-                    success: function(data){
-                        var p = django.jQuery.parseJSON(data);
-                        var listbox = document.getElementById(elementId);
-                        for (var key in p) {
-                            var i = parseInt(key)
-                            if (p.hasOwnProperty(key)) {
-                                listbox.options[i] = new Option(p[key].fields.name, p[key].pk);
-                                //... but select previously assigned dc.componentType if object already exists with this category
-                                {% if original %}
-                                    if (({{original.componentType.pk}} == p[key].pk)){
-                                        listbox.options[i].selected = true;
-                                        cachedTypeIndex = 0;  // reset to prevent selection of type from previous form
-                                    }
-                                {% endif %}
-                                // go back to previously selected type for this category
-                                if ( cachedTypeIndex == i ){
-                                    listbox.options[i].selected = true;
-                                }
+                url : "{% url 'categoryTypes' typeclass=opts.verbose_name|guessComponentType %}",
+                type : "GET",
+                async: false,
+                data : { 
+                            category_id : $('#id_componentCategory').val(),
+                        },
+                success : function(data){
+                            if(data){
+                                var d = '<select id="id_componentType" name="Type">';
+                                $.each(data, function(i, v){
+                                    d += '<option value="' + v.id + '">' + v.fields.name +'</option>';
+                                });
+                                d += '</select>';
+                                $('#id_componentType').html(d);
                             }
-                        }                            
-                    }
-                }                
-            );	
-        }
-
-        {% block hideShow %}
-        function hideShow() {
-            var category = getCurrentCategory();
-    
-            switch ( category ) {
-                // !! needs to be overriden for specific fields to hide / show !!
-                default:
-                    break;
-            }
-        }
-        {% endblock hideShow%}
-
-        // return a dictionary of Category names mapping to their position in listbox 
-        function captureCategories() {
-            var listbox = document.getElementById('id_componentCategory')
-            var table = {};
-            for (var i=0; i < listbox.options.length; i++){
-                table[ listbox.options[i].text ] = i;
-            }
-            return table;
+                        },
+                error : function(error){ 
+                            alert('Cannot fetch sub-types. Error: ' + error[0])
+                        },
+                dataType : 'json'
+            });
         }
     
-        {% block func_setPlusLinks %}
-        // override the link for "+" Buttons so that the correct category is pre-selected    
-        function setPlusLinks() {
-            var categories = captureCategories();
-            // !! needs to be overriden for category-dependent plus links !!
-        }
-        {% endblock func_setPlusLinks %}
-
-
-        // previously selected type for this category or 0
-        function lastTypeSelection(category) {
-            var r = getCategoryCache('lastType');
-            if (! r){ return 0; }
-            return r; 
-        }
-    
-        //pre-select category if given in URL; requires context_processors.request
-        //requires context_processors.request in settings.py
-        function preselectCategory() {
-            if ("{{request.GET.category}}" != ""){
-                var i = parseInt("{{request.GET.category}}");
-                document.getElementById('id_componentCategory').options[i].selected = true;
-            }
-        }
+        $('#id_componentCategory').change(updateTypes);
         
-        // helper function to generate form-specific key for sessionStorage
-        function cacheKey(key){
-            return {% block cacheKey %}'{{opts.module_name}}_'{% endblock cacheKey %} + key;  // e.g. 'dnacomponent_key'
-        }
-
-        // helper function for set/getCategoryCache; override for form-specific keys
-        function categoryCacheKey(key){
-            return cacheKey(key) + '_' + getCurrentCategory();
-        }
+        $( document ).ready(updateTypes());
         
-        // put value into form-specific session storage
-        // see: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Storage?redirectlocale=en-US&redirectslug=DOM%2FStorage
-        function setCache(key, value){
-            sessionStorage.setItem( cacheKey(key), value );
-        }
-        
-        // retrieve value from form-specific session storage
-        function getCache(key) {
-            if (sessionStorage.getItem( cacheKey(key) ) ){
-                return sessionStorage.getItem( cacheKey(key) );
-            } else {
-                return '';
-            }
-        }
-        
-        // put given value into sessionStorage using a key specific to 
-        // currently selected category
-        function setCategoryCache(key, value) {
-            sessionStorage.setItem( categoryCacheKey(key), value );
-        }
-
-        // return last "entry" value stored for current Category selection
-        // example: getCategoryCache('name') -> sessionStorage['DnaComponent_name_Plasmid']
-        function getCategoryCache(key) {
-            if (sessionStorage.getItem( categoryCacheKey(key) ) ){
-                return sessionStorage.getItem( categoryCacheKey(key) );
-            } else {
-                return '';
-            }
-        }
-
-        // erase session storage
-        function resetStorageBetweenForms() {
-            {# GET indicates a freshly loaded form; POST means the form came back with errors #}
-            {% if request.method == "GET" %}
-                sessionStorage.clear();
-            {% endif %}
-        }
-        
-        {% block func_extractName %}
-        // extract "name" from "displayId (name)"
-        function _extractName( s ) {
-            var r = '';
-            if (s){
-                r = s.match( /\(.+\)/ );
-                if (r){
-                    r = r[0].slice(1,-1); // remove "(" and ")"
-                } else {
-                    r = s.split(' ')[0]; // use displayId and strip after first ' '
-                }
-            }
-            return r;
-        }
-        {% endblock func_extractName %}
-        
-        {% block func_suggestName %}
-        // !! needs to be overridden !!
-        // compose new Name depending on current form status
-        function suggestName() {
-            var category = getCurrentCategory();
-            var name_field = document.getElementById('id_name');
-            
-            if (getCache('manualName')){
-                name_field.value = getCache('manualName');
-            } else {
-                name_field.value = '';
-            }
-        }
-        {% endblock func_suggestName %}
-
-        {% block func_suggestId %}
-        // request next available ID for currently selected category
-        function suggestId() {
-            var category = getCurrentCategory();
-            var id_field = document.getElementById('id_displayId');
-            
-            if ( getCategoryCache( 'manualId' ) != '' ){
-                id_field.value = getCategoryCache('manualId');
-            } else {
-                $.ajax({
-                    async: false,
-                    type: 'GET',
-                    // !! next block needs to be overridden with actual ajax address !!
-                    url: {% block ajax-nextId %}"/rotmic/ajax/nexId/"{% endblock ajax-nextId %}+category+"/",
-                    success: function(data){                    
-                        id_field.value = data['id'];
-                    }
-                });
-            }
-        }
-        {% endblock func_suggestId %}
-        
-        {% block func_categoryAction %}
-        // method called if componentCategory select element is changed
-        function categoryAction(){
-            updateListBox();
-            hideShow();
-            suggestName();
-            suggestId();
-        }
-        {% endblock func_categoryAction %}
-
-        {% block func_typeAction %}
-        // method called if componentType (Species) select element is changed
-        function typeAction() {
-            setCategoryCache('lastType', document.getElementById( 'id_componentType' ).selectedIndex );
-        }
-        {% endblock func_typeAction %}
-        
-        {% block func_nameAction %} 
-        // cache manually edited name
-        function nameAction() {
-            var current = document.getElementById('id_name').value;
-            setCategoryCache('manualName', current);
-        }
-        {% endblock func_nameAction %}
-        
-        {% block func_displayIdAction %}
-        // cache manually edited IDs
-        function displayIdAction() {
-            var current = document.getElementById('id_displayId').value;
-            setCategoryCache('manualId', current);
-        }
-        {% endblock func_displayIdAction %}
-        
-        {% block extra_methods %}
-        {% endblock extra_methods %}
-    
-        {% block func_main %}
-        // "Main" function
-        window.onload = function() {
-            resetStorageBetweenForms();
-            initIdDiv();
-            setPlusLinks();
-            // typeAction(); // cache pre-selected Type
-            preselectCategory();
-            
-            {% block setEventsCommon %}
-                document.getElementById( 'id_componentCategory' ).onchange = categoryAction;
-                document.getElementById( 'id_componentType' ).onchange = typeAction;
-                hideShow();
-            
-                document.getElementById('id_name').onchange = nameAction;
-                document.getElementById('id_displayId').onchange = displayIdAction;
-
-                {% block setEventsExtra %}
-                {% endblock setEventsExtra%}
-                
-            {% endblock setEventsCommon %}
-
-            {% block main_finish %}
-                updateListBox();
-                hideShow();
-            {% endblock main_finish %}
-
-            {% if not original %}
-                suggestId();
-                suggestName();
-            {% else %}
-                displayIdAction();  // cache current (original) displayId as manual
-                nameAction();       // cache current (original) name
-            {% endif %}
-            
-        };
-        {% endblock func_main %}
-        
-        
-    {% endblock javascript %}    
     </script>
 
 {% endblock after_field_sets %}

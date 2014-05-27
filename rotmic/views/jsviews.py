@@ -9,6 +9,16 @@ import rotmic.utils.ids as I
 #### set of methods used to populate categorie and type under Dna and Cell selection,
 #### called by Javascript when the user selects a categorie
 
+def categoryTypes(request, typeclass, **kwargs):
+    """@return json, all child ComponentTypes of given Category"""
+    T = M.__dict__[typeclass]
+    cat = int(request.GET['category_id'])
+    subtypes = T.objects.filter(subTypeOf__id=int(cat))
+    
+    json_models = serializers.serialize("json", subtypes)
+    return HttpResponse(json_models, mimetype="application/javascript") 
+
+
 def getTypeDnaInfo(request, maintype):
     if maintype == -1:
         subtypes = M.DnaComponentType.objects.all()
@@ -52,6 +62,8 @@ def getParentTypeDnaInfo(request, subtype):
     
     json_models = serializers.serialize("json", currentMainType)
     return HttpResponse(json_models, mimetype="application/javascript") 
+
+
 
 def nextDnaId(request, category):
     """
