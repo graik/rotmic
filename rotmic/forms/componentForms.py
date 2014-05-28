@@ -245,6 +245,10 @@ class DnaComponentForm(GenbankComponentForm):
     
     def clean_componentType(self):
         r = self.cleaned_data['componentType']
+        
+        if not r.subTypeOf:
+            raise ValidationError('Cannot assign category as type.')
+        
         cat = r.category()
         old = M.DnaComponentType.objects.get(id=self.initial['componentType']).category()
         
@@ -299,7 +303,11 @@ class DnaComponentForm(GenbankComponentForm):
         Note: this is also partly enforced by the DnaComponent.save method.
         """
         data = super(DnaComponentForm, self).clean()
-        category = data.get('componentCategory', None) 
+        category = data.get('componentCategory', None)
+        if not category:
+            t = data.get('componentType', None)
+            if t:
+                category = t.category()
 
         if category and (category != T.dcPlasmid):
             data['insert'] = None
@@ -388,6 +396,11 @@ class CellComponentForm(ComponentForm):
                 raise ValidationError('%s is not a marker.' % m.__unicode__() )
         return r
 
+    def clean_componentType(self):
+        r = self.cleaned_data['componentType']
+        if not r.subTypeOf:
+            raise ValidationError('Cannot assign category as type.')
+        return r
 
     class Meta:
         model = M.CellComponent
@@ -450,6 +463,11 @@ class ChemicalComponentForm(ComponentForm):
         if not o:
             self.fields['status'].initial = 'available'
         
+    def clean_componentType(self):
+        r = self.cleaned_data['componentType']
+        if not r.subTypeOf:
+            raise ValidationError('Cannot assign category as type.')
+        return r
 
     class Meta:
         model = M.ChemicalComponent
@@ -506,6 +524,11 @@ class ProteinComponentForm(GenbankComponentForm):
             raise forms.ValidationError()
         return ''
     
+    def clean_componentType(self):
+        r = self.cleaned_data['componentType']
+        if not r.subTypeOf:
+            raise ValidationError('Cannot assign category as type.')
+        return r
     
     class Meta:
         model = M.ProteinComponent
