@@ -71,7 +71,7 @@
 
 
         //
-        // protect user edit of name; otherwise re-suggest on vector / insert change
+        // suggest name on vector / insert / category change but protect user edit
         //
         var default_name = {%if original.pk %}"{{original.name}}"{%else%}''{%endif%};
 
@@ -123,6 +123,24 @@
         $('#id_componentCategory').change(suggestName);
         document.getElementById( 'id_insert_0' ).djselectableselect = suggestName;
         document.getElementById( 'id_vectorBackbone_0' ).djselectableselect = suggestName;
+        
+        //
+        // re-assign links for "Add new" (+) Links to include correct category
+        //
+        function setPlusLinks() {
+            $("#add_id_markers").hide(); // hide the Marker + field
+
+            var categories = captureCategories();
+            //var cat_marker = categories['Marker'].toString();
+            var cat_vector = categories['Vector Backbone'].toString();
+            var cat_insert = categories['Fragment'].toString();
+            
+            var urladd = "{% url 'admin:rotmic_dnacomponent_add'%}?componentCategory="
+            $("#add_id_vectorBackbone").attr('href', urladd + cat_vector);
+            $("#add_id_insert").attr('href', urladd + cat_insert);
+        }
+        
+        $(document).ready(setPlusLinks);
 
     </script>
     
