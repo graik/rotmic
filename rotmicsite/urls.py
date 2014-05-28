@@ -14,20 +14,9 @@ urlpatterns = patterns('',
     url(r'^rotmic/ajax/categoryTypes/(?P<typeclass>.+)/$', 
         V.categoryTypes, name='categoryTypes' ),
 
-    url(r'^rotmic/ajax/nextDnaId/(?P<category>.+)/$', 
-        V.nextDnaId, name='nextDnaId' ),
+    url(r'^rotmic/ajax/nextId/(?P<modelclass>.+)/$', 
+        V.nextId, name='nextId' ),
 
-    url(r'^rotmic/ajax/nextCellId/(?P<category>.+)/$', 
-        V.nextCellId, name='nextCellId' ),
-
-    url(r'^rotmic/ajax/nextOligoId/$', 
-        V.nextOligoId, name='nextOligoId' ),
-
-    url(r'^rotmic/ajax/nextChemicalId/(?P<category>.+)/$', 
-        V.nextChemicalId, name='nextChemicalId' ),
-
-    url(r'^rotmic/ajax/nextProteinId/(?P<category>.+)/$', 
-        V.nextProteinId, name='nextProteinId' ),
 
     url(r'^rotmic/ajax/nextSampleId/(?P<container>.+)/$', 
         V.nextSampleId, name='nextSampleId' ),

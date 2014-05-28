@@ -8,9 +8,10 @@
     {{ block.super }}
 
     <script language=javascript type='text/javascript'>
-    
+        
         var selected_type_pk = {% if original %}{{original.componentType.pk}}{%else%} -1{%endif%};
         
+        // update ComponentType ChoiceField to only show subTypes of selected category
         function updateTypes(){
             $.ajax({
                 url : "{% url 'categoryTypes' typeclass=opts.verbose_name|guessComponentType %}",
@@ -38,10 +39,34 @@
             });
         }
     
-        $('#id_componentCategory').change(updateTypes);
+        // skip category -> type filling if there is no category field
+        if ( $('#id_componentCategory').length ){
+
+            $('#id_componentCategory').change(updateTypes);
+
+            $( document ).ready(updateTypes());
+        }
         
-        $( document ).ready(updateTypes());
+        // request next available ID for currently selected category
+        function suggestId() {
+            $.ajax({
+                url: "{% url 'nextId' modelclass=opts.verbose_name|guessComponentClass %}",
+                type: 'GET',
+                async: false,
+                data: { category_id : $('#id_componentCategory').val() },
+                success: function(data){                    
+                    $('#id_displayId').val(data['id']);
+                }
+            });
+        }
         
+        // by default only call on "Add New" form creation, don't update with category field
+        {% if not original %}    
+            $( document ).ready(suggestId());
+        {% endif %}
+        
+        {%block javascript-extras %}{% endblock %}
+
     </script>
 
 {% endblock after_field_sets %}

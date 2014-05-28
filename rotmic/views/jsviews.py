@@ -12,80 +12,34 @@ import rotmic.utils.ids as I
 def categoryTypes(request, typeclass, **kwargs):
     """@return json, all child ComponentTypes of given Category"""
     T = M.__dict__[typeclass]
-    cat = int(request.GET['category_id'])
+    cat = request.GET['category_id']
     subtypes = T.objects.filter(subTypeOf__id=int(cat))
     
     json_models = serializers.serialize("json", subtypes)
     return HttpResponse(json_models, mimetype="application/javascript") 
 
 
-
-def getParentTypeDnaInfo(request, subtype):
-    currentSubType = M.DnaComponentType.objects.get(id=subtype)
-    currentMainType = M.DnaComponentType.objects.filter(id = currentSubType.subTypeOf.id)
-    
-    json_models = serializers.serialize("json", currentMainType)
-    return HttpResponse(json_models, mimetype="application/javascript") 
-
-
-
-def nextDnaId(request, category):
+def nextId(request, modelclass):
     """
     request - request object
     category - parent ComponentType
     """
-    middle = category[0].lower()
-    r = {'id': I.suggestDnaId( request.user.id, middle=middle )}
+    mclass = M.__dict__[modelclass]
+    cat = int(request.GET.get('category_id', -1))
     
-    json_models = json.dumps(r)
-    return HttpResponse(json_models, mimetype="application/json") 
-
-def nextCellId(request, category):
-    """
-    request - request object
-    category - parent ComponentType
-    """
-    ## middle = category[0].lower()
-    middle = 'c'
-    r = {'id': I.suggestCellId( request.user.id, middle=middle )}
-    
-    json_models = json.dumps(r)
-    return HttpResponse(json_models, mimetype="application/json") 
-
-def nextOligoId(request):
-    """
-    request - request object
-    """
-    ## middle = category[0].lower()
-    middle = 'o'
-    r = {'id': I.suggestOligoId( request.user.id, middle=middle )}
+    r = {'id': I.nextId( mclass, request.user, category_id=cat )}
     
     json_models = json.dumps(r)
     return HttpResponse(json_models, mimetype="application/json") 
 
 
-def nextChemicalId(request, category):
-    """
-    request - request object
-    category - ignored for now
-    """
-    r = {'id': I.suggestChemicalId( request.user.id )}
-    
-    json_models = json.dumps(r)
-    return HttpResponse(json_models, mimetype="application/json") 
 
-
-def nextProteinId(request, category):
-    """
-    request - request object
-    category - parent ComponentType
-    """
-    ## middle = category[0].lower()
-    middle = 'aa'
-    r = {'id': I.suggestProteinId( request.user.id, middle=middle )}
-    
-    json_models = json.dumps(r)
-    return HttpResponse(json_models, mimetype="application/json") 
+##def getParentTypeDnaInfo(request, subtype):
+##    currentSubType = M.DnaComponentType.objects.get(id=subtype)
+##    currentMainType = M.DnaComponentType.objects.filter(id = currentSubType.subTypeOf.id)
+##    
+##    json_models = serializers.serialize("json", currentMainType)
+##    return HttpResponse(json_models, mimetype="application/javascript") 
 
 
 def nextSampleId(request, container):

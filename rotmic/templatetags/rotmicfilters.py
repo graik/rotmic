@@ -147,3 +147,19 @@ def guessComponentType(verbose_name):
         return r
     except:
         return ''
+
+@register.filter(is_safe=True)
+@stringfilter
+def guessComponentClass(verbose_name):
+    """
+    Guess Model class based on Meta.verbose_name.
+    e.g. 'DNA constructs' -> DnaComponent
+    """
+    try:
+        r = verbose_name.split()[0]
+        
+        r = r[0].upper() + r[1:].lower() + 'Component'
+        
+        return r
+    except:
+        return ''
