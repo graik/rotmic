@@ -69,5 +69,58 @@
         
         $(document).ready(setPlusLinks);
 
+        //
+        // suggest name on vector / insert / category change but protect user edit
+        //
+        var default_name = {%if original.pk %}"{{original.name}}"{%else%}''{%endif%};
+
+        function block_name(){
+            if ($('#id_name').val()){
+                sessionStorage.setItem('name_changed', "1"); //suggestName checks for == "1"
+                default_name = $('#id_name').val();
+            } else {
+                sessionStorage.setItem('name_changed', "0"); //re-activate suggestName
+                default_name = {%if original.pk %}"{{original.name}}"{%else%}''{%endif%};
+            }
+        }
+        
+        $("#id_name").change(block_name);
+
+        {%if original.pk %}//protect existing name from auto-edit
+            $(document).ready(block_name);
+        {%endif%}
+        
+        
+        function suggestName(){
+            if (sessionStorage.getItem('name_changed') != '1' ){
+                    
+                var cell = $("#id_componentType option:selected").text();
+    
+                var plasmid = $('#id_plasmid_0').val();
+                var pname = '';
+                // extract "name" from "displayId (name)"
+                if (plasmid){
+                    pname = plasmid.match( /\(.+\)/ );
+                    if (pname){
+                        pname = pname[0].slice(1,-1); // remove "(" and ")"
+                    } else {
+                        pname = plasmid.split(' ')[0]; // use displayId and strip after first ' '
+                    }
+                }
+                
+                if ($('.field-box.field-plasmid').first()[0].style.visibility != 'visible'){
+                    pname = '';
+                }
+                
+                var r = pname + '@' + cell;
+                $('#id_name').val(r);
+            }    
+        }
+        
+        $('#id_componentCategory').change(suggestName);
+        $('#id_componentType').change(suggestName);
+        $(document).ready(suggestName);
+        document.getElementById( 'id_plasmid_0' ).djselectableselect = suggestName;
+
     </script>    
 {% endblock %}    
