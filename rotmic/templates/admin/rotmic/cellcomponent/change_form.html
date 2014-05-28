@@ -55,6 +55,19 @@
         $('#id_componentType').change(hideShow);
         $(document).ready(hideShow);
     
+        //
+        // re-assign links for "Add new" (+) Links to include correct category
+        //
+        function setPlusLinks() {
+            $("#add_id_markers").hide(); // hide the Marker + field
+
+            var cat_plasmid =  "{{plasmid|dnaCategoryToId}}";
+            
+            var urladd = "{% url 'admin:rotmic_dnacomponent_add'%}?componentCategory="
+            $("#add_id_plasmid").attr('href', urladd + cat_plasmid);
+        }
+        
+        $(document).ready(setPlusLinks);
 
     </script>    
 {% endblock %}    
