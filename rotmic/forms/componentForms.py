@@ -214,9 +214,6 @@ class DnaComponentForm(GenbankComponentForm):
                             queryset=M.DnaComponentType.objects.filter(subTypeOf=None),
                             required=False, 
                             empty_label=None)
-##                            initial=T.dcPlasmid)
-    
-    
 
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
@@ -246,25 +243,30 @@ class DnaComponentForm(GenbankComponentForm):
             raise ValidationError('This is not a DNA sequence.', code='invalid')        
         return r
     
-    def clean_componentCategory(self):
-        r = self.cleaned_data['componentCategory']
+    def clean_componentType(self):
+        r = self.cleaned_data['componentType']
+        cat = r.category()
+        old = M.DnaComponentType.objects.get(id=self.initial['componentType']).category()
+        
+        if cat.id == old.id: ## only worry if category had changed
+            return r
 
         if self.instance and self.instance.id and ('componentType' in self.changed_data):
-            assert( isinstance(r, M.DnaComponentType) )
-            msg = 'Cannot change category: '
+            assert( isinstance(cat, M.DnaComponentType) )
+            msg = 'Cannot change category / type: '
 
-            if r.id != T.dcVectorBB and self.instance.as_vector_in_plasmid.count():
+            if cat.id != T.dcVectorBB and self.instance.as_vector_in_plasmid.count():
                 raise ValidationError(msg + 'This construct is in use as a vector backbone.')
             
-            if not r.id in [T.dcFragment.id, T.dcMarker.id] and \
+            if not cat.id in [T.dcFragment.id, T.dcMarker.id] and \
                self.instance.as_insert_in_dna.count():
                 raise ValidationError(msg + 'This construct is in use as an insert.')
                 
-            if r.id != T.dcMarker and (self.instance.as_marker_in_cell.count() \
+            if cat.id != T.dcMarker and (self.instance.as_marker_in_cell.count() \
                                        or self.instance.as_marker_in_dna.count() ):
                 raise ValidationError(msg + 'This construct is in use as a marker.')
         
-            if r.id != T.dcPlasmid and self.instance.as_plasmid_in_cell.count():
+            if cat.id != T.dcPlasmid and self.instance.as_plasmid_in_cell.count():
                 raise ValidationError(msg + 'This construct is in use as a plasmid.')
         return r
     
