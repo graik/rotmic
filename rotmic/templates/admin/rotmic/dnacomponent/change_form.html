@@ -20,7 +20,9 @@
         
         $("#id_displayId").change(block_displayId);
 
+        //  
         // Hide & Show input fields depending on category     
+        //
         function hideShow() {
             var category = $("#id_componentCategory option:selected").text();
             var f_insert = $('.field-box.field-insert').first()[0];
@@ -66,9 +68,9 @@
         $( document ).ready(hideShow);
 
 
+        //
         // protect user edit of name; otherwise re-suggest on vector / insert change
-        //$('#id_name').change(suggestName);
-        
+        //
         function block_name(){
             if ($('#id_name').val()){
                 sessionStorage.setItem('name_changed', "1"); //suggestName checks for == "1"
