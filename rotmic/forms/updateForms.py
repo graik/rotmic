@@ -87,10 +87,6 @@ class UpdateManyForm(forms.Form):
                         f = self.fields[fieldname]
                         f.required = False
                         
-##                        if fieldname in a.exclude_from_update:
-##                            f.label = ''
-##                            f.widget = forms.HiddenInput()
-                            
                         # special choice field treatment:
                         ## replace(/create) '---' by '---no change--' and ensure
                         ## it is selected instead of any default value declared by the field

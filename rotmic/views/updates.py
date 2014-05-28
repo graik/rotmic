@@ -86,8 +86,9 @@ class UpdateManyView(TemplateView):
                     changed = 'changed: ' + ', '.join(changed) \
                         if changed else 'nothing changed.'
                     
+                    s = getattr(f.instance, 'displayId', unicode(f.instance))
                     messages.success(request, 
-                        u'Updated record %s -- %s' % (unicode(f.instance), changed), 
+                        u'Updated record %s -- %s' % (s, changed), 
                         extra_tags='', 
                         fail_silently=False)
             

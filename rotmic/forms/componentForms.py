@@ -112,6 +112,14 @@ class ComponentForm(ModelFormWithRequest, CleaningMixIn):
         
         return r
     
+    @property
+    def changed_data(self):
+        r = super(ComponentForm,self).changed_data
+        
+        ## filter out any form fields that do not exist on the model
+        r = [ a for a in r if getattr(self.instance, a, None) ]
+
+        return r
     
     class Meta:
         model = M.Component
