@@ -60,8 +60,8 @@
             });
         }
         
-        // by default only call on "Add New" form creation, don't update with category field
-        {% if not original %}    
+        // by default only call on fresh "Add New" form creation, don't update with category field or when form is reloaded with errors.
+        {% if not original.pk and not errors %}  
             $( document ).ready(suggestId());
         {% endif %}
         
