@@ -72,6 +72,17 @@
             sessionStorage.clear();
         {% endif %}
         
+        // helper function, creates hash map category_name -> pk
+        // only used by DNA and Cell forms
+        function captureCategories() {
+            var listbox = document.getElementById('id_componentCategory')
+            var table = {};
+            for (var i=0; i < listbox.options.length; i++){
+                table[ listbox.options[i].text ] = listbox.options[i].value;
+            }
+            return table;
+        }
+        
     </script>
 
 {% endblock after_field_sets %}
