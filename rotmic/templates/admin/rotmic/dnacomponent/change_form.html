@@ -86,6 +86,10 @@
         }
         
         $("#id_name").change(block_name);
+
+        {%if original.pk %}//protect existing name from auto-edit
+            $(document).ready(block_name);
+        {%endif%}
         
         // extract "name" from "displayId (name)"
         function _extractName( s ) {
