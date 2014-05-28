@@ -44,29 +44,34 @@
 
             $('#id_componentCategory').change(updateTypes);
 
-            $( document ).ready(updateTypes());
+            $( document ).ready(updateTypes);
         }
         
         // request next available ID for currently selected category
         function suggestId() {
-            $.ajax({
-                url: "{% url 'nextId' modelclass=opts.verbose_name|guessComponentClass %}",
-                type: 'GET',
-                async: false,
-                data: { category_id : $('#id_componentCategory').val() },
-                success: function(data){                    
-                    $('#id_displayId').val(data['id']);
-                }
-            });
+            if (sessionStorage.getItem('displayId_changed') != "1"){
+                $.ajax({
+                    url: "{% url 'nextId' modelclass=opts.verbose_name|guessComponentClass %}",
+                    type: 'GET',
+                    async: false,
+                    data: { category_id : $('#id_componentCategory').val() },
+                    success: function(data){                    
+                        $('#id_displayId').val(data['id']);
+                    }
+                });
+            }
         }
         
         // by default only call on fresh "Add New" form creation, don't update with category field or when form is reloaded with errors.
         {% if not original.pk and not errors %}  
-            $( document ).ready(suggestId());
+            $( document ).ready(suggestId);
         {% endif %}
         
-        {%block javascript-extras %}{% endblock %}
-
+        //GET indicates a freshly loaded form; POST means the form came back with errors
+        {% if request.method == "GET" %}
+            sessionStorage.clear();
+        {% endif %}
+        
     </script>
 
 {% endblock after_field_sets %}
