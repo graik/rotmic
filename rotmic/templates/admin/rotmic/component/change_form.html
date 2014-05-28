@@ -24,7 +24,7 @@
                             if(data){
                                 var d = '<select id="id_componentType" name="Type">';
                                 $.each(data, function(i, v){
-                                    selected = ''
+                                    var selected = ''
                                     if (v.pk == selected_type_pk){selected='selected'}
                                     d += '<option value="' + v.pk + '" ' + selected +'>' + v.fields.name +'</option>';
                                 });

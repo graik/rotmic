@@ -23,10 +23,10 @@
         // Hide & Show input fields depending on category     
         function hideShow() {
             var category = $("#id_componentCategory option:selected").text();
-            f_insert = $('.field-box.field-insert').first()[0];
-            f_vector = $('.field-box.field-vectorBackbone').first()[0];
-            f_markers= $('.field-box.field-markers').first()[0];
-            f_translates = $('.field-box.field-translatesTo').first()[0]
+            var f_insert = $('.field-box.field-insert').first()[0];
+            var f_vector = $('.field-box.field-vectorBackbone').first()[0];
+            var f_markers= $('.field-box.field-markers').first()[0];
+            var f_translates = $('.field-box.field-translatesTo').first()[0]
             
             switch ( category ) {
                 case 'Vector Backbone':
@@ -64,6 +64,54 @@
         
         $("#id_componentCategory").change(hideShow);
         $( document ).ready(hideShow);
+
+
+        // protect user edit of name; otherwise re-suggest on vector / insert change
+        //$('#id_name').change(suggestName);
+        
+        function block_name(){
+            if ($('#id_name').val()){
+                sessionStorage.setItem('name_changed', "1"); //suggestName checks for == "1"
+            } else {
+                sessionStorage.setItem('name_changed', "0"); //re-activate suggestName
+            }
+        }
+        
+        $("#id_name").change(block_name);
+
+        // extract "name" from "displayId (name)"
+        function _extractName( s ) {
+            var r = '';
+            if (s){
+                r = s.match( /\(.+\)/ );
+                if (r){
+                    r = r[0].slice(1,-1); // remove "(" and ")"
+                } else {
+                    r = s.split(' ')[0]; // use displayId and strip after first ' '
+                }
+            }
+            return r;
+        }
+
+        function suggestName(){
+            var category = $("#id_componentCategory option:selected").text();        
+
+            if ( sessionStorage.getItem('name_changed') != '1' ){
+                if (category == 'Plasmid'){
+                    var vector = $('#id_vectorBackbone_0').val();
+                    var insert = $('#id_insert_0').val();
+                    var r = [_extractName(vector), _extractName(insert) ];
+                    alert('suggesting: ' + vector + ' + ' + insert);
+                    $('#id_name').val( r.join('_') );    
+                } else {
+                    $('#id_name').val( '' );
+                }
+            }
+        }
+        
+        $('#id_componentCategory').change(suggestName);
+        document.getElementById( 'id_insert_0' ).djselectableselect = suggestName;
+        document.getElementById( 'id_vectorBackbone_0' ).djselectableselect = suggestName;
 
     </script>
     
