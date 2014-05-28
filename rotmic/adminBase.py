@@ -272,9 +272,8 @@ class UpdateManyMixin:
         return http.HttpResponseRedirect("/rotmic/update/%s/?entries=%s" \
                                     % (modelname, ",".join(selected)))
 
-    make_update.short_description = 'Edit all selected records at once'
+    make_update.short_description = 'Edit selected records in parallel'
 
-    
 
 def export_csv(request, queryset, fields):
     """

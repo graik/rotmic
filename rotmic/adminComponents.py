@@ -80,8 +80,8 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, Up
                                ('Type', 'componentType.name'),
                                ])
 
-    actions = ['make_update',
-               'delete_selected',  ## This is needed to activate non-author delete protection               
+    actions = [ 'delete_selected',  ## This is needed to activate non-author delete protection               
+                'make_update',
                ]  
     
     ## list field names that should be excluded from the bulk update dialog
