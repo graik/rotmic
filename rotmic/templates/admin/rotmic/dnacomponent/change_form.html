@@ -7,8 +7,10 @@
     
     <script language=javascript type='text/javascript'>
 
-        // protect user edit of displayId; otherwise re-suggest on category change
-        $('#id_componentCategory').change(suggestId);
+        // protect user edit and existing record's displayId; otherwise re-suggest on category change
+        {% if not original.pk %}  
+            $('#id_componentCategory').change(suggestId);
+        {% endif %}
         
         function block_displayId(){
             if ($('#id_displayId').val()){
@@ -71,19 +73,23 @@
         //
         // protect user edit of name; otherwise re-suggest on vector / insert change
         //
+        var default_name = {%if original.pk %}"{{original.name}}"{%else%}''{%endif%};
+
         function block_name(){
             if ($('#id_name').val()){
                 sessionStorage.setItem('name_changed', "1"); //suggestName checks for == "1"
+                default_name = $('#id_name').val();
             } else {
                 sessionStorage.setItem('name_changed', "0"); //re-activate suggestName
+                default_name = {%if original.pk %}"{{original.name}}"{%else%}''{%endif%};
             }
         }
         
         $("#id_name").change(block_name);
-
+        
         // extract "name" from "displayId (name)"
         function _extractName( s ) {
-            var r = '';
+            var r = null;
             if (s){
                 r = s.match( /\(.+\)/ );
                 if (r){
@@ -102,11 +108,14 @@
                 if (category == 'Plasmid'){
                     var vector = $('#id_vectorBackbone_0').val();
                     var insert = $('#id_insert_0').val();
+
                     var r = [_extractName(vector), _extractName(insert) ];
-                    alert('suggesting: ' + vector + ' + ' + insert);
+                    r = r.filter(function(x){return x != undefined});
+
                     $('#id_name').val( r.join('_') );    
+
                 } else {
-                    $('#id_name').val( '' );
+                    $('#id_name').val( default_name );
                 }
             }
         }
