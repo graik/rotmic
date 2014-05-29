@@ -20,20 +20,21 @@ from django.contrib import admin
 import reversion
 
 from .utils.customadmin import ViewFirstModelAdmin
-from .adminBase import UserRecordMixin, export_csv
+from .adminBase import UserRecordMixin, export_csv, UpdateManyMixin
+from .forms import selectLookups as L
 
 import models as M
 
-class ProjectAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+class ProjectAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin, UpdateManyMixin):
 
     permit_delete = ['registeredBy'] ## only creator or superuser can delete
     
     fieldsets = [
         (None, {
-            'fields' : ((('name'),
+            'fields' : ((('name',),
                          ('description',)
                         )),
-            'description' : 'Describe a projects to bundle constructs into.',
+            'description' : 'Describe a project to bundle constructs into.',
             }
          )
         ]
@@ -42,5 +43,9 @@ class ProjectAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin)
     search_fields = ('name', 'description')
 
     save_as = True
+
+    actions = ['make_update']
+    exclude_from_update = ['name']
+    model_lookup = L.ProjectLookup
 
 admin.site.register( M.Project, ProjectAdmin )

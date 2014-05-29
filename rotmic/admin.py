@@ -150,6 +150,7 @@ class UnitAdmin( reversion.VersionAdmin, UpdateManyMixin):
         )
 
     actions = ['make_update']
+    exclude_from_update = ['name']
     model_lookup = L.UnitLookup
     
     list_display = ('name','unitType', 'conversion')
@@ -159,7 +160,7 @@ admin.site.register( M.Unit, UnitAdmin )
 
 
 
-class LocationAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+class LocationAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin, UpdateManyMixin):
     form = forms.LocationForm
     
     permit_delete = [] ## de-activate author-only delete permission
@@ -187,10 +188,14 @@ class LocationAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin
 
     save_as = True
     
+    actions = ['make_update']
+    exclude_from_update = ['displayId']
+    model_lookup = L.LocationLookup
+    
 admin.site.register( M.Location, LocationAdmin )
 
 
-class RackAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+class RackAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin, UpdateManyMixin):
     form = forms.RackForm
 
     permit_delete = [] ## de-activate author-only delete permission
@@ -217,6 +222,10 @@ class RackAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
 
     save_as = True
 
+    actions = ['make_update']
+    exclude_from_update = ['displayId']
+    model_lookup = L.RackLookup
+
     def showLocationUrl(self, obj):
         """Table display of linked insert or ''"""
         assert isinstance(obj, M.Rack), 'object missmatch'
@@ -233,7 +242,7 @@ class RackAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
 admin.site.register( M.Rack, RackAdmin )
 
 
-class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin):
+class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin, UpdateManyMixin):
     form = forms.ContainerForm
 
     permit_delete = [] ## de-activate author-only delete permission
@@ -262,6 +271,10 @@ class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmi
     search_fields = ('displayId', 'name','description')
 
     save_as = True
+
+    actions = ['make_update']
+    exclude_from_update = ['displayId']
+    model_lookup = L.SampleContainerLookup
 
     def showLocationUrl(self, obj):
         """Table display of linked insert or ''"""

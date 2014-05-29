@@ -199,6 +199,28 @@ class ContainerRackLookup(ModelLookup):
 registry.register( ContainerRackLookup )
 
 
+class ProjectLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = M.Project
+    search_fields = ('name__startswith', )
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(ProjectLookup)
+
+class UserLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = User
+    search_fields = ('username__startswith', 'first_name__startswith',
+                     'last_name__startswith')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(UserLookup)
+
+
 class UnitLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
     model = M.Unit
@@ -242,27 +264,6 @@ class VolumeAmountUnitLookup(UnitLookup):
         return r
 
 registry.register(VolumeAmountUnitLookup)
-
-class ProjectLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.Project
-    search_fields = ('name__startswith', )
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(ProjectLookup)
-
-class UserLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = User
-    search_fields = ('username__startswith', 'first_name__startswith',
-                     'last_name__startswith')
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(UserLookup)
 
 
 class SampleLookupBase(ModelLookup):
@@ -340,3 +341,24 @@ class ChemicalSampleLookup(SampleLookupBase):
                      'displayId__startswith', 'chemical__displayId__startswith')
     
 registry.register( ChemicalSampleLookup )
+
+
+class LocationLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = M.Location
+    search_fields = ('displayId__startswith', 'name__startswith', )
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(LocationLookup)
+
+class RackLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = M.Rack
+    search_fields = ('displayId__startswith', 'name__startswith', )
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(RackLookup)
