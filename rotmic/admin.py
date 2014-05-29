@@ -26,8 +26,9 @@ from .utils.customadmin import ViewFirstModelAdmin
 from .utils import adminFilters as filters
 
 from . import forms
+from .forms import selectLookups as L
 
-from .adminBase import UserRecordMixin, RequestFormMixin, export_csv
+from .adminBase import UserRecordMixin, RequestFormMixin, export_csv, UpdateManyMixin
 
 from . import adminUser  ## trigger extension of User
 from . import adminComponents ## trigger registration of component admin interfaces
@@ -137,7 +138,7 @@ class ProteinComponentTypeAdmin( reversion.VersionAdmin ):
 admin.site.register(M.ProteinComponentType, ProteinComponentTypeAdmin)
 
 
-class UnitAdmin( reversion.VersionAdmin ):
+class UnitAdmin( reversion.VersionAdmin, UpdateManyMixin):
     
     fieldsets = (
         (None, {
@@ -147,6 +148,9 @@ class UnitAdmin( reversion.VersionAdmin ):
             }
          ),
         )
+
+    actions = ['make_update']
+    model_lookup = L.UnitLookup
     
     list_display = ('name','unitType', 'conversion')
     list_filter = ('unitType',)

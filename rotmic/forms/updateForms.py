@@ -26,6 +26,7 @@ import selectable.forms as sforms
 
 import selectLookups as L
 import rotmic.initialTypes as T
+from rotmic.forms.baseforms import ModelFormWithRequest
 
 import rotmic.models as M
 
@@ -54,7 +55,7 @@ class UpdateManyForm(forms.Form):
         self.model = kwarg.pop('model', None)
 
         self.model_admin = admin.site._registry[self.model]
-        self.model_form = self.model_admin.form
+        self.model_form = self.model_admin.get_form(self.request)
 
         super(UpdateManyForm, self).__init__(*arg, **kwarg)
 
@@ -89,7 +90,7 @@ class UpdateManyForm(forms.Form):
                 for fieldname in fieldrow:
 
                     if not fieldname in getattr(a, 'exclude_from_update', []):
-                        self.fields[fieldname] = copy.copy(a.form.base_fields[fieldname])
+                        self.fields[fieldname] = copy.copy(self.model_form.base_fields[fieldname])
                         f = self.fields[fieldname]
                         f.required = False
                         
@@ -189,8 +190,10 @@ class UpdateManyForm(forms.Form):
                 data = forms.model_to_dict(e)
                 data.update(d)
                 
-                form = self.model_form( data, instance=e, request=request )
-                ##form.request = self.request  ##This is actually only required for customized forms
+                if issubclass(self.model_form, ModelFormWithRequest):
+                    form = self.model_form( data, instance=e, request=request )
+                else:
+                    form = self.model_form( data, instance=e )
                 
                 if not form.is_valid(): raise ValueError('single form validation')
 
