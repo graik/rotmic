@@ -32,11 +32,11 @@ class UserMixin(models.Model):
     registeredAt = models.DateTimeField(default=datetime.now(), 
                                 verbose_name="registered")
     
-    modifiedBy = models.ForeignKey(User, null=True, blank=False, 
+    modifiedBy = models.ForeignKey(User, null=True, blank=True, 
                                 related_name='%(class)s_modified_by',
                                 verbose_name='modified by')
     
-    modifiedAt = models.DateTimeField(default=datetime.now(), 
+    modifiedAt = models.DateTimeField(default=datetime.now(), blank=True,
                                 verbose_name="modified")
     
     

@@ -108,7 +108,7 @@ class Sample( UserMixin, ReadonlyUrlMixin ):
     
     description = models.TextField('Description', blank=True)
 
-    preparedAt = models.DateField(default=datetime.now().date, verbose_name="Prepared")
+    preparedAt = models.DateField(default=datetime.now().date(), verbose_name="Prepared")
     
     preparedBy = models.ForeignKey(User, null=False, blank=False, 
                                 related_name='%(class)s_prepared_by',

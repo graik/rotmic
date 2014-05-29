@@ -47,8 +47,14 @@ def getSampleWidgets( extra={} ):
         'experimentNr' : forms.TextInput(attrs={'size':15}),
 
         'concentration' : forms.TextInput(attrs={'size':5}),
+        
+        'concentrationUnit' : sforms.AutoComboboxSelectWidget(lookup_class=L.ConcentrationUnitLookup,
+                                                              allow_new=False,attrs={'size':5}),
 
         'amount' : forms.TextInput(attrs={'size':5}),
+        
+        'amountUnit' : sforms.AutoComboboxSelectWidget(lookup_class=L.VolumeAmountUnitLookup,
+                                                       allow_new=False,attrs={'size':5}),
 
         'aliquotNr' : forms.TextInput(attrs={'size':2}),
         'description': forms.Textarea(attrs={'cols': 100, 'rows': 5,
@@ -68,26 +74,6 @@ class SampleForm(ModelFormWithRequest):
                                  required=False,
                                  label='')
 
-    ## use lookup fields and provide default value
-    concentrationUnit = sforms.AutoCompleteSelectField(
-        label='... unit',
-        required=False,
-        lookup_class=L.ConcentrationUnitLookup,
-        allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.ConcentrationUnitLookup,
-                                               allow_new=False,attrs={'size':5}),
-        initial=U.uM)
-    
-    ## restrict choices to volume units; override for other choices
-    amountUnit = sforms.AutoCompleteSelectField(
-        label='... unit',
-        required=False,
-        lookup_class=L.VolumeAmountUnitLookup,
-        allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.VolumeAmountUnitLookup,
-                                               allow_new=False,attrs={'size':5}),
-        initial=U.ul)
-
     
     def __init__(self, *args, **kwargs):
         """
@@ -100,7 +86,17 @@ class SampleForm(ModelFormWithRequest):
         o = kwargs.get('instance', None)
         if not o and self.request: 
             self.initial['preparedBy'] = str(self.request.user.id)
-            ##self.fields['preparedBy'].initial = User.objects.get(id=self.request.user.id)
+
+        if not o:
+            self.initial['concentrationUnit'] = str(U.uM.pk)
+            self.initial['amountUnit'] = str(U.ul.pk)
+
+        # POST with data attached to previously existing instance
+        ## Note: by calling has_changed here, we populate the _changed_data dict
+        ## any further modifications go under the radar.
+        if o and self.data and self.request and self.has_changed():        
+            self.data['modifiedBy'] = self.request.user.id
+            self.data['modifiedAt'] = datetime.datetime.now()
         
 
     def clean_displayId(self):
@@ -156,6 +152,16 @@ class SampleForm(ModelFormWithRequest):
         
         return data
 
+    @property
+    def changed_data(self):
+        """Adapt to virtual form creation by updateMany"""
+        r = super(SampleForm,self).changed_data
+        
+        ## filter out any form fields that do not exist on the model
+        r = [ a for a in r if getattr(self.instance, a, None) ]
+
+        return r
+
     class Meta:
         model = M.Sample
         widgets = getSampleWidgets()
@@ -165,15 +171,12 @@ class SampleForm(ModelFormWithRequest):
 class DnaSampleForm( SampleForm ):
     """Customized Form for DnaSample add / change"""
     
-    ## modify initial (default) value
-    concentrationUnit = sforms.AutoCompleteSelectField(
-        label='... unit',
-        required=False,
-        lookup_class=L.ConcentrationUnitLookup,
-        allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.ConcentrationUnitLookup,
-                                               allow_new=False,attrs={'size':5}),
-        initial=U.ngul)
+    def __init__(self, *args, **kwargs):
+        super(DnaSampleForm, self).__init__(*args, **kwargs)
+        o = kwargs.get('instance', None)
+        if not o:
+            self.initial['concentrationUnit'] = str(U.ngul.pk)
+        
     
     class Meta:
         model = M.DnaSample
@@ -290,7 +293,7 @@ class CellSampleForm( SampleForm ):
 
         
 class OligoSampleForm( SampleForm ):
-    """Customized Form for DnaSample add / change"""
+    """Customized Form for OligoSample add / change"""
     
     class Meta:
         model = M.OligoSample
@@ -303,25 +306,12 @@ class OligoSampleForm( SampleForm ):
 class ChemicalSampleForm( SampleForm ):
     """Customized Form for ChemicalSample add / change"""
     
-    ## modify initial (default) value
-    concentrationUnit = sforms.AutoCompleteSelectField(
-        label='... unit',
-        required=False,
-        lookup_class=L.ConcentrationUnitLookup,
-        allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.ConcentrationUnitLookup,
-                                               allow_new=False,attrs={'size':5}),
-        initial=U.M)
-    
-    ## restrict available choices to volume units only
-    amountUnit = sforms.AutoCompleteSelectField(
-        label='... unit',
-        required=False,
-        lookup_class=L.AmountUnitLookup,
-        allow_new=False,
-        widget=sforms.AutoComboboxSelectWidget(lookup_class=L.AmountUnitLookup,
-                                               allow_new=False,attrs={'size':5}),
-        initial=U.g)
+    def __init__(self, *args, **kwargs):
+        super(ChemicalSampleForm, self).__init__(*args, **kwargs)
+        o = kwargs.get('instance', None)
+        if not o:
+            self.initial['concentrationUnit'] = str(U.M.pk)
+            self.initial['amountUnit'] = str(U.g.pk)
 
     class Meta:
         model = M.ChemicalSample

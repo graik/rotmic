@@ -35,7 +35,13 @@ class UpdateManyForm(forms.Form):
                M.CellComponent : L.SampleCellLookup,
                M.OligoComponent : L.OligoLookup,
                M.ChemicalComponent : L.ChemicalLookup,
-               M.ProteinComponent : L.ProteinLookup }
+               M.ProteinComponent : L.ProteinLookup,
+               M.DnaSample : L.DnaSampleLookup,
+               M.CellSample : L.CellSampleLookup,
+               M.OligoSample : L.OligoSampleLookup,
+               M.ProteinSample : L.ProteinSampleLookup,
+               M.ChemicalSample : L.ChemicalSampleLookup,
+               M.Sample : L.SampleLookup}
     
     entries = forms.ModelMultipleChoiceField(M.Component.objects.all(), 
                         cache_choices=False, 
@@ -82,7 +88,7 @@ class UpdateManyForm(forms.Form):
             for fieldrow in d['fields']:
                 for fieldname in fieldrow:
 
-                    if not fieldname in a.exclude_from_update:
+                    if not fieldname in getattr(a, 'exclude_from_update', []):
                         self.fields[fieldname] = copy.copy(a.form.base_fields[fieldname])
                         f = self.fields[fieldname]
                         f.required = False
@@ -131,25 +137,28 @@ class UpdateManyForm(forms.Form):
         ## get selected entries and already pre-fetch all ForeignKey related objects
 
         for fieldname in self.fields:
-            if fieldname not in ['entries'] + self.model_admin.exclude_from_update:
+            if fieldname not in ['entries'] + getattr(self.model_admin, 'exclude_from_update', []):
                 ## check for all-equal values and, if yes, copy value -> initial
-                values = self.extract_values(entries, fieldname)
                 f = self.fields[fieldname]
-
-                if len(values) == entries.count() and\
-                   len(self.__deduplicate(values)) <= 1:                   
-                    f.all_equal = True
-                    f.help_text = 'This field seems to have the same (or no) value in all %i entries.\n' % len(values)\
-                        + f.help_text
-                    v = values[0]
-                    
-                    ## don't set empty empty fields;
-                    if v:
-                        self.initial[fieldname] = v
-                else:
-                    f.all_equal = False
-                    f.help_text = 'Attention! This field currently has different values in the selected entries. Only change if you are sure.\n'\
-                        + f.help_text
+                try:
+                    values = self.extract_values(entries, fieldname)
+    
+                    if len(values) == entries.count() and\
+                       len(self.__deduplicate(values)) <= 1:                   
+                        f.help_text = 'This field seems to have the same (or no) value in all %i entries.\n' % len(values)\
+                            + f.help_text
+                        v = values[0]
+                        
+                        ## don't set empty empty fields; but clear pre-assigned if values differ
+                        if v:
+                            self.initial[fieldname] = v
+                    else:
+                        if self.fields[fieldname].initial:
+                            self.fields[fieldname].initial = None
+                        f.help_text = 'Attention! This field currently has different values in the selected entries. Only change if you are sure.\n'\
+                            + f.help_text
+                except:
+                    f.help_text = 'Error: could not extract values for this field.'
 
 
     def add_error(self, field, msg):

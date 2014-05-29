@@ -307,3 +307,36 @@ class DnaSampleLookup(SampleLookupBase):
     
 registry.register( DnaSampleLookup )
 
+class CellSampleLookup(SampleLookupBase):
+    """For selectable auto-completion field in Sequencing form"""
+    model = M.CellSample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith', 'plasmid__displayId__startswith',
+                     'cell__displayId__startswith')
+    
+registry.register( CellSampleLookup )
+
+class OligoSampleLookup(SampleLookupBase):
+    """For selectable auto-completion field in Sequencing form"""
+    model = M.OligoSample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith', 'oligo__displayId__startswith')
+    
+registry.register( OligoSampleLookup )
+
+
+class ProteinSampleLookup(SampleLookupBase):
+    """For selectable auto-completion field in Sequencing form"""
+    model = M.ProteinSample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith', 'protein__displayId__startswith')
+    
+registry.register( ProteinSampleLookup )
+
+class ChemicalSampleLookup(SampleLookupBase):
+    """For selectable auto-completion field in Sequencing form"""
+    model = M.ChemicalSample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith', 'chemical__displayId__startswith')
+    
+registry.register( ChemicalSampleLookup )
