@@ -219,7 +219,8 @@
                     </li>
                 <li><B>Medium/Buffer</B>:
                     {% if o.solvent %}
-                        <p>{{o.solvent}}</p>
+                        <span {% if o.solvent|length < 25%} style="white-space:nowrap"{%endif%}
+                        >{{o.solvent}}</span>
                     {% endif %}
                 </li>
                 <li><B>Experiment #</B>:
@@ -235,7 +236,6 @@
         <div class="module" id="record-module">
             <h2>Record</h2>
             <ul>    
-                <li><B>Status</B>: <b>{{o.showStatus}}</b><br><br></li>
                 <li><B>prepared</B>: 
                     <p>
                     {% with o.preparedBy as U %}

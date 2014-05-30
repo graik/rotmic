@@ -4,6 +4,7 @@ Rotten Microbes
 "Your sample is out there." (tm)
 retrieve samples and sequences from laboratory chaos
 
+
 __Setting up a test server__
 
 Out of the box, the project is configured for quick set up of a development server, which should only be used for testing purposes. The test server uses a SQLite database (created as rotmicdev.db) and the built-in django debugging web server. File attachments will be saved in the dev_uploads/ folder.
@@ -16,7 +17,6 @@ ___Dependencies___
 
 Rotmic relies on additional third-party django apps and python modules. For convenience, these apps are cloned in the thirdparty/ folder. This folder will be automagically included in the Python path when you load rotmic:
 
- * guardian -- object-level permissions (not implemented in the user interface)
  * reversion -- versioning (view and revert changes to data records)
  * selectable -- javascript elements for dynamic lookup of related records in forms
  * xlrd -- Excel table import
@@ -43,7 +43,7 @@ This will create a new folder rotmicdjango in your current directory. The next c
 
 It is important to NOT create a super user at this point. The rotmic data model introduces a "userprofile" table for saving user-specific settings. This table is "hard-linked" to the django.contrib.auth.User table and can only be created as long as this User table is still empty.
 
-We use the django migration system to create rotmic, reversion, and guardian data structures:
+We use the django migration system to create rotmic and reversion data structures:
 
     ./manage.py migrate
 
@@ -84,3 +84,33 @@ Point your browser to http://127.0.0.1:8000 and start exploring the site.
 
 Note: While you can get quite far with emacs and vi, for development and debugging, I highly recommend a professional Python development IDE. I have made good experiences with WingIDE.
 
+__Production server setup__
+
+... is better documented by the Django developers. Some notes:
+
+At this point, I recommend cloning directly from github (as described above) so that 
+it will be easy to update the server source code. Updating then consists of three easy commands:
+
+    git pull
+    ./manage.py collectstatic
+    ./manage.py migrate
+    sudo /etc/init.d/apache2 restart
+
+The 'collectstatic' command will update the folder from which static file content is served 
+(javascript, icons, css) by synchronizing it with rotmic/static. 'migrate' will perform
+south database migrations (only if the git pull command has created any additional migration
+files in rotmic/migrations/).
+
+`/rotmicsite/settings.py` is checked in as a symbolic link to `settings_dev.py`.
+Make a copy of `settings_dev.py`, adapt it to production needs, save it under a different name,
+e.g., `settings_prod.py` and then point `settings.py -> settings_prod.py`.
+
+**Important:** Re-generate the private SSH key -- the one in `settings_dev.py` is public on github!!
+
+Other things you will want to change are the database engine used (we are using postgresql). 
+`rotmicsite/` also contains django's default` wsgi.py` configuration module for using wsgi / apache. 
+
+If you are using apache, you have to adapt the setting for the `$LANG` environment variable in 
+`/etc/apache2/envvars`. Change `LANG=C` to `LANG="en_US.UTF-8"` or another unicode-compatible encoding. 
+Otherwise, you will likely run into UniCode encoding errors as soon a user tries to upload a file 
+with non-ascii characters in its file name.

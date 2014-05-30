@@ -34,10 +34,8 @@ from .utils import adminFilters as filters
 from .utils import ids
 from .utils.customadmin import ViewFirstModelAdmin
 
-from .adminBase import UserRecordMixin, RequestFormMixin, export_csv
+from .adminBase import UserRecordMixin, RequestFormMixin, export_csv, UpdateManyMixin
 
-##import profilehooks
-##import cProfile as profile
 
 class ComponentAttachmentInline(admin.TabularInline):
     model = M.ComponentAttachment
@@ -46,7 +44,7 @@ class ComponentAttachmentInline(admin.TabularInline):
     extra = 1
     max_num = 5
 
-class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
+class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, UpdateManyMixin ):
     """
     Derived from ViewFirstModelAdmin -- Custom version of admin.ModelAdmin
     which shows a read-only View for a given object instead of the normal
@@ -81,8 +79,13 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin ):
                                ('Category', 'componentType.category()'),
                                ('Type', 'componentType.name'),
                                ])
+
+    actions = [ 'delete_selected',  ## This is needed to activate non-author delete protection               
+                'make_update',
+               ]  
     
-    actions = ['delete_selected']  ## This is needed to activate non-author delete protection
+    ## list field names that should be excluded from the bulk update dialog
+    exclude_from_update = ['displayId', 'name', 'category', 'componentCategory']
     
     def queryset(self, request):
         """
@@ -216,7 +219,7 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     
     ordering = ('displayId', 'name')
     
-    actions = ['make_csv', 'make_genbank'] + ComponentAdmin.actions
+    actions = ComponentAdmin.actions + ['make_csv', 'make_genbank']
     
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
@@ -229,6 +232,9 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
                                ('Sequence','sequence') 
                               ] )
     
+    exclude_from_update = ComponentAdmin.exclude_from_update +\
+        ['genbankFile', 'genbankClear', 'sequence']
+    
     SMPL_ICON = ST.static('admin/img/icon-yes.gif')
     
     def queryset(self, request):
@@ -236,25 +242,6 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
         return super(ComponentAdmin,self).queryset(request)
  
         
-    def get_form(self, request, obj=None, **kwargs):
-        """
-        Override queryset of ForeignKey fields without overriding the field itself.
-        This preserves the "+" Button which is otherwise lost.
-        See http://djangosnippets.org/snippets/1558/#c4674
-        """
-        form = super(DnaComponentAdmin,self).get_form(request, obj,**kwargs)
-
-        ## suggest ID
-        category = form.base_fields['componentCategory'].initial
-        category = category.name[0].lower()
-        prefix = request.user.profile.dcPrefix or request.user.profile.prefix
-        prefix += category
-        
-        field = form.base_fields['displayId']
-        field.initial = ids.suggestDnaId(request.user.id, prefix=prefix)
-            
-        return form
-
     def showInsertUrl(self, obj):
         """Table display of linked insert or ''"""
         assert isinstance(obj, M.DnaComponent), 'object missmatch'
@@ -392,19 +379,6 @@ class CellComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
         """Revert modification made by ComponentModelAdmin"""
         return super(ComponentAdmin,self).queryset(request)
 
-    def get_form(self, request, obj=None, **kwargs):
-        """
-        Override queryset of ForeignKey fields without overriding the field itself.
-        This preserves the "+" Button which is otherwise lost.
-        See http://djangosnippets.org/snippets/1558/#c4674
-        """
-        form = super(CellComponentAdmin,self).get_form(request, obj,**kwargs)
-        
-        field = form.base_fields['markers']
-        field.queryset = field.queryset.filter(componentType__subTypeOf=I.dcMarker)
-        field.help_text = ''
-        return form
-    
     def showPlasmidUrl(self, obj):
         """Table display of linked insert or ''"""
         assert isinstance(obj, M.CellComponent), 'object missmatch'
@@ -492,6 +466,8 @@ class OligoComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
                                ('n Samples', 'oligo_samples.count()'),
                                ('Description','description'),
                                ('Sequence','sequence')])
+
+    exclude_from_update = ComponentAdmin.exclude_from_update + ['sequence']
 
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""
@@ -614,6 +590,9 @@ class ProteinComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
                                ('Description','description'),
                                ('Sequence', 'sequence'),                               
                               ])
+ 
+    exclude_from_update = ComponentAdmin.exclude_from_update +\
+        ['sequence', 'genbankFile', 'genbankClear', 'encodedBy']
     
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""

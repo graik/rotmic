@@ -28,7 +28,7 @@ from . import forms
 from .utils.customadmin import ViewFirstModelAdmin
 from .utils import adminFilters as filters
 
-from .adminBase import UserRecordMixin, RequestFormMixin, export_csv
+from .adminBase import UserRecordMixin, RequestFormMixin, export_csv, UpdateManyMixin
 
 
 class SampleAttachmentInline(admin.TabularInline):
@@ -71,7 +71,7 @@ class SampleProvenanceInline(admin.StackedInline):
         }),
     )
 
-class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, ViewFirstModelAdmin ):
+class SampleAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, UpdateManyMixin ):
     form = forms.SampleForm     
     
     permit_delete = ['registeredBy', 'preparedBy'] ## creator, author or superuser can delete
@@ -87,7 +87,7 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, Vi
         (None, {
             'fields' : ((('dummyfield',),('container', 'displayId', 'status'),
                          ('preparedAt', 'preparedBy', 'experimentNr'),
-                         ('description'),
+                         ('description',),
                     ))
             } ),
          ('Content', {
@@ -118,8 +118,10 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, Vi
                    filters.SampleRackFilter, filters.SampleContainerFilter,
                    filters.SortedPreparedByFilter)
     
-    actions = ['make_csv', 'delete_selected']  ## activate author-only delete protection
-    
+    actions = ['make_update', 'make_csv', 'delete_selected']  ## activate author-only delete protection
+
+    exclude_from_update = ['dummyfield', 'displayId']
+                           
     def __init__(self, *args, **kwargs):
         """Disable automatic link generation"""
         super(SampleAdmin, self).__init__(*args, **kwargs)
@@ -200,7 +202,7 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, reversion.VersionAdmin, Vi
 admin.site.register( M.Sample, SampleAdmin )
 
 
-class DnaSampleAdmin( SampleAdmin ):
+class DnaSampleAdmin( reversion.VersionAdmin, SampleAdmin ):
     form = forms.DnaSampleForm
     
     change_list_template = 'admin/rotmic/dnasample/change_list.html'
@@ -210,7 +212,7 @@ class DnaSampleAdmin( SampleAdmin ):
         (None, {
             'fields' : ((('dummyfield',),('container', 'displayId', 'status'),
                          ('preparedAt', 'preparedBy', 'experimentNr'),
-                         ('description'),
+                         ('description',),
                     ))
             } ),
          ('Content', {
@@ -254,7 +256,7 @@ class DnaSampleAdmin( SampleAdmin ):
 admin.site.register( M.DnaSample, DnaSampleAdmin )
 
 
-class CellSampleAdmin( SampleAdmin ):
+class CellSampleAdmin( reversion.VersionAdmin, SampleAdmin ):
     form = forms.CellSampleForm
     
     ##change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
@@ -265,7 +267,7 @@ class CellSampleAdmin( SampleAdmin ):
         (None, {
             'fields' : ((('dummyfield',),('container', 'displayId', 'status'),
                          ('preparedAt', 'preparedBy', 'experimentNr'),
-                         ('description'),
+                         ('description',),
                     ))
             } ),
          ('Content', {
@@ -291,7 +293,10 @@ class CellSampleAdmin( SampleAdmin ):
 
     search_fields = SampleAdmin.search_fields + \
         ['cell__displayId', 'cell__name', 'cell__plasmid__displayId', 'cell__plasmid__name']
-        
+
+    exclude_from_update = SampleAdmin.exclude_from_update + \
+        ['plasmid','cellCategory','cellType']
+                                       
     def queryset(self, request):
         """Revert modification made by SampleAdmin"""
         return super(SampleAdmin,self).queryset(request)
@@ -299,7 +304,7 @@ class CellSampleAdmin( SampleAdmin ):
 admin.site.register( M.CellSample, CellSampleAdmin )
 
 
-class OligoSampleAdmin( SampleAdmin ):
+class OligoSampleAdmin( reversion.VersionAdmin, SampleAdmin ):
     form = forms.OligoSampleForm
     
     ##change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
@@ -309,7 +314,7 @@ class OligoSampleAdmin( SampleAdmin ):
         (None, {
             'fields' : ((('dummyfield',),('container', 'displayId', 'status'),
                          ('preparedAt', 'preparedBy', 'experimentNr'),
-                         ('description'),
+                         ('description',),
                     ))
             } ),
          ('Content', {
@@ -341,7 +346,7 @@ class OligoSampleAdmin( SampleAdmin ):
 admin.site.register( M.OligoSample, OligoSampleAdmin )
 
 
-class ChemicalSampleAdmin( SampleAdmin ):
+class ChemicalSampleAdmin( reversion.VersionAdmin, SampleAdmin ):
     form = forms.ChemicalSampleForm
     
     ## change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
@@ -351,7 +356,7 @@ class ChemicalSampleAdmin( SampleAdmin ):
         (None, {
             'fields' : ((('dummyfield',),('container', 'displayId', 'status'),
                          ('preparedAt', 'preparedBy', 'experimentNr'),
-                         ('description'),
+                         ('description',),
                     ))
             } ),
          ('Content', {
@@ -383,7 +388,7 @@ class ChemicalSampleAdmin( SampleAdmin ):
 admin.site.register( M.ChemicalSample, ChemicalSampleAdmin )
 
 
-class ProteinSampleAdmin( SampleAdmin ):
+class ProteinSampleAdmin( reversion.VersionAdmin, SampleAdmin ):
     form = forms.ProteinSampleForm
     
     ## change_list_template = reversion.VersionAdmin.change_list_template ## revert change from SampleAdmin
@@ -393,7 +398,7 @@ class ProteinSampleAdmin( SampleAdmin ):
         (None, {
             'fields' : ((('dummyfield',),('container', 'displayId', 'status'),
                          ('preparedAt', 'preparedBy', 'experimentNr'),
-                         ('description'),
+                         ('description',),
                     ))
             } ),
          ('Content', {

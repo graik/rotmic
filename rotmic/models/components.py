@@ -32,12 +32,19 @@ from .usermixin import UserMixin, ReadonlyUrlMixin
 
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
+from rotmic.models.componentTypes import DnaComponentType
+
+def _extractNumbers( queryset, pattern ):
+    matches = [ pattern.match( o.displayId ) for o in queryset ]
+    numbers = [ int(x.groups()[0]) for x in matches if x is not None ]
+    numbers.sort()
+    return numbers    
 
 class ComponentBase(UserMixin):
     upload_to = 'attachments/Component'
 
     displayId = models.CharField('ID', max_length=20, unique=True, 
-        help_text='Unique identification')
+                                 help_text='Unique identification')
 
     name = models.CharField('Name', max_length=200, blank=True, 
                             help_text='short descriptive name')
@@ -82,6 +89,26 @@ class ComponentBase(UserMixin):
         return r
     showDescription.allow_tags = True
     showDescription.short_description = 'Description'
+    
+    @staticmethod
+    def nextAvailableId(user, prefix=None, category_id=None):
+        """
+        determine the next free ID for given user and component category.
+        
+        category_id - int, pk of ComponentType instance selected in Category field
+        This parameter is ignored in this default implementation.
+        """
+        prefix = prefix or user.profile.prefix
+        objects = Component.objects.filter( displayId__startswith=prefix )
+
+        if objects.count() == 0:
+            return '%s%04i' % (prefix, 1)
+
+        pattern = re.compile(prefix+'([0-9]+)')
+        numbers = _extractNumbers( objects, pattern ) or [0]
+        
+        return '%s%04i' % (prefix, numbers[-1]+1)
+        
 
     class Meta:
         abstract = True
@@ -209,6 +236,23 @@ class DnaComponent(Component, StatusMixinDna):
         dnasamples = self.dna_samples.all()
         return list(dnasamples) + list(self.cellSamples)
 
+
+    @staticmethod
+    def nextAvailableId(user, prefix=None, category_id=None):
+        """
+        determine the next free ID for given user and component category.
+        category_id - int, pk of ComponentType instance selected in Category field
+        """
+        cat = DnaComponentType.objects.get(id=category_id)
+        
+        default_prefix = user.profile.dcPrefix or user.profile.prefix
+
+        middle = cat.name.lower()[0]
+        default_prefix += middle
+        
+        prefix = prefix or default_prefix
+        
+        return Component.nextAvailableId(user, prefix)
 
     def relatedDnaDict(self):
         """
@@ -357,6 +401,16 @@ class CellComponent(Component, StatusMixinDna):
         """
         return self.cell_samples
 
+    @staticmethod
+    def nextAvailableId(user, prefix=None, category_id=None):
+        """
+        determine the next free ID for given user and component category.
+        """
+        default_prefix = user.profile.ccPrefix or user.profile.prefix + 'c'
+        prefix = prefix or default_prefix
+        
+        return Component.nextAvailableId(user, prefix)
+
     def allMarkers( self ):
         """
         @return: [DnaComponent]
@@ -397,6 +451,17 @@ class ProteinComponent(Component, StatusMixinDna):
         for this specific component.
         """
         return self.protein_samples
+
+    @staticmethod
+    def nextAvailableId(user, prefix=None, category_id=None):
+        """
+        determine the next free ID for given user and component category.
+        category_id is ignored
+        """
+        default_prefix = user.profile.pcPrefix or user.profile.prefix + 'aa'
+        prefix = prefix or default_prefix
+        
+        return Component.nextAvailableId(user, prefix)
 
     def length( self ):
         """@return int, amino acid count"""
@@ -500,6 +565,17 @@ class OligoComponent(Component, StatusMixinCommercial):
         """
         return self.oligo_samples
     
+    @staticmethod
+    def nextAvailableId(user, prefix=None, category_id=None):
+        """
+        determine the next free ID for given user and component category.
+        category_id -- ignored
+        """
+        default_prefix = user.profile.ocPrefix or user.profile.prefix + 'o'
+        prefix = prefix or default_prefix
+        
+        return Component.nextAvailableId(user, prefix)
+
     def tm_nn(self, dnaconc=500, saltconc=50):
         """
         dnaconc - float, [DNA] nM
@@ -540,6 +616,17 @@ class ChemicalComponent(Component, StatusMixinCommercial):
         for this specific component.
         """
         return self.chemical_samples
+
+    @staticmethod
+    def nextAvailableId(user, prefix=None, category_id=None):
+        """
+        determine the next free ID for given user and component category.
+        category_id is ignored
+        """
+        default_prefix = user.profile.chPrefix or user.profile.prefix + 'r'
+        prefix = prefix or default_prefix
+        
+        return Component.nextAvailableId(user, prefix)
 
     class Meta:
         app_label = 'rotmic'

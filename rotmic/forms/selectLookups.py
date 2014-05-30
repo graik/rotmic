@@ -35,11 +35,11 @@ class FixedSelectMultipleWidget( sforms.AutoComboboxSelectMultipleWidget ):
     This should, in theory, be obsolete since Django 1.6
     (The _has_changed method has moved from widget to FormField)
     """    
-    def _has_changed(self,initial, data):
-        """override buggy method from SelectWidget"""
-        old_values = [ unicode(i) for i in (initial or [u''])]
-        new_values = [ unicode(i) for i in (data or [u''])]
-        return not set(new_values) == set(old_values)
+##    def _has_changed(self,initial, data):
+##        """override buggy method from SelectWidget"""
+##        old_values = [ unicode(i) for i in (initial or [u''])]
+##        new_values = [ unicode(i) for i in (data or [u''])]
+##        return not set(new_values) == set(old_values)
 
 
 class DnaLookup(ModelLookup):
@@ -199,6 +199,28 @@ class ContainerRackLookup(ModelLookup):
 registry.register( ContainerRackLookup )
 
 
+class ProjectLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = M.Project
+    search_fields = ('name__startswith', )
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(ProjectLookup)
+
+class UserLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = User
+    search_fields = ('username__startswith', 'first_name__startswith',
+                     'last_name__startswith')
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(UserLookup)
+
+
 class UnitLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
     model = M.Unit
@@ -243,27 +265,6 @@ class VolumeAmountUnitLookup(UnitLookup):
 
 registry.register(VolumeAmountUnitLookup)
 
-class ProjectLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.Project
-    search_fields = ('name__startswith', )
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(ProjectLookup)
-
-class UserLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = User
-    search_fields = ('username__startswith', 'first_name__startswith',
-                     'last_name__startswith')
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(UserLookup)
-
 
 class SampleLookupBase(ModelLookup):
     """
@@ -307,3 +308,57 @@ class DnaSampleLookup(SampleLookupBase):
     
 registry.register( DnaSampleLookup )
 
+class CellSampleLookup(SampleLookupBase):
+    """For selectable auto-completion field in Sequencing form"""
+    model = M.CellSample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith', 'plasmid__displayId__startswith',
+                     'cell__displayId__startswith')
+    
+registry.register( CellSampleLookup )
+
+class OligoSampleLookup(SampleLookupBase):
+    """For selectable auto-completion field in Sequencing form"""
+    model = M.OligoSample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith', 'oligo__displayId__startswith')
+    
+registry.register( OligoSampleLookup )
+
+
+class ProteinSampleLookup(SampleLookupBase):
+    """For selectable auto-completion field in Sequencing form"""
+    model = M.ProteinSample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith', 'protein__displayId__startswith')
+    
+registry.register( ProteinSampleLookup )
+
+class ChemicalSampleLookup(SampleLookupBase):
+    """For selectable auto-completion field in Sequencing form"""
+    model = M.ChemicalSample
+    search_fields = ('container__displayId__startswith',
+                     'displayId__startswith', 'chemical__displayId__startswith')
+    
+registry.register( ChemicalSampleLookup )
+
+
+class LocationLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = M.Location
+    search_fields = ('displayId__startswith', 'name__startswith', )
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(LocationLookup)
+
+class RackLookup(ModelLookup):
+    """Lookup definition for selectable auto-completion fields"""
+    model = M.Rack
+    search_fields = ('displayId__startswith', 'name__startswith', )
+    
+    def get_item_id(self,item):
+        return item.pk
+
+registry.register(RackLookup)

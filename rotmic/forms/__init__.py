@@ -32,3 +32,5 @@ from uploadForms import TableUploadForm, GenbankUploadForm, TracesUploadForm,\
 
 from annotationForms import DnaAnnotationFormSet
 
+from updateForms import UpdateManyForm
+

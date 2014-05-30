@@ -10,29 +10,17 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     ## custom javascript URLS
-    url(r'^getTypeDnaInfo/(?P<maintype>.*)/$',V.getTypeDnaInfo,name='getTypeDnaInfo'),
-    url(r'^getCellTypes/(?P<maintype>.*)/$',V.getCellTypes,name='getCellTypes'),
-    url(r'^getChemicalTypes/(?P<maintype>.*)/$',V.getChemicalTypes,name='getChemicalTypes'),
-    url(r'^getProteinTypes/(?P<maintype>.*)/$',V.getProteinTypes,name='getProteinTypes'),
 
-    url(r'^rotmic/ajax/nextDnaId/(?P<category>.+)/$', 
-        V.nextDnaId, name='nextDnaId' ),
+    url(r'^rotmic/ajax/categoryTypes/(?P<typeclass>.+)/$', 
+        V.categoryTypes, name='categoryTypes' ),
 
-    url(r'^rotmic/ajax/nextCellId/(?P<category>.+)/$', 
-        V.nextCellId, name='nextCellId' ),
+    url(r'^rotmic/ajax/nextId/(?P<modelclass>.+)/$', 
+        V.nextId, name='nextId' ),
 
-    url(r'^rotmic/ajax/nextOligoId/$', 
-        V.nextOligoId, name='nextOligoId' ),
-
-    url(r'^rotmic/ajax/nextChemicalId/(?P<category>.+)/$', 
-        V.nextChemicalId, name='nextChemicalId' ),
-
-    url(r'^rotmic/ajax/nextProteinId/(?P<category>.+)/$', 
-        V.nextProteinId, name='nextProteinId' ),
 
     url(r'^rotmic/ajax/nextSampleId/(?P<container>.+)/$', 
         V.nextSampleId, name='nextSampleId' ),
-
+    
     ## autocomplete fields javascript
     url(r'^selectable/', include('selectable.urls')),
 
@@ -67,6 +55,9 @@ urlpatterns = patterns('',
 
     ## other
     (r'^comments/', include('ratedcomments.urls')),
+
+    ## bulk update dialog
+    url(r'^rotmic/update/(?P<model>.+)/$', V.UpdateManyView.as_view(), name='update_many'),  
 
     url(r'^', include(admin.site.urls)),
 )

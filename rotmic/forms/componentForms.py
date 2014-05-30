@@ -79,18 +79,26 @@ class ComponentForm(ModelFormWithRequest, CleaningMixIn):
         """
         super(ComponentForm, self).__init__(*args, **kwargs)
 
-        o = kwargs.get('instance', None)
-        ## only set initial if form is unbound (new entry)
-        if not o and self.request:
-            self.fields['authors'].initial = [self.request.user]
-        
+        # general field modifications
         self.fields['projects'].widget.can_add_related = False
         self.fields['authors'].widget_can_add_related = False
-
-        ## only set category if form is bound (edit existing entry)
+        if self.request:
+            self.fields['authors'].initial = [self.request.user]
+        
+        o = kwargs.get('instance', None)
+        
+        # GET or POST with existing instance
         if o and 'componentCategory' in self.fields:
             self.fields['componentCategory'].initial = o.componentType.subTypeOf
+        
+        # POST with data attached to previously existing instance
+        ## Note: by calling has_changed here, we populate the _changed_data dict
+        ## any further modifications go under the radar.
+        if o and self.data and self.request and self.has_changed():        
+            self.data['modifiedBy'] = self.request.user.id
+            self.data['modifiedAt'] = datetime.datetime.now()
             
+
     def clean_authors(self):
         """Prevent non-authors from changing authorship"""
         r = self.cleaned_data['authors']
@@ -102,6 +110,15 @@ class ComponentForm(ModelFormWithRequest, CleaningMixIn):
                and not u.is_superuser:
                 raise ValidationError, 'Sorry, only authors or creators can change this field.'
         
+        return r
+    
+    @property
+    def changed_data(self):
+        r = super(ComponentForm,self).changed_data
+        
+        ## filter out any form fields that do not exist on the model
+        r = [ a for a in r if getattr(self.instance, a, None) ]
+
         return r
     
     class Meta:
@@ -195,19 +212,21 @@ class DnaComponentForm(GenbankComponentForm):
     
     componentCategory = forms.ModelChoiceField(label='Category',
                             queryset=M.DnaComponentType.objects.filter(subTypeOf=None),
-                            required=True, 
-                            empty_label=None,
-                            initial=T.dcPlasmid)
-    
-    
+                            required=False, 
+                            empty_label=None)
 
     def __init__(self, *args, **kwargs):
         super(DnaComponentForm, self).__init__(*args, **kwargs)
 
         o = kwargs.get('instance', None)
+
         ## Add New form
         if not o:
+            self.fields['componentCategory'].initial = T.dcPlasmid
+            self.fields['componentType'].initial = T.dcPlasmidGeneric
+
             ## pre-set category if 'translatesTo' is given as URL parameter
+            ## currently this doesn't seem to work
             if 'translatesTo' in self.initial:
                 self.initial['componentType'] = unicode(T.dcFragmentCDS.pk)
                 self.initial['componentCategory'] = unicode(T.dcFragment.pk)
@@ -224,25 +243,34 @@ class DnaComponentForm(GenbankComponentForm):
             raise ValidationError('This is not a DNA sequence.', code='invalid')        
         return r
     
-    def clean_componentCategory(self):
-        r = self.cleaned_data['componentCategory']
+    def clean_componentType(self):
+        r = self.cleaned_data['componentType']
+        
+        if not r.subTypeOf:
+            raise ValidationError('Cannot assign category as type.')
+        
+        cat = r.category()
+        old = M.DnaComponentType.objects.get(id=self.initial['componentType']).category()
+        
+        if cat.id == old.id: ## only worry if category had changed
+            return r
 
         if self.instance and self.instance.id and ('componentType' in self.changed_data):
-            assert( isinstance(r, M.DnaComponentType) )
-            msg = 'Cannot change category: '
+            assert( isinstance(cat, M.DnaComponentType) )
+            msg = 'Cannot change category / type: '
 
-            if r.id != T.dcVectorBB and self.instance.as_vector_in_plasmid.count():
+            if cat.id != T.dcVectorBB and self.instance.as_vector_in_plasmid.count():
                 raise ValidationError(msg + 'This construct is in use as a vector backbone.')
             
-            if not r.id in [T.dcFragment.id, T.dcMarker.id] and \
+            if not cat.id in [T.dcFragment.id, T.dcMarker.id] and \
                self.instance.as_insert_in_dna.count():
                 raise ValidationError(msg + 'This construct is in use as an insert.')
                 
-            if r.id != T.dcMarker and (self.instance.as_marker_in_cell.count() \
+            if cat.id != T.dcMarker and (self.instance.as_marker_in_cell.count() \
                                        or self.instance.as_marker_in_dna.count() ):
                 raise ValidationError(msg + 'This construct is in use as a marker.')
         
-            if r.id != T.dcPlasmid and self.instance.as_plasmid_in_cell.count():
+            if cat.id != T.dcPlasmid and self.instance.as_plasmid_in_cell.count():
                 raise ValidationError(msg + 'This construct is in use as a plasmid.')
         return r
     
@@ -275,7 +303,11 @@ class DnaComponentForm(GenbankComponentForm):
         Note: this is also partly enforced by the DnaComponent.save method.
         """
         data = super(DnaComponentForm, self).clean()
-        category = data.get('componentCategory', None) 
+        category = data.get('componentCategory', None)
+        if not category:
+            t = data.get('componentType', None)
+            if t:
+                category = t.category()
 
         if category and (category != T.dcPlasmid):
             data['insert'] = None
@@ -331,9 +363,9 @@ class CellComponentForm(ComponentForm):
     
     componentCategory = forms.ModelChoiceField(label='Species',
                             queryset=M.CellComponentType.objects.filter(subTypeOf=None),
-                            required=True, 
-                            empty_label=None,
-                            initial=T.ccEcoli)
+                            required=False, 
+                            empty_label=None)
+##                            initial=T.ccEcoli)
     
 
     def clean_plasmid(self):
@@ -364,6 +396,11 @@ class CellComponentForm(ComponentForm):
                 raise ValidationError('%s is not a marker.' % m.__unicode__() )
         return r
 
+    def clean_componentType(self):
+        r = self.cleaned_data['componentType']
+        if not r.subTypeOf:
+            raise ValidationError('Cannot assign category as type.')
+        return r
 
     class Meta:
         model = M.CellComponent
@@ -381,7 +418,10 @@ class OligoComponentForm(ComponentForm):
     def __init__(self, *args, **kwargs):
         super(OligoComponentForm, self).__init__(*args, **kwargs)
         
-        self.fields['componentType'].initial = T.ocStandard
+        o = kwargs.get('instance', None)
+        ## "Add New" Form
+        if not o:
+            self.fields['componentType'].initial = T.ocStandard
     
     def clean_sequence(self):
         """Enforce DNA sequence."""
@@ -410,16 +450,24 @@ class ChemicalComponentForm(ComponentForm):
     
     componentCategory = forms.ModelChoiceField(label='Category',
                             queryset=M.ChemicalType.objects.filter(subTypeOf=None),
-                            required=True, 
-                            empty_label=None,
-                            initial=T.chemOther)
+                            required=False, 
+                            empty_label=None)
+##                            initial=T.chemOther)
     
 
     def __init__(self, *args, **kwargs):
         super(ChemicalComponentForm, self).__init__(*args, **kwargs)
-
-        self.fields['status'].initial = 'available'
         
+        o = kwargs.get('instance', None)
+        ## "Add New" Form
+        if not o:
+            self.fields['status'].initial = 'available'
+        
+    def clean_componentType(self):
+        r = self.cleaned_data['componentType']
+        if not r.subTypeOf:
+            raise ValidationError('Cannot assign category as type.')
+        return r
 
     class Meta:
         model = M.ChemicalComponent
@@ -431,9 +479,9 @@ class ProteinComponentForm(GenbankComponentForm):
     
     componentCategory = forms.ModelChoiceField(label='Category',
                             queryset=M.ProteinComponentType.objects.filter(subTypeOf=None),
-                            required=True, 
-                            empty_label=None,
-                            initial=T.pcProtein)
+                            required=False, 
+                            empty_label=None)
+##                            initial=T.pcProtein)
     
    
     ## hidden field which can be set through URL parameter
@@ -445,10 +493,13 @@ class ProteinComponentForm(GenbankComponentForm):
     def __init__(self, *args, **kwargs):
         super(ProteinComponentForm, self).__init__(*args, **kwargs)
 
-        self.fields['status'].initial = 'available'
-        self.fields['componentType'].initial = T.pcOther
-        
-        
+        o = kwargs.get('instance', None)
+        ## "Add New" Form
+        if not o:
+            self.fields['status'].initial = 'available'
+            self.fields['componentType'].initial = T.pcOther
+            self.fields['componentCategory'].initial = T.pcProtein
+                
     def clean_sequence(self):
         """Enforce Protein sequence."""
         r = self.cleaned_data['sequence']
@@ -473,6 +524,11 @@ class ProteinComponentForm(GenbankComponentForm):
             raise forms.ValidationError()
         return ''
     
+    def clean_componentType(self):
+        r = self.cleaned_data['componentType']
+        if not r.subTypeOf:
+            raise ValidationError('Cannot assign category as type.')
+        return r
     
     class Meta:
         model = M.ProteinComponent

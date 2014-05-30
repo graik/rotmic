@@ -30,82 +30,13 @@ def _extractNumbers( queryset, pattern ):
     return numbers    
 
 
-def suggestComponentId(componentClass, prefix):
-    """
-    Extract running number from mixed displayId like "prefix0001" and suggest next
-    ID like "prefix0002"
-    """
-    objects = componentClass.objects.filter( displayId__startswith=prefix )
-
-    if objects.count() == 0:
-        return '%s%04i' % (prefix, 1)
-    pattern = re.compile(prefix+'([0-9]+)')
-    numbers = _extractNumbers( objects, pattern ) or [0]
-    
-    return '%s%04i' % (prefix, numbers[-1]+1)
-
-
-def suggestDnaId(user_id, prefix='', middle=''):
-    """
-    user_id - int, pk of User object
-    prefix  - str, first characters of desired DNA ID (default: from user.profile)
-    middle  - str, additional prefix characters (e.g. "p" for plasmid, default: '')
-    """
-    user = User.objects.get( id=user_id )
-    prefix = prefix or user.profile.dcPrefix or user.profile.prefix
-    prefix += middle
-
-    return suggestComponentId( M.DnaComponent, prefix )
-
-
-def suggestCellId(user_id, prefix='', middle='c'):
-    """
-    user_id - int, pk of User object
-    prefix  - str, first characters of desired DNA ID (default: from user.profile)
-    middle  - str, additional prefix characters (e.g. "p" for plasmid, default: '')
-    """
-    user = User.objects.get( id=user_id )
-    prefix = prefix or user.profile.ccPrefix or user.profile.prefix
-    if prefix == user.profile.prefix:
-        prefix += middle
-
-    return suggestComponentId( M.CellComponent, prefix )
-
-
-def suggestOligoId(user_id, prefix='', middle='o'):
-    """
-    user_id - int, pk of User object
-    prefix  - str, first characters of desired DNA ID (default: from user.profile)
-    middle  - str, additional prefix characters (e.g. "p" for plasmid, default: '')
-    """
-    user = User.objects.get( id=user_id )
-    prefix = prefix or user.profile.ocPrefix or user.profile.prefix + middle
-
-    return suggestComponentId( M.OligoComponent, prefix )
-
-
-def suggestChemicalId(user_id, prefix='', middle='chem'):
-    """
-    user_id - int, pk of User object
-    prefix  - str, first characters of desired DNA ID (default: from user.profile)
-    middle  - str, additional prefix characters (e.g. "E" for enzyme, default: 'chem')
-    """
-    user = User.objects.get( id=user_id )
-    prefix = prefix or user.profile.chPrefix or user.profile.prefix + middle
-
-    return suggestComponentId( M.ChemicalComponent, prefix )
-
-
-def suggestProteinId(user_id, prefix='', middle='aa'):
-    """
-    user_id - int, pk of User object
-    prefix  - str, first characters of desired ID (default: from user.profile)
-    middle  - str, additional prefix characters (e.g. "E" for enzyme, default: 'aa')
-    """
-    user = User.objects.get( id=user_id )
-    prefix = prefix or user.profile.pcPrefix or user.profile.prefix + middle
-
-    return suggestComponentId( M.ProteinComponent, prefix )
+def nextId(modelClass, user, category_id=None):
+    """Generic ID generator"""
+    f = getattr(modelClass, 'nextAvailableId', None)
+    if callable(f):
+        return f(user, category_id=category_id)
+    else:
+        return 'xxx'
 
 
 def __nextSampleInBox( samples ):
