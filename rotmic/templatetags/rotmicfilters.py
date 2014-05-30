@@ -20,7 +20,7 @@ from django.template.defaultfilters import stringfilter
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 
-from rotmic.models import DnaComponentType
+from rotmic.models.componentTypes import DnaComponentType
 import ratedcomments
 
 register = template.Library()
@@ -128,3 +128,38 @@ def get_verbose_short(object):
         return r
     return r.split()[0]
 
+@register.filter(is_safe=True)
+@stringfilter
+def guessComponentType(verbose_name):
+    """
+    Guess ComponentType based on DnaComponent Meta.verbose_name.
+    e.g. 'DNA constructs' -> DnaComponentType
+    """
+    try:
+        r = verbose_name.split()[0]
+        
+        ## Hack:
+        if r == 'Chemical':
+            return u'ChemicalType'
+        
+        r = r[0].upper() + r[1:].lower() + 'ComponentType'
+        
+        return r
+    except:
+        return ''
+
+@register.filter(is_safe=True)
+@stringfilter
+def guessComponentClass(verbose_name):
+    """
+    Guess Model class based on Meta.verbose_name.
+    e.g. 'DNA constructs' -> DnaComponent
+    """
+    try:
+        r = verbose_name.split()[0]
+        
+        r = r[0].upper() + r[1:].lower() + 'Component'
+        
+        return r
+    except:
+        return ''

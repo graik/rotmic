@@ -3,108 +3,100 @@
 {% load i18n admin_modify  %}
 {% load rotmicfilters %}
 
-    {# duplicating a line from parent template but activates syntax highlighting #}
+{% block after_field_sets %}
+
+    {{block.super}}
+
     <script language=javascript type='text/javascript'>
-        
-        {% block ajax-typeinfo %}"/getCellTypes/"{% endblock %}   
-            
-        {% block ajax-nextId %}"/rotmic/ajax/nextCellId/"{% endblock %}
-        
-        // Assign IDs to vector, marker fields (complete <div> with Label and help text)
-        // By default, input elements themselves are accessible by, for example:
-        // "id_marker" and "add_id_marker" (the Plus symbol for sub-forms). 
-        {% block func_initDiv %}
-        function initIdDiv(){
-            try{
-                var scr = "";
-                var divs = document.getElementsByTagName("div");
-                for(var i = 0; i < divs.length; i++){
-                    if (divs[i].className=='field-box field-plasmid') {
-                        divs[i].id = 'id_field_plasmid';
-                    }
-                    if (divs[i].className=='field-box field-markers') {
-                        divs[i].id = 'id_field_markers';
-                    }
-                }    
-            } catch (e) {
-                log(e.message);
-            }
-        }
-        {% endblock %}
-    
-        {% block extra_methods %}
+        //  
+        // Hide & Show input fields depending on selected strain  
+        //
 
-            // get (name of) currently selected componentType
-            function getCurrentType(){
-                var index = document.getElementById('id_componentType').selectedIndex;
-                if ( index != -1 ){
-                    return document.getElementById('id_componentType').options[index].label;
-                }
-                return "";
-            }
-            
-           // copy plasmid visibility flags from all registered CellComponentTypes
-            function typeAllowsPlasmid(name) {
-                var map = {
-                    {% for t in cellTypes %}"{{t.name}}" : {% if t.allowPlasmids %} true {% else %} false {%endif%},
-                    {% endfor %}};
+        // map plasmid flags from all registered CellComponentTypes
+        var map_allows_plasmid = {
+                {% for t in cellTypes %}"{{t.name}}" : {% if t.allowPlasmids %} true {% else %} false {%endif%},
+                {% endfor %}
+                };
                 
-                if ( !(name in map) ){ return false; };
-                return map[ name ];
-            }
-        
-            // copy marker visibility flags from all registered CellComponentTypes
-            function typeAllowsMarkers(name) {
-                var map = {
-                    {% for t in cellTypes %}"{{t.name}}" : {% if t.allowMarkers %} true {% else %} false {%endif%},
-                    {% endfor %}};
-            
-                if ( !(name in map) ){ return false; };
-                return map[ name ];
-            }
-        
-        {% endblock extra_methods %}
-    
-    
-        // hide or show input elements depending on chosen category or sub-type
-        {% block hideShow %}
-        function hideShow() {
-            var current_type = getCurrentType();
-            
-            if (typeAllowsPlasmid(current_type)){
-                document.getElementById('id_field_plasmid').style.visibility = 'visible';
-            } else {
-                document.getElementById('id_field_plasmid').style.visibility = 'hidden';
-            }
-    
-            if (typeAllowsMarkers(current_type)){
-                document.getElementById('id_field_markers').style.visibility = 'visible';
-            } else {
-                document.getElementById('id_field_markers').style.visibility = 'hidden';
-            }
-        }   
-        {% endblock %}
-        
-        {% block func_setPlusLinks %}
-        // override the link for "+" Buttons so that the correct category is pre-selected    
-        function setPlusLinks() {
-            django.jQuery("#add_id_markers").hide(); // hide the Marker + field
-
-            var urladd = "/rotmic/dnacomponent/add/?category="
-            {% with plasmid="Plasmid" %}
-                document.getElementById("add_id_plasmid").href = urladd + "{{plasmid|dnaCategoryToId}}";
-            {% endwith %}
+        // copy marker flags from all registered CellComponentTypes
+        var map_allows_marker = {
+                {% for t in cellTypes %}"{{t.name}}" : {% if t.allowMarkers %} true {% else %} false {%endif%},
+                {% endfor %}
+                };
+                
+        function typeAllowsPlasmid(name) {
+            if ( !(name in map_allows_plasmid) ){ return false; };
+            return map_allows_plasmid[ name ];
         }
-        {% endblock %}
     
-        {% block func_suggestName %}
-        // compose new Name from plasmid and cell name
-        function suggestName() {
-            if (document.getElementById('id_field_plasmid').style.visibility == 'visible'){
-                var f_cell = document.getElementById('id_componentType')
-                var cell = f_cell.options[f_cell.selectedIndex].label;
+        function typeAllowsMarkers(name) {
+            if ( !(name in map_allows_marker) ){ return false; };
+            return map_allows_marker[ name ];
+        }
+
+        function hideShow() {
+            var type = $("#id_componentType option:selected").text();
+            var f_plasmid = $('.field-box.field-plasmid').first()[0];
+            var f_markers= $('.field-box.field-markers').first()[0];
+            
+            if (typeAllowsMarkers(type)){
+                f_markers.style.visibility = 'visible'
+            } else{
+                f_markers.style.visibility = 'hidden'
+            }
+            
+            if (typeAllowsPlasmid(type)){
+                f_plasmid.style.visibility = 'visible'
+            } else{
+                f_plasmid.style.visibility = 'hidden'
+            }
+        }
+        
+        $('#id_componentType').change(hideShow);
+        $(document).ready(hideShow);
     
-                var plasmid = document.getElementById('id_plasmid_0').value;
+        //
+        // re-assign links for "Add new" (+) Links to include correct category
+        //
+        function setPlusLinks() {
+            $("#add_id_markers").hide(); // hide the Marker + field
+
+            var cat_plasmid =  "{{plasmid|dnaCategoryToId}}";
+            
+            var urladd = "{% url 'admin:rotmic_dnacomponent_add'%}?componentCategory="
+            $("#add_id_plasmid").attr('href', urladd + cat_plasmid);
+        }
+        
+        $(document).ready(setPlusLinks);
+
+        //
+        // suggest name on vector / insert / category change but protect user edit
+        //
+        var default_name = {%if original.pk %}"{{original.name}}"{%else%}''{%endif%};
+
+        function block_name(){
+            if ($('#id_name').val()){
+                sessionStorage.setItem('name_changed', "1"); //suggestName checks for == "1"
+                default_name = $('#id_name').val();
+            } else {
+                sessionStorage.setItem('name_changed', "0"); //re-activate suggestName
+                default_name = {%if original.pk %}"{{original.name}}"{%else%}''{%endif%};
+            }
+        }
+        
+        $("#id_name").change(block_name);
+
+        {%if original.pk %}//protect existing name from auto-edit
+            $(document).ready(block_name);
+        {%endif%}
+        
+        
+        function suggestName(){
+            if (sessionStorage.getItem('name_changed') != '1' ){
+                    
+                var cell = $("#id_componentType option:selected").text();
+    
+                var plasmid = $('#id_plasmid_0').val();
                 var pname = '';
                 // extract "name" from "displayId (name)"
                 if (plasmid){
@@ -116,36 +108,19 @@
                     }
                 }
                 
+                if ($('.field-box.field-plasmid').first()[0].style.visibility != 'visible'){
+                    pname = '';
+                }
+                
                 var r = pname + '@' + cell;
-                document.getElementById( 'id_name').value = r;
-            }
+                $('#id_name').val(r);
+            }    
         }
-        {% endblock %}
         
-        {% block func_typeAction %}
-        // method called if componentType (Species) select element is changed
-        function typeAction() {
-            setCategoryCache('lastType', document.getElementById( 'id_componentType' ).selectedIndex );
-            hideShow();
-            suggestName();
-        }
-        {% endblock %}
-    
-        // Append events to Main function
-        {% block setEventsExtra %}
-            document.getElementById( 'id_plasmid_0' ).djselectableselect = suggestName;
-        {% endblock %}
-        
-        {% block func_categoryAction %}
-        // method called if componentCategory select element is changed
-        function categoryAction(){
-            updateListBox();
-            hideShow();
-            suggestName();
-            // suggestId(); // only suggest ID on loading of the form
-        }
-        {% endblock func_categoryAction %}
+        $('#id_componentCategory').change(suggestName);
+        $('#id_componentType').change(suggestName);
+        $(document).ready(suggestName);
+        document.getElementById( 'id_plasmid_0' ).djselectableselect = suggestName;
 
-
-<!--    </script>-->
-    
+    </script>    
+{% endblock %}    

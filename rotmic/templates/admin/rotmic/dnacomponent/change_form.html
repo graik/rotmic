@@ -2,152 +2,150 @@
 
 {% load i18n admin_modify %}
 
+{% block after_field_sets %}
+    {{block.super}}
     
-    {# duplicating a line from parent template but activates syntax highlighting #}
-    {# <script language=javascript type='text/javascript'> #}
-    
-        {% block ajax-typeinfo %}"/getTypeDnaInfo/"{% endblock %}   
-            
-        {% block ajax-nextId %}"/rotmic/ajax/nextDnaId/"{% endblock %}
+    <script language=javascript type='text/javascript'>
+
+        // protect user edit and existing record's displayId; otherwise re-suggest on category change
+        {% if not original.pk %}  
+            $('#id_componentCategory').change(suggestId);
+        {% endif %}
         
-        // Assign IDs to vector, marker and insert fields (complete <div> with Label and help text)
-        // By default, input elements themselves are accessible by, for example:
-        // "id_marker" and "add_id_marker" (the Plus symbol for sub-forms). 
-        {% block func_initDiv %}
-        function initIdDiv(){
-            try{
-                var scr = "";
-                var divs = document.getElementsByTagName("div");
-                for(var i = 0; i < divs.length; i++){
-                    if (divs[i].className=='field-box field-insert') {
-                        divs[i].id = 'id_field_insert';
-                    }
-                    if (divs[i].className=='field-box field-markers') {
-                        divs[i].id = 'id_field_markers';
-                    }
-                    if (divs[i].className=='field-box field-vectorBackbone') {
-                        divs[i].id = 'id_field_vectorBackbone';
-                    }
-                    if (divs[i].className=='field-box field-translatesTo') {
-                        divs[i].id = 'id_field_translatesTo';
-                    }
-                }
-            } catch (e) {
-                log(e.message);
+        function block_displayId(){
+            if ($('#id_displayId').val()){
+                sessionStorage.setItem('displayId_changed', "1"); //suggestId checks for == "1"
+            } else {
+                sessionStorage.setItem('displayId_changed', "0"); //re-activate suggestId
             }
         }
-        {% endblock %}
-    
-        {% block hideShow %}
+        
+        $("#id_displayId").change(block_displayId);
+
+        //  
+        // Hide & Show input fields depending on category     
+        //
         function hideShow() {
-            var category = getCurrentCategory();
+            var category = $("#id_componentCategory option:selected").text();
+            var f_insert = $('.field-box.field-insert').first()[0];
+            var f_vector = $('.field-box.field-vectorBackbone').first()[0];
+            var f_markers= $('.field-box.field-markers').first()[0];
+            var f_translates = $('.field-box.field-translatesTo').first()[0]
             
             switch ( category ) {
                 case 'Vector Backbone':
-                    document.getElementById('id_field_insert').style.visibility = 'hidden';
-                    document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
-                    document.getElementById('id_field_markers').style.visibility = 'visible';
-                    document.getElementById('id_field_translatesTo').style.visibility = 'hidden';
+                    f_insert.style.visibility = 'hidden';
+                    f_vector.style.visibility = 'hidden';
+                    f_markers.style.visibility = 'visible';
+                    f_translates.style.visibility = 'hidden';
                     break;
                 case 'Plasmid':
-                    document.getElementById('id_field_insert').style.visibility = 'visible';
-                    document.getElementById('id_field_vectorBackbone').style.visibility = 'visible';
-                    document.getElementById('id_field_markers').style.visibility = 'hidden';
-                    document.getElementById('id_field_translatesTo').style.visibility = 'hidden';
+                    f_insert.style.visibility = 'visible';
+                    f_vector.style.visibility = 'visible';
+                    f_markers.style.visibility = 'hidden';
+                    f_translates.style.visibility = 'hidden';
                     break;
                 case 'Fragment':
-                    document.getElementById('id_field_insert').style.visibility = 'hidden';
-                    document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
-                    document.getElementById('id_field_markers').style.visibility = 'visible';
-                    document.getElementById('id_field_translatesTo').style.visibility = 'visible';
+                    f_insert.style.visibility = 'hidden';
+                    f_vector.style.visibility = 'hidden';
+                    f_markers.style.visibility = 'visible';
+                    f_translates.style.visibility = 'visible';
                     break;
                 case 'Marker':
-                    document.getElementById('id_field_insert').style.visibility = 'hidden';
-                    document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
-                    document.getElementById('id_field_markers').style.visibility = 'hidden';
-                    document.getElementById('id_field_translatesTo').style.visibility = 'hidden';
+                    f_insert.style.visibility = 'hidden';
+                    f_vector.style.visibility = 'hidden';
+                    f_markers.style.visibility = 'hidden';
+                    f_translates.style.visibility = 'hidden';
                     break;
                 default:
-                    document.getElementById('id_field_insert').style.visibility = 'hidden';
-                    document.getElementById('id_field_vectorBackbone').style.visibility = 'hidden';
-                    document.getElementById('id_field_markers').style.visibility = 'hidden';
-                    document.getElementById('id_field_translatesTo').style.visibility = 'hidden';
+                    f_insert.style.visibility = 'hidden';
+                    f_vector.style.visibility = 'hidden';
+                    f_markers.style.visibility = 'hidden';
+                    f_translates.first().style.visibility = 'hidden';
                     break;
             }
         }
-        {% endblock %}
         
-        {% block func_setPlusLinks %}    
-        // override the link for "+" Buttons so that the correct category is pre-selected    
+        $("#id_componentCategory").change(hideShow);
+        $( document ).ready(hideShow);
+
+
+        //
+        // suggest name on vector / insert / category change but protect user edit
+        //
+        var default_name = {%if original.pk %}"{{original.name}}"{%else%}''{%endif%};
+
+        function block_name(){
+            if ($('#id_name').val()){
+                sessionStorage.setItem('name_changed', "1"); //suggestName checks for == "1"
+                default_name = $('#id_name').val();
+            } else {
+                sessionStorage.setItem('name_changed', "0"); //re-activate suggestName
+                default_name = {%if original.pk %}"{{original.name}}"{%else%}''{%endif%};
+            }
+        }
+        
+        $("#id_name").change(block_name);
+
+        {%if original.pk %}//protect existing name from auto-edit
+            $(document).ready(block_name);
+        {%endif%}
+        
+        // extract "name" from "displayId (name)"
+        function _extractName( s ) {
+            var r = null;
+            if (s){
+                r = s.match( /\(.+\)/ );
+                if (r){
+                    r = r[0].slice(1,-1); // remove "(" and ")"
+                } else {
+                    r = s.split(' ')[0]; // use displayId and strip after first ' '
+                }
+            }
+            return r;
+        }
+
+        function suggestName(){
+            var category = $("#id_componentCategory option:selected").text();        
+
+            if ( sessionStorage.getItem('name_changed') != '1' ){
+                if (category == 'Plasmid'){
+                    var vector = $('#id_vectorBackbone_0').val();
+                    var insert = $('#id_insert_0').val();
+
+                    var r = [_extractName(vector), _extractName(insert) ];
+                    r = r.filter(function(x){return x != undefined});
+
+                    $('#id_name').val( r.join('_') );    
+
+                } else {
+                    $('#id_name').val( default_name );
+                }
+            }
+        }
+        
+        $('#id_componentCategory').change(suggestName);
+        document.getElementById( 'id_insert_0' ).djselectableselect = suggestName;
+        document.getElementById( 'id_vectorBackbone_0' ).djselectableselect = suggestName;
+        
+        //
+        // re-assign links for "Add new" (+) Links to include correct category
+        //
         function setPlusLinks() {
-            django.jQuery("#add_id_markers").hide(); // hide the Marker + field
+            $("#add_id_markers").hide(); // hide the Marker + field
 
             var categories = captureCategories();
             //var cat_marker = categories['Marker'].toString();
             var cat_vector = categories['Vector Backbone'].toString();
             var cat_insert = categories['Fragment'].toString();
             
-            var urladd = "/rotmic/dnacomponent/add/?category="
-            document.getElementById("add_id_vectorBackbone").href = urladd + cat_vector;
-            document.getElementById("add_id_insert").href = urladd + cat_insert;
+            var urladd = "{% url 'admin:rotmic_dnacomponent_add'%}?componentCategory="
+            $("#add_id_vectorBackbone").attr('href', urladd + cat_vector);
+            $("#add_id_insert").attr('href', urladd + cat_insert);
         }
-        {% endblock %}
         
-        {% block func_suggestName %}
-        // compose new Name from plasmid and cell name
-        function suggestName() {
-            var category = getCurrentCategory();
-            var name_field = document.getElementById('id_name');
-            
-            if (category == 'Plasmid'){
-                if (getCache('manualName_Plasmid')){
-                    name_field.value = getCache('manualName_Plasmid');
-                } else {
-            
-                    var vector = document.getElementById('id_vectorBackbone_0').value
-                    if (document.getElementById('id_field_insert').style.visibility == 'hidden'){
-                        vector = '';
-                    }
-                    
-                    var insert = document.getElementById('id_insert_0').value;
-                    if (document.getElementById('id_field_insert').style.visibility == 'hidden'){ 
-                        insert = ''; 
-                    }
-                    
-                    var r = _extractName(insert) + '_' + _extractName(vector);
-                    if (insert || vector){
-                        document.getElementById('id_name').value = r;
-                    } else {
-                        document.getElementById('id_name').value = '';
-                    }
-                }
-            } else {
-                if (getCache('manualName')){
-                    name_field.value = getCache('manualName');
-                }
-            }
-        }
-        {% endblock %}
-    
-        {% block func_nameAction %} 
-        // cache manually edited name
-        function nameAction() {
-            var current = document.getElementById('id_name').value;
-            //distinguish only between plasmid and any other category
-            if (getCurrentCategory() != 'Plasmid'){
-                setCache('manualName', current);
-            } else {
-                setCache('manualName_Plasmid', current);
-            }
-        }
-        {% endblock %}
-        
-        // Append events to Main function
-        {% block setEventsExtra %}
-            // see https://django-selectable.readthedocs.org/en/version-0.7.0/advanced.html
-            // for all available events
-            document.getElementById( 'id_insert_0' ).djselectableselect = suggestName;
-            document.getElementById( 'id_vectorBackbone_0' ).djselectableselect = suggestName;
-        {% endblock %}
-      
+        $(document).ready(setPlusLinks);
 
+    </script>
+    
+{% endblock %}

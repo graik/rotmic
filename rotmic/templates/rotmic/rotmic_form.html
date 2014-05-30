@@ -1,0 +1,81 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls admin_static admin_modify rotmicforms %}
+
+{# prepare for "select" autocomplete fields #}
+{% block extrahead %}
+
+    {# Note: selectable scripts and ressources: the order of load and super is important #}
+    {% load selectable_tags %}
+    {% include_ui_theme %}
+    {% include_jquery_libs %}
+
+    {# needed for selectable and calendar widgets #}   
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+        {{ form.media }}
+    
+    {# needed for selectable and calendar widgets #}   
+    <script type="text/javascript"
+        src="{% static 'admin/js/core.js' %}"></script>
+
+    {# needed for calendar widgets -- double-loading is for some ordering reason neccessary #}   
+    <script type="text/javascript"
+        src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
+    
+    {# In this case, super is actually empty #}
+    {{ block.super }} 
+{% endblock %}
+
+{# copied from changeform template#}
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
+{%endblock%}
+
+
+{% block breadcrumbs%}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
+    <a href="{% url 'admin:index' %}">Rotmic</a> &rsaquo;
+    <a href="{% url 'admin:rotmic_'|add:model_name|add:'_changelist' %}">{% block object-class1 %}{{verbose_name|capfirst}}s{% endblock %}</a> &rsaquo;
+    {% block last-breadcrumb %}Form{% endblock %} 
+</div>
+{% endblock %}
+
+
+{% block content %}        
+
+    {% block form-title %}<h2>Rotten Microbes Form</h2>{% endblock %}
+
+    <ul class="object-tools">
+        <li>
+            {% block help-links %}
+                <a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/upload-xls" class="helplink">{% trans "Help!" %}</a>
+            {% endblock %}
+        </li>
+    </ul>
+
+    
+    <!-- Upload form. Note enctype attribute! -->
+    <form action="{% block actionurl %}{% url "upload_xxxx" %}{% endblock %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}<p>{{ form.non_field_errors }}</p>{% endif %}
+
+        {% block form-fieldsets %}
+            <fieldset class="module">
+            
+                <h2>1. First Form section</h2>
+                                
+            </fieldset>
+         
+        {% endblock %}
+        
+        {% block submit-row %}
+            <div class="submit-row">        
+                <input type="submit" class="default" value="{%block submit-button%}Upload{%endblock%}">
+            </div>
+        {% endblock %}
+ 
+    </form>
+                
+{% endblock %}

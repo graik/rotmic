@@ -1,0 +1,67 @@
+{% extends "rotmic/upload/uploadGbk.html" %}
+{% load i18n admin_urls admin_static admin_modify rotmicforms %}
+
+{% block last-breadcrumb %}Upload Sequencing{% endblock %}
+
+{% block actionurl %}{% url "upload_tracefiles" %}{% endblock %}
+
+
+{%block form-title%}<h2>Attach Sequencing traces to Samples</h2>{%endblock%}
+
+{%block help-link%}
+    <a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/upload-xls" class="helplink">{% trans "Help!" %}</a>
+{% endblock %}
+        
+{% block form-fieldsets %}
+    
+    <fieldset class="module">
+    
+        <h2>1. Select Samples</h2>
+        
+        <p>One new sequencing record will be created for each sample. 
+        All trace files matched to a given sample will be attached to this new
+        record. Existing sequencing
+        records will <em>not</em> be modified. You must upload, at least,
+        one trace file for each selected sample.
+        </p>
+    
+        {% formrow form.samples tooltip=True %}
+        
+    </fieldset>
+    
+    <fieldset class="module">
+        <h2>2. Select Trace Files</h2>
+        
+        <p>
+        The file name will be used to match each trace to a sample. 
+        By default, file names are expected to start with the sample ID 
+        (the sample position within the container). You can change this 
+        matching pattern below.
+        </p>
+        
+        {% formrow form.files %}
+    
+        {% formrow form.matchBy ignoreRequired=True %}
+    
+        {% formrow form.matchPrimer ignoreRequired=True %}
+    
+    </fieldset>
+    
+    <fieldset class="module">
+        
+        <h2>3. Adjust Sequencing properties</h2>
+    
+        <p>
+            Trace files will be pooled into one new sequencing record for each sample.
+            You can adjust the properties of these new sequencing entries below.
+        </p>
+        
+        {% formrow form.evaluation %}
+        
+        {% formrow form.orderedAt form.orderedBy %}
+        
+        {% formrow form.comments %}
+    
+    </fieldset>
+        
+{% endblock %}

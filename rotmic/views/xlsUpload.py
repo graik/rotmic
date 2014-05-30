@@ -55,7 +55,7 @@ class AnnotationEditView(TemplateView):
 
 class XlsUploadView(TemplateView):
     """View for uploading Excel files into DnaComponent table"""
-    template_name = 'admin/rotmic/upload/uploadXls.html'
+    template_name = 'rotmic/upload/uploadXls.html'
    
     form_class = TableUploadForm
     

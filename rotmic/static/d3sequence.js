@@ -18,6 +18,7 @@
 * requires CSS:
 * - axis ... sequence ruler with regular position marks
 * - feature-label ... text properties for annotation labels
+* - sequence-text ... text properties for zoomed-in sequence display
 *
 * Usage:
 * <div id='containerElementId'></div>

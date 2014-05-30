@@ -1,0 +1,43 @@
+{% extends "rotmic/rotmic_form.html" %}
+{% load i18n admin_urls admin_static admin_modify rotmicforms %}
+
+{% block last-breadcrumb %}Update {{verbose_name|add:'s'}}{% endblock %}
+
+{% block actionurl %}{% url "update_many" model=model_name %}{% endblock %}
+
+
+{%block form-title%}<h2>Update {{verbose_name}}s</h2>{%endblock%}
+
+{%block help-link%}
+    <a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/update" class="helplink">{% trans "Help!" %}</a>
+{% endblock %}
+
+{% block form-fieldsets %}
+
+    <fieldset class="module">
+
+        <h2>1. Select Entries</h2>
+    
+        <p>Select the entries that you want to edit in parallel.</p>
+    
+        {% formrow form.entries %}
+
+    </fieldset>
+
+    <fieldset class="module">
+
+        <h2>2. Modify data</h2>
+    
+        <p>Any changes to any of the fields below will be applied to all the selected entries.</p>
+    
+        {% for field in form %}
+            {% if field.name != 'entries' %}
+                {% formrow field ignoreRequired=True%}
+            {% endif %}
+        {% endfor%}
+
+    </fieldset>
+
+{% endblock %}
+
+{%block submit-button%}Update All{%endblock%}
