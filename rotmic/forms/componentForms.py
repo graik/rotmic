@@ -250,11 +250,7 @@ class DnaComponentForm(GenbankComponentForm):
             raise ValidationError('Cannot assign category as type.')
         
         cat = r.category()
-        old = M.DnaComponentType.objects.get(id=self.initial['componentType']).category()
         
-        if cat.id == old.id: ## only worry if category had changed
-            return r
-
         if self.instance and self.instance.id and ('componentType' in self.changed_data):
             assert( isinstance(cat, M.DnaComponentType) )
             msg = 'Cannot change category / type: '
