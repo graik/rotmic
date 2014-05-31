@@ -250,27 +250,23 @@ class DnaComponentForm(GenbankComponentForm):
             raise ValidationError('Cannot assign category as type.')
         
         cat = r.category()
-        old = M.DnaComponentType.objects.get(id=self.initial['componentType']).category()
         
-        if cat.id == old.id: ## only worry if category had changed
-            return r
-
         if self.instance and self.instance.id and ('componentType' in self.changed_data):
             assert( isinstance(cat, M.DnaComponentType) )
             msg = 'Cannot change category / type: '
 
-            if cat.id != T.dcVectorBB and self.instance.as_vector_in_plasmid.count():
+            if cat.id != T.dcVectorBB.id and self.instance.as_vector_in_plasmid.count():
                 raise ValidationError(msg + 'This construct is in use as a vector backbone.')
             
             if not cat.id in [T.dcFragment.id, T.dcMarker.id] and \
                self.instance.as_insert_in_dna.count():
                 raise ValidationError(msg + 'This construct is in use as an insert.')
                 
-            if cat.id != T.dcMarker and (self.instance.as_marker_in_cell.count() \
+            if cat.id != T.dcMarker.id and (self.instance.as_marker_in_cell.count() \
                                        or self.instance.as_marker_in_dna.count() ):
                 raise ValidationError(msg + 'This construct is in use as a marker.')
         
-            if cat.id != T.dcPlasmid and self.instance.as_plasmid_in_cell.count():
+            if cat.id != T.dcPlasmid.id and self.instance.as_plasmid_in_cell.count():
                 raise ValidationError(msg + 'This construct is in use as a plasmid.')
         return r
     
