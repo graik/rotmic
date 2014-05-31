@@ -30,14 +30,12 @@ class Annotation(models.Model):
     bioEnd = models.PositiveIntegerField('to position', blank=True, null=True,
                                       help_text='ending position (including)')
     
-    preceedes = models.ForeignKey('self', verbose_name='Next', blank=True, null=True)
-
     strand = models.CharField('strand', max_length=1, choices=(('+',u'+'),('-',u'\u2013')), 
                               blank=False,
                               help_text='on strand (+...coding, -...anticoding)')
     
     @property
-    def parent(self):
+    def target(self):
         """@return properly type-cast parent component to which this annotation is assigned"""
         raise NotImplemented
     
@@ -52,8 +50,9 @@ class SequenceFeature(Annotation):
     typically coming from genbank entry.
     """
     
-    parentComponent = models.ForeignKey(Component, blank=False,
-                                        related_name='sequenceFeatures')
+    component = models.ForeignKey(Component, verbose_name='target construct',
+                                  blank=False,
+                               related_name='sequenceFeatures')
     
     name = models.CharField('Name', max_length=200, blank=False, 
                             help_text='short descriptive name')
@@ -72,15 +71,16 @@ class SequenceFeature(Annotation):
 class SequenceLink(Annotation):
     """Link a sequence region to another Component"""
 
-    parentComponent = models.ForeignKey(Component, blank=False,
-                                        related_name='sequenceLinks')
+    component = models.ForeignKey(Component, verbose_name='target construct',
+                                  blank=False,
+                                  related_name='sequenceLinks')
     
-    subComponent = models.ForeignKey(Component, verbose_name='Target',
-                                     related_name='parentLinks',
+    subComponent = models.ForeignKey(Component, verbose_name='source part',
+                                     related_name='linkedVia',
                                      blank=True, null=True )
 
     hardLink = models.BooleanField('hard link sequence', default=False, null=False, 
-                                   help_text='modify this sequence if target sequence changes')
+                                   help_text='modify target sequence if source sequence changes')
 
     class Meta:
         app_label = 'rotmic'        

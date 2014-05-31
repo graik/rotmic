@@ -27,6 +27,8 @@ from .annotations import Annotation
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
 
+from positions.fields import PositionField
+
 class StatusMixin(models.Model):
     
     STATUS_CHOICES = ( ('design', 'design'),
@@ -63,20 +65,44 @@ class AssemblyLink(Annotation):
     """Point to a particular region of a source DNA (considered hard link)"""
     ## Annotion provides: bioStart, bioEnd, strand, preceedes
     
-    source = models.ForeignKey(DnaComponent, blank=True,
+    assembly = models.ForeignKey('Assembly', verbose_name='target assembly',
+                                 null=False, blank=False, 
+                                 related_name='assemblyLinks')
+
+    subComponent = models.ForeignKey(DnaComponent, blank=True, null=True,
                                help_text='existing source DNA construct if any',
                                related_name='in_assemblyLinks')
     
     sequence = models.TextField( help_text='or specify new nucleotide sequence', 
-                                 blank=True, 
-                                 null=True )
+                                 blank=True )
     
-    order = models.IntegerField(max_length=2, help_text='position within assembly')
+    position = PositionField(collection='assembly')
     
     class Meta:
         app_label = 'rotmic'
         abstract = False
         order_by = ['order', ]
+
+
+class DnaAssembly(ComponentBase, StatusMixin):
+    """Capture information for a DNA assembly design"""
+    
+    METHOD_CHOICES = ( ('gibson', 'Gibson assembly'),
+                       ('golden', 'Golden Gate'),
+                       ('classic', 'restriction/ligation'),
+                       ('other', 'other') )
+    
+    method = models.CharField( max_length=30, choices=METHOD_CHOICES, 
+                               default='gibson')
+    
+    preparedAt = models.DateField(default=datetime.now().date(), verbose_name="Prepared")
+    
+    
+    reactions = models.ManyToManyField(DnaReaction)
+    
+    class Meta:
+        app_label = 'rotmic'
+        abstract = False
 
 
 class DnaReaction(models.Model):
@@ -94,6 +120,8 @@ class DnaReaction(models.Model):
  
     template = models.ForeignKey(DnaComponent, blank=True, null=True)
     
+    product = models.ForeignKey(DnaComponent, blank=True, null=True)
+    
     primer1 = models.ForeignKey(OligoComponent, blank=True, null=True)
     primer2 = models.ForeignKey(OligoComponent, blank=True, null=True)
     
@@ -106,24 +134,8 @@ class DnaReaction(models.Model):
     overhangLeft = models.IntegerField()
     overhangRight = models.IntegerField()
     
-
-class DnaAssembly(ComponentBase, StatusMixin):
-    """Capture information for a DNA assembly design"""
-    
-    METHOD_CHOICES = ( ('gibson', 'Gibson assembly'),
-                       ('golden', 'Golden Gate'),
-                       ('classic', 'restriction/ligation'),
-                       ('other', 'other') )
-    
-    method = models.CharField( max_length=30, choices=METHOD_CHOICES, 
-                               default='gibson')
-    
-    preparedAt = models.DateField(default=datetime.now().date, verbose_name="Prepared")
-    
-    parts = models.ManyToManyField(AssemblyLink)
-    
-    reactions = models.ManyToManyField(DnaReaction)
-    
     class Meta:
         app_label = 'rotmic'
         abstract = False
+
+
