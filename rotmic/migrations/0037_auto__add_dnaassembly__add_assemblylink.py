@@ -8,38 +8,65 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'SequenceFeature'
-        db.create_table(u'rotmic_sequencefeature', (
+        # Adding model 'DnaAssembly'
+        db.create_table(u'rotmic_dnaassembly', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('bioStart', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('bioEnd', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('strand', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('component', self.gf('django.db.models.fields.related.ForeignKey')(related_name='sequenceFeatures', to=orm['rotmic.Component'])),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('featureType', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('registeredBy', self.gf('django.db.models.fields.related.ForeignKey')(related_name='dnaassembly_created_by', to=orm['auth.User'])),
+            ('registeredAt', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 5, 31, 0, 0))),
+            ('modifiedBy', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='dnaassembly_modified_by', null=True, to=orm['auth.User'])),
+            ('modifiedAt', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 5, 31, 0, 0), blank=True)),
+            ('displayId', self.gf('django.db.models.fields.CharField')(unique=True, max_length=20)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
             ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('status', self.gf('django.db.models.fields.CharField')(default='design', max_length=30)),
+            ('method', self.gf('django.db.models.fields.CharField')(default='gibson', max_length=30)),
+            ('preparedAt', self.gf('django.db.models.fields.DateField')(default=datetime.datetime(2014, 5, 31, 0, 0))),
         ))
-        db.send_create_signal('rotmic', ['SequenceFeature'])
+        db.send_create_signal('rotmic', ['DnaAssembly'])
 
-        # Adding model 'SequenceLink'
-        db.create_table(u'rotmic_sequencelink', (
+        # Adding M2M table for field authors on 'DnaAssembly'
+        m2m_table_name = db.shorten_name(u'rotmic_dnaassembly_authors')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('dnaassembly', models.ForeignKey(orm['rotmic.dnaassembly'], null=False)),
+            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['dnaassembly_id', 'user_id'])
+
+        # Adding M2M table for field projects on 'DnaAssembly'
+        m2m_table_name = db.shorten_name(u'rotmic_dnaassembly_projects')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('dnaassembly', models.ForeignKey(orm['rotmic.dnaassembly'], null=False)),
+            ('project', models.ForeignKey(orm['rotmic.project'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['dnaassembly_id', 'project_id'])
+
+        # Adding model 'AssemblyLink'
+        db.create_table(u'rotmic_assemblylink', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('bioStart', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
             ('bioEnd', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
             ('strand', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('component', self.gf('django.db.models.fields.related.ForeignKey')(related_name='sequenceLinks', to=orm['rotmic.Component'])),
-            ('subComponent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='linkedVia', null=True, to=orm['rotmic.Component'])),
-            ('hardLink', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('assembly', self.gf('django.db.models.fields.related.ForeignKey')(related_name='partLinks', to=orm['rotmic.DnaAssembly'])),
+            ('component', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='assemblyLinks', null=True, to=orm['rotmic.DnaComponent'])),
+            ('sequence', self.gf('django.db.models.fields.TextField')(blank=True)),
         ))
-        db.send_create_signal('rotmic', ['SequenceLink'])
+        db.send_create_signal('rotmic', ['AssemblyLink'])
 
 
     def backwards(self, orm):
-        # Deleting model 'SequenceFeature'
-        db.delete_table(u'rotmic_sequencefeature')
+        # Deleting model 'DnaAssembly'
+        db.delete_table(u'rotmic_dnaassembly')
 
-        # Deleting model 'SequenceLink'
-        db.delete_table(u'rotmic_sequencelink')
+        # Removing M2M table for field authors on 'DnaAssembly'
+        db.delete_table(db.shorten_name(u'rotmic_dnaassembly_authors'))
+
+        # Removing M2M table for field projects on 'DnaAssembly'
+        db.delete_table(db.shorten_name(u'rotmic_dnaassembly_projects'))
+
+        # Deleting model 'AssemblyLink'
+        db.delete_table(u'rotmic_assemblylink')
 
 
     models = {
@@ -78,6 +105,16 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        'rotmic.assemblylink': {
+            'Meta': {'object_name': 'AssemblyLink'},
+            'assembly': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'partLinks'", 'to': "orm['rotmic.DnaAssembly']"}),
+            'bioEnd': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'bioStart': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'component': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'assemblyLinks'", 'null': 'True', 'to': "orm['rotmic.DnaComponent']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'sequence': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'strand': ('django.db.models.fields.CharField', [], {'max_length': '1'})
         },
         'rotmic.cellcomponent': {
             'Meta': {'ordering': "['displayId']", 'object_name': 'CellComponent', '_ormbases': ['rotmic.Component']},
@@ -154,6 +191,22 @@ class Migration(SchemaMigration):
             'rack': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'containers'", 'to': "orm['rotmic.Rack']"}),
             'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 31, 0, 0)'}),
             'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'container_created_by'", 'to': u"orm['auth.User']"})
+        },
+        'rotmic.dnaassembly': {
+            'Meta': {'object_name': 'DnaAssembly'},
+            'authors': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'dnaassemblys_authored'", 'symmetrical': 'False', 'to': u"orm['auth.User']"}),
+            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'displayId': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '20'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'method': ('django.db.models.fields.CharField', [], {'default': "'gibson'", 'max_length': '30'}),
+            'modifiedAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 31, 0, 0)', 'blank': 'True'}),
+            'modifiedBy': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'dnaassembly_modified_by'", 'null': 'True', 'to': u"orm['auth.User']"}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            'preparedAt': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 5, 31, 0, 0)'}),
+            'projects': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'dnaassemblys'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['rotmic.Project']"}),
+            'registeredAt': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 5, 31, 0, 0)'}),
+            'registeredBy': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'dnaassembly_created_by'", 'to': u"orm['auth.User']"}),
+            'status': ('django.db.models.fields.CharField', [], {'default': "'design'", 'max_length': '30'})
         },
         'rotmic.dnacomponent': {
             'Meta': {'ordering': "['displayId']", 'object_name': 'DnaComponent', '_ormbases': ['rotmic.Component']},

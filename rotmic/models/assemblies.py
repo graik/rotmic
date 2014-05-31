@@ -65,23 +65,23 @@ class AssemblyLink(Annotation):
     """Point to a particular region of a source DNA (considered hard link)"""
     ## Annotion provides: bioStart, bioEnd, strand, preceedes
     
-    assembly = models.ForeignKey('Assembly', verbose_name='target assembly',
+    assembly = models.ForeignKey('DnaAssembly', verbose_name='target assembly',
                                  null=False, blank=False, 
-                                 related_name='assemblyLinks')
+                                 related_name='partLinks')
 
-    subComponent = models.ForeignKey(DnaComponent, blank=True, null=True,
+    component = models.ForeignKey(DnaComponent, blank=True, null=True,
                                help_text='existing source DNA construct if any',
-                               related_name='in_assemblyLinks')
+                               related_name='assemblyLinks')
     
     sequence = models.TextField( help_text='or specify new nucleotide sequence', 
                                  blank=True )
     
-    position = PositionField(collection='assembly')
+    ##position = PositionField(collection='assembly')
     
     class Meta:
         app_label = 'rotmic'
         abstract = False
-        order_by = ['order', ]
+        ##order_by = ['position', ]
 
 
 class DnaAssembly(ComponentBase, StatusMixin):
@@ -98,44 +98,44 @@ class DnaAssembly(ComponentBase, StatusMixin):
     preparedAt = models.DateField(default=datetime.now().date(), verbose_name="Prepared")
     
     
-    reactions = models.ManyToManyField(DnaReaction)
+##    reactions = models.ManyToManyField(DnaReaction)
     
     class Meta:
         app_label = 'rotmic'
         abstract = False
 
 
-class DnaReaction(models.Model):
-    """
-    capture information for experimental preparation of a DNA fragment,
-    typically by PCR.
-    """
-    METHOD_CHOICES = ( ('PCR', 'PCR'),
-                       ('digest', 'restriction digest'),
-                       ('synthesis', 'gene synthesis'),
-                       ('other', 'other') )
-    
-    method = models.CharField( max_length=30, choices=METHOD_CHOICES, 
-                               default='PCR')
- 
-    template = models.ForeignKey(DnaComponent, blank=True, null=True)
-    
-    product = models.ForeignKey(DnaComponent, blank=True, null=True)
-    
-    primer1 = models.ForeignKey(OligoComponent, blank=True, null=True)
-    primer2 = models.ForeignKey(OligoComponent, blank=True, null=True)
-    
-    flankLeft = models.CharField(max_length=100, blank=True)
-    flankRight = models.CharField(max_length=100, blank=True)
-
-    tm3 = models.FloatField(verbose_name="Tm3'")
-    tm  = models.FloatField(verbose_name='Tm full')
-    
-    overhangLeft = models.IntegerField()
-    overhangRight = models.IntegerField()
-    
-    class Meta:
-        app_label = 'rotmic'
-        abstract = False
-
+##class DnaReaction(models.Model):
+##    """
+##    capture information for experimental preparation of a DNA fragment,
+##    typically by PCR.
+##    """
+##    METHOD_CHOICES = ( ('PCR', 'PCR'),
+##                       ('digest', 'restriction digest'),
+##                       ('synthesis', 'gene synthesis'),
+##                       ('other', 'other') )
+##    
+##    method = models.CharField( max_length=30, choices=METHOD_CHOICES, 
+##                               default='PCR')
+##    // or PartLink?
+##    template = models.ForeignKey(DnaComponent, blank=True, null=True)
+##    
+##    product = models.ForeignKey(DnaComponent, blank=True, null=True)
+##    
+##    primer1 = models.ForeignKey(OligoComponent, blank=True, null=True)
+##    primer2 = models.ForeignKey(OligoComponent, blank=True, null=True)
+##    
+##    flankLeft = models.CharField(max_length=100, blank=True)
+##    flankRight = models.CharField(max_length=100, blank=True)
+##
+##    tm3 = models.FloatField(verbose_name="Tm3'")
+##    tm  = models.FloatField(verbose_name='Tm full')
+##    
+##    overhangLeft = models.IntegerField()
+##    overhangRight = models.IntegerField()
+##    
+##    class Meta:
+##        app_label = 'rotmic'
+##        abstract = False
+##
 

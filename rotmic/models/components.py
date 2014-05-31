@@ -57,7 +57,7 @@ class ComponentBase(UserMixin):
     
     projects = models.ManyToManyField('Project', blank=True, null=True,
                                       verbose_name='Projects',
-                                     related_name='components',   ## end with + to suppress reverse relationship
+                                     related_name='%(class)ss',   ## end with + to suppress reverse relationship
                                      )
 
     description = models.TextField('Description', blank=True,
@@ -114,7 +114,6 @@ class ComponentBase(UserMixin):
         abstract = True
         ordering = ['displayId']   
     
-
 
 class Component(ComponentBase, ReadonlyUrlMixin):
     """

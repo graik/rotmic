@@ -29,7 +29,7 @@ class SingleSequenceLinkForm(forms.ModelForm):
 
 DnaAnnotationFormSet = inlineformset_factory(
     DnaComponent, SequenceLink, 
-    fk_name='parentComponent',
+    fk_name='component',
     form=SingleSequenceLinkForm,
     extra=2,
     )

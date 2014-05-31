@@ -39,3 +39,4 @@ from rotmic.models.projects import Project
 
 from rotmic.models.annotations import Annotation, SequenceLink
 
+from rotmic.models.assemblies import DnaAssembly, AssemblyLink
