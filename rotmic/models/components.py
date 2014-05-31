@@ -236,19 +236,20 @@ class DnaComponent(Component, StatusMixinDna):
         dnasamples = self.dna_samples.all()
         return list(dnasamples) + list(self.cellSamples)
 
-
     @staticmethod
     def nextAvailableId(user, prefix=None, category_id=None):
         """
         determine the next free ID for given user and component category.
         category_id - int, pk of ComponentType instance selected in Category field
         """
+        import rotmic.initialTypes as T  ## local import to avoid recursion
+        
         cat = DnaComponentType.objects.get(id=category_id)
         
         default_prefix = user.profile.dcPrefix or user.profile.prefix
 
-        middle = cat.name.lower()[0]
-        default_prefix += middle
+        if cat.id in [T.dcMarker.id, T.dcFragment.id, T.dcVectorBB.id]:
+            default_prefix += cat.name.lower()[0] 
         
         prefix = prefix or default_prefix
         
