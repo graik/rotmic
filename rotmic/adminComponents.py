@@ -44,24 +44,10 @@ class ComponentAttachmentInline(admin.TabularInline):
     extra = 1
     max_num = 5
 
-class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, UpdateManyMixin ):
+class ComponentAdminMixin(UserRecordMixin):
     """
-    Derived from ViewFirstModelAdmin -- Custom version of admin.ModelAdmin
-    which shows a read-only View for a given object instead of the normal
-    ChangeForm. The changeForm is accessed by admin/ModelName/id/edit.
-    
-    In addition, there is extra_context provided to the change_view:
-    * dnaTypes -- all registered instances of DnaComponentType
-    * cellTypes -- all CellComponentTypes
-    * dnaCategories -- all "super" or base-level DnaComponentTypes
-    * cellCategories -- all "super" or base-level CellComponentTypes
-    
-    Component-specific methods:
-    * showDescription -- truncated description with html mouse-over full text for tables
-    * showStatus
-    * showFirstAuthor -- show first; indicate by '+' if there is additional authors
-    * showSampleStatus -- pretty symbols for availability of samples
-    * showType -- shortened text repr. of category/Type
+    Admin Base class for Component-related Tables with UserRecords, displayId,
+    authors etc. 
     """
     
     permit_delete = ['registeredBy', 'authors']
@@ -76,50 +62,11 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, Up
                                ('Modified', 'modificationDate()'),
                                ('Modified By','modifiedBy.username'),
                                ('Projects', "projects.values_list('name', flat=True)"),
-                               ('Category', 'componentType.category()'),
-                               ('Type', 'componentType.name'),
                                ])
 
-    actions = [ 'delete_selected',  ## This is needed to activate non-author delete protection               
-                'make_update',
-               ]  
+    actions = ['delete_selected',  ## This is needed to activate non-author delete protection
+               'make_csv'] 
     
-    ## list field names that should be excluded from the bulk update dialog
-    exclude_from_update = ['displayId', 'name', 'category', 'componentCategory']
-    
-    def queryset(self, request):
-        """
-        Return actual sub-class instances instead of generic Component super-class
-        This method builds on the custom InheritanceManager replacing Component.objects
-        """
-        return super(ViewFirstModelAdmin,self).queryset(request).select_subclasses()
-
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        "The 'Edit' admin view for this model."
-        extra_context = extra_context or {}
-        
-        extra_context['dnaTypes'] = M.DnaComponentType.objects.all()
-        extra_context['dnaCategories'] = M.DnaComponentType.objects.filter(subTypeOf=None)
-        extra_context['cellTypes'] = M.CellComponentType.objects.all()
-        extra_context['cellCategories'] = M.CellComponentType.objects.filter(subTypeOf=None)
-        
-        return super(ComponentAdmin, self).change_view(\
-            request, object_id, form_url, extra_context=extra_context)
-
-
-    def add_view(self, request, form_url='', extra_context=None):
-        "The 'Add new' admin view for this model."
-        extra_context = extra_context or {}
-        
-        extra_context['dnaTypes'] = M.DnaComponentType.objects.all()
-        extra_context['dnaCategories'] = M.DnaComponentType.objects.filter(subTypeOf=None)
-        extra_context['cellTypes'] = M.CellComponentType.objects.all()
-        extra_context['cellCategories'] = M.CellComponentType.objects.filter(subTypeOf=None)
-        
-        return super(ComponentAdmin, self).add_view(\
-            request, form_url, extra_context=extra_context)
-
-
     def showDescription(self, obj):
         """
         @return: str; truncated description with full description mouse-over
@@ -134,6 +81,50 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, Up
     showDescription.allow_tags = True
     showDescription.short_description = 'Description'
     
+    def showFirstAuthor(self, obj):
+        r = u'%s' % obj.authors.first()
+        if obj.authors.count() > 1:
+            r += '+'
+        return r
+    showFirstAuthor.allow_tags = True
+    showFirstAuthor.short_description = 'Authors'
+
+    def make_csv(self, request, queryset):
+        return export_csv( request, queryset, self.csv_fields)
+    make_csv.short_description = 'Export items as CSV'
+
+
+class ComponentAdmin( ComponentAdminMixin, RequestFormMixin, ViewFirstModelAdmin, UpdateManyMixin ):
+    """
+    Derived from ViewFirstModelAdmin -- Custom version of admin.ModelAdmin
+    which shows a read-only View for a given object instead of the normal
+    ChangeForm. The changeForm is accessed by admin/ModelName/id/edit.
+    
+    Component-specific methods:
+    * showDescription -- truncated description with html mouse-over full text for tables
+    * showStatus
+    * showFirstAuthor -- show first; indicate by '+' if there is additional authors
+    * showSampleStatus -- pretty symbols for availability of samples
+    * showType -- shortened text repr. of category/Type
+    """
+    ## custom class variable for table generation
+    csv_fields = OrderedDict( ComponentAdminMixin.csv_fields.items() + 
+                              [('Category', 'componentType.category()'),
+                               ('Type', 'componentType.name'),
+                               ])
+
+    actions = ComponentAdminMixin.actions + ['make_update']  
+    
+    ## list field names that should be excluded from the bulk update dialog
+    exclude_from_update = ['displayId', 'name', 'category', 'componentCategory']
+    
+    def queryset(self, request):
+        """
+        Return actual sub-class instances instead of generic Component super-class
+        This method builds on the custom InheritanceManager replacing Component.objects
+        """
+        return super(ViewFirstModelAdmin,self).queryset(request).select_subclasses()
+
     def showType(self, obj):
         cat = unicode(obj.componentType.category())
         try:
@@ -143,14 +134,6 @@ class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, Up
         return cat + '/ ' + unicode(obj.componentType.name)
     showType.allow_tags = True
     showType.short_description = 'Type'
-
-    def showFirstAuthor(self, obj):
-        r = u'%s' % obj.authors.first()
-        if obj.authors.count() > 1:
-            r += '+'
-        return r
-    showFirstAuthor.allow_tags = True
-    showFirstAuthor.short_description = 'Authors'
 
     def showSampleStatus(self, obj):
         fyes = ST.static('admin/img/icon-yes.gif')
@@ -219,7 +202,7 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     
     ordering = ('displayId', 'name')
     
-    actions = ComponentAdmin.actions + ['make_csv', 'make_genbank']
+    actions = ComponentAdmin.actions + ['make_genbank']
     
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
@@ -310,11 +293,6 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     showSampleStatus.allow_tags = True    
     showSampleStatus.short_description = 'Smpls' 
 
-
-    def make_csv(self, request, queryset):
-        return export_csv( request, queryset, self.csv_fields)
-    make_csv.short_description = 'Export items as CSV'
-
     def make_genbank(self, request, queryset):
         """List view action to attach sequencing data to samples"""
         ## see https://docs.djangoproject.com/en/dev/ref/contrib/admin/actions/#actions-that-provide-intermediate-pages
@@ -364,8 +342,6 @@ class CellComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     
     ordering = ('displayId', 'name',)
     
-    actions = ['make_csv'] + ComponentAdmin.actions
-    
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
                               [
@@ -402,11 +378,6 @@ class CellComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
         return ', '.join(urls)    
     showMarkerUrls.allow_tags = True
     showMarkerUrls.short_description = 'Markers'
-
-    def make_csv(self, request, queryset):
-        return export_csv( request, queryset, self.csv_fields)
-    make_csv.short_description = 'Export items as CSV'
-
 
 admin.site.register(M.CellComponent, CellComponentAdmin)
 
@@ -449,8 +420,6 @@ class OligoComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     
     ordering = ('displayId', 'name',)
     
-    actions = ['make_csv'] + ComponentAdmin.actions
-
     ## custom class variable for table generation
     csv_fields = OrderedDict( [('ID', 'displayId'),
                                ('Name', 'name'),
@@ -479,11 +448,6 @@ class OligoComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
         return ''
     showTm.allow_tags = True
     showTm.short_description = 'Tm'
-    
-    def make_csv(self, request, queryset):
-        return export_csv( request, queryset, self.csv_fields)
-    make_csv.short_description = 'Export items as CSV'
-
     
 admin.site.register(M.OligoComponent, OligoComponentAdmin)
 
@@ -525,8 +489,6 @@ class ChemicalComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     
     ordering = ('displayId', 'name')
     
-    actions = ['make_csv'] + ComponentAdmin.actions
-
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
                               [
@@ -538,10 +500,6 @@ class ChemicalComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""
         return super(ComponentAdmin,self).queryset(request)
-
-    def make_csv(self, request, queryset):
-        return export_csv( request, queryset, self.csv_fields)
-    make_csv.short_description = 'Export items as CSV'
 
 admin.site.register(M.ChemicalComponent, ChemicalComponentAdmin)
 
@@ -581,7 +539,7 @@ class ProteinComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
     
     ordering = ('displayId', 'name')
     
-    actions = ['make_csv', 'make_genbank'] + ComponentAdmin.actions
+    actions = ['make_genbank'] + ComponentAdmin.actions
 
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
@@ -598,10 +556,6 @@ class ProteinComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
         """Revert modification made by ComponentModelAdmin"""
         return super(ComponentAdmin,self).queryset(request)
 
-    def make_csv(self, request, queryset):
-        return export_csv( request, queryset, self.csv_fields)
-    make_csv.short_description = 'Export items as CSV'
-    
     def make_genbank(self, request, queryset):
         """List view action to attach sequencing data to samples"""
         ## see https://docs.djangoproject.com/en/dev/ref/contrib/admin/actions/#actions-that-provide-intermediate-pages

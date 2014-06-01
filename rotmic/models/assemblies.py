@@ -70,21 +70,32 @@ class AssemblyLink(Annotation):
                                  related_name='partLinks')
 
     component = models.ForeignKey(DnaComponent, blank=True, null=True,
+                                  verbose_name='source construct',
                                help_text='existing source DNA construct if any',
                                related_name='assemblyLinks')
     
-    sequence = models.TextField( help_text='or specify new nucleotide sequence', 
-                                 blank=True )
+    sequence = models.TextField(verbose_name='or specify sequence', 
+                                help_text='or specify new nucleotide sequence', 
+                                blank=True )
     
     ##position = PositionField(collection='assembly')
+    
+    def __unicode__(self):
+        r = u'%(id)s #%(pos)i: %(component)s[%(start)i : %(end)i]'
+        d = dict(id=self.assembly.displayId, pos=0, 
+                 component=self.component.__unicode__() if self.component else 'synthesis',
+                 start=self.bioStart or 0,
+                 end=self.bioEnd or -1)
+        return r % d
     
     class Meta:
         app_label = 'rotmic'
         abstract = False
+        verbose_name = 'Assembly Link'
         ##order_by = ['position', ]
 
 
-class DnaAssembly(ComponentBase, StatusMixin):
+class DnaAssembly(StatusMixin, ReadonlyUrlMixin, ComponentBase):
     """Capture information for a DNA assembly design"""
     
     METHOD_CHOICES = ( ('gibson', 'Gibson assembly'),
@@ -103,6 +114,8 @@ class DnaAssembly(ComponentBase, StatusMixin):
     class Meta:
         app_label = 'rotmic'
         abstract = False
+        verbose_name = 'DNA Assembly'
+        verbose_name_plural = 'DNA Assemblies'
 
 
 ##class DnaReaction(models.Model):

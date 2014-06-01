@@ -24,14 +24,14 @@ from .componentTypes import DnaComponentType
 class Annotation(models.Model):
     """Base class for part annotations (links) between different kind of components"""
 
-    bioStart = models.PositiveIntegerField('from position', blank=True, null=True,
+    bioStart = models.PositiveIntegerField('from', blank=True, null=True,
                                         help_text='starting position (beginning with 1)')
     
-    bioEnd = models.PositiveIntegerField('to position', blank=True, null=True,
+    bioEnd = models.PositiveIntegerField('to', blank=True, null=True,
                                       help_text='ending position (including)')
     
     strand = models.CharField('strand', max_length=1, choices=(('+',u'+'),('-',u'\u2013')), 
-                              blank=False,
+                              blank=False, default='+',
                               help_text='on strand (+...coding, -...anticoding)')
     
     @property
