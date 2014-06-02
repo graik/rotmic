@@ -1,3 +1,5 @@
+// Note: if there are more than one inline blocks on the form, this will propably not work
+
 var ordering = (function($){
 
     var sort_column = 'position';
@@ -6,6 +8,15 @@ var ordering = (function($){
         initialiseRows();
     });
     
+    $('.add-row a').live('click', function(){
+        initialiseRows();
+    });
+    
+    $('.inline-deletelink').live('click', function(){
+        initialiseRows();
+    });
+   
+
     function initialiseRows(){
         var last_so = 0;
     
@@ -29,8 +40,6 @@ var ordering = (function($){
             // Setup the up/down button html for this row
             var btnUpHtml = '<input type="button" class="moveButton" title="move one up" value="&#x2b06" onclick="ordering.move(' + i + ', 1)">';
             var btnDownHtml = '<input type="button" class="moveButton" title="move one down" value="&#x2b07" onclick="ordering.move(' + i + ', 0)">';
-//            var btnUpHtml = '<input type="button" class="moveButton" value="&#x25b2" onclick="ordering.move(' + i + ', 1)">';
-//            var btnDownHtml = '<input type="button" class="moveButton" value="&#x25bc" onclick="ordering.move(' + i + ', 0)">';
     
             // Apply the up button to all but the first row
             if(this_sort > 1)
@@ -74,7 +83,8 @@ var ordering = (function($){
     }
 
     return {
-        move: moveRow
+        move: moveRow,
+        init: initialiseRows,
     }
 
 })(django.jQuery);

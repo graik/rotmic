@@ -34,7 +34,7 @@ class AssemblyLinkInline(admin.TabularInline):
 
     can_delete=True
     extra = 4
-    max_num = 5
+    max_num = 10
     
     fieldsets = (
         ('Parts', {
