@@ -27,8 +27,6 @@ from .annotations import Annotation
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
 
-from positions.fields import PositionField
-
 class StatusMixin(models.Model):
     
     STATUS_CHOICES = ( ('design', 'design'),
@@ -78,7 +76,7 @@ class AssemblyLink(Annotation):
                                 help_text='or specify new nucleotide sequence', 
                                 blank=True )
     
-    ##position = PositionField(collection='assembly')
+    position = models.SmallIntegerField()
     
     def __unicode__(self):
         r = u'%(id)s #%(pos)i: %(component)s[%(start)i : %(end)i]'
@@ -92,8 +90,8 @@ class AssemblyLink(Annotation):
         app_label = 'rotmic'
         abstract = False
         verbose_name = 'Assembly Link'
-        ##order_by = ['position', ]
-
+        ordering = ['assembly', 'position']
+        
 
 class DnaAssembly(StatusMixin, ReadonlyUrlMixin, ComponentBase):
     """Capture information for a DNA assembly design"""

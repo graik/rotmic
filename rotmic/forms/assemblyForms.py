@@ -39,3 +39,6 @@ class AssemblyLinkForm(forms.ModelForm):
                    'sequence' : forms.Textarea(attrs={'cols': 50, 'rows': 2,
                                              'style':'font-family:monospace'})
                    }
+
+    class Media: 
+        js = ['inline_ordering.js', ]
