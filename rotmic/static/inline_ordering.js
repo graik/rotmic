@@ -8,6 +8,7 @@ var ordering = (function($){
         initialiseRows();
     });
     
+    // live() is deprecated in more recent jQuery and replaced by on()    
     $('.add-row a').live('click', function(){
         initialiseRows();
     });
