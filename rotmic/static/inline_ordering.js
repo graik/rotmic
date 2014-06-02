@@ -27,8 +27,10 @@ var ordering = (function($){
             last_so = this_sort;
     
             // Setup the up/down button html for this row
-            var btnUpHtml = '<input type="button" class="moveButton" value="Up" onclick="ordering.move(' + i + ', 1)">';
-            var btnDownHtml = '<input type="button" class="moveButton" value="Down" onclick="ordering.move(' + i + ', 0)">';
+            var btnUpHtml = '<input type="button" class="moveButton" title="move one up" value="&#x2b06" onclick="ordering.move(' + i + ', 1)">';
+            var btnDownHtml = '<input type="button" class="moveButton" title="move one down" value="&#x2b07" onclick="ordering.move(' + i + ', 0)">';
+//            var btnUpHtml = '<input type="button" class="moveButton" value="&#x25b2" onclick="ordering.move(' + i + ', 1)">';
+//            var btnDownHtml = '<input type="button" class="moveButton" value="&#x25bc" onclick="ordering.move(' + i + ', 0)">';
     
             // Apply the up button to all but the first row
             if(this_sort > 1)
