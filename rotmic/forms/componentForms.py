@@ -58,10 +58,13 @@ def getComponentWidgets( extra={} ):
     """widgets shared between different types of Component forms."""
     r = {'displayId' : forms.TextInput(attrs={'size':10,
                             'title':'IDs must fit the pattern a[bcdef]1234[ab].'\
-                            +' That means, 1 - 6 lower case letters + four digits + 0 - 2 lower case letters.'
+                            +' That means, 1 - 6 lower case letters + four digits + 0 - 2 lower case letters.'\
+                            +' Erase (and change category) in order to re-activate the automatic ID suggestion.'
                         }),
          
-         'name' : forms.TextInput(attrs={'size':25}),
+         'name' : forms.TextInput(attrs={'size':25,
+                            'title' : 'Erase in order to re-activate automatic name composition from vector and insert.'
+                        }),
 
          'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                           'style':'font-family:monospace'}),
