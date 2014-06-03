@@ -180,7 +180,7 @@ class DnaComponent(Component, StatusMixinDna):
     
     insert = models.ForeignKey( 'self', blank=True, null=True,
                                 related_name='as_insert_in_dna',
-                                help_text='start typing ID or name of insert DNA (Fragment)')
+                                help_text='start typing ID or name of DNA <b>Fragment</b>')
     
     vectorBackbone = models.ForeignKey( 'self', blank=True, null=True ,
                                         verbose_name='Vector Backbone',

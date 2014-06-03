@@ -56,15 +56,23 @@ class CleaningMixIn:
 
 def getComponentWidgets( extra={} ):
     """widgets shared between different types of Component forms."""
-    r = {'displayId' : forms.TextInput(attrs={'size':10}),
+    r = {'displayId' : forms.TextInput(attrs={'size':10,
+                            'title':'IDs must fit the pattern a[bcdef]1234[ab].'\
+                            +' That means, 1 - 6 lower case letters + four digits + 0 - 2 lower case letters.'
+                        }),
+         
          'name' : forms.TextInput(attrs={'size':25}),
 
          'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                           'style':'font-family:monospace'}),
          
-         'projects': L.FixedSelectMultipleWidget(lookup_class=L.ProjectLookup,),
+         'projects': L.FixedSelectMultipleWidget(lookup_class=L.ProjectLookup,
+                            attrs={'title':'Assign one or more projects. Start typing part of the project name to restrict the choice.'
+                        }),
 
-         'authors': L.FixedSelectMultipleWidget(lookup_class=L.UserLookup,),
+         'authors': L.FixedSelectMultipleWidget(lookup_class=L.UserLookup,
+                            attrs={'title':'Assign one or more authors. Start typing beginning of user-, first or last name to restrict the choice.'
+                        }),
          }
     r.update( extra )
     return r
@@ -340,17 +348,25 @@ class DnaComponentForm(GenbankComponentForm):
                                                'style':'font-family:monospace'}), 
 
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=L.InsertLookup, 
-                                                       allow_new=False,
-                                                       attrs={'size':32}),
+                            allow_new=False,
+                            attrs={'size':32,
+                                   'title':'Select a DNA construct (must be classified as "Fragment").'
+                        }),
             'vectorBackbone' : sforms.AutoComboboxSelectWidget(
-                                                  lookup_class=L.VectorLookup, 
-                                                  allow_new=False),
+                                   lookup_class=L.VectorLookup, 
+                                   allow_new=False,
+                                   attrs={'title': 'Select a DNA construct (must be classified as "Vector Backbone").'
+                                }),
 
-            'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup),
+            'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup,
+                            attrs={'title': 'Select one or more DNA constructs (must be classified as "Marker").'
+                        }),
             
             'translatesTo' : sforms.AutoComboboxSelectWidget(
-                                                 lookup_class=L.ProteinLookup,
-                                                 allow_new=False)
+                                lookup_class=L.ProteinLookup,
+                                allow_new=False,
+                                attrs={'title': 'Select a Protein construct.'
+                            }),
             })
 
 
