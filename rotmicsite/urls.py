@@ -55,6 +55,9 @@ urlpatterns = patterns('',
 
     ## bulk update dialog
     url(r'^rotmic/update/(?P<model>.+)/$', V.UpdateManyView.as_view(), name='update_many'),  
+    
+    ## search dialog
+    url(r'^rotmic/search/dnacomponent/$', V.search_dnacomponent, name='search_dnacomponent'),
 
     url(r'^', include(admin.site.urls)),
 )

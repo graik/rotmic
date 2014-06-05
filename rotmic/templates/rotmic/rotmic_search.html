@@ -1,0 +1,59 @@
+{% extends "rotmic/rotmic_form.html" %}
+{% load i18n admin_urls admin_static admin_modify rotmicforms %}
+
+{% block breadcrumbs%}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
+    <a href="{% url 'admin:index' %}">Rotmic</a> &rsaquo;
+    <a href="{% url 'admin:rotmic_'|add:model_name|add:'_changelist' %}">{% block object-class1 %}{{verbose_name|capfirst}}s{% endblock %}</a> &rsaquo;
+    {% block last-breadcrumb %}Search{% endblock %} 
+</div>
+{% endblock %}
+
+
+{% block content %}        
+
+    {% block form-title %}<h2>Search {{verbose_name}}s</h2>{% endblock %}
+
+    <ul class="object-tools">
+        <li>
+            {% block help-links %}
+                <a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/search" class="helplink">{% trans "Help!" %}</a>
+            {% endblock %}
+        </li>
+    </ul>
+    
+    <form action="" method="get">
+
+        {% if filter.form.non_field_errors %}<p>{{ filter.form.non_field_errors }}</p>{% endif %}
+
+        {% block form-fieldsets %}
+            <fieldset class="module">
+            
+                <h2>Search Parameters</h2>
+
+                {{ filter.form.as_p }}
+                                
+            </fieldset>
+         
+        {% endblock %}
+
+        {% block submit-row %}
+            <div class="submit-row">        
+                <input type="submit" class="default" value="{%block submit-button%}Search Entries{%endblock%}">
+            </div>
+        {% endblock %}
+
+    </form>
+    
+    {% if filter.form.has_changed %}
+    
+        <p>Found {{form.count}} entries.</p>
+
+        {% for obj in filter %}
+            {{ obj }}<br />
+        {% endfor %}
+        
+    {% endif %}
+                
+{% endblock %}
