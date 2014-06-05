@@ -23,40 +23,10 @@ import django.utils.html as html
 from .usermixin import UserMixin, ReadonlyUrlMixin
 from .components import ComponentBase, DnaComponent
 from .annotations import Annotation
+from .projects import Project
 
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
-
-class StatusMixin(models.Model):
-    
-    STATUS_CHOICES = ( ('design', 'design'),
-                       ('ordered', 'ordered'),
-                       ('assembly', 'assembly'),
-                       ('screening','screening'),
-                       ('sequencing', 'sequencing'),
-                       ('completed', 'completed'),
-                       ('cancelled', 'cancelled'))
-
-    status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
-                               default='design')
-    
-    def showStatus(self):
-        color = {u'completed': '088A08', # green
-                 u'design': '808080', # grey
-                 u'ordered' : '0000FF', # blue
-                 u'assembly' : '0000FF', # blue
-                 u'screening' : '0000FF', # blue
-                 u'sequencing' : '0000FF', # blue
-                 u'cancelled': 'B40404', # red
-                 }
-        r = '<span style="color: #%s;">%s</span>' %\
-               (color.get(self.status, '000000'), self.get_status_display())
-        return html.mark_safe(r)
-    showStatus.allow_tags = True
-    showStatus.short_description = 'Status'
-    
-    class Meta:
-        abstract = True
 
 
 class AssemblyLink(Annotation):
@@ -93,7 +63,7 @@ class AssemblyLink(Annotation):
         ordering = ['assembly', 'position']
         
 
-class DnaAssembly(StatusMixin, ReadonlyUrlMixin, ComponentBase):
+class DnaAssembly(ReadonlyUrlMixin, ComponentBase):
     """Capture information for a DNA assembly design"""
     
     METHOD_CHOICES = ( ('gibson', 'Gibson assembly'),
@@ -106,6 +76,32 @@ class DnaAssembly(StatusMixin, ReadonlyUrlMixin, ComponentBase):
     
     preparedAt = models.DateField(default=datetime.now().date(), verbose_name="Prepared")
     
+    STATUS_CHOICES = ( ('design', 'design'),
+                       ('ordered', 'ordered'),
+                       ('assembly', 'assembly'),
+                       ('screening','screening'),
+                       ('sequencing', 'sequencing'),
+                       ('completed', 'completed'),
+                       ('cancelled', 'cancelled'))
+
+    status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
+                               default='design')
+    
+    def showStatus(self):
+        color = {u'completed': '088A08', # green
+                 u'design': '808080', # grey
+                 u'ordered' : '0000FF', # blue
+                 u'assembly' : '0000FF', # blue
+                 u'screening' : '0000FF', # blue
+                 u'sequencing' : '0000FF', # blue
+                 u'cancelled': 'B40404', # red
+                 }
+        r = '<span style="color: #%s;">%s</span>' %\
+               (color.get(self.status, '000000'), self.get_status_display())
+        return html.mark_safe(r)
+    showStatus.allow_tags = True
+    showStatus.short_description = 'Status'
+    
     
 ##    reactions = models.ManyToManyField(DnaReaction)
     
@@ -115,6 +111,21 @@ class DnaAssembly(StatusMixin, ReadonlyUrlMixin, ComponentBase):
         verbose_name = 'DNA Assembly'
         verbose_name_plural = 'DNA Assemblies'
 
+
+class AssemblyProject(Project):
+
+    STATUS_CHOICES = ( ('design', 'design'),
+                       ('in progress', 'progress'),
+                       ('completed', 'completed'),
+                       ('cancelled', 'cancelled'))
+
+    status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
+                               default='design')
+
+    assemblies = models.ManyToManyField(DnaAssembly, blank=True, null=True,
+                                        related_name='assemblyProjects')
+    
+    
 
 ##class DnaReaction(models.Model):
 ##    """
