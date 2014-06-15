@@ -1,6 +1,14 @@
 {% extends "rotmic/rotmic_form.html" %}
 {% load i18n admin_urls admin_static admin_modify rotmicforms %}
 
+{% block extrahead %}
+
+    {{block.super}}
+    
+    {{filter.form.media}}
+    
+{% endblock %}
+
 {% block breadcrumbs%}
 <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
@@ -31,6 +39,12 @@
             <fieldset class="module">
             
                 <h2>Search Parameters</h2>
+                
+                <p>
+                Specify a combination of field-specific search terms (fragments of IDs, names, etc).
+                Only results that match <b>all</b> search terms will be shown. Leave fields empty
+                in order to allow any value.
+                </p>
 
                 {{ filter.form.as_p }}
                                 
@@ -40,7 +54,7 @@
 
         {% block submit-row %}
             <div class="submit-row">        
-                <input type="submit" class="default" value="{%block submit-button%}Search Entries{%endblock%}">
+                <input type="submit" class="default" value="{%block submit-button%}Update Search{%endblock%}">
             </div>
         {% endblock %}
 
@@ -48,12 +62,47 @@
     
     {% if filter.form.has_changed %}
     
-        <p>Found {{form.count}} entries.</p>
+        <div class="module">
 
-        {% for obj in filter %}
-            {{ obj }}<br />
-        {% endfor %}
+            <h2>Result: {{filter.count}} entries</h2>
+    
+            <div style="margin: 10px">
+                <table cellspacing="1">
         
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for x in filter %}
+                            <tr class="{% cycle 'row1' 'row2' %}">
+                            
+                                <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
+                                <td>{{x.name}}</td>
+                                <td>{{x.showDescription}}</td>
+    
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
     {% endif %}
-                
+
+
+{% endblock %}
+
+{% block footer %}
+
+    <script type="text/javascript"> 
+        $(function(){
+            $(".dateinput").datepicker();
+        });
+    </script>
+
 {% endblock %}
