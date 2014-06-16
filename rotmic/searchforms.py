@@ -17,6 +17,7 @@ import django_filters as F
 
 import django.forms as forms
 import django.contrib.auth.models as auth
+from django.db.models import Q
 
 import forms.selectLookups as L
 import selectable.forms as sforms
@@ -36,10 +37,14 @@ class JQueryUIDatepickerWidget(forms.DateInput):
 ##              "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js",)
 
 
+def searchComponentAuthor(qs, query):
+    q = Q(authors__username__contains=query) | Q(authors__first_name__contains=query) |\
+        Q(authors__last_name__contains=query)
+    return qs.filter(q)
+
 class ComponentFilter(F.FilterSet):
     
-    displayId = F.CharFilter(label='ID', lookup_type='contains',
-                             help_text='(part of unique ID)')
+    displayId = F.CharFilter(label='ID', lookup_type='contains')
 
     name      = F.CharFilter(label='Name', lookup_type='contains')
     
@@ -50,24 +55,56 @@ class ComponentFilter(F.FilterSet):
     modifiedAt = F.DateFilter(label='Modified after',
                                 widget=JQueryUIDatepickerWidget,
                                 lookup_type='gte')
-
-    filterfields = ['displayId', 'name', 'status',
-                  'registeredBy', 'registeredAt',
-                  'modifiedBy','modifiedAt',]
     
+    author = F.CharFilter(name='author', label='Author',
+                          action=searchComponentAuthor)
+
+    project = F.CharFilter(name='projects__name', label='Project name',
+                          lookup_type='contains')
+    
+    description = F.CharFilter(name='description', label='Description',
+                               lookup_type='contains')
+
+    filterfields = ['componentType', 
+                    'displayId', 'name', 'status', 
+                    'registeredBy', 'registeredAt',
+                    'modifiedBy','modifiedAt',
+                    'author', 'project', 'description']
+    
+
+def searchDnaMarkers(qs, query):
+    q = Q(markers__name__contains=query) | Q(markers__displayId__contains=query) |\
+        Q(vectorBackbone__markers__name__contains=query) |\
+        Q(vectorBackbone__markers__displayId__contains=query) |\
+        Q(insert__markers__name__contains=query) |\
+        Q(insert__markers__displayId__contains=query)
+        
+    r = qs.filter(q)
+    return r
+
+def searchDnaVector(qs, query):
+    q = Q(vectorBackbone__name__contains=query) | Q(vectorBackbone__displayId__contains=query)
+    return qs.filter(q)
+
+def searchDnaInsert(qs, query):
+    q = Q(insert__name__contains=query) | Q(insert__displayId__contains=query)
+    return qs.filter(q)
 
 class DnaComponentFilter(ComponentFilter, F.FilterSet):
     
-    insertId  = F.CharFilter(name='insert__displayId', label='insert ID',
-                             lookup_type='contains')
+    insertId  = F.CharFilter(name='insert', label='Insert (name or ID)',
+                             action=searchDnaInsert)
 
-    insertName= F.CharFilter(name='insert__name', label='insert Name',
-                             lookup_type='contains')
+    vector  = F.CharFilter(name='vector', label='Base vector (name or ID)',
+                           action=searchDnaVector)
     
-    vectorId  = F.CharFilter(name='vector__displayId', label='vector ID',
-                             lookup_type='contains')
-    vectorName= F.CharFilter(name='vector__name', label='vector Name',
-                             lookup_type='contains')
+    marker1  = F.CharFilter(name='marker1', label='Marker 1 (name or ID)',
+                            lookup_type='contains',
+                            action=searchDnaMarkers)
+
+    marker2  = F.CharFilter(name='marker2', label='Marker 2 (name or ID)',
+                            lookup_type='contains',
+                            action=searchDnaMarkers)
 
     class Meta:
         model = M.DnaComponent
@@ -79,3 +116,6 @@ class DnaComponentFilter(ComponentFilter, F.FilterSet):
         s = self.filters['status']
         s.extra['choices'] = (('','--Any Status--'),) + s.extra['choices']
         s.extra['initial'] = ''
+        
+    
+    

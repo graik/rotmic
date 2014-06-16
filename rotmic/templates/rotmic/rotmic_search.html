@@ -41,9 +41,15 @@
                 <h2>Search Parameters</h2>
                 
                 <p>
-                Specify a combination of field-specific search terms (fragments of IDs, names, etc).
-                Only results that match <b>all</b> search terms will be shown. Leave fields empty
-                in order to allow any value.
+                Specify a combination of field-specific search terms. Search terms do not need to 
+                cover the complete value of the field but can be text fragments. For example:
+                Searching the ID field for "02" will find constructs with IDs such "id0221" as
+                well as "mygene02".
+                </p>
+                
+                <p>
+                Each search field acts as an additional filter. Only results that match <b>all</b> 
+                search terms will be shown. Leave fields empty to exclude them from the search.
                 </p>
 
                 {{ filter.form.as_p }}
