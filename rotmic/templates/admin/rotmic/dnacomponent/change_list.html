@@ -2,11 +2,18 @@
 
 {% load i18n admin_modify  %}
 
-        {% block object-tools-items %}
-        {{block.super}}
-          <li>
+    {% block object-tools-items %}
+    {{block.super}}
+        <li>
             <a href="{% url 'upload_dnacomponent' %}{% if is_popup %}?_popup=1{% endif %}" class="addlink">
               Upload Table
             </a>
-          </li>
-        {% endblock %}
+        </li>
+    {% endblock %}
+    
+    {% block filters %}
+        {{block.super}}
+        <div id='changelist-filter'>
+            <h2>Filter / <a href="{%url 'search_dnacomponent'%}">Advanced</a></h2>
+        </div>
+    {% endblock %}
