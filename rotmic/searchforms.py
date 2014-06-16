@@ -43,6 +43,7 @@ def searchComponentAuthor(qs, query):
     return qs.filter(q)
 
 class ComponentFilter(F.FilterSet):
+    """Base definition for all Component subtypes"""
     
     displayId = F.CharFilter(label='ID', lookup_type='contains')
 
@@ -118,4 +119,58 @@ class DnaComponentFilter(ComponentFilter, F.FilterSet):
         s.extra['initial'] = ''
         
     
+
+class CellComponentFilter(ComponentFilter, F.FilterSet):
     
+    class Meta:
+        model = M.CellComponent
+        fields = ComponentFilter.filterfields
+
+    def __init__(self, *args, **kwargs):
+        super(CellComponentFilter, self).__init__(*args, **kwargs)
+
+        s = self.filters['status']
+        s.extra['choices'] = (('','--Any Status--'),) + s.extra['choices']
+        s.extra['initial'] = ''
+        
+
+class OligoComponentFilter(ComponentFilter, F.FilterSet):
+    
+    class Meta:
+        model = M.OligoComponent
+        fields = ComponentFilter.filterfields
+
+    def __init__(self, *args, **kwargs):
+        super(OligoComponentFilter, self).__init__(*args, **kwargs)
+
+        s = self.filters['status']
+        s.extra['choices'] = (('','--Any Status--'),) + s.extra['choices']
+        s.extra['initial'] = ''
+
+
+class ProteinComponentFilter(ComponentFilter, F.FilterSet):
+    
+    class Meta:
+        model = M.ProteinComponent
+        fields = ComponentFilter.filterfields
+
+    def __init__(self, *args, **kwargs):
+        super(ProteinComponentFilter, self).__init__(*args, **kwargs)
+
+        s = self.filters['status']
+        s.extra['choices'] = (('','--Any Status--'),) + s.extra['choices']
+        s.extra['initial'] = ''
+
+
+class ChemicalComponentFilter(ComponentFilter, F.FilterSet):
+    
+    class Meta:
+        model = M.ChemicalComponent
+        fields = ComponentFilter.filterfields
+
+    def __init__(self, *args, **kwargs):
+        super(ChemicalComponentFilter, self).__init__(*args, **kwargs)
+
+        s = self.filters['status']
+        s.extra['choices'] = (('','--Any Status--'),) + s.extra['choices']
+        s.extra['initial'] = ''
