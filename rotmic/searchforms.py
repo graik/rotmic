@@ -37,10 +37,18 @@ class JQueryUIDatepickerWidget(forms.DateInput):
 ##              "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js",)
 
 
-def searchComponentAuthor(qs, query):
-    q = Q(authors__username__contains=query) | Q(authors__first_name__contains=query) |\
-        Q(authors__last_name__contains=query)
-    return qs.filter(q)
+def linkedSearch(field, subfields=['displayId','name'], lookup='contains'):
+    """Generate search function for filter field action parameter"""
+    def f(qs, query):
+        if not query:
+            return qs
+        searches = [ '%s__%s__%s' % (field, sub, lookup) for sub in subfields ]
+        q = Q()
+        for s in searches:
+            q = q | Q(**{s:query})
+        return qs.filter(q)
+    
+    return f
 
 class ComponentFilter(F.FilterSet):
     """Base definition for all Component subtypes"""
@@ -58,7 +66,8 @@ class ComponentFilter(F.FilterSet):
                                 lookup_type='gte')
     
     author = F.CharFilter(name='author', label='Author',
-                          action=searchComponentAuthor)
+                          action=linkedSearch('authors', 
+                                subfields=['username','first_name','last_name']))
 
     project = F.CharFilter(name='projects__name', label='Project name',
                           lookup_type='contains')
@@ -73,6 +82,7 @@ class ComponentFilter(F.FilterSet):
                     'author', 'project', 'description']
     
 
+
 def searchDnaMarkers(qs, query):
     q = Q(markers__name__contains=query) | Q(markers__displayId__contains=query) |\
         Q(vectorBackbone__markers__name__contains=query) |\
@@ -83,21 +93,13 @@ def searchDnaMarkers(qs, query):
     r = qs.filter(q)
     return r
 
-def searchDnaVector(qs, query):
-    q = Q(vectorBackbone__name__contains=query) | Q(vectorBackbone__displayId__contains=query)
-    return qs.filter(q)
-
-def searchDnaInsert(qs, query):
-    q = Q(insert__name__contains=query) | Q(insert__displayId__contains=query)
-    return qs.filter(q)
-
 class DnaComponentFilter(ComponentFilter, F.FilterSet):
     
     insertId  = F.CharFilter(name='insert', label='Insert (name or ID)',
-                             action=searchDnaInsert)
+                             action=linkedSearch('insert'))
 
     vector  = F.CharFilter(name='vector', label='Base vector (name or ID)',
-                           action=searchDnaVector)
+                           action=linkedSearch('vectorBackbone'))
     
     marker1  = F.CharFilter(name='marker1', label='Marker 1 (name or ID)',
                             lookup_type='contains',
@@ -117,7 +119,8 @@ class DnaComponentFilter(ComponentFilter, F.FilterSet):
         s = self.filters['status']
         s.extra['choices'] = (('','--Any Status--'),) + s.extra['choices']
         s.extra['initial'] = ''
-        
+
+
     
 def searchCellMarkers(qs, query):
     q = Q(markers__name__contains=query) | Q(markers__displayId__contains=query) |\
@@ -129,14 +132,10 @@ def searchCellMarkers(qs, query):
     r = qs.filter(q)
     return r
 
-def searchCellPlasmid(qs, query):
-    q = Q(plasmid__name__contains=query) | Q(plasmid__displayId__contains=query)
-    return qs.filter(q)
-
 class CellComponentFilter(ComponentFilter, F.FilterSet):
     
     plasmid  = F.CharFilter(name='plasmid', label='Plasmid (name or ID)',
-                           action=searchCellPlasmid)
+                           action=linkedSearch('plasmid'))
 
     marker1  = F.CharFilter(name='marker1', label='Marker 1 (name or ID)',
                             lookup_type='contains',
@@ -157,17 +156,37 @@ class CellComponentFilter(ComponentFilter, F.FilterSet):
         s.extra['initial'] = ''
         
 
+def searchOligoTemp(qs, query):
+    assert isinstance(query, slice)
+    if not query:
+        return qs
+    q = Q(meltingTemp__gt=query.start, meltingTemp__lt=query.stop)
+    return qs.filter(q)
+
 class OligoComponentFilter(ComponentFilter, F.FilterSet):
     
+    templates  = F.CharFilter(name='template', label='Template (name or ID)',
+                              action=linkedSearch('templates'))
+    
+    reverse = F.CharFilter(name='reversePrimer', label='Reverse Primer (name or ID)',
+                           action=linkedSearch('reversePrimers'))
+    
+    meltingTemp = F.RangeFilter(name='meltingTemp', label='melting Temp. between',
+                                action=searchOligoTemp)
+
     class Meta:
         model = M.OligoComponent
-        fields = ComponentFilter.filterfields
+        fields = ComponentFilter.filterfields + ['purification']
 
     def __init__(self, *args, **kwargs):
         super(OligoComponentFilter, self).__init__(*args, **kwargs)
 
         s = self.filters['status']
         s.extra['choices'] = (('','--Any Status--'),) + s.extra['choices']
+        s.extra['initial'] = ''
+        
+        s = self.filters['purification']
+        s.extra['choices'] = (('','--Any Purification--'),) + s.extra['choices']
         s.extra['initial'] = ''
 
 
@@ -186,6 +205,8 @@ class ProteinComponentFilter(ComponentFilter, F.FilterSet):
 
 
 class ChemicalComponentFilter(ComponentFilter, F.FilterSet):
+    
+    cas  = F.CharFilter(label='C.A.S.', lookup_type='contains')
     
     class Meta:
         model = M.ChemicalComponent
