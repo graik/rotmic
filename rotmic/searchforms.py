@@ -16,10 +16,17 @@
 import django_filters as F
 
 import django.forms as forms
+import django.contrib.auth.models as auth
+
+import forms.selectLookups as L
+import selectable.forms as sforms
 
 import rotmic.models as M
 
 class JQueryUIDatepickerWidget(forms.DateInput):
+    """Custom widget for JQuery Calendar lookup (more robust than AdminDateWidget)"""
+    ## See: http://stackoverflow.com/questions/1450463/django-datetimewidget-not-showing-up
+    
     def __init__(self, **kwargs):
         super(forms.DateInput, self).__init__(attrs={"size":10, "class": "dateinput"}, **kwargs)
 
@@ -28,6 +35,7 @@ class JQueryUIDatepickerWidget(forms.DateInput):
 ##        js = ("http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js",
 ##              "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js",)
 
+
 class ComponentFilter(F.FilterSet):
     
     displayId = F.CharFilter(label='ID', lookup_type='contains',
@@ -35,8 +43,6 @@ class ComponentFilter(F.FilterSet):
 
     name      = F.CharFilter(label='Name', lookup_type='contains')
     
-    
-
     registeredAt = F.DateTimeFilter(label='Registered before',
                                     widget=JQueryUIDatepickerWidget,
                                     lookup_type='lte')
@@ -73,4 +79,3 @@ class DnaComponentFilter(ComponentFilter, F.FilterSet):
         s = self.filters['status']
         s.extra['choices'] = (('','--Any Status--'),) + s.extra['choices']
         s.extra['initial'] = ''
-        
