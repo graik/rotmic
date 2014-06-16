@@ -119,9 +119,32 @@ class DnaComponentFilter(ComponentFilter, F.FilterSet):
         s.extra['initial'] = ''
         
     
+def searchCellMarkers(qs, query):
+    q = Q(markers__name__contains=query) | Q(markers__displayId__contains=query) |\
+        Q(plasmid__vectorBackbone__markers__name__contains=query) |\
+        Q(plasmid__vectorBackbone__markers__displayId__contains=query) |\
+        Q(plasmid__insert__markers__name__contains=query) |\
+        Q(plasmid__insert__markers__displayId__contains=query)
+        
+    r = qs.filter(q)
+    return r
+
+def searchCellPlasmid(qs, query):
+    q = Q(plasmid__name__contains=query) | Q(plasmid__displayId__contains=query)
+    return qs.filter(q)
 
 class CellComponentFilter(ComponentFilter, F.FilterSet):
     
+    plasmid  = F.CharFilter(name='plasmid', label='Plasmid (name or ID)',
+                           action=searchCellPlasmid)
+
+    marker1  = F.CharFilter(name='marker1', label='Marker 1 (name or ID)',
+                            lookup_type='contains',
+                            action=searchCellMarkers)
+
+    marker2  = F.CharFilter(name='marker2', label='Marker 2 (name or ID)',
+                            lookup_type='contains',
+                            action=searchCellMarkers)
     class Meta:
         model = M.CellComponent
         fields = ComponentFilter.filterfields
