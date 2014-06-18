@@ -33,7 +33,7 @@ class AssemblyLinkInline(admin.TabularInline):
     fk_name = 'assembly'
 
     can_delete=True
-    extra = 4
+    extra = 2
     max_num = 10
     
     fieldsets = (
