@@ -19,6 +19,7 @@ from datetime import datetime
 from django.db import models
 from django.utils.safestring import mark_safe
 import django.utils.html as html
+from django.contrib.auth.models import User
 
 from .usermixin import UserMixin, ReadonlyUrlMixin
 from .components import ComponentBase, DnaComponent
@@ -29,14 +30,30 @@ import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
 
 
-class AssemblyLink(Annotation):
-    """Point to a particular region of a source DNA (considered hard link)"""
+class AssemblyProject(ReadonlyUrlMixin, ComponentBase):
+    """Collection of DNA assembly reactions with shared parts."""
+
+    STATUS_CHOICES = ( ('design', 'design'),
+                       ('in progress', 'progress'),
+                       ('completed', 'completed'),
+                       ('cancelled', 'cancelled'))
+
+    status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
+                               default='design')
+
+    class Meta:
+        app_label = 'rotmic'
+        verbose_name = 'Assembly Project'
+
+
+class AssemblyPart(Annotation):
+    """
+    Point to a particular region of a source DNA. Connects an assembly project
+    to all potentially useful source parts. Can also specify a sequence without
+    source (likely targetted for synthesis).
+    """
     ## Annotion provides: bioStart, bioEnd, strand, preceedes
     
-    assembly = models.ForeignKey('DnaAssembly', verbose_name='target assembly',
-                                 null=False, blank=False, 
-                                 related_name='partLinks')
-
     component = models.ForeignKey(DnaComponent, blank=True, null=True,
                                   verbose_name='source construct',
                                help_text='existing source DNA construct if any',
@@ -46,35 +63,46 @@ class AssemblyLink(Annotation):
                                 help_text='or specify new nucleotide sequence', 
                                 blank=True )
     
-    position = models.SmallIntegerField()
+    assProject = models.ForeignKey(AssemblyProject, null=False, blank=False)
     
     def __unicode__(self):
-        r = u'%(id)s #%(pos)i: %(component)s[%(start)i : %(end)i]'
-        d = dict(id=self.assembly.displayId, pos=0, 
-                 component=self.component.__unicode__() if self.component else 'synthesis',
+        r = u'[%(component)s[%(start)i : %(end)i]'
+        d = dict(component=self.component.__unicode__() if self.component else 'synthesis',
                  start=self.bioStart or 0,
                  end=self.bioEnd or -1)
         return r % d
     
     class Meta:
         app_label = 'rotmic'
+        verbose_name = 'Assembly Part'
+
+
+class AssemblyLink(models.Model):
+    """
+    Connect a single assembly product to the sequence of parts it is defined
+    from.
+    """
+
+    assembly = models.ForeignKey('DnaAssembly', verbose_name='target assembly',
+                                 null=False, blank=False, 
+                                 related_name='partLinks')
+    
+    part = models.ForeignKey('AssemblyLink')
+
+    position = models.SmallIntegerField()
+    
+    class Meta:
+        app_label = 'rotmic'
         abstract = False
         verbose_name = 'Assembly Link'
         ordering = ['assembly', 'position']
-        
 
-class DnaAssembly(ReadonlyUrlMixin, ComponentBase):
+
+class Assembly(models.Model):
     """Capture information for a DNA assembly design"""
     
-    METHOD_CHOICES = ( ('gibson', 'Gibson assembly'),
-                       ('golden', 'Golden Gate'),
-                       ('classic', 'restriction/ligation'),
-                       ('other', 'other') )
-    
-    method = models.CharField( max_length=30, choices=METHOD_CHOICES, 
-                               default='gibson')
-    
-    preparedAt = models.DateField(default=datetime.now().date(), verbose_name="Prepared")
+    displayId = models.CharField('ID', max_length=20, unique=True, 
+                                 help_text='Unique identification')
     
     STATUS_CHOICES = ( ('design', 'design'),
                        ('ordered', 'ordered'),
@@ -86,6 +114,20 @@ class DnaAssembly(ReadonlyUrlMixin, ComponentBase):
 
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='design')
+
+    METHOD_CHOICES = ( ('gibson', 'Gibson assembly'),
+                       ('golden', 'Golden Gate'),
+                       ('classic', 'restriction/ligation'),
+                       ('other', 'other') )
+    
+    method = models.CharField( max_length=30, choices=METHOD_CHOICES, 
+                               default='gibson')
+    
+    preparedAt = models.DateField(default=datetime.now().date(), verbose_name="Prepared")
+    
+    preparedBy = models.ForeignKey(User, verbose_name="By")
+    
+    
     
     def showStatus(self):
         color = {u'completed': '088A08', # green
@@ -102,30 +144,12 @@ class DnaAssembly(ReadonlyUrlMixin, ComponentBase):
     showStatus.allow_tags = True
     showStatus.short_description = 'Status'
     
-    
-##    reactions = models.ManyToManyField(DnaReaction)
-    
     class Meta:
         app_label = 'rotmic'
-        abstract = False
         verbose_name = 'DNA Assembly'
         verbose_name_plural = 'DNA Assemblies'
 
 
-class AssemblyProject(Project):
-
-    STATUS_CHOICES = ( ('design', 'design'),
-                       ('in progress', 'progress'),
-                       ('completed', 'completed'),
-                       ('cancelled', 'cancelled'))
-
-    status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
-                               default='design')
-
-    assemblies = models.ManyToManyField(DnaAssembly, blank=True, null=True,
-                                        related_name='assemblyProjects')
-    
-    
 
 ##class DnaReaction(models.Model):
 ##    """
@@ -139,7 +163,7 @@ class AssemblyProject(Project):
 ##    
 ##    method = models.CharField( max_length=30, choices=METHOD_CHOICES, 
 ##                               default='PCR')
-##    // or PartLink?
+##
 ##    template = models.ForeignKey(DnaComponent, blank=True, null=True)
 ##    
 ##    product = models.ForeignKey(DnaComponent, blank=True, null=True)
@@ -158,6 +182,5 @@ class AssemblyProject(Project):
 ##    
 ##    class Meta:
 ##        app_label = 'rotmic'
-##        abstract = False
 ##
-
+##
