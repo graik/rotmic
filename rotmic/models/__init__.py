@@ -25,8 +25,8 @@ from rotmic.models.units import Unit
 from rotmic.models.componentTypes import ComponentType, DnaComponentType, \
      CellComponentType, OligoComponentType, ChemicalType, ProteinComponentType
 
-from rotmic.models.components import Component, DnaComponent, CellComponent, \
-     OligoComponent, ChemicalComponent, ProteinComponent
+from rotmic.models.components import ComponentBase, Component, DnaComponent, \
+     CellComponent, OligoComponent, ChemicalComponent, ProteinComponent
 
 from rotmic.models.samples import Sample, DnaSample, CellSample, OligoSample,\
      ChemicalSample, ProteinSample, SampleProvenance, SampleProvenanceType
@@ -39,4 +39,4 @@ from rotmic.models.projects import Project
 
 from rotmic.models.annotations import Annotation, SequenceLink
 
-from rotmic.models.assemblies import DnaAssembly, AssemblyLink
+from usermixin import UserMixin, ReadonlyUrlMixin

@@ -34,8 +34,6 @@ from . import adminUser  ## trigger extension of User
 from . import adminComponents ## trigger registration of component admin interfaces
 from . import adminProjects ## trigger registration of ProjectAdmin
 from . import adminSamples ## trigger registration of Sample-related admin interfaces
-from . import adminAssembly ## trigger registration of DNA assembly related interfaces
-
 
 class DnaComponentTypeAdmin( reversion.VersionAdmin ):
     

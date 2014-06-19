@@ -21,16 +21,12 @@ from django.utils.safestring import mark_safe
 import django.utils.html as html
 from django.contrib.auth.models import User
 
-from .usermixin import UserMixin, ReadonlyUrlMixin
-from .components import ComponentBase, DnaComponent
-from .annotations import Annotation
-from .projects import Project
+import rotmic.models as M
 
 import rotmic.templatetags.rotmicfilters as F
-import rotmic.utils.inheritance as I
 
 
-class AssemblyProject(ReadonlyUrlMixin, ComponentBase):
+class AssemblyProject(M.ReadonlyUrlMixin, M.ComponentBase):
     """Collection of DNA assembly reactions with shared parts."""
 
     STATUS_CHOICES = ( ('design', 'design'),
@@ -41,12 +37,24 @@ class AssemblyProject(ReadonlyUrlMixin, ComponentBase):
     status = models.CharField( max_length=30, choices=STATUS_CHOICES, 
                                default='design')
 
+    def showStatus(self):
+        color = {u'completed': '088A08', # green
+                 u'design': '808080', # grey
+                 u'progress' : '0000FF', # blue
+                 u'cancelled': 'B40404', # red
+                 }
+        r = '<span style="color: #%s;">%s</span>' %\
+               (color.get(self.status, '000000'), self.get_status_display())
+        return html.mark_safe(r)
+    showStatus.allow_tags = True
+    showStatus.short_description = 'Status'
+
     class Meta:
-        app_label = 'rotmic'
+        app_label = 'assemblies'
         verbose_name = 'Assembly Project'
 
 
-class AssemblyPart(Annotation):
+class AssemblyPart(M.Annotation):
     """
     Point to a particular region of a source DNA. Connects an assembly project
     to all potentially useful source parts. Can also specify a sequence without
@@ -54,10 +62,10 @@ class AssemblyPart(Annotation):
     """
     ## Annotion provides: bioStart, bioEnd, strand, preceedes
     
-    component = models.ForeignKey(DnaComponent, blank=True, null=True,
+    component = models.ForeignKey(M.DnaComponent, blank=True, null=True,
                                   verbose_name='source construct',
-                               help_text='existing source DNA construct if any',
-                               related_name='assemblyLinks')
+                                  help_text='existing source DNA construct if any',
+                                  related_name='assemblyParts')
     
     sequence = models.TextField(verbose_name='or specify sequence', 
                                 help_text='or specify new nucleotide sequence', 
@@ -73,17 +81,17 @@ class AssemblyPart(Annotation):
         return r % d
     
     class Meta:
-        app_label = 'rotmic'
+        app_label = 'assemblies'
         verbose_name = 'Assembly Part'
 
 
 class AssemblyLink(models.Model):
     """
-    Connect a single assembly product to the sequence of parts it is defined
-    from.
+    Connect a single assembly product to the sequence of parts by which it is
+    defined.
     """
 
-    assembly = models.ForeignKey('DnaAssembly', verbose_name='target assembly',
+    assembly = models.ForeignKey('Assembly', verbose_name='target assembly',
                                  null=False, blank=False, 
                                  related_name='partLinks')
     
@@ -92,8 +100,7 @@ class AssemblyLink(models.Model):
     position = models.SmallIntegerField()
     
     class Meta:
-        app_label = 'rotmic'
-        abstract = False
+        app_label = 'assemblies'
         verbose_name = 'Assembly Link'
         ordering = ['assembly', 'position']
 
@@ -127,8 +134,7 @@ class Assembly(models.Model):
     
     preparedBy = models.ForeignKey(User, verbose_name="By")
     
-    
-    
+   
     def showStatus(self):
         color = {u'completed': '088A08', # green
                  u'design': '808080', # grey
@@ -145,7 +151,7 @@ class Assembly(models.Model):
     showStatus.short_description = 'Status'
     
     class Meta:
-        app_label = 'rotmic'
+        app_label = 'assemblies'
         verbose_name = 'DNA Assembly'
         verbose_name_plural = 'DNA Assemblies'
 

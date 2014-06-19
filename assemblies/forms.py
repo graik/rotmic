@@ -14,16 +14,16 @@
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 import django.forms as forms
 
-from .componentForms import ComponentForm, getComponentWidgets
-import rotmic.models as M
+from rotmic.forms.componentForms import ComponentForm, getComponentWidgets
+import models as M
 
-import selectLookups as L
+import rotmic.forms.selectLookups as L
 import selectable.forms as sforms
 
-class DnaAssemblyForm(ComponentForm):
+class AssemblyProjectForm(ComponentForm):
     
     class Meta:
-        model = M.DnaAssembly
+        model = M.AssemblyProject
         widgets = getComponentWidgets({
             'description' : forms.Textarea(attrs={'cols': 100, 'rows': 3,
                                              'style':'font-family:monospace'}),

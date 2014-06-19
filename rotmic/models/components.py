@@ -33,6 +33,7 @@ from .usermixin import UserMixin, ReadonlyUrlMixin
 import rotmic.templatetags.rotmicfilters as F
 import rotmic.utils.inheritance as I
 from rotmic.models.componentTypes import DnaComponentType
+from rotmic.models.projects import Project
 
 def _extractNumbers( queryset, pattern ):
     matches = [ pattern.match( o.displayId ) for o in queryset ]
@@ -55,7 +56,7 @@ class ComponentBase(UserMixin):
                                 verbose_name='Authors')
     
     
-    projects = models.ManyToManyField('Project', blank=True, null=True,
+    projects = models.ManyToManyField(Project, blank=True, null=True,
                                       verbose_name='Projects',
                                      related_name='%(class)ss',   ## end with + to suppress reverse relationship
                                      )

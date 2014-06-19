@@ -34,5 +34,3 @@ from annotationForms import DnaAnnotationFormSet
 
 from updateForms import UpdateManyForm
 
-from assemblyForms import DnaAssemblyForm, AssemblyLinkForm
-

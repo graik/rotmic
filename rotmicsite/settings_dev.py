@@ -156,6 +156,7 @@ INSTALLED_APPS = (
     'selectable',
     'reversion',
     'rotmic',
+    'assemblies',
     'django.contrib.admin',  ## last for lowest priority in template loading
 )
 

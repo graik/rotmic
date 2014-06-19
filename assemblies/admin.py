@@ -19,50 +19,45 @@ from django.contrib import admin, messages
 
 from . import models as M
 from . import forms
-from . import initialTypes as I
 
-from .utils import adminFilters as filters
-from .utils.customadmin import ViewFirstModelAdmin
-from .adminBase import UserRecordMixin, RequestFormMixin, export_csv, UpdateManyMixin
-from .adminComponents import ComponentAdminMixin
+from rotmic.utils import adminFilters as filters
+from rotmic.utils.customadmin import ViewFirstModelAdmin
+from rotmic.adminBase import UserRecordMixin, RequestFormMixin, export_csv, UpdateManyMixin
+from rotmic.adminComponents import ComponentAdminMixin
 
 
-class AssemblyLinkInline(admin.TabularInline):
-    model = M.AssemblyLink
-    form = forms.AssemblyLinkForm
-    fk_name = 'assembly'
+##class AssemblyLinkInline(admin.TabularInline):
+##    model = M.AssemblyLink
+##    form = forms.AssemblyLinkForm
+##    fk_name = 'assembly'
+##
+##    can_delete=True
+##    extra = 2
+##    max_num = 10
+##    
+##    fieldsets = (
+##        ('Parts', {
+##            'fields' : (('position','component', 'bioStart', 'bioEnd', 'strand', 'sequence'),
+##                        ),
+##        }),
+##    )
+##    
+##    verbose_name = 'Part'
+##    verbose_name_plural = '1. Define Parts'
 
-    can_delete=True
-    extra = 2
-    max_num = 10
+class AssemblyProjectAdmin(RequestFormMixin, ComponentAdminMixin, ViewFirstModelAdmin ):
     
-    fieldsets = (
-        ('Parts', {
-            'fields' : (('position','component', 'bioStart', 'bioEnd', 'strand', 'sequence'),
-                        ),
-        }),
-    )
+    form = forms.AssemblyProjectForm
     
-    verbose_name = 'Part'
-    verbose_name_plural = '1. Define Parts (in exact order)'
-
-class DnaAssemblyAdmin(RequestFormMixin, ComponentAdminMixin, ViewFirstModelAdmin ):
-    
-    form = forms.DnaAssemblyForm
-    
-    inlines = [AssemblyLinkInline]
+##    inlines = [AssemblyLinkInline]
     
     fieldsets = (
         (None, {
             'fields': (('displayId', 'name','status'),
-                       ('method', 'preparedAt', ),
+                       ('authors', 'projects'),
+                       ('description',),
                        )
         }),
-        (None, {
-            'fields' : (('authors', 'projects'),
-                        ('description',),
-                        ),
-        }),            
     )
 
     list_display = ('displayId',
@@ -75,7 +70,7 @@ class DnaAssemblyAdmin(RequestFormMixin, ComponentAdminMixin, ViewFirstModelAdmi
                     'showEdit' 
                    )
     
-    list_filter = ['status', 'method', 'projects', filters.SortedAuthorFilter]
+    list_filter = ['status', 'projects', filters.SortedAuthorFilter]
     
     search_fields = ('displayId', 'name', 'description', 'authors__username',
                      'projects__name')
@@ -85,4 +80,4 @@ class DnaAssemblyAdmin(RequestFormMixin, ComponentAdminMixin, ViewFirstModelAdmi
     
     ordering = ('displayId', 'name')
 
-admin.site.register(M.DnaAssembly, DnaAssemblyAdmin)
+admin.site.register(M.AssemblyProject, AssemblyProjectAdmin)
