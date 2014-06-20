@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block extrahead %}{{ block.super }}
-    {% benchling_libs %}
-    {% seqdisplay_libs %}
+{#    {% benchling_libs %}
+    {% seqdisplay_libs %} #}
 {% endblock %}
 
 {% block footer %}{{ block.super }}
@@ -50,7 +50,7 @@
                 
                 <!-- style="display:none" completely removes the element at first loading of page-->
                 <div id='seq-benchling' style='display:none'>
-                    {% benchling o %}
+                    {# {% benchling o %}  #}
                 </div>
                 
                 <div id='seq-text' style="height:145px;overflow:auto;display:none">
