@@ -26,30 +26,30 @@ from rotmic.adminBase import UserRecordMixin, RequestFormMixin, export_csv, Upda
 from rotmic.adminComponents import ComponentAdminMixin
 
 
-##class AssemblyLinkInline(admin.TabularInline):
-##    model = M.AssemblyLink
-##    form = forms.AssemblyLinkForm
-##    fk_name = 'assembly'
-##
-##    can_delete=True
-##    extra = 2
-##    max_num = 10
-##    
-##    fieldsets = (
-##        ('Parts', {
-##            'fields' : (('position','component', 'bioStart', 'bioEnd', 'strand', 'sequence'),
-##                        ),
-##        }),
-##    )
-##    
-##    verbose_name = 'Part'
-##    verbose_name_plural = '1. Define Parts'
+class AssemblyPartInline(admin.TabularInline):
+    model = M.AssemblyPart
+    form = forms.AssemblyPartForm
+    fk_name = 'assProject'
+
+    can_delete=True
+    extra = 2
+    max_num = 10
+    
+    fieldsets = (
+        ('Parts', {
+            'fields' : (('component', 'bioStart', 'bioEnd', 'strand', 'sequence'),
+                        ),
+        }),
+    )
+    
+    verbose_name = 'Part'
+    verbose_name_plural = '1. Define Parts'
 
 class AssemblyProjectAdmin(RequestFormMixin, ComponentAdminMixin, ViewFirstModelAdmin ):
     
     form = forms.AssemblyProjectForm
     
-##    inlines = [AssemblyLinkInline]
+    inlines = [AssemblyPartInline]
     
     fieldsets = (
         (None, {

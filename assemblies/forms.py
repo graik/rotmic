@@ -29,7 +29,7 @@ class AssemblyProjectForm(ComponentForm):
                                              'style':'font-family:monospace'}),
         })
         
-class AssemblyLinkForm(forms.ModelForm):
+class AssemblyPartForm(forms.ModelForm):
     
     class Meta:
         model = M.AssemblyLink
@@ -38,7 +38,6 @@ class AssemblyLinkForm(forms.ModelForm):
                                     allow_new=False),
                    'sequence' : forms.Textarea(attrs={'cols': 50, 'rows': 2,
                                              'style':'font-family:monospace'}),
-                   'position' : forms.TextInput(attrs={'size':1}),
                    'bioStart' : forms.TextInput(attrs={'size':4}),
                    'bioEnd' : forms.TextInput(attrs={'size':4}),
                    }
