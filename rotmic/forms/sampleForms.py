@@ -264,7 +264,7 @@ class CellSampleForm( SampleForm ):
             else:
                 newcell = M.CellComponent(componentType=ctype,
                                         plasmid=plasmid,
-                                        displayId=ids.suggestCellId(self.request.user.id),
+                                        displayId=M.CellComponent.nextAvailableId(self.request.user),
                                         registeredBy = self.request.user,
                                         registeredAt = datetime.datetime.now(),
                                         name = plasmid.name + '@' + ctype.name,

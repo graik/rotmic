@@ -398,7 +398,7 @@ class CellComponent(Component, StatusMixinDna):
     @staticmethod
     def nextAvailableId(user, prefix=None, category_id=None):
         """
-        determine the next free ID for given user and component category.
+        determine the next free ID for given user and (ignored) component category.
         """
         default_prefix = user.profile.ccPrefix or user.profile.prefix + 'c'
         prefix = prefix or default_prefix
