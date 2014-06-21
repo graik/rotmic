@@ -65,7 +65,8 @@ class SampleProvenance(models.Model):
 
     provenanceType = models.ForeignKey( SampleProvenanceType, 
                                         verbose_name='via (method)',
-                                        help_text="How is this sample derived from it's source?")
+                                        help_text="How is this sample derived from it's source?",
+                                        blank=True)
 
     def __unicode__(self):
         """"""

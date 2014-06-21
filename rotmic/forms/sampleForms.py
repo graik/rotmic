@@ -336,19 +336,41 @@ class ProteinSampleForm( SampleForm ):
 class SampleProvenanceForm( forms.ModelForm ):
     """minimal form used inline for sample History records"""
     
+    def add_error(self, field, msg):
+        """
+        This method exists in Form from django 1.7+ ; remove/rename after upgrade
+        """
+        self._errors[field] = self._errors.get( field, self.error_class([]) )
+        if len( self._errors[field] ) < 3:
+            self._errors[field].append(msg)
+        elif len( self._errors[field] ) == 3:
+            self._errors[field].append('...skipping further errors.')
+
     def clean_sourceSample(self):
         r = self.cleaned_data['sourceSample']
-        t = self.cleaned_data['provenanceType']
-        
-
-        if t and t.requiresSource and not r:
-            raise ValidationError('%s requires a source sample.' % unicode(t))
         
         if r and self.instance and r.id == self.instance.sample_id:
             raise ValidationError('Cannot derive sample from itself.')
         
         return r
+    
+    def clean_provenanceType(self):
+        """Called if any of the inline form fields received any value."""
+        r = self.cleaned_data['provenanceType']
         
+        if not r:
+            raise ValidationError('This field is required.')
+        return r
+    
+    def clean(self):
+        data = self.cleaned_data
+        
+        if data.get('provenanceType',None):
+            if data['provenanceType'].requiresSource and not data.get('sourceSample', None):
+                self.add_error('sourceSample', u'%s requires a source sample.'\
+                               % unicode(data['provenanceType']) )
+        
+        return data
     
     class Meta:
         widgets = {'sourceSample': sforms.AutoComboboxSelectWidget(lookup_class=L.SampleLookup,

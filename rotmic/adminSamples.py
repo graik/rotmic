@@ -67,7 +67,8 @@ class SampleProvenanceInline(admin.StackedInline):
         (None, {
             'fields': (('provenanceType', 'sourceSample', 'description',),
                        ),
-            'description': 'Specify how this sample was created or from which other sample it was derived from.',
+            'description': 'Specify how this sample was created or from which other sample it was derived.'\
+                            +' (optional -- specify at least method or leave all empty)',
         }),
     )
 
