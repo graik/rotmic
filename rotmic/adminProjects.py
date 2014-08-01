@@ -20,12 +20,12 @@ from django.contrib import admin
 import reversion
 
 from .utils.customadmin import ViewFirstModelAdmin
-from .adminBase import UserRecordMixin, export_csv, UpdateManyMixin
+from .adminBase import UserRecordProtectedMixin, export_csv, UpdateManyMixin
 from .forms import selectLookups as L
 
 import models as M
 
-class ProjectAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin, UpdateManyMixin):
+class ProjectAdmin(UserRecordProtectedMixin, reversion.VersionAdmin, ViewFirstModelAdmin, UpdateManyMixin):
 
     permit_delete = ['registeredBy'] ## only creator or superuser can delete
     

@@ -28,7 +28,7 @@ from . import forms
 from .utils.customadmin import ViewFirstModelAdmin
 from .utils import adminFilters as filters
 
-from .adminBase import UserRecordMixin, RequestFormMixin, export_csv, UpdateManyMixin
+from .adminBase import UserRecordProtectedMixin, RequestFormMixin, export_csv, UpdateManyMixin
 
 
 class SampleAttachmentInline(admin.TabularInline):
@@ -72,7 +72,7 @@ class SampleProvenanceInline(admin.StackedInline):
         }),
     )
 
-class SampleAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, UpdateManyMixin ):
+class SampleAdmin( UserRecordProtectedMixin, RequestFormMixin, ViewFirstModelAdmin, UpdateManyMixin ):
     form = forms.SampleForm     
     
     permit_delete = ['registeredBy', 'preparedBy'] ## creator, author or superuser can delete

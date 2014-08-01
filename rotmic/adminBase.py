@@ -38,18 +38,10 @@ from django.views.decorators.csrf import csrf_protect
 
 class UserRecordMixin:
     """
-    * Automatically save and assign house-keeping information like by whom and
-      when a record was saved.
-    
-    * Create self.request variable in form.
-    
-    * Block deletion of objects via delete_selected action if any of the selected
-      or any related object are not listing the user as an author.
+    Automatically save and assign house-keeping information like by whom and
+    when a record was saved.
     """
 
-    permit_delete = ['registeredBy',]
-    
-    actions = ['delete_selected']
 
     def save_model(self, request, obj, form, change):
         """Override to save user who created this record"""
@@ -65,7 +57,23 @@ class UserRecordMixin:
         obj.save()
 
     save_as = True  ## enable "Save as" button in all derrived classes.
+
+
+class UserRecordProtectedMixin(UserRecordMixin):
+    """
+    Block deletion of objects via:
+       * delete_selected action or
+       * delete view 
+    if any of the selected or any related object are not listing the user as 
+    an author. 'Author fields' are set in 'permit_delete' variable (default is 
+    'registeredBy' field).
     
+    This mixin also provides the "delete_selected" action.
+    """
+
+    permit_delete = ['registeredBy',]
+    
+    actions = ['delete_selected']
 
     def is_authorized(self, user, obj, fields=None):
         """

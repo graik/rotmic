@@ -28,7 +28,8 @@ from .utils import adminFilters as filters
 from . import forms
 from .forms import selectLookups as L
 
-from .adminBase import UserRecordMixin, RequestFormMixin, export_csv, UpdateManyMixin
+from .adminBase import UserRecordMixin, UserRecordProtectedMixin, \
+     RequestFormMixin, export_csv, UpdateManyMixin
 
 from . import adminUser  ## trigger extension of User
 from . import adminComponents ## trigger registration of component admin interfaces
@@ -242,7 +243,7 @@ class RackAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin, Up
 admin.site.register( M.Rack, RackAdmin )
 
 
-class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin, UpdateManyMixin):
+class ContainerAdmin(UserRecordProtectedMixin, reversion.VersionAdmin, ViewFirstModelAdmin, UpdateManyMixin):
     form = forms.ContainerForm
 
     permit_delete = [] ## de-activate author-only delete permission
@@ -323,7 +324,7 @@ class SequencingRunInline(admin.TabularInline):
            }),
     )
     
-class SequencingAdmin(UserRecordMixin, RequestFormMixin, reversion.VersionAdmin):
+class SequencingAdmin(UserRecordProtectedMixin, RequestFormMixin, reversion.VersionAdmin):
     form = forms.SequencingForm
     
     permit_delete = [] ## de-activate author-only delete permission
