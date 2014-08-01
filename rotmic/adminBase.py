@@ -42,7 +42,6 @@ class UserRecordMixin:
     when a record was saved.
     """
 
-
     def save_model(self, request, obj, form, change):
         """Override to save user who created this record"""
         ## do if new object or if object is being recovered by reversion
