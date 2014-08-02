@@ -65,13 +65,14 @@ class AssemblyPart(M.Annotation):
     component = models.ForeignKey(M.DnaComponent, blank=True, null=True,
                                   verbose_name='source construct',
                                   help_text='existing source DNA construct if any',
-                                  related_name='assemblyParts')
+                                  related_name='assemblyFragments')
     
     sequence = models.TextField(verbose_name='or specify sequence', 
                                 help_text='or specify new nucleotide sequence', 
                                 blank=True )
     
-    assProject = models.ForeignKey(AssemblyProject, null=False, blank=False)
+    assProject = models.ForeignKey(AssemblyProject, null=False, blank=False,
+                                   related_name='parts')
     
     def __unicode__(self):
         r = u'[%(component)s[%(start)i : %(end)i]'
@@ -95,7 +96,7 @@ class AssemblyLink(models.Model):
                                  null=False, blank=False, 
                                  related_name='partLinks')
     
-    part = models.ForeignKey('AssemblyLink')
+    part = models.ForeignKey('AssemblyPart')
 
     position = models.SmallIntegerField()
     
