@@ -74,10 +74,12 @@ class ReadonlyUrlMixin:
         see: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
         """
         classname = self.__class__.__name__.lower()
-        return reverse('admin:rotmic_%s_readonly' % classname, args=(self.id,))
+        app = self._meta.app_label
+        return reverse('admin:%s_%s_readonly' % (app, classname), args=(self.id,))
     
     def get_absolute_url_edit(self):
         """link to Editing Field"""
         classname = self.__class__.__name__.lower()
-        return reverse('admin:rotmic_%s_change' % classname, args=(self.id,))
+        app = self._meta.app_label
+        return reverse('admin:%s_%s_change' % (app, classname), args=(self.id,))
      
