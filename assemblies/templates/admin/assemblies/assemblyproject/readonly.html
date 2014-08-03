@@ -1,0 +1,62 @@
+{% extends "admin/rotmic/readonly.html" %}
+{% load rotmicfilters %}
+
+{% block content-top %}
+    <div class='module'>
+        <h2>Description</h2>
+
+            {% block projects %}
+                <p><em>by</em>
+                {% for a in o.authors.all %}
+                    {{a.first_name}} {{a.last_name}} ({{a}}), 
+                {% endfor %}
+                <em>Projects:</em>
+                {% if o.projects.count > 0 %}
+                    {% for p in o.projects.all %}
+                        <a href={{p.get_absolute_url}}>{{p.name}}</a>;
+                    {% endfor %}
+                {% else %}
+                    no projects assigned.
+                {% endif %}
+                </p>
+            {% endblock %}
+
+            <p class='description'>
+                {{o.description|markdown}}
+            </p>        
+    </div>
+{% endblock %}
+
+{% block content-middle %}
+    <div class='module'>
+        <h2>Parts (source fragments) <a href="#" onclick="toggle_visibility('parts');">(Hide/Show)</a></h2>
+        <div id='parts'>
+
+            <div style="margin: 10px">
+                <table cellspacing="1">
+        
+                    <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>strand</th>
+                        <th>from</th><th>to</th>
+                        <th>sequence</th>
+                    </tr>
+                    </thead>
+        
+                    <tbody>
+                        {% for x in o.parts.all %}
+                            <tr class="{% cycle 'row1' 'row2' %}">
+                                <td><b><a href="{{x.component.get_absolute_url}}">{{x.component}}</a></b></td>
+                                <td>{{x.strand}}</td>
+                                <td>{{x.bioStart | default_if_none:""}}</td>
+                                <td>{{x.bioEnd | default_if_none:""}}</td>
+                                <td>{{x.sequence | truncateHTML:40 }}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
