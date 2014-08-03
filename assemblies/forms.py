@@ -36,11 +36,27 @@ class AssemblyPartForm(forms.ModelForm):
         widgets = {'component' : sforms.AutoComboboxSelectWidget(
                                     lookup_class=L.DnaLookup,
                                     allow_new=False),
-                   'sequence' : forms.Textarea(attrs={'cols': 50, 'rows': 2,
+                   'sequence' : forms.Textarea(attrs={'cols': 40, 'rows': 2,
                                              'style':'font-family:monospace'}),
-                   'bioStart' : forms.TextInput(attrs={'size':4}),
-                   'bioEnd' : forms.TextInput(attrs={'size':4}),
+                   'bioStart' : forms.TextInput(attrs={'size':3}),
+                   'bioEnd' : forms.TextInput(attrs={'size':3}),
                    }
 
     class Media: 
         js = ['inline_ordering.js', ]
+        
+    def __init__(self, *args, **kwargs):
+        super(AssemblyPartForm, self).__init__(*args, **kwargs)
+
+        # supress Plus link for new object creation
+        self.fields['component'].widget.can_add_related = False
+    
+
+class AssemblyForm(forms.ModelForm):
+    
+    class Meta:
+        model = M.Assembly
+    
+    class Media:
+        js = ['inline_ordering.js']
+        

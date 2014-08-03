@@ -45,11 +45,30 @@ class AssemblyPartInline(admin.TabularInline):
     verbose_name = 'Part'
     verbose_name_plural = '1. Define Parts'
 
+class AssemblyInline(admin.TabularInline):
+    model = M.Assembly
+    form = forms.AssemblyForm
+    fk_name = 'assProject'
+
+    can_delete=True
+    extra = 2
+    max_num = 96
+    
+    fieldsets = (
+        ('Assemblies', {
+            'fields' : (('displayId', 'method', 'status',),
+                        ),
+        }),
+    )
+
+    verbose_name = 'DNA Assembly'
+    verbose_name_plural = '2. Define Assembly Designs'
+
 class AssemblyProjectAdmin(RequestFormMixin, ComponentAdminMixin, ViewFirstModelAdmin ):
     
     form = forms.AssemblyProjectForm
     
-    inlines = [AssemblyPartInline]
+    inlines = [AssemblyPartInline, AssemblyInline]
     
     fieldsets = (
         (None, {

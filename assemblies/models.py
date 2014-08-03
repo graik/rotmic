@@ -135,6 +135,8 @@ class Assembly(models.Model):
     
     preparedBy = models.ForeignKey(User, verbose_name="By")
     
+    assProject = models.ForeignKey(AssemblyProject, null=False, blank=False,
+                                   related_name='assemblies')
    
     def showStatus(self):
         color = {u'completed': '088A08', # green
