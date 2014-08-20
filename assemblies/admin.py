@@ -37,7 +37,7 @@ class AssemblyPartInline(admin.TabularInline):
     
     fieldsets = (
         ('Parts', {
-            'fields' : (('component', 'bioStart', 'bioEnd', 'strand', 'sequence'),
+            'fields' : (('partId', 'component', 'bioStart', 'bioEnd', 'strand', 'sequence'),
                         ),
         }),
     )

@@ -31,6 +31,9 @@ class AssemblyProjectForm(ComponentForm):
         
 class AssemblyPartForm(forms.ModelForm):
     
+    partId = forms.CharField(max_length=2, label='ID',
+                             widget=forms.TextInput(attrs={'style':'width:10px'}))
+    
     class Meta:
         model = M.AssemblyLink
         widgets = {'component' : sforms.AutoComboboxSelectWidget(
