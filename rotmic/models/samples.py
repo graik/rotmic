@@ -115,9 +115,9 @@ class Sample( UserMixin, ReadonlyUrlMixin ):
                                 related_name='%(class)s_prepared_by',
                                 verbose_name='By')
     
-    experimentNr = models.CharField('Exeriment Nr.', blank=True, null=True, 
+    experimentNr = models.CharField('Experiment Nr.', blank=True, null=True, 
                               max_length=100,
-                              help_text='exeriment/lab book Nr.' )
+                              help_text='experiment/lab book Nr.' )
     
     solvent = models.CharField('in Buffer/Medium', max_length=100, blank=True)
 
