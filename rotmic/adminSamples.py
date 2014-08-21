@@ -111,7 +111,7 @@ class SampleAdmin( UserRecordProtectedMixin, RequestFormMixin, ViewFirstModelAdm
     save_as = True
     save_on_top = True
 
-    search_fields = ['displayId', 
+    search_fields = ['displayId', 'container__displayId',
                      'preparedBy__username', 'preparedBy__first_name', 'preparedBy__last_name',
                      'description', 'experimentNr','solvent']
     
