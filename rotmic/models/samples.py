@@ -274,6 +274,13 @@ class Sample( UserMixin, ReadonlyUrlMixin ):
         return amount + ' '+ unit
     showAmount.short_description = 'Amount' 
     
+    def showAliquots(self):
+        """@return: str; number of aliquots"""
+        if not self.aliquotNr:
+            return u''
+        return unicode(self.aliquotNr)
+    showAliquots.short_description = 'Alq.'
+    
     def showStatus(self):
         color = {u'ok': '088A08', # green
                  u'bad': 'B40404', # red

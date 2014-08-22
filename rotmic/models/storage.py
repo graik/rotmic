@@ -208,6 +208,13 @@ class Container( UserMixin, ReadonlyUrlMixin ):
             r += ' (%s)' % self.name
         return r
 
+    def fullSampleCount(self):
+        """@return int - number of samples + associated extra aliquots"""
+        d = self.samples.aggregate(aliquot_total=models.Sum('aliquotNr'),
+                                   with_aliquot=models.Count('aliquotNr'))
+        r = self.samples.count()
+        r += (d['aliquot_total'] or 0) - d['with_aliquot']
+        return r
 
     def showVerbose(self):
         """show full chain Location / Rack / Container with URL links"""
@@ -230,7 +237,7 @@ class Container( UserMixin, ReadonlyUrlMixin ):
         url = reverse('admin:rotmic_sample_changelist')
         url += '?location=%s&rack=%s&container=%s' % \
             (self.rack.location.displayId, self.rack.displayId, self.displayId)
-        r = '<a href="%s" title="jump to samples">%s</a>' % (url, self.samples.count())
+        r = '<a href="%s" title="jump to samples">%s</a>' % (url, self.fullSampleCount())
         return html.mark_safe(r)
     showSampleCount.allow_tags = True
     showSampleCount.short_description = 'Samples'

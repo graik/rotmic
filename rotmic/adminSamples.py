@@ -103,7 +103,8 @@ class SampleAdmin( UserRecordProtectedMixin, RequestFormMixin, ViewFirstModelAdm
     list_display = ('showExtendedId', 'showRack', 'showLocation',
                     'showStatus', 'showComments',
                     'preparedAt', 'preparedBy', 'showType',
-                    'showContent', 'showConcentration', 'showAmount',
+                    'showContent', 
+                    'showConcentration', 'showAmount', 'showAliquots', 
                     'showEdit')
     
     ordering = ('container', 'displayId')
@@ -172,7 +173,7 @@ class SampleAdmin( UserRecordProtectedMixin, RequestFormMixin, ViewFirstModelAdm
         return r
     showDescription.allow_tags = True
     showDescription.short_description = 'Description'
-    
+
     def make_csv(self, request, queryset):
         from collections import OrderedDict
         
@@ -415,7 +416,8 @@ class ProteinSampleAdmin( reversion.VersionAdmin, SampleAdmin ):
     list_display = ('showExtendedId', 'showRack', 'showLocation',
                     'showStatus', 'showComments',
                     'preparedAt', 'preparedBy',
-                    'showContent', 'showConcentration', 'showAmount',
+                    'showContent', 
+                    'showAliquots', 'showConcentration', 'showAmount',
                     'showEdit')
 
     list_filter = ('status', filters.ProteinSampleLocationFilter, 
