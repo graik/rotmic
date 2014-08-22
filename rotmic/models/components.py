@@ -241,7 +241,7 @@ class DnaComponent(Component, StatusMixinDna):
         
         default_prefix = user.profile.dcPrefix or user.profile.prefix
 
-        if cat.id in [T.dcMarker.id, T.dcFragment.id, T.dcVectorBB.id]:
+        if cat.id in [T.dcMarker.id, T.dcVectorBB.id]:
             default_prefix += cat.name.lower()[0] 
         
         prefix = prefix or default_prefix
@@ -452,7 +452,7 @@ class ProteinComponent(Component, StatusMixinDna):
         determine the next free ID for given user and component category.
         category_id is ignored
         """
-        default_prefix = user.profile.pcPrefix or user.profile.prefix + 'aa'
+        default_prefix = user.profile.pcPrefix or user.profile.prefix + 'p'
         prefix = prefix or default_prefix
         
         return Component.nextAvailableId(user, prefix)
