@@ -47,6 +47,8 @@ class ImportXls(object):
     # lookup instructions for Many2Many fields (list of dict)
     xls2many = [ ]
                        
+    # force integer type if a x.0 number is returned by Excel
+    field2int = []  
     
     def __init__(self, f, user, request=None):
         """
@@ -125,6 +127,12 @@ class ImportXls(object):
         
         for key, value in self.xls2field.items():
             self.renameKey(d, key, value )
+        
+        ## convert integer floats to int if requested in field2int
+        for key in self.field2int:
+            v = d.get(key,None)
+            if type(v) is float and v % 1.0 == 0:
+                d[key] = int(v)
         
         return d
 
@@ -711,8 +719,10 @@ class ImportXlsSample( ImportXls ):
                         
                         { 'field' : 'preparedBy', 'model' : User, 
                           'targetfield' : 'username' }
-
                        ]
+    
+    # enforce integer numbers if it is a number
+    field2int = ['aliquotNr', 'displayId', 'experimentNr']
     
 
     def correctStatus(self, d):

@@ -34,7 +34,7 @@ from .utils import adminFilters as filters
 from .utils import ids
 from .utils.customadmin import ViewFirstModelAdmin
 
-from .adminBase import UserRecordMixin, RequestFormMixin, export_csv, UpdateManyMixin
+from .adminBase import UserRecordProtectedMixin, RequestFormMixin, export_csv, UpdateManyMixin
 
 
 class ComponentAttachmentInline(admin.TabularInline):
@@ -44,7 +44,7 @@ class ComponentAttachmentInline(admin.TabularInline):
     extra = 1
     max_num = 5
 
-class ComponentAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, UpdateManyMixin ):
+class ComponentAdmin( UserRecordProtectedMixin, RequestFormMixin, ViewFirstModelAdmin, UpdateManyMixin ):
     """
     Derived from ViewFirstModelAdmin -- Custom version of admin.ModelAdmin
     which shows a read-only View for a given object instead of the normal

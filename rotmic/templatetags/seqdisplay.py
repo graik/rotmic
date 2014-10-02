@@ -94,9 +94,9 @@ def seqdisplay_css():
 def seqdisplay(dc, element='seqdisplay'):
     """display D3 Sequence widget"""
 
-    sequence = dc.sequence
-    if not sequence and not dc.genbank:
-        return mark_safe("<p>There is no sequence registered. Upload a genbank file to show annotations.</p>")
+    sequence = dc.sequence or ''
+##    if not sequence and not dc.genbank:
+##        return mark_safe("<p>There is no sequence registered. Upload a genbank file to show annotations.</p>")
     
     annotations = ''
     errors = ''

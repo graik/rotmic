@@ -28,7 +28,7 @@ from . import forms
 from .utils.customadmin import ViewFirstModelAdmin
 from .utils import adminFilters as filters
 
-from .adminBase import UserRecordMixin, RequestFormMixin, export_csv, UpdateManyMixin
+from .adminBase import UserRecordProtectedMixin, RequestFormMixin, export_csv, UpdateManyMixin
 
 
 class SampleAttachmentInline(admin.TabularInline):
@@ -67,11 +67,12 @@ class SampleProvenanceInline(admin.StackedInline):
         (None, {
             'fields': (('provenanceType', 'sourceSample', 'description',),
                        ),
-            'description': 'Specify how this sample was created or from which other sample it was derived from.',
+            'description': 'Specify how this sample was created or from which other sample it was derived.'\
+                            +' (optional -- specify at least method or leave all empty)',
         }),
     )
 
-class SampleAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, UpdateManyMixin ):
+class SampleAdmin( UserRecordProtectedMixin, RequestFormMixin, ViewFirstModelAdmin, UpdateManyMixin ):
     form = forms.SampleForm     
     
     permit_delete = ['registeredBy', 'preparedBy'] ## creator, author or superuser can delete
@@ -102,7 +103,8 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, Updat
     list_display = ('showExtendedId', 'showRack', 'showLocation',
                     'showStatus', 'showComments',
                     'preparedAt', 'preparedBy', 'showType',
-                    'showContent', 'showConcentration', 'showAmount',
+                    'showContent', 
+                    'showConcentration', 'showAmount', 'showAliquots', 
                     'showEdit')
     
     ordering = ('container', 'displayId')
@@ -110,7 +112,7 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, Updat
     save_as = True
     save_on_top = True
 
-    search_fields = ['displayId', 
+    search_fields = ['displayId', 'container__displayId', 'container__name',
                      'preparedBy__username', 'preparedBy__first_name', 'preparedBy__last_name',
                      'description', 'experimentNr','solvent']
     
@@ -171,7 +173,7 @@ class SampleAdmin( UserRecordMixin, RequestFormMixin, ViewFirstModelAdmin, Updat
         return r
     showDescription.allow_tags = True
     showDescription.short_description = 'Description'
-    
+
     def make_csv(self, request, queryset):
         from collections import OrderedDict
         
@@ -414,7 +416,8 @@ class ProteinSampleAdmin( reversion.VersionAdmin, SampleAdmin ):
     list_display = ('showExtendedId', 'showRack', 'showLocation',
                     'showStatus', 'showComments',
                     'preparedAt', 'preparedBy',
-                    'showContent', 'showConcentration', 'showAmount',
+                    'showContent', 
+                    'showAliquots', 'showConcentration', 'showAmount',
                     'showEdit')
 
     list_filter = ('status', filters.ProteinSampleLocationFilter, 

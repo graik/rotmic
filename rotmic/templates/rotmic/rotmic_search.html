@@ -1,0 +1,114 @@
+{% extends "rotmic/rotmic_form.html" %}
+{% load i18n admin_urls admin_static admin_modify rotmicforms %}
+
+{% block extrahead %}
+
+    {{block.super}}
+    
+    {{filter.form.media}}
+    
+{% endblock %}
+
+{% block breadcrumbs%}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
+    <a href="{% url 'admin:index' %}">Rotmic</a> &rsaquo;
+    <a href="{% url 'admin:rotmic_'|add:model_name|add:'_changelist' %}">{% block object-class1 %}{{verbose_name|capfirst}}s{% endblock %}</a> &rsaquo;
+    {% block last-breadcrumb %}Search{% endblock %} 
+</div>
+{% endblock %}
+
+
+{% block content %}        
+
+    {% block form-title %}<h2>Search {{verbose_name}}s</h2>{% endblock %}
+
+    <ul class="object-tools">
+        <li>
+            {% block help-links %}
+                <a href="http://rotmic.iric.ca/wiki/UserGuide/Dialogs/search" class="helplink">{% trans "Help!" %}</a>
+            {% endblock %}
+        </li>
+    </ul>
+    
+    <form action="" method="get">
+
+        {% if filter.form.non_field_errors %}<p>{{ filter.form.non_field_errors }}</p>{% endif %}
+
+        {% block form-fieldsets %}
+            <fieldset class="module">
+            
+                <h2>Search Parameters</h2>
+                
+                <p>
+                Specify a combination of field-specific search terms. Search terms do not need to 
+                cover the complete value of the field but can be text fragments. For example:
+                Searching the ID field for "02" will find constructs with IDs such "id0221" as
+                well as "mygene02".
+                </p>
+                
+                <p>
+                Each search field acts as an additional filter. Only results that match <b>all</b> 
+                search terms will be shown. Leave fields empty to exclude them from the search.
+                </p>
+
+                {{ filter.form.as_p }}
+                                
+            </fieldset>
+         
+        {% endblock %}
+
+        {% block submit-row %}
+            <div class="submit-row">        
+                <input type="submit" class="default" value="{%block submit-button%}Update Search{%endblock%}">
+            </div>
+        {% endblock %}
+
+    </form>
+    
+    {% if filter.form.has_changed %}
+    
+        <div class="module">
+
+            <h2>Result: {{filter.count}} entries</h2>
+    
+            <div style="margin: 10px">
+                <table cellspacing="1">
+        
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for x in filter %}
+                            <tr class="{% cycle 'row1' 'row2' %}">
+                            
+                                <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
+                                <td>{{x.name}}</td>
+                                <td>{{x.showDescription}}</td>
+    
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+{% endblock %}
+
+{% block footer %}
+
+    <script type="text/javascript"> 
+        $(function(){
+            $(".dateinput").datepicker();
+        });
+    </script>
+
+{% endblock %}

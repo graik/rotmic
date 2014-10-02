@@ -28,12 +28,14 @@ from .utils import adminFilters as filters
 from . import forms
 from .forms import selectLookups as L
 
-from .adminBase import UserRecordMixin, RequestFormMixin, export_csv, UpdateManyMixin
+from .adminBase import UserRecordMixin, UserRecordProtectedMixin, \
+     RequestFormMixin, export_csv, UpdateManyMixin
 
 from . import adminUser  ## trigger extension of User
 from . import adminComponents ## trigger registration of component admin interfaces
 from . import adminProjects ## trigger registration of ProjectAdmin
 from . import adminSamples ## trigger registration of Sample-related admin interfaces
+from . import adminSequencing ## trigger registration of Sequencing-related interface
 
 
 class DnaComponentTypeAdmin( reversion.VersionAdmin ):
@@ -163,8 +165,6 @@ admin.site.register( M.Unit, UnitAdmin )
 class LocationAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin, UpdateManyMixin):
     form = forms.LocationForm
     
-    permit_delete = [] ## de-activate author-only delete permission
-
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
 
     change_list_template = "admin/rotmic/location/change_list.html"
@@ -197,8 +197,6 @@ admin.site.register( M.Location, LocationAdmin )
 
 class RackAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin, UpdateManyMixin):
     form = forms.RackForm
-
-    permit_delete = [] ## de-activate author-only delete permission
 
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
     
@@ -245,8 +243,6 @@ admin.site.register( M.Rack, RackAdmin )
 class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin, UpdateManyMixin):
     form = forms.ContainerForm
 
-    permit_delete = [] ## de-activate author-only delete permission
-    
     change_form_template = 'admin/rotmic/change_form_viewfirst.html'  ## adapt breadcrums to view first admin
 
     change_list_template = "admin/rotmic/container/change_list.html"
@@ -310,62 +306,3 @@ class SampleProvenanceTypeAdmin(reversion.VersionAdmin):
     
 admin.site.register( M.SampleProvenanceType, SampleProvenanceTypeAdmin )
     
-
-class SequencingRunInline(admin.TabularInline):
-    model = M.SequencingRun
-    form = forms.SequencingRunForm
-    extra = 2
-    max_num = 15
-
-    fieldsets = (
-        (None,
-         { 'fields': ('f', 'primer', 'description')
-           }),
-    )
-    
-class SequencingAdmin(UserRecordMixin, RequestFormMixin, reversion.VersionAdmin):
-    form = forms.SequencingForm
-    
-    permit_delete = [] ## de-activate author-only delete permission
-    
-    change_list_template = "admin/rotmic/sequencing/change_list.html"
-
-    inlines = [ SequencingRunInline ]
-
-    fieldsets = (
-        (None,
-         { 'fields': (('dummyfield',), ('sample','evaluation'),('orderedAt', 'orderedBy'), 
-                      'comments')
-           }),
-    )
-
-    ordering = ('sample', 'orderedAt')
-
-    date_hierarchy = 'orderedAt'
-    
-    save_as = True
-    save_on_top = True
-
-    list_display   = ( '__unicode__', 'showSample', 'orderedAt', 'orderedBy', 'showEvaluation' )
-
-    list_filter    = ('sample__dna__projects', filters.SortedOrderedByFilter, 'evaluation',)
-
-    search_fields  = ('sample__displayId', 'sample__name', 'registeredBy__username',
-                      'comments','evaluation',
-                      'orderedBy__username',
-                      'sample__container__displayId')
-    
-    def showSample(self, obj):
-        """Table display of linked sample ''"""
-        assert isinstance(obj, M.Sequencing), 'object missmatch'
-        x = obj.sample
-        if not x:
-            return u''
-        url = x.get_absolute_url()
-        s = '%s (%s)' % ( x, x.content.displayId)
-        return html.mark_safe('<a href="%s" title="">%s</a>' \
-                              % (url, s ))
-    showSample.allow_tags = True
-    showSample.short_description = 'Sample'
-
-admin.site.register(M.Sequencing, SequencingAdmin)

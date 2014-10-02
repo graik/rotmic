@@ -82,7 +82,7 @@ class GenbankInMemory:
         """Names/Labels seem to be a mess; make a good guess"""
         q = feature.qualifiers
         r = q.get('label','') or q.get('product','') or q.get('gene') \
-            or feature.type
+            or q.get('note') or feature.type
         if r == feature.type:
             print 'fallback to type: ', q
         if type(r) is list:

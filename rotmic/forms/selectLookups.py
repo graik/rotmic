@@ -215,6 +215,10 @@ class UserLookup(ModelLookup):
     search_fields = ('username__startswith', 'first_name__startswith',
                      'last_name__startswith')
     
+    def get_item_label(self, item):
+        """The value shown in the drop down list"""
+        return '%s (%s %s)' % (unicode(item.username), item.first_name, item.last_name) 
+
     def get_item_id(self,item):
         return item.pk
 

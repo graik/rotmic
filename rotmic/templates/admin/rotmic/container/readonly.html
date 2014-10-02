@@ -31,7 +31,7 @@
 <div class='module'>
     <h2>Samples</h2>
     <p>
-        This Container contains <b>{{o.samples.count}} samples</b>.<br>
+        This Container contains <b>{{o.fullSampleCount}} samples</b>.<br>
         <a href="{% url 'admin:rotmic_sample_changelist'%}?location={{o.rack.location.displayId}}&rack={{o.rack.displayId}}&container={{o.displayId}}">
             Jump to sample table</a>
     </p>
@@ -54,6 +54,7 @@
                 <th>ID/<br>Pos.</th><th>prepared</th><th>by</th>
                 <th>Type</th><th>Content</th>
                 <th>Conc.</th><th>Amount</th>
+                <th title='aliquots'>Alq</th>
                 <th>Description</th><th>Status</th>
             </tr>
             </thead>
@@ -76,6 +77,8 @@
                 <td>{{x.showConcentration}}</td>
                 
                 <td>{{x.showAmount}}</td>
+                
+                <td>{{x.showAliquots}}</td>
                    
                 <td>{{x.description | truncateHTML:30}}</td>
                 

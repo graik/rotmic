@@ -180,7 +180,7 @@ class DnaComponent(Component, StatusMixinDna):
     
     insert = models.ForeignKey( 'self', blank=True, null=True,
                                 related_name='as_insert_in_dna',
-                                help_text='start typing ID or name of insert DNA (Fragment)')
+                                help_text='start typing ID or name of DNA <b>Fragment</b>')
     
     vectorBackbone = models.ForeignKey( 'self', blank=True, null=True ,
                                         verbose_name='Vector Backbone',
@@ -229,19 +229,20 @@ class DnaComponent(Component, StatusMixinDna):
         dnasamples = self.dna_samples.all()
         return list(dnasamples) + list(self.cellSamples)
 
-
     @staticmethod
     def nextAvailableId(user, prefix=None, category_id=None):
         """
         determine the next free ID for given user and component category.
         category_id - int, pk of ComponentType instance selected in Category field
         """
+        import rotmic.initialTypes as T  ## local import to avoid recursion
+        
         cat = DnaComponentType.objects.get(id=category_id)
         
         default_prefix = user.profile.dcPrefix or user.profile.prefix
 
-        middle = cat.name.lower()[0]
-        default_prefix += middle
+        if cat.id in [T.dcMarker.id, T.dcVectorBB.id]:
+            default_prefix += cat.name.lower()[0] 
         
         prefix = prefix or default_prefix
         
@@ -397,7 +398,7 @@ class CellComponent(Component, StatusMixinDna):
     @staticmethod
     def nextAvailableId(user, prefix=None, category_id=None):
         """
-        determine the next free ID for given user and component category.
+        determine the next free ID for given user and (ignored) component category.
         """
         default_prefix = user.profile.ccPrefix or user.profile.prefix + 'c'
         prefix = prefix or default_prefix
@@ -451,7 +452,7 @@ class ProteinComponent(Component, StatusMixinDna):
         determine the next free ID for given user and component category.
         category_id is ignored
         """
-        default_prefix = user.profile.pcPrefix or user.profile.prefix + 'aa'
+        default_prefix = user.profile.pcPrefix or user.profile.prefix + 'p'
         prefix = prefix or default_prefix
         
         return Component.nextAvailableId(user, prefix)

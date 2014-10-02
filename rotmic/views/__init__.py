@@ -6,4 +6,4 @@ from .annotationViews import *
 
 from .uploads import *
 from .updates import *
-
+from .searchviews import *

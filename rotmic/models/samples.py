@@ -65,7 +65,8 @@ class SampleProvenance(models.Model):
 
     provenanceType = models.ForeignKey( SampleProvenanceType, 
                                         verbose_name='via (method)',
-                                        help_text="How is this sample derived from it's source?")
+                                        help_text="How is this sample derived from it's source?",
+                                        blank=True)
 
     def __unicode__(self):
         """"""
@@ -114,9 +115,9 @@ class Sample( UserMixin, ReadonlyUrlMixin ):
                                 related_name='%(class)s_prepared_by',
                                 verbose_name='By')
     
-    experimentNr = models.CharField('Exeriment Nr.', blank=True, null=True, 
+    experimentNr = models.CharField('Experiment Nr.', blank=True, null=True, 
                               max_length=100,
-                              help_text='exeriment/lab book Nr.' )
+                              help_text='experiment/lab book Nr.' )
     
     solvent = models.CharField('in Buffer/Medium', max_length=100, blank=True)
 
@@ -272,6 +273,13 @@ class Sample( UserMixin, ReadonlyUrlMixin ):
         unit   = unicode( self.amountUnit or '' )
         return amount + ' '+ unit
     showAmount.short_description = 'Amount' 
+    
+    def showAliquots(self):
+        """@return: str; number of aliquots"""
+        if not self.aliquotNr:
+            return u''
+        return unicode(self.aliquotNr)
+    showAliquots.short_description = 'Alq.'
     
     def showStatus(self):
         color = {u'ok': '088A08', # green

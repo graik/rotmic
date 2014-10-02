@@ -12,6 +12,7 @@ from django.contrib.admin.util import unquote, flatten_fieldsets, get_deleted_ob
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 import django.utils.html as html
+from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 
 ## imports for show / display links
 from django.utils.safestring import mark_safe
@@ -154,9 +155,25 @@ class ViewFirstModelAdmin( ModelAdmin ):
                                (opts.app_label, opts.module_name),
                                args=(obj.pk,),
                                current_app=self.admin_site.name)
+            preserved_filters = self.get_preserved_filters(request)
+            post_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, post_url)
         else:
             post_url = reverse('admin:index',
                                current_app=self.admin_site.name)
+        return HttpResponseRedirect(post_url)
+
+    def response_post_save_add(self, request, obj):
+        """
+        Figure out where to redirect after the 'Save' button has been pressed
+        when adding a new object.
+        """
+        opts = self.model._meta
+        post_url = reverse('admin:%s_%s_readonly' %
+                           (opts.app_label, opts.module_name),
+                           args=(obj.pk,),
+                           current_app=self.admin_site.name)
+        preserved_filters = self.get_preserved_filters(request)
+        post_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, post_url)
         return HttpResponseRedirect(post_url)
 
     def showEdit(self, obj):

@@ -266,8 +266,26 @@ var seqdisplay = function(){
         
         redraw();
     }
+    
+    // called if there is no sequence
+    function draw_empty(){
+        var notice = svg.append('text')
+                            .attr("x", w / 2 - 60)
+                            .attr("y", 50)
+                            .text('no sequence found');
+        svg.append('text')
+                            .attr("x", w / 2 - 150)
+                            .attr("y", 80)
+                            .text('Attach genbank file to view sequence annotations.');
+        
+    }
 
     function redraw(){
+    
+        if (! seq){ 
+            draw_empty();
+            return;
+        }
 
         var show_sequence = ((scale(2) - scale(1)) > 7);
         var s_start = Math.floor(scale.domain()[0]);

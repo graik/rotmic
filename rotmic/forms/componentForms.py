@@ -56,15 +56,24 @@ class CleaningMixIn:
 
 def getComponentWidgets( extra={} ):
     """widgets shared between different types of Component forms."""
-    r = {'displayId' : forms.TextInput(attrs={'size':10}),
+    r = {'displayId' : forms.TextInput(attrs={'size':10,
+                            'title':'IDs must fit the pattern a[bcdef]1234[ab].'\
+                            +' That means, 1 - 6 lower case letters + four digits + 0 - 2 lower case letters.'\
+                            +' Erase (and change category) in order to re-activate the automatic ID suggestion.'
+                        }),
+         
          'name' : forms.TextInput(attrs={'size':25}),
 
          'description' : forms.Textarea(attrs={'cols': 100, 'rows': 10,
                                           'style':'font-family:monospace'}),
          
-         'projects': L.FixedSelectMultipleWidget(lookup_class=L.ProjectLookup,),
+         'projects': L.FixedSelectMultipleWidget(lookup_class=L.ProjectLookup,
+                            attrs={'title':'Assign one or more projects. Start typing part of the project name to restrict the choice.'
+                        }),
 
-         'authors': L.FixedSelectMultipleWidget(lookup_class=L.UserLookup,),
+         'authors': L.FixedSelectMultipleWidget(lookup_class=L.UserLookup,
+                            attrs={'title':'Assign one or more authors. Start typing beginning of user-, first or last name to restrict the choice.'
+                        }),
          }
     r.update( extra )
     return r
@@ -250,27 +259,23 @@ class DnaComponentForm(GenbankComponentForm):
             raise ValidationError('Cannot assign category as type.')
         
         cat = r.category()
-        old = M.DnaComponentType.objects.get(id=self.initial['componentType']).category()
         
-        if cat.id == old.id: ## only worry if category had changed
-            return r
-
         if self.instance and self.instance.id and ('componentType' in self.changed_data):
             assert( isinstance(cat, M.DnaComponentType) )
             msg = 'Cannot change category / type: '
 
-            if cat.id != T.dcVectorBB and self.instance.as_vector_in_plasmid.count():
+            if cat.id != T.dcVectorBB.id and self.instance.as_vector_in_plasmid.count():
                 raise ValidationError(msg + 'This construct is in use as a vector backbone.')
             
             if not cat.id in [T.dcFragment.id, T.dcMarker.id] and \
                self.instance.as_insert_in_dna.count():
                 raise ValidationError(msg + 'This construct is in use as an insert.')
                 
-            if cat.id != T.dcMarker and (self.instance.as_marker_in_cell.count() \
+            if cat.id != T.dcMarker.id and (self.instance.as_marker_in_cell.count() \
                                        or self.instance.as_marker_in_dna.count() ):
                 raise ValidationError(msg + 'This construct is in use as a marker.')
         
-            if cat.id != T.dcPlasmid and self.instance.as_plasmid_in_cell.count():
+            if cat.id != T.dcPlasmid.id and self.instance.as_plasmid_in_cell.count():
                 raise ValidationError(msg + 'This construct is in use as a plasmid.')
         return r
     
@@ -340,21 +345,33 @@ class DnaComponentForm(GenbankComponentForm):
         model = M.DnaComponent
 
         widgets = getComponentWidgets( extra={
+            'name' : forms.TextInput(attrs={'size':25,
+                            'title' : 'Erase in order to re-activate automatic name composition from insert and vector.'
+                        }),
+
             'sequence': forms.Textarea(attrs={'cols': 100, 'rows': 4,
                                                'style':'font-family:monospace'}), 
 
             'insert' : sforms.AutoComboboxSelectWidget(lookup_class=L.InsertLookup, 
-                                                       allow_new=False,
-                                                       attrs={'size':32}),
+                            allow_new=False,
+                            attrs={'size':32,
+                                   'title':'Select a DNA construct (must be classified as "Fragment").'
+                        }),
             'vectorBackbone' : sforms.AutoComboboxSelectWidget(
-                                                  lookup_class=L.VectorLookup, 
-                                                  allow_new=False),
+                                   lookup_class=L.VectorLookup, 
+                                   allow_new=False,
+                                   attrs={'title': 'Select a DNA construct (must be classified as "Vector Backbone").'
+                                }),
 
-            'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup),
+            'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup,
+                            attrs={'title': 'Select one or more DNA constructs (must be classified as "Marker").'
+                        }),
             
             'translatesTo' : sforms.AutoComboboxSelectWidget(
-                                                 lookup_class=L.ProteinLookup,
-                                                 allow_new=False)
+                                lookup_class=L.ProteinLookup,
+                                allow_new=False,
+                                attrs={'title': 'Select a Protein construct.'
+                            }),
             })
 
 
@@ -405,10 +422,17 @@ class CellComponentForm(ComponentForm):
     class Meta:
         model = M.CellComponent
         widgets = getComponentWidgets( extra={
+            'name' : forms.TextInput(attrs={'size':30,
+                            'title' : 'Erase in order to re-activate automatic name composition from plasmid and strain.'
+                        }),
             'plasmid': sforms.AutoComboboxSelectWidget(lookup_class=L.PlasmidLookup, 
-                                                       allow_new=False,
-                                                       attrs={'size':35}),
-            'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup)
+                            allow_new=False,
+                            attrs={'size':35,
+                                   'title':'Select a DNA construct (must be classified as "Plasmid").'
+                        }),
+            'markers' : L.FixedSelectMultipleWidget(lookup_class=L.MarkerLookup,
+                            attrs={'title': 'Select one or more DNA constructs (must be classified as "Marker").'
+                        })
             })
 
 
