@@ -148,4 +148,19 @@
 
     </script>
     
+    <script language=javascript type='text/javascript'>
+        
+        // add a Hide/Show link to tabular Inline Admin
+        // requires rotmic.js in form media
+        $(function(){
+            $('#sequenceFeatures-group table').attr('id','sf-table');
+            $('#sequenceFeatures-group h2').html('DNA Sequence Features <a href="#" onclick="toggle_visibility(\'sf-table\');">(Hide/Show)</a>');
+
+            // Don't collapse if fieldset contains errors
+            if ($('#sequenceFeatures-group').find('.errorlist').length == 0){
+                toggle_visibility('sf-table');
+            }
+        })
+    </script>
+
 {% endblock %}

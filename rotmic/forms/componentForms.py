@@ -155,7 +155,7 @@ class GenbankComponentForm(ComponentForm):
     def __init__(self, *args, **kwargs):
         super(GenbankComponentForm, self).__init__(*args, **kwargs)
         
-        self.fields['sequence'].label = 'Raw Sequence'
+        self.fields['sequence'].label = 'raw Sequence'
         
         if self.instance:
             if not self.instance.genbank:
@@ -373,6 +373,9 @@ class DnaComponentForm(GenbankComponentForm):
                                 attrs={'title': 'Select a Protein construct.'
                             }),
             })
+    
+    class Media:
+        js = ['rotmic.js'] ## required for collapsing SequenceFeature inline
 
 
 class CellComponentForm(ComponentForm):

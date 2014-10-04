@@ -37,8 +37,8 @@ from .utils.customadmin import ViewFirstModelAdmin
 from .adminBase import UserRecordProtectedMixin, RequestFormMixin, export_csv, UpdateManyMixin
 
 class SequenceFeatureInline(admin.TabularInline):
-    model = M.SequenceFeature
-    form = forms.SingleSequenceFeatureForm
+    model = M.DnaSequenceFeature
+    form = forms.DnaSequenceFeatureForm
     can_delete=True
     extra=2
     max_num=20
@@ -175,7 +175,7 @@ class ComponentAdmin( UserRecordProtectedMixin, RequestFormMixin, ViewFirstModel
 
 class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     """Admin interface description for DNA constructs."""
-    inlines = [ ComponentAttachmentInline, SequenceFeatureInline ]
+    inlines = [ SequenceFeatureInline, ComponentAttachmentInline ]
     form = forms.DnaComponentForm
     
     change_list_template = "admin/rotmic/dnacomponent/change_list.html"

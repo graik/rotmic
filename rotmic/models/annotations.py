@@ -34,11 +34,6 @@ class Annotation(models.Model):
                               blank=False, default='+',
                               help_text='strand (+...coding, -...anticoding)')
     
-    @property
-    def annotated(self):
-        """@return properly type-cast parent component to which this annotation is assigned"""
-        raise NotImplemented
-    
     class Meta:
         app_label = 'rotmic'        
         abstract = True
@@ -71,11 +66,6 @@ class DnaSequenceFeature(SequenceFeature):
                                   blank=False,
                                   related_name='sequenceFeatures')
 
-    @property
-    def annotated(self):
-        """@return properly type-cast parent component to which this annotation is assigned"""
-        return self.component
-
     class Meta:
         app_label = 'rotmic'        
         abstract = False
@@ -88,15 +78,9 @@ class ProteinSequenceFeature(SequenceFeature):
                                   blank=False,
                                   related_name='sequenceFeatures')
 
-    @property
-    def annotated(self):
-        """@return properly type-cast parent component to which this annotation is assigned"""
-        return self.component
-
     class Meta:
         app_label = 'rotmic'        
         abstract = False
-
 
 
 class DnaSequenceLink(Annotation):
