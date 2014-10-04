@@ -37,5 +37,6 @@ from rotmic.models.storage import Location, Rack, Container
 
 from rotmic.models.projects import Project
 
-from rotmic.models.annotations import Annotation, SequenceLink
+from rotmic.models.annotations import Annotation, DnaSequenceFeature, \
+     ProteinSequenceFeature, DnaSequenceLink
 

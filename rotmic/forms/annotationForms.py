@@ -17,14 +17,22 @@ import django.forms as forms
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 
-from rotmic.models import SequenceLink, DnaComponent
+from rotmic.models import SequenceLink, SequenceFeature, DnaComponent
+
+class SingleSequenceFeatureForm(forms.ModelForm):
+    """Form for a single sequence feature -- to be used within a ModelFormset"""
+    
+    class Meta:
+        model = SequenceFeature
+        fields = ['name', 'featureType', 'start', 'bioend'description' ]
+        
 
 class SingleSequenceLinkForm(forms.ModelForm):
     """Form for a single annotation -- to be used within a ModelFormset"""
     
     class Meta:
         model = SequenceLink
-        fields = ['subComponent', 'bioStart', 'bioEnd', 'hardLink', 'strand']
+        fields = ['subComponent', 'hardLink', ]
 
 
 DnaAnnotationFormSet = inlineformset_factory(

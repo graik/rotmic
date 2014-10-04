@@ -18,24 +18,24 @@ from datetime import datetime
 
 from django.db import models
 
-from .components import UserMixin, Component
+from .components import UserMixin, Component, DnaComponent, ProteinComponent
 from .componentTypes import DnaComponentType
 
 class Annotation(models.Model):
-    """Base class for part annotations (links) between different kind of components"""
+    """Base class for part annotations and links between different kind of components"""
 
-    bioStart = models.PositiveIntegerField('from', blank=True, null=True,
+    start = models.PositiveIntegerField('from', blank=True, null=True,
                                         help_text='starting position (beginning with 1)')
     
-    bioEnd = models.PositiveIntegerField('to', blank=True, null=True,
+    end = models.PositiveIntegerField('to', blank=True, null=True,
                                       help_text='ending position (including)')
     
     strand = models.CharField('strand', max_length=1, choices=(('+',u'+'),('-',u'\u2013')), 
                               blank=False, default='+',
-                              help_text='on strand (+...coding, -...anticoding)')
+                              help_text='strand (+...coding, -...anticoding)')
     
     @property
-    def target(self):
+    def annotated(self):
         """@return properly type-cast parent component to which this annotation is assigned"""
         raise NotImplemented
     
@@ -50,10 +50,6 @@ class SequenceFeature(Annotation):
     typically coming from genbank entry.
     """
     
-    component = models.ForeignKey(Component, verbose_name='target construct',
-                                  blank=False,
-                               related_name='sequenceFeatures')
-    
     name = models.CharField('Name', max_length=200, blank=False, 
                             help_text='short descriptive name')
     
@@ -65,17 +61,52 @@ class SequenceFeature(Annotation):
 
     class Meta:
         app_label = 'rotmic'        
+        abstract = True
+
+
+class DnaSequenceFeature(SequenceFeature):
+    """Implementation of SequenceFeature for annotating DNA constructs"""
+    
+    component = models.ForeignKey(DnaComponent, verbose_name='annotated construct',
+                                  blank=False,
+                                  related_name='sequenceFeatures')
+
+    @property
+    def annotated(self):
+        """@return properly type-cast parent component to which this annotation is assigned"""
+        return self.component
+
+    class Meta:
+        app_label = 'rotmic'        
         abstract = False
 
 
-class SequenceLink(Annotation):
+class ProteinSequenceFeature(SequenceFeature):
+    """Implementation of SequenceFeature for annotating Protein constructs"""
+    
+    component = models.ForeignKey(ProteinComponent, verbose_name='annotated construct',
+                                  blank=False,
+                                  related_name='sequenceFeatures')
+
+    @property
+    def annotated(self):
+        """@return properly type-cast parent component to which this annotation is assigned"""
+        return self.component
+
+    class Meta:
+        app_label = 'rotmic'        
+        abstract = False
+
+
+
+class DnaSequenceLink(Annotation):
     """Link a sequence region to another Component"""
 
-    component = models.ForeignKey(Component, verbose_name='target construct',
+    component = models.ForeignKey(DnaComponent, verbose_name='target construct',
                                   blank=False,
                                   related_name='sequenceLinks')
     
-    subComponent = models.ForeignKey(Component, verbose_name='source part',
+    subComponent = models.ForeignKey(DnaComponent, verbose_name='source part',
                                      related_name='linkedVia',
                                      blank=True, null=True )
 
@@ -84,4 +115,5 @@ class SequenceLink(Annotation):
 
     class Meta:
         app_label = 'rotmic'        
-        abstract = False
+        abstract = True
+        
