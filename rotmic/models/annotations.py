@@ -115,5 +115,5 @@ class DnaSequenceLink(Annotation):
 
     class Meta:
         app_label = 'rotmic'        
-        abstract = True
+        abstract = False
         
