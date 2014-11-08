@@ -39,9 +39,10 @@ from .adminBase import UserRecordProtectedMixin, RequestFormMixin, export_csv, U
 class SequenceFeatureInline(admin.TabularInline):
     model = M.DnaSequenceFeature
     form = forms.DnaSequenceFeatureForm
+    formset = forms.SequenceFeatureFormSet
     can_delete=True
     extra=2
-    max_num=20
+    max_num=50
 
 class ComponentAttachmentInline(admin.TabularInline):
     model = M.ComponentAttachment

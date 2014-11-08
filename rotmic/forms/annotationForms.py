@@ -14,13 +14,25 @@
 ## You should have received a copy of the GNU Affero General Public
 ## License along with rotmic. If not, see <http://www.gnu.org/licenses/>.
 import django.forms as forms
-from django.forms.models import inlineformset_factory
+from django.forms.models import inlineformset_factory, BaseInlineFormSet
 from django.http import HttpResponseRedirect
 
 import rotmic.models as M
 
 import selectLookups as L
 import selectable.forms as sforms
+
+
+class SequenceFeatureFormSet(BaseInlineFormSet):
+    """Populate Inline forms from genbank file"""
+
+    def clean(self):
+        super(SequenceFeatureFormSet, self).clean()
+
+        for form in self.forms:
+            if not hasattr(form, 'cleaned_data'):
+                continue
+
 
 class DnaSequenceFeatureForm(forms.ModelForm):
     """Form for a single sequence feature -- to be used within a ModelFormset"""

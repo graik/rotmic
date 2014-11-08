@@ -30,7 +30,8 @@ from sequencingForms import SequencingForm, SequencingRunForm
 from uploadForms import TableUploadForm, GenbankUploadForm, TracesUploadForm,\
      GenbankProteinUploadForm
 
-from annotationForms import DnaAnnotationFormSet, DnaSequenceFeatureForm
+from annotationForms import DnaAnnotationFormSet, DnaSequenceFeatureForm, \
+     SequenceFeatureFormSet
 
 from updateForms import UpdateManyForm
 
