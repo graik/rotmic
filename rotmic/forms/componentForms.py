@@ -280,11 +280,12 @@ class DnaComponentForm(GenbankComponentForm):
         return r
     
     
-    def _validateLinked(self, x, categories=[T.dcFragment,T.dcMarker]):
+    def _validateLinked(self, x, categories=[T.dcFragment,T.dcMarker], field=''):
         """
         Enforce that linked DC instances have given categories and check
         for circular references
         """
+        assert field is not ''
         if x:
             cat_ids = [ cat.id for cat in categories ]
             if not x.componentType.category().id in cat_ids:
@@ -295,7 +296,7 @@ class DnaComponentForm(GenbankComponentForm):
             if x.id == self.instance.id: 
                 self._errors[field] = self.error_class(['Circular reference!'])
     
-    def _validateLinkedMany(self, query, categories=[]):
+    def _validateLinkedMany(self, query, categories=[], field=''):
         """validate all instances in Many2Many relation"""
         for x in query:
             self._validateLinked(x, categories=categories)
@@ -330,13 +331,13 @@ class DnaComponentForm(GenbankComponentForm):
             self._errors['vectorBackbone'] = self.error_class([msg])
         
         ## validate Insert, Marker, Vector, and Protein categories
-        self._validateLinked(data['insert'], [T.dcFragment, T.dcMarker])
+        self._validateLinked(data['insert'], [T.dcFragment, T.dcMarker], 'insert')
         
-        self._validateLinked(data['vectorBackbone'], [T.dcVectorBB])
+        self._validateLinked(data['vectorBackbone'], [T.dcVectorBB], 'vectorBackbone')
         
-        self._validateLinked(data['translatesTo'], [T.pcProtein])
+        ##self._validateLinked(data['translatesTo'], [T.pcProtein], 'translatesTo')
 
-        self._validateLinkedMany(data['markers'], [T.dcMarker])
+        self._validateLinkedMany(data['markers'], [T.dcMarker], 'markers')
         
         return data
       
