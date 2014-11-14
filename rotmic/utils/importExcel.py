@@ -430,7 +430,8 @@ class ImportXlsDna( ImportXlsComponent ):
     # rename Excel headers to field name
     xls2field = { 'id' : 'displayId',
                   'type' : 'componentType',
-                  'vector' : 'vectorBackbone' }
+                  'vector' : 'vectorBackbone',
+                  'translates to' : 'translatesTo'}
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
@@ -438,7 +439,9 @@ class ImportXlsDna( ImportXlsComponent ):
                        { 'field' : 'vectorBackbone', 
                          'targetfield2' : 'name'},
                        { 'field' : 'componentType', 'model' : M.DnaComponentType,
-                         'targetfield' : 'name'}
+                         'targetfield' : 'name'},
+                       { 'field' : 'translatesTo', 'model' : M.ProteinComponent,
+                         'targetfield' : 'displayId'}
                        ]
     
     # lookup instructions for Many2Many fields
