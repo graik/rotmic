@@ -186,14 +186,15 @@ class ImportXls(object):
                             identify the correct instance
         @return: True if there wasn't any error
         """
-        value, error = self.__lookupId( d[field], 
-                                        model=model, targetfield=targetfield,
-                                        targetfield2=targetfield2)
-        
-        d[field] = value
-        if error:
-            d['errors'][field] = d['errors'].get(field, [])
-            d['errors'][field] = [ error ]
+        if field in d:
+            value, error = self.__lookupId( d[field], 
+                                            model=model, targetfield=targetfield,
+                                            targetfield2=targetfield2)
+            
+            d[field] = value
+            if error:
+                d['errors'][field] = d['errors'].get(field, [])
+                d['errors'][field] = [ error ]
     
     
     def __lookupMany(self, d, field='', model=M.DnaComponent, 
