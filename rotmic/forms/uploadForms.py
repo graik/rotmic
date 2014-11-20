@@ -312,7 +312,7 @@ Example:
                 records = concat.split('//')[:-1]  ## skip '' split fragment after last //
                 records = [ s + '//' for s in records ]
     
-                for s in records:
+                for i, s in enumerate(records):
                     f = StringIO.StringIO(s)
                     seqrecord = SeqIO.parse( f, 'gb' ).next()
     
@@ -320,14 +320,14 @@ Example:
                     r += [ seqrecord ]
 
         except StopIteration, why:
-            raise forms.ValidationError('Empty or corrupted genbank file %s: %r' % \
-                                        (data, why))
+            raise forms.ValidationError('Empty or corrupted genbank file %r: %r' % \
+                                        (data[i], why))
         except ValueError, why:
-            raise forms.ValidationError('Error parsing genbank record from %s: %r' % \
-                                        (data, why))
+            raise forms.ValidationError('Error parsing genbank record from %r: %r' % \
+                                        (data[i], why))
         except Exception, why:
             raise forms.ValidationError("Unknown error parsing %r: %r" % \
-                                        (data, why))
+                                        (f, why))
             
         return r
 
