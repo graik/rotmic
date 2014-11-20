@@ -321,10 +321,10 @@ Example:
 
         except StopIteration, why:
             raise forms.ValidationError('Empty or corrupted genbank record #%i: %s' % \
-                                        (i, why))
+                                        (i+1, why))
         except ValueError, why:
-            raise forms.ValidationError('Error parsing genbank record #%i %s' % \
-                                        (i, why))
+            raise forms.ValidationError('Error parsing genbank record #%i: %s' % \
+                                        (i+1, why))
         except Exception, why:
             raise forms.ValidationError("Unknown error parsing %r: %r" % \
                                         (f, why))
