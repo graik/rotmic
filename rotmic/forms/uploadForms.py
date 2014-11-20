@@ -320,11 +320,11 @@ Example:
                     r += [ seqrecord ]
 
         except StopIteration, why:
-            raise forms.ValidationError('Empty or corrupted genbank file %r: %r' % \
-                                        (data[i], why))
+            raise forms.ValidationError('Empty or corrupted genbank file %r: %s' % \
+                                        (data[i].name, why))
         except ValueError, why:
-            raise forms.ValidationError('Error parsing genbank record from %r: %r' % \
-                                        (data[i], why))
+            raise forms.ValidationError('Error parsing genbank record from %r: %s' % \
+                                        (data[i].name, why))
         except Exception, why:
             raise forms.ValidationError("Unknown error parsing %r: %r" % \
                                         (f, why))
