@@ -27,6 +27,7 @@ import selectable.forms as sforms
 
 from rotmic.utils.filefields import DocumentFormField
 from rotmic.utils.multiFile import MultiFileField
+import rotmic.utils.reporting as R
 import selectLookups as L
 import rotmic.initialTypes as T
 
