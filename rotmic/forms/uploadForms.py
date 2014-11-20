@@ -321,13 +321,13 @@ Example:
 
         except StopIteration, why:
             raise forms.ValidationError('Empty or corrupted genbank file %s: %r' % \
-                                        (f, why))
+                                        (data, why))
         except ValueError, why:
             raise forms.ValidationError('Error parsing genbank record from %s: %r' % \
-                                        (f, why))
+                                        (data, why))
         except Exception, why:
             raise forms.ValidationError("Unknown error parsing %r: %r" % \
-                                        (f, why))
+                                        (data, why))
             
         return r
 
