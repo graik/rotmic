@@ -299,7 +299,7 @@ class DnaComponentForm(GenbankComponentForm):
     def _validateLinkedMany(self, query, categories=[], field=''):
         """validate all instances in Many2Many relation"""
         for x in query:
-            self._validateLinked(x, categories=categories)
+            self._validateLinked(x, categories=categories, field=field)
 
 
     def clean(self):
