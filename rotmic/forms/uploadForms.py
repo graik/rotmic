@@ -27,6 +27,7 @@ import selectable.forms as sforms
 
 from rotmic.utils.filefields import DocumentFormField
 from rotmic.utils.multiFile import MultiFileField
+import rotmic.utils.reporting as R
 import selectLookups as L
 import rotmic.initialTypes as T
 
@@ -311,7 +312,7 @@ Example:
                 records = concat.split('//')[:-1]  ## skip '' split fragment after last //
                 records = [ s + '//' for s in records ]
     
-                for s in records:
+                for i, s in enumerate(records):
                     f = StringIO.StringIO(s)
                     seqrecord = SeqIO.parse( f, 'gb' ).next()
     
@@ -319,11 +320,11 @@ Example:
                     r += [ seqrecord ]
 
         except StopIteration, why:
-            raise forms.ValidationError('Empty or corrupted genbank file %s: %r' % \
-                                        (f.name, why))
+            raise forms.ValidationError('Empty or corrupted genbank record #%i: %s' % \
+                                        (i+1, why))
         except ValueError, why:
-            raise forms.ValidationError('Error parsing genbank record from %s: %r' % \
-                                        (f.name, why))
+            raise forms.ValidationError('Error parsing genbank record #%i: %s' % \
+                                        (i+1, why))
         except Exception, why:
             raise forms.ValidationError("Unknown error parsing %r: %r" % \
                                         (f, why))

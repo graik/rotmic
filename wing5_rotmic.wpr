@@ -1,0 +1,36 @@
+#!wing
+#!version=5.0
+##################################################################
+# Wing IDE project file                                          #
+##################################################################
+[project attributes]
+debug.launch-configs = (1,
+                        {'launch-MaBssuWB0EQoD9AY': ({},
+        {'buildcmd': ('project',
+                      ('',
+                       '')),
+         'env': ('project',
+                 []),
+         'name': '',
+         'pyexec': ('project',
+                    ''),
+         'pypath': ('project',
+                    ''),
+         'pyrunargs': ('project',
+                       '-u'),
+         'runargs': 'runserver --noreload 8000',
+         'rundir': ('project',
+                    '')})})
+proj.directory-list = [{'dirloc': loc('.'),
+                        'excludes': [u'rotmic/templates/admin/rotmic/annotations.html'],
+                        'filter': '*',
+                        'include_hidden': False,
+                        'recursive': True,
+                        'watch_for_changes': True}]
+proj.file-list = [loc('rotmic/templates/admin/rotmic/annotations.html')]
+proj.file-type = 'shared'
+proj.launch-config = {loc('manage.py'): ('custom',
+        (u'',
+         'launch-MaBssuWB0EQoD9AY'))}
+proj.main-file = loc('manage.py')
+testing.test-framework = {loc('manage.py'): ':internal djangotest'}

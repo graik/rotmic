@@ -186,14 +186,15 @@ class ImportXls(object):
                             identify the correct instance
         @return: True if there wasn't any error
         """
-        value, error = self.__lookupId( d[field], 
-                                        model=model, targetfield=targetfield,
-                                        targetfield2=targetfield2)
-        
-        d[field] = value
-        if error:
-            d['errors'][field] = d['errors'].get(field, [])
-            d['errors'][field] = [ error ]
+        if field in d:
+            value, error = self.__lookupId( d[field], 
+                                            model=model, targetfield=targetfield,
+                                            targetfield2=targetfield2)
+            
+            d[field] = value
+            if error:
+                d['errors'][field] = d['errors'].get(field, [])
+                d['errors'][field] = [ error ]
     
     
     def __lookupMany(self, d, field='', model=M.DnaComponent, 
@@ -430,7 +431,8 @@ class ImportXlsDna( ImportXlsComponent ):
     # rename Excel headers to field name
     xls2field = { 'id' : 'displayId',
                   'type' : 'componentType',
-                  'vector' : 'vectorBackbone' }
+                  'vector' : 'vectorBackbone',
+                  'translates to' : 'translatesTo'}
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
@@ -438,7 +440,9 @@ class ImportXlsDna( ImportXlsComponent ):
                        { 'field' : 'vectorBackbone', 
                          'targetfield2' : 'name'},
                        { 'field' : 'componentType', 'model' : M.DnaComponentType,
-                         'targetfield' : 'name'}
+                         'targetfield' : 'name'},
+                       { 'field' : 'translatesTo', 'model' : M.ProteinComponent,
+                         'targetfield' : 'displayId'}
                        ]
     
     # lookup instructions for Many2Many fields
