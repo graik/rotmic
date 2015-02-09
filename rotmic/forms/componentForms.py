@@ -393,7 +393,7 @@ class CellComponentForm(ComponentForm):
         Enforce DC of type 'Plasmid'. 
         This should not strictly be needed as the dialogue is only populated
         with correct types of DnaComponents but the type of an existing
-        construct may later be change.
+        construct may later change.
         """
         r = self.cleaned_data['plasmid']
         if not r:
