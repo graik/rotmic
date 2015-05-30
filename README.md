@@ -4,6 +4,30 @@ Rotten Microbes
 "Your sample is out there." (tm)
 retrieve samples and sequences from laboratory chaos
 
+__Features__
+
+ * keep track of DNA constructs, cell stocks, primers, proteins and
+   chemicals (such as fine chemicals or antibodies)
+
+ * categorize and search them
+
+ * add descriptions and file attachments to constructs and samples
+
+ * crosslinks between, for example, cell constructs, the plasmids
+   contained in them and the vector backbones shared between
+   constructs
+
+ * track sample pedigrees, for example, that a cell stock was derived
+   by transformation from a certain DNA sample
+
+ * convenient Excel import (/export) for all types of samples and constructs
+
+ * versioning: all changes to all entries are tracked and can be
+   reverted.
+
+ * quick commenting and rating (fresh / rotten) for constructs and
+   samples
+
 
 __Setting up a test server__
 
