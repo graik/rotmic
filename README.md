@@ -31,7 +31,10 @@ __Features__
 
 __Screen shots__
 
- * ![Landing page](/screenshots/rotmic_home.png =150x)
+ * ![Landing page](/screenshots/rotmic_home.png?raw=true)
+
+[[screenshots/rotmic_dnasample.png|width=100px]]
+
 
 __Setting up a test server__
 
