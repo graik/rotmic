@@ -31,7 +31,7 @@ __Features__
 
 __Screen shots__
 
- * ![Landing page](/screenshots/rotmic_home.png?raw=true "Index")
+ * ![Landing page](/screenshots/rotmic_home.png?raw=true =250x)
 
 __Setting up a test server__
 
