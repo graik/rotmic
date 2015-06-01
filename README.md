@@ -29,6 +29,10 @@ __Features__
    samples
 
 
+__Screen shots__
+
+ * ![Landing page](/screenshots/rotmic_home.png?raw=true "Index")
+
 __Setting up a test server__
 
 Out of the box, the project is configured for quick set up of a development server, which should only be used for testing purposes. The test server uses a SQLite database (created as rotmicdev.db) and the built-in django debugging web server. File attachments will be saved in the dev_uploads/ folder.
