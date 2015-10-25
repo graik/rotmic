@@ -46,6 +46,7 @@ ___Dependencies___
  * python 2.7
  * Django 1.6
  * Biopython
+ * pysqlite (for development)
 
 Rotmic relies on additional third-party django apps and python modules. For convenience, these apps are cloned in the thirdparty/ folder. This folder will be automagically included in the Python path when you load rotmic:
 
