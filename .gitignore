@@ -4,6 +4,8 @@ venv
 *sqlite3
 staticfiles
 .env
+dev_uploads
+*.db
 
 *.py[cod]
 
