@@ -12,6 +12,13 @@ that later delegates to the Django one. For example, you could introduce WSGI
 middleware here, or combine a Django application with an application of another
 framework.
 
+Adapted according to Heroku python-getting-started app.
+
+It exposes the WSGI callable as a module-level variable named ``application``.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/1.9/howto/deployment/wsgi/
+https://devcenter.heroku.com/articles/django-app-configuration
 """
 import os
 
@@ -29,12 +36,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rotmicsite.settings")
 os.environ['LANG'] = "en_US.UTF-8"     ## hard override of systems default
 os.environ['LC_ALL'] = "en_US.UTF-8"
 
-# This application object is used by any WSGI server configured to use this
-# file. This includes Django's development server, if the WSGI_APPLICATION
-# setting points here.
 from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
+from whitenoise.django import DjangoWhiteNoise
 
-# Apply WSGI middleware here.
-# from helloworld.wsgi import HelloWorldApplication
-# application = HelloWorldApplication(application)
+application = get_wsgi_application()
+application = DjangoWhiteNoise(application)
