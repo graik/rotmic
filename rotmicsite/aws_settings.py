@@ -16,6 +16,6 @@ AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
 MEDIA_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
 MEDIA_ROOT = '/uploads'
-'
+
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto.S3BotoStorage"
 
