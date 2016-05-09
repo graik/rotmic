@@ -9,7 +9,7 @@ PROJECT_ROOT = osp.dirname(osp.dirname(__file__))
 import sys
 RUNNING_DEV_SERVER = ('runserver' in sys.argv)
 
-TEMPLATE_DEBUG = DEBUG
+TEMPLATE_DEBUG = RUNNING_DEV_SERVER
 
 if not RUNNING_DEV_SERVER:
     DEBUG = bool(os.environ.get('DEBUG')) or False
