@@ -7,7 +7,14 @@
       "DJANGO_SECRET_KEY" : {
           "description": "A secret key for https encryption",
           "generator": "secret"
-        }
+          },
+      'AWS_ACCESS_KEY_ID' : {
+          'description' : 'user name for Amazon AWS account'},
+      'AWS_SECRET_ACCESS_KEY' : {
+          'description' : 'password for AWS account'},
+      'S3_BUCKET_NAME' : {
+          'description' : 'S3 bucket (storage) name within AWS user account' },
+      
   },
   "addons": [ "heroku-postgresql" ],
   "scripts": {
