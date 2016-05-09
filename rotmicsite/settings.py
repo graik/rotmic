@@ -167,7 +167,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     
-    'storages'
+    'storages',
     'django_comments',
     'ratedcomments',
     'south',
