@@ -107,7 +107,7 @@ if RUNNING_DEV_SERVER:
     # URL that handles the media served from MEDIA_ROOT. Make sure to use a
     # trailing slash.
     # Examples: "http://example.com/media/", "http://media.example.com/"
-    MEDIA_URL = '/usruploads/'
+    MEDIA_URL = '/media/'
 else:
     from aws_settings import *
 
@@ -167,6 +167,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     
+    'storages'
     'django_comments',
     'ratedcomments',
     'south',
