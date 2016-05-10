@@ -49,6 +49,10 @@ class Attachment(models.Model):
     class Meta:
         app_label = 'rotmic'
         abstract = True
+
+    def exists(self):
+        """True if referenced file indeed exists"""
+        return self.f.storage.exists( self.f.name )
     
 # These two auto-delete files from filesystem when they are unneeded:
 ##@receiver(models.signals.post_delete, sender=Attachment)

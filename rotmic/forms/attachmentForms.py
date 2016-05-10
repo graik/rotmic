@@ -29,7 +29,7 @@ class AttachmentForm(forms.ModelForm):
         """Enforce existing file"""
         f = self.cleaned_data['f']
         if isinstance(f, models.fields.files.FieldFile) \
-           and not os.path.exists( f.path ):
+           and not f.storage.exists( f.name ):
 
             fname = os.path.split( f.path )[-1]
             raise ValidationError('Attached file %s does not exist.' % fname, 

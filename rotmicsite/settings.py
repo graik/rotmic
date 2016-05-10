@@ -22,6 +22,7 @@ else:
 # activate storage of uploaded files on Amazon AWS
 USE_S3_STORAGE = not RUNNING_DEV_SERVER
 
+##USE_S3_STORAGE = True
 
 ###############################
 ## Database and related config
