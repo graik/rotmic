@@ -1,6 +1,7 @@
 ## custom additions
 venv
-*wpu
+*.wpu
+*.wpr
 *sqlite3
 staticfiles
 .env
