@@ -10,19 +10,19 @@ PROJECT_ROOT = osp.dirname(osp.dirname(__file__))
 
 # distinguish development from production server
 import sys
-RUNNING_DEV_SERVER = ('runserver' in sys.argv)
+RUNNING_DEV_SERVER = ('manage.py' in sys.argv[0])
 
 TEMPLATE_DEBUG = RUNNING_DEV_SERVER
 
 if not RUNNING_DEV_SERVER:
-    DEBUG = bool(os.environ.get('DEBUG')) or False
+    DEBUG = bool(os.environ.get('DEBUG', False))
 else:
     DEBUG = True
 
 # activate storage of uploaded files on Amazon AWS
 USE_S3_STORAGE = not RUNNING_DEV_SERVER
 
-USE_S3_STORAGE = True
+#USE_S3_STORAGE = True
 
 ###############################
 ## Database and related config
@@ -82,7 +82,7 @@ try:
     ## prepare env variable:
     ## heroku config:add DJANGO_SECRET_KEY="your_secret_key"
     ## Note: () are not tolerated in the key even using quotation marks
-    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or SECRET_KEY
+    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', SECRET_KEY)
 except:
     pass
 
@@ -107,11 +107,11 @@ else:
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-TIME_ZONE = 'US/Eastern'
+TIME_ZONE = os.environ.get('TIME_ZONE', 'US/Eastern')
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = os.environ.get('LANGUAGE_CODE','en-us')
 
 SITE_ID = 1
 
@@ -127,9 +127,9 @@ USE_L10N = False
 USE_TZ = True
 
 # site-wide default for displaying dates
-DATE_FORMAT = 'Y-m-d'
+DATE_FORMAT = os.environ.get('DATE_FORMAT', 'Y-m-d')
 
-DATETIME_FORMAT = 'Y-m-d H:i'
+DATETIME_FORMAT = os.environ.get('DATETIME_FORMAT', 'Y-m-d H:i')
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

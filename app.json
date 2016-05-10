@@ -1,27 +1,37 @@
 {
-  "name": "Rotten Microbes Sample Management",
-  "description": "Django app for management of samples and data sheets in a molecular biology / synthetic biology lab",
-  "repository": "https://github.com/graik/rotmic.git",
-  "keywords": ["python", "django", "science"],
-  "env": {
-      "DJANGO_SECRET_KEY" : {
-          "description": "A secret key for https encryption",
-          "generator": "secret"
-          },
-      'AWS_ACCESS_KEY_ID' : {
-          'description' : 'user name for Amazon AWS account'},
-      'AWS_SECRET_ACCESS_KEY' : {
-          'description' : 'password for AWS account'},
-      'S3_BUCKET_NAME' : {
-          'description' : 'S3 bucket (storage) name within AWS user account' },
+    "name": "Rotten Microbes Sample Management",
+    "description": "Django app for management of samples and data sheets in a molecular biology / synthetic biology lab",
+    "repository": "https://github.com/graik/rotmic.git",
+    "keywords": ["python", "django", "science"],
+    "env": {
+        "DJANGO_SECRET_KEY" : {
+            "description": "A secret key for https encryption",
+            "generator": "secret"
+            },
+        'S3_BUCKET_NAME' : {
+            'description' : 'Amazon AWS S3 bucket name (for storing uploaded files)' },
+        'AWS_ACCESS_KEY_ID' : {
+            'description' : 'IMA Access ID (user) for S3 bucket'},
+        'AWS_SECRET_ACCESS_KEY' : {
+            'description' : 'Access key'},
+        'TIME_ZONE' : {
+            'description' : 'Django time zone (default "US/Eastern")'},
+        'LANGUAGE_CODE' : {
+            'description : '(default "us-en"), see http://www.i18nguy.com/unicode/language-identifiers.html'
+            },
+        'DATE_FORMAT' : {
+            'description' : 'web server date format (default: "Y-m-d")'}
+        'DATETIME_FORMAT' : {
+            'description' : 'format for date and time display (default: "Y-m-d H:i")'},
       
-  },
-  "addons": [ "heroku-postgresql" ],
-  "scripts": {
-      "postdeploy" : "./manage.py migrate --noinput; python manage.py loaddata initial_data.json"
-      },
-  "buildpacks": [
-      {"url": "heroku/python"},
-      {"url": "https://github.com/andreipetre/heroku-buildpack-django-migrate"}
-  ]
+    },
+    "addons": [ "heroku-postgresql" ],
+    "scripts": {
+## django 1.9:        "postdeploy" : "./manage.py migrate --noinput; python manage.py loaddata initial_data.json"
+        "postdeploy" : "./manage.py syncdb --noinput; ./manage.py migrate --noinput; manage.py loaddata initial_data.json"
+        },
+    "buildpacks": [
+        {"url": "heroku/python"},
+        {"url": "https://github.com/andreipetre/heroku-buildpack-django-migrate"}
+    ]
 }
