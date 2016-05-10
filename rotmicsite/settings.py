@@ -5,7 +5,10 @@ import os
 # Build paths inside the project like this: os.path.join(PROJECT_ROOT, ...)
 PROJECT_ROOT = osp.dirname(osp.dirname(__file__))
 
-# custom: distinguish development from production server
+###############################
+## Dev / Production / Debugging
+
+# distinguish development from production server
 import sys
 RUNNING_DEV_SERVER = ('runserver' in sys.argv)
 
@@ -15,6 +18,13 @@ if not RUNNING_DEV_SERVER:
     DEBUG = bool(os.environ.get('DEBUG')) or False
 else:
     DEBUG = True
+
+# activate storage of uploaded files on Amazon AWS
+USE_S3_STORAGE = not RUNNING_DEV_SERVER
+
+
+###############################
+## Database and related config
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -40,9 +50,10 @@ DATABASES['default'].update(db_from_env)
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['*']
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
-# https://devcenter.heroku.com/articles/django-app-configuration#static-assets-and-file-serving
+#############################
+## Static files (CSS, JavaScript, Images)
+## https://docs.djangoproject.com/en/1.9/howto/static-files/
+## https://devcenter.heroku.com/articles/django-app-configuration#static-assets-and-file-serving
 
 # Absolute path to the directory static files should be collected to.
 STATIC_ROOT = osp.join(PROJECT_ROOT, 'rotmicsite','staticfiles')
@@ -61,6 +72,9 @@ STATICFILES_FINDERS = (
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
+############################
+## SSL / Encryption
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'settings-k^(3w9m#hndetog(ap+f(m+^jn*vu&s4a9cv3%&a(fe)$aq=s'
 try:
@@ -71,7 +85,24 @@ try:
 except:
     pass
 
+#################################
+## Storage of User-uploaded files
 
+# Absolute path to the directory that will hold user-uploaded files.
+# Example: "/var/www/example.com/media/"
+MEDIA_ROOT = osp.join(PROJECT_ROOT, 'dev_uploads')
+
+if USE_S3_STORAGE:
+    from aws_settings import *
+    ## sets MEDIA_URL and DEFAULT_FILE_STORAGE
+else:
+    # URL that handles the media served from MEDIA_ROOT. Make sure to use a
+    # trailing slash.
+    # Examples: "http://example.com/media/", "http://media.example.com/"
+    MEDIA_URL = '/media/'
+
+#########################
+## Various settings
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -98,18 +129,6 @@ USE_TZ = True
 DATE_FORMAT = 'Y-m-d'
 
 DATETIME_FORMAT = 'Y-m-d H:i'
-
-if RUNNING_DEV_SERVER:
-    # Absolute path to the directory that will hold user-uploaded files.
-    # Example: "/var/www/example.com/media/"
-    MEDIA_ROOT = osp.join(PROJECT_ROOT, 'dev_uploads')
-
-    # URL that handles the media served from MEDIA_ROOT. Make sure to use a
-    # trailing slash.
-    # Examples: "http://example.com/media/", "http://media.example.com/"
-    MEDIA_URL = '/media/'
-else:
-    from aws_settings import *
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -167,7 +186,6 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     
-    'storages',
     'django_comments',
     'ratedcomments',
     'south',
@@ -177,6 +195,10 @@ INSTALLED_APPS = (
     'django.contrib.admin',  ## last for lowest priority in template loading
 )
 
+if USE_S3_STORAGE:
+    INSTALLED_APPS += ('storages',)
+
+    
 COMMENTS_APP = 'ratedcomments'
 
 # A sample logging configuration. The only tangible logging
