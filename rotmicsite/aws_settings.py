@@ -3,8 +3,7 @@ import os
 AWS_QUERYSTRING_AUTH = False
 
 AWS_HEADERS = {  # see http://developer.yahoo.com/performance/rules.html#expires
-        'Expires': 'Thu, 31 Dec 2099 20:00:00 GMT',
-        'Cache-Control': 'max-age=94608000',
+        'Cache-Control': 'max-age=6000',
     }
 
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
@@ -15,4 +14,3 @@ S3_URL = 'https://%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
 MEDIA_URL = S3_URL + '/media/'
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto.S3BotoStorage"
-
