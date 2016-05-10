@@ -61,13 +61,13 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     Deletes file from filesystem when corresponding `MediaFile` object is deleted.
     Also deletes containing folder if it is empty.
     """
-    if instance.f:
-        if os.path.isfile(instance.f.path):
-            os.remove(instance.f.path)
+    f = instance.f
+    if f:
+        f.storage.delete(f.name)
 
-            folder = os.path.split( instance.f.path )[0]
-            if len( os.listdir( folder ) ) == 0:
-                os.removedirs( folder )
+        folder = os.path.split( f.name )[0]
+        if f.storage.listdir( folder ) == (0,0):
+            f.storage.delete( folder )
 
 ##@receiver(models.signals.pre_save, sender=Attachment)
 def auto_delete_file_on_change(sender, instance, **kwargs):
@@ -85,12 +85,11 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
 
     new_file = instance.f
     if not old_file == new_file:
-        if os.path.isfile(old_file.path):
-            os.remove(old_file.path)
+        old_file.storage.delete(old_file.name)
 
-            folder = os.path.split( old_file.path )[0]
-            if len( os.listdir( folder ) ) == 0:
-                os.removedirs( folder )
+        folder = os.path.split( old_file.name )[0]
+        if old_file.storage.listdir( folder ) == (0,0):
+            old_file.storage.delete( folder )
 
 
 class ComponentAttachment(Attachment):
