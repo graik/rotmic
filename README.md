@@ -4,6 +4,8 @@ Rotten Microbes
 "Your sample is out there." (tm)
 retrieve samples and sequences from laboratory chaos
 
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 __Features__
 
  * keep track of DNA constructs, cell stocks, primers, proteins and
