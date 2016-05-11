@@ -10,7 +10,7 @@ PROJECT_ROOT = osp.dirname(osp.dirname(__file__))
 
 # distinguish development from production server
 import sys
-RUNNING_DEV_SERVER = ('manage.py' in sys.argv[0])
+RUNNING_DEV_SERVER = ('runserver' in sys.argv)
 
 TEMPLATE_DEBUG = RUNNING_DEV_SERVER
 
