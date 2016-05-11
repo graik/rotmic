@@ -10,20 +10,20 @@
             },
         "S3_BUCKET_NAME" : {
             "description" : "Amazon AWS S3 bucket name (for storing uploaded files)" },
-        "AWS_ACCESS_KEY_ID" : {
-            "description" : "IMA Access ID (user) for S3 bucket"},
-        "AWS_SECRET_ACCESS_KEY" : {
-            "description" : "Access key"},
+        "AWS_ACCESS_ID_KEY" : {
+            "description" : "IMA Access ID (user key) for S3 bucket"},
+        "AWS_ACCESS_SECRET_KEY" : {
+            "description" : "secret access key"},
         "TIME_ZONE" : {
-            "description" : "Django time zone (default: US/Eastern)"},
+            "description" : "Django time zone (default if empty: US/Eastern)"},
         "LANGUAGE_CODE" : {
-            "description" : "(default: us-en), see http://www.i18nguy.com/unicode/language-identifiers.html"
+            "description" : "(default if empty: us-en), see http://www.i18nguy.com/unicode/language-identifiers.html"
             },
         "DATE_FORMAT" : {
-            "description" : "web server date format (default: Y-m-d)"
+            "description" : "web server date format (default if empty: Y-m-d)"
             },
         "DATETIME_FORMAT" : {
-            "description" : "format for date and time display (default: Y-m-d H:i)" }
+            "description" : "format for date and time display (default if empty: Y-m-d H:i)" }
     },
     "addons": [ "heroku-postgresql" ],
     "scripts": {
