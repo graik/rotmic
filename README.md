@@ -4,7 +4,7 @@ Rotten Microbes
 "Your sample is out there." (tm)
 retrieve samples and sequences from laboratory chaos
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/graik/rotmic)
 
 __Features__
 
