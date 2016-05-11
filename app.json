@@ -1,6 +1,6 @@
 {
-    "name": "Rotten Microbes Sample Management",
-    "description": "Django app for management of samples and data sheets in a molecular biology / synthetic biology lab",
+    "name": "Rotten Microbes",
+    "description": "Django app for management of samples, constructs and protein data sheets in a molecular biology / synthetic biology lab",
     "repository": "https://github.com/graik/rotmic.git",
     "keywords": ["python", "django", "science"],
     "env": {
