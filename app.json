@@ -27,7 +27,7 @@
     },
     "addons": [ "heroku-postgresql" ],
     "scripts": {
-        "postdeploy" : "./manage.py syncdb --noinput; ./manage.py migrate --noinput; ./manage.py loaddata initial_data.json"
+        "postdeploy" : "./manage.py syncdb --noinput; ./manage.py migrate --noinput; ./manage.py loaddata initial_usergroups.json"
         },
     "buildpacks": [
         {"url": "heroku/python"},
