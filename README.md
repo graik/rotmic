@@ -11,8 +11,8 @@ Contents
 
 * [Features](#features)
 * [Screen shots](#screenshots)
-* [Setup for development](#devsetup)
 * [Production setup](#production)
+* [Setup for development](#devsetup)
 
 Features <a name="features"></a>
 --------
@@ -48,6 +48,94 @@ Screen shots <a name="screenshots"></a>
 ![DNA sample](/screenshots/rotmic_dnasample.png?raw=true)
 
 See "screenshots" folder for more.
+
+
+Production setup <a name="production"></a>
+-----------------
+
+Within about five minutes, you can have your own rotmic server instance up and
+running on the Amazon cloud. For the typical usage of a lab or small
+institution, the resources offered for free, should be fully sufficient. There
+are two steps involved: (1) Reserve storage space on the Amazon AWS where your
+web server will save user-uploaded files -- this is referred to as an 'S3
+bucket'. (2) Deploy your webserver using Heroku. Step by step instructions:
+
+Before you start, choose a name for your new web server instance. The new 
+server will soon be available as http://*"app-name"*.herokuapp.com
+
+### 1. Set up cloud storage for user-uploaded files (attachments):
+
+1. Go to https://console.aws.amazon.com/
+   Create account if needed, verify account, sign in.
+   
+2. Menu: Services / S3
+    1. Click "Create Bucket"
+        * BTW, do _not_ use “Frankfurt” as a Region
+        * assign name of your choice (*"bucket-name"* below)
+3. Menu: Services / IAM (Identity and Access Management)
+    1. Go to “Users” (left menu)
+    2. Create User
+        * choose user name (best: same as *"app-name"*)
+        * keep “Generate Access Key for each User” checked
+    3. Show or download User Credentials
+        * copy Access Key ID and Secret Access Key to safe location (if lost, 
+          user needs to be re-generated), these will need to be given to the 
+          server as environment variables
+    4. Click “Close"
+    5. Click on new <app-name> user / go to “Permissions” Tab / “Attach Policy"
+        * enter “S3” in search field
+        * Activate “AmazonS3FullAccess"
+        * Click “Attach Policy"
+
+
+### 2. Set up Heroku web server instance:
+
+* Click [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/graik/rotmic&env[TIME_ZONE]=US/Eastern&env[LANGUAGE_CODE]=us-en&env[DATE_FORMAT]=Y-m-d&env[DATETIME_FORMAT]=Y-m-d H:i)
+    * choose a name for your web server (<app-name>)
+    * choose the same region as the one you picked for the S3 storage above (US seems the saves bet)
+* Fill in the three parameters for S3 cloud storage:
+    * S3 bucket name — use the *"bucket-name"* you chose during “Create Bucket” in AWS
+    * AWS_ACCESS_ID_KEY — the ID you noted in point 3.3 above
+    * AWS_ACCESS_SECRET_KEY — the even longer secret key, AWS showed you in 3.3 above
+    * you can adapt the other variables at any later point
+* Click “Deploy"
+
+
+### 3. Getting started with your new app:
+
+* Go to your new app: *app-name*.herokuapp.com
+    * Login: admin
+    * Password: rotmic2016
+    * Change password!!
+
+Three users have been created automatically:
+
+* admin — for adding users and changing permissions or all other kind of super powerful tasks
+* test_labmember — a user with typical end-user permissions
+* test_labmanager — can, in addition, create new storage racks and locations and can also create new categories for the classification of DNA, Protein or Chemicals
+
+You should remove the latter two accounts or at least set them to "inactive"
+once you have familiarized yourself with the permission and group management.
+
+### Modify and update a running heroku app
+   
+   - You can use the heroku dashboard to update your app directly from the rotmic.git repo.
+
+   - To make changes to your Rotmic server, clone the app project locally using the [Heroku Toolbelt](https://toolbelt.heroku.com/):
+
+      ```sh
+      heroku login
+      heroku git:clone --app *app-name*
+      ```
+   - ... and then update the heroku app from your local computer:
+
+      ```sh
+      cd YOURAPPNAME
+      git remote add origin https://github.com/graik/rotmic
+      git pull origin master # may trigger a few merge conflicts, depending on how long since last update
+      git push heroku master
+      ```
+   - This latter option has the advantage, that you can test changes locally. See section [Setup for development].
 
 
 Setup for development <a name="devsetup"></a>
@@ -98,91 +186,3 @@ either `admin` (super user) or `test_user` (user with normal permissions) or
 `test_manager` (user who can also create storage locations and categories).
 
 The test server uses a SQLite database (created as `db.sqlite3`) and the built-in django debugging web server. File attachments will be saved in the `dev_uploads/` folder.
-
-
-Production setup <a name="production"></a>
------------------
-
-Within about five minutes, you can have your own rotmic server instance up and
-running on the Amazon cloud. For the typical usage of a lab or small
-institution, the resources offered for free, should be fully sufficient. There
-are two steps involved: (1) Reserve storage space on the Amazon AWS where your
-web server will save user-uploaded files -- this is referred to as an 'S3
-bucket'. (2) Deploy your webserver using Heroku. Step by step instructions:
-
-Before you start, choose a name for your new web server instance. The new 
-server will soon be available as http://app-name>.herokuapp.com
-
-### 1. Set up cloud storage for user-uploaded files (attachments):
-
-1. Go to https://console.aws.amazon.com/
-   Create account if needed, verify account, sign in.
-   
-2. Menu: Services / S3
-    1. Click "Create Bucket"
-        * BTW, do _not_ use “Frankfurt” as a Region
-        * assign name of your choice (<bucket-name> below)
-3. Menu: Services / IAM (Identity and Access Management)
-    1. Go to “Users” (left menu)
-    2. Create User
-        * choose user name (best: same as <app-name>)
-        * keep “Generate Access Key for each User” checked
-    3. Show or download User Credentials
-        * copy Access Key ID and Secret Access Key to safe location (if lost, 
-          user needs to be re-generated), these will need to be given to the 
-          server as environment variables
-    4. Click “Close"
-    5. Click on new <app-name> user / go to “Permissions” Tab / “Attach Policy"
-        * enter “S3” in search field
-        * Activate “AmazonS3FullAccess"
-        * Click “Attach Policy"
-
-
-### 2. Set up Heroku web server instance:
-
-* Click [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/graik/rotmic&env[TIME_ZONE]=US/Eastern&env[LANGUAGE_CODE]=us-en&env[DATE_FORMAT]=Y-m-d&env[DATETIME_FORMAT]=Y-m-d H:i)
-    * choose a name for your web server (<app-name>)
-    * choose the same region as the one you picked for the S3 storage above (US seems the saves bet)
-* Fill in the three parameters for S3 cloud storage:
-    * S3 bucket name — use the <bucket-name> you chose during “Create Bucket” in AWS
-    * AWS_ACCESS_ID_KEY — the ID you noted in point 3.3 above
-    * AWS_ACCESS_SECRET_KEY — the even longer secret key, AWS showed you in 3.3 above
-    * you can adapt the other variables at any later point
-* Click “Deploy"
-
-
-### 3. Getting started with your new app:
-
-* Go to your new app: <app-name>.herokuapp.com
-    * Login: admin
-    * Password: rotmic2016
-    * Change password!!
-
-Three users have been created automatically:
-
-* admin — for adding users and changing permissions or all other kind of super powerful tasks
-* test_labmember — a user with typical end-user permissions
-* test_labmanager — can, in addition, create new storage racks and locations and can also create new categories for the classification of DNA, Protein or Chemicals
-
-You should remove the latter two accounts or at least set them to "inactive"
-once you have familiarized yourself with the permission and group management.
-
-### Modify and update a running heroku app
-   
-   - You can use the heroku dashboard to update your app directly from the rotmic.git repo.
-
-   - To make changes to your Rotmic server, clone the app project locally using the [Heroku Toolbelt](https://toolbelt.heroku.com/):
-
-      ```sh
-      heroku login
-      heroku git:clone --app <app-name>
-      ```
-   - ... and then update the heroku app from your local computer:
-
-      ```sh
-      cd YOURAPPNAME
-      git remote add origin https://github.com/graik/rotmic
-      git pull origin master # may trigger a few merge conflicts, depending on how long since last update
-      git push heroku master
-      ```
-   - This latter option has the advantage, that you can test changes locally. See section [Setup for development].
