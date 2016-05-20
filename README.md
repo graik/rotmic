@@ -111,7 +111,7 @@ web server will save user-uploaded files -- this is referred to as an 'S3
 bucket'. (2) Deploy your webserver using Heroku. Step by step instructions:
 
 Before you start, choose a name for your new web server instance. The new 
-server will soon be available as http://app-name>.herokuapp.com
+server will soon be available as http://``app-name``.herokuapp.com
 
 ### 1. Set up cloud storage for user-uploaded files (attachments):
 
