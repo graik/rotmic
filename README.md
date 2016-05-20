@@ -6,7 +6,7 @@ retrieve samples and sequences from laboratory chaos
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/graik/rotmic&env[TIME_ZONE]=US/Eastern&env[LANGUAGE_CODE]=us-en&env[DATE_FORMAT]=Y-m-d&env[DATETIME_FORMAT]=Y-m-d H:i)
 
-__Features__
+## Features
 
  * keep track of DNA constructs, cell stocks, primers, proteins and
    chemicals (such as fine chemicals or antibodies)
@@ -31,7 +31,7 @@ __Features__
    samples
 
 
-__Screen shots__
+## Screen shots
 
 ![Landing page](/screenshots/rotmic_home.png?raw=true)
 
@@ -39,12 +39,7 @@ __Screen shots__
 
 See "screenshots" folder for more.
 
-__Setting up a test server__
-
-Out of the box, the project is configured for quick set up of a development server, which should only be used for testing purposes. The test server uses a SQLite database (created as rotmicdev.db) and the built-in django debugging web server. File attachments will be saved in the dev_uploads/ folder.
-
-
-___Setup for development___
+# Setup for development
 
 Download / Checkout the rotmic project into a new folder, create a python
 virtual environment and install all the required third-party dependencies:
@@ -90,8 +85,10 @@ Point your browser to http://127.0.0.1:8000 and start exploring the site. Login 
 either `admin` (super user) or `test_user` (user with normal permissions) or
 `test_manager` (user who can also create storage locations and categories).
 
+The test server uses a SQLite database (created as `db.sqlite3`) and the built-in django debugging web server. File attachments will be saved in the `dev_uploads/` folder.
 
-__Production server setup__
+
+# Production server setup
 
 Within about five minutes, you can have your own rotmic server instance up and
 running on the Amazon cloud. For the typical usage of a lab or small
@@ -103,7 +100,7 @@ bucket'. (2) Deploy your webserver using Heroku. Step by step instructions:
 Before you start, choose a name for your new web server instance. The new 
 server will soon be available as http://<app-name>.herokuapp.com
 
-____1. Set up cloud storage for user-uploaded files (attachments):____
+## 1. Set up cloud storage for user-uploaded files (attachments):
 
     1. Go to https://console.aws.amazon.com/
        Create account if needed, verify account, sign in.
@@ -128,7 +125,7 @@ ____1. Set up cloud storage for user-uploaded files (attachments):____
             * Click “Attach Policy"
 
 
-____2. Set up Heroku web server instance:____
+## 2. Set up Heroku web server instance:
 
     * Click [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/graik/rotmic&env[TIME_ZONE]=US/Eastern&env[LANGUAGE_CODE]=us-en&env[DATE_FORMAT]=Y-m-d&env[DATETIME_FORMAT]=Y-m-d H:i)
         * choose a name for your web server (<app-name>)
@@ -141,7 +138,7 @@ ____2. Set up Heroku web server instance:____
     * Click “Deploy"
 
 
-____3. Getting started with your new app:____
+## 3. Getting started with your new app:
 
     * Go to your new app: <app-name>.herokuapp.com
         * Login: admin
@@ -157,7 +154,7 @@ Three users have been created automatically:
 You should remove the latter two accounts or at least set them to "inactive"
 once you have familiarized yourself with the permission and group management.
 
-___Modify and update a running heroku app___
+## Modify and update a running heroku app
    
    - You can use the heroku dashboard to update your app directly from the rotmic.git repo.
 
