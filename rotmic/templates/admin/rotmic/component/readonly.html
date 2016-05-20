@@ -54,7 +54,14 @@
                             </tr>
                             <tr>
                                 {% for a in o.attachments.all %}
-                                    <td style="text-align: center;">{{a.description}} ({{a.f.size|filesizeformat}})</td> 
+                                    <td style="text-align: center;">
+                                        {{a.description}}
+                                        {% if a.exists %}
+                                            ({{a.f.size|filesizeformat}})
+                                        {% else %}
+                                            (file not found)
+                                        {% endif %}
+                                    </td> 
                                     <td></td>
                                 {% endfor %}
                             </tr>

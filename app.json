@@ -1,0 +1,36 @@
+{
+    "name": "Rotten Microbes",
+    "description": "Django app for management of samples, constructs and protein data sheets in a molecular biology / synthetic biology lab",
+    "repository": "https://github.com/graik/rotmic.git",
+    "keywords": ["python", "django", "science"],
+    "env": {
+        "DJANGO_SECRET_KEY" : {
+            "description": "A secret key for https encryption",
+            "generator": "secret"
+            },
+        "S3_BUCKET_NAME" : {
+            "description" : "Amazon AWS S3 bucket name (for storing uploaded files)" },
+        "AWS_ACCESS_ID_KEY" : {
+            "description" : "IMA Access ID (user key) for S3 bucket"},
+        "AWS_ACCESS_SECRET_KEY" : {
+            "description" : "secret access key"},
+        "TIME_ZONE" : {
+            "description" : "Django time zone (default if empty: US/Eastern)"},
+        "LANGUAGE_CODE" : {
+            "description" : "(default if empty: us-en), see http://www.i18nguy.com/unicode/language-identifiers.html"
+            },
+        "DATE_FORMAT" : {
+            "description" : "web server date format (default if empty: Y-m-d)"
+            },
+        "DATETIME_FORMAT" : {
+            "description" : "format for date and time display (default if empty: Y-m-d H:i)" }
+    },
+    "addons": [ "heroku-postgresql" ],
+    "scripts": {
+        "postdeploy" : "./manage.py syncdb --noinput; ./manage.py migrate --noinput; ./manage.py loaddata initial_usergroups.json"
+        },
+    "buildpacks": [
+        {"url": "heroku/python"},
+        {"url": "https://github.com/andreipetre/heroku-buildpack-django-migrate"}
+    ]
+}

@@ -1,0 +1,552 @@
+[
+{
+    "pk": 1, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "admin", 
+        "first_name": "", 
+        "last_name": "", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_staff": true, 
+        "last_login": "2016-05-11T16:49:01.776Z", 
+        "groups": [], 
+        "user_permissions": [], 
+        "password": "pbkdf2_sha256$12000$NLTjBdVAlWJY$ZAa/1Zk2vUMoCQsQoQIVAPwRxvi9IJq4DHFDBn+uIB4=", 
+        "email": "admin@fakemail.com", 
+        "date_joined": "2016-05-11T16:49:01.776Z"
+    }
+},
+{
+    "pk": 1, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "labmember", 
+        "permissions": [
+            [
+                "add_ratedcomment", 
+                "ratedcomments", 
+                "ratedcomment"
+            ], 
+            [
+                "change_ratedcomment", 
+                "ratedcomments", 
+                "ratedcomment"
+            ], 
+            [
+                "delete_ratedcomment", 
+                "ratedcomments", 
+                "ratedcomment"
+            ], 
+            [
+                "add_cellcomponent", 
+                "rotmic", 
+                "cellcomponent"
+            ], 
+            [
+                "change_cellcomponent", 
+                "rotmic", 
+                "cellcomponent"
+            ], 
+            [
+                "delete_cellcomponent", 
+                "rotmic", 
+                "cellcomponent"
+            ], 
+            [
+                "add_cellsample", 
+                "rotmic", 
+                "cellsample"
+            ], 
+            [
+                "change_cellsample", 
+                "rotmic", 
+                "cellsample"
+            ], 
+            [
+                "delete_cellsample", 
+                "rotmic", 
+                "cellsample"
+            ], 
+            [
+                "add_chemicalcomponent", 
+                "rotmic", 
+                "chemicalcomponent"
+            ], 
+            [
+                "change_chemicalcomponent", 
+                "rotmic", 
+                "chemicalcomponent"
+            ], 
+            [
+                "delete_chemicalcomponent", 
+                "rotmic", 
+                "chemicalcomponent"
+            ], 
+            [
+                "add_chemicalsample", 
+                "rotmic", 
+                "chemicalsample"
+            ], 
+            [
+                "change_chemicalsample", 
+                "rotmic", 
+                "chemicalsample"
+            ], 
+            [
+                "delete_chemicalsample", 
+                "rotmic", 
+                "chemicalsample"
+            ], 
+            [
+                "add_component", 
+                "rotmic", 
+                "component"
+            ], 
+            [
+                "change_component", 
+                "rotmic", 
+                "component"
+            ], 
+            [
+                "delete_component", 
+                "rotmic", 
+                "component"
+            ], 
+            [
+                "add_componentattachment", 
+                "rotmic", 
+                "componentattachment"
+            ], 
+            [
+                "change_componentattachment", 
+                "rotmic", 
+                "componentattachment"
+            ], 
+            [
+                "delete_componentattachment", 
+                "rotmic", 
+                "componentattachment"
+            ], 
+            [
+                "add_container", 
+                "rotmic", 
+                "container"
+            ], 
+            [
+                "change_container", 
+                "rotmic", 
+                "container"
+            ], 
+            [
+                "delete_container", 
+                "rotmic", 
+                "container"
+            ], 
+            [
+                "add_dnacomponent", 
+                "rotmic", 
+                "dnacomponent"
+            ], 
+            [
+                "change_dnacomponent", 
+                "rotmic", 
+                "dnacomponent"
+            ], 
+            [
+                "delete_dnacomponent", 
+                "rotmic", 
+                "dnacomponent"
+            ], 
+            [
+                "add_dnasample", 
+                "rotmic", 
+                "dnasample"
+            ], 
+            [
+                "change_dnasample", 
+                "rotmic", 
+                "dnasample"
+            ], 
+            [
+                "delete_dnasample", 
+                "rotmic", 
+                "dnasample"
+            ], 
+            [
+                "change_location", 
+                "rotmic", 
+                "location"
+            ], 
+            [
+                "add_oligocomponent", 
+                "rotmic", 
+                "oligocomponent"
+            ], 
+            [
+                "change_oligocomponent", 
+                "rotmic", 
+                "oligocomponent"
+            ], 
+            [
+                "delete_oligocomponent", 
+                "rotmic", 
+                "oligocomponent"
+            ], 
+            [
+                "add_oligosample", 
+                "rotmic", 
+                "oligosample"
+            ], 
+            [
+                "change_oligosample", 
+                "rotmic", 
+                "oligosample"
+            ], 
+            [
+                "delete_oligosample", 
+                "rotmic", 
+                "oligosample"
+            ], 
+            [
+                "add_project", 
+                "rotmic", 
+                "project"
+            ], 
+            [
+                "change_project", 
+                "rotmic", 
+                "project"
+            ], 
+            [
+                "delete_project", 
+                "rotmic", 
+                "project"
+            ], 
+            [
+                "add_proteincomponent", 
+                "rotmic", 
+                "proteincomponent"
+            ], 
+            [
+                "change_proteincomponent", 
+                "rotmic", 
+                "proteincomponent"
+            ], 
+            [
+                "delete_proteincomponent", 
+                "rotmic", 
+                "proteincomponent"
+            ], 
+            [
+                "add_proteinsample", 
+                "rotmic", 
+                "proteinsample"
+            ], 
+            [
+                "change_proteinsample", 
+                "rotmic", 
+                "proteinsample"
+            ], 
+            [
+                "delete_proteinsample", 
+                "rotmic", 
+                "proteinsample"
+            ], 
+            [
+                "change_rack", 
+                "rotmic", 
+                "rack"
+            ], 
+            [
+                "add_sample", 
+                "rotmic", 
+                "sample"
+            ], 
+            [
+                "change_sample", 
+                "rotmic", 
+                "sample"
+            ], 
+            [
+                "delete_sample", 
+                "rotmic", 
+                "sample"
+            ], 
+            [
+                "add_sampleattachment", 
+                "rotmic", 
+                "sampleattachment"
+            ], 
+            [
+                "change_sampleattachment", 
+                "rotmic", 
+                "sampleattachment"
+            ], 
+            [
+                "delete_sampleattachment", 
+                "rotmic", 
+                "sampleattachment"
+            ], 
+            [
+                "add_sampleprovenance", 
+                "rotmic", 
+                "sampleprovenance"
+            ], 
+            [
+                "change_sampleprovenance", 
+                "rotmic", 
+                "sampleprovenance"
+            ], 
+            [
+                "delete_sampleprovenance", 
+                "rotmic", 
+                "sampleprovenance"
+            ], 
+            [
+                "add_sequencing", 
+                "rotmic", 
+                "sequencing"
+            ], 
+            [
+                "change_sequencing", 
+                "rotmic", 
+                "sequencing"
+            ], 
+            [
+                "delete_sequencing", 
+                "rotmic", 
+                "sequencing"
+            ], 
+            [
+                "add_sequencingrun", 
+                "rotmic", 
+                "sequencingrun"
+            ], 
+            [
+                "change_sequencingrun", 
+                "rotmic", 
+                "sequencingrun"
+            ], 
+            [
+                "delete_sequencingrun", 
+                "rotmic", 
+                "sequencingrun"
+            ], 
+            [
+                "add_userprofile", 
+                "rotmic", 
+                "userprofile"
+            ], 
+            [
+                "change_userprofile", 
+                "rotmic", 
+                "userprofile"
+            ]
+        ]
+    }
+},
+{
+    "pk": 2, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "storageManager", 
+        "permissions": [
+            [
+                "add_container", 
+                "rotmic", 
+                "container"
+            ], 
+            [
+                "change_container", 
+                "rotmic", 
+                "container"
+            ], 
+            [
+                "delete_container", 
+                "rotmic", 
+                "container"
+            ], 
+            [
+                "add_location", 
+                "rotmic", 
+                "location"
+            ], 
+            [
+                "change_location", 
+                "rotmic", 
+                "location"
+            ], 
+            [
+                "delete_location", 
+                "rotmic", 
+                "location"
+            ], 
+            [
+                "add_rack", 
+                "rotmic", 
+                "rack"
+            ], 
+            [
+                "change_rack", 
+                "rotmic", 
+                "rack"
+            ], 
+            [
+                "delete_rack", 
+                "rotmic", 
+                "rack"
+            ]
+        ]
+    }
+},
+{
+    "pk": 3, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "categoryManager", 
+        "permissions": [
+            [
+                "add_cellcomponenttype", 
+                "rotmic", 
+                "cellcomponenttype"
+            ], 
+            [
+                "change_cellcomponenttype", 
+                "rotmic", 
+                "cellcomponenttype"
+            ], 
+            [
+                "delete_cellcomponenttype", 
+                "rotmic", 
+                "cellcomponenttype"
+            ], 
+            [
+                "add_chemicaltype", 
+                "rotmic", 
+                "chemicaltype"
+            ], 
+            [
+                "change_chemicaltype", 
+                "rotmic", 
+                "chemicaltype"
+            ], 
+            [
+                "delete_chemicaltype", 
+                "rotmic", 
+                "chemicaltype"
+            ], 
+            [
+                "add_dnacomponenttype", 
+                "rotmic", 
+                "dnacomponenttype"
+            ], 
+            [
+                "change_dnacomponenttype", 
+                "rotmic", 
+                "dnacomponenttype"
+            ], 
+            [
+                "delete_dnacomponenttype", 
+                "rotmic", 
+                "dnacomponenttype"
+            ], 
+            [
+                "add_oligocomponenttype", 
+                "rotmic", 
+                "oligocomponenttype"
+            ], 
+            [
+                "change_oligocomponenttype", 
+                "rotmic", 
+                "oligocomponenttype"
+            ], 
+            [
+                "delete_oligocomponenttype", 
+                "rotmic", 
+                "oligocomponenttype"
+            ], 
+            [
+                "add_proteincomponenttype", 
+                "rotmic", 
+                "proteincomponenttype"
+            ], 
+            [
+                "change_proteincomponenttype", 
+                "rotmic", 
+                "proteincomponenttype"
+            ], 
+            [
+                "delete_proteincomponenttype", 
+                "rotmic", 
+                "proteincomponenttype"
+            ], 
+            [
+                "add_sampleprovenancetype", 
+                "rotmic", 
+                "sampleprovenancetype"
+            ], 
+            [
+                "change_sampleprovenancetype", 
+                "rotmic", 
+                "sampleprovenancetype"
+            ], 
+            [
+                "delete_sampleprovenancetype", 
+                "rotmic", 
+                "sampleprovenancetype"
+            ]
+        ]
+    }
+},
+{
+    "pk": 2, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "test_labmember", 
+        "first_name": "Test", 
+        "last_name": "LabMember", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_staff": true, 
+        "last_login": "2016-05-11T17:07:35Z", 
+        "groups": [
+            [
+                "labmember"
+            ]
+        ], 
+        "user_permissions": [], 
+        "password": "pbkdf2_sha256$12000$tFeSw0f7wR1r$7rHP/2L+dC/STBf2ElwyuaRyC2o/6Yg0YNUTENftGRw=", 
+        "email": "fake@mail.com", 
+        "date_joined": "2016-05-11T17:07:35Z"
+    }
+},
+{
+    "pk": 3, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "test_labmanager", 
+        "first_name": "Test", 
+        "last_name": "Labmanager", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_staff": true, 
+        "last_login": "2016-05-11T17:08:20Z", 
+        "groups": [
+            [
+                "labmember"
+            ], 
+            [
+                "storageManager"
+            ], 
+            [
+                "categoryManager"
+            ]
+        ], 
+        "user_permissions": [], 
+        "password": "pbkdf2_sha256$12000$BNvDhLiKONsG$Cc1v5TiCMxS/A1bgPODQhpfwm4Ekc2ZZs04eN5fwKbs=", 
+        "email": "fake@mail.com", 
+        "date_joined": "2016-05-11T17:08:20Z"
+    }
+}
+]

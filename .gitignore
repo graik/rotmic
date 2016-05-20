@@ -1,3 +1,13 @@
+## custom additions
+venv
+*.wpu
+*.wpr
+*sqlite3
+staticfiles
+.env
+dev_uploads
+*.db
+
 *.py[cod]
 
 # C extensions

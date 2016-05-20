@@ -4,7 +4,18 @@ Rotten Microbes
 "Your sample is out there." (tm)
 retrieve samples and sequences from laboratory chaos
 
-__Features__
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/graik/rotmic&env[TIME_ZONE]=US/Eastern&env[LANGUAGE_CODE]=us-en&env[DATE_FORMAT]=Y-m-d&env[DATETIME_FORMAT]=Y-m-d H:i)
+
+Contents
+---------------------
+
+* [Features](#features)
+* [Screen shots](#screenshots)
+* [Production setup](#production)
+* [Setup for development](#devsetup)
+
+Features <a name="features"></a>
+--------
 
  * keep track of DNA constructs, cell stocks, primers, proteins and
    chemicals (such as fine chemicals or antibodies)
@@ -29,69 +40,135 @@ __Features__
    samples
 
 
-__Setting up a test server__
+Screen shots <a name="screenshots"></a>
+------------
 
-Out of the box, the project is configured for quick set up of a development server, which should only be used for testing purposes. The test server uses a SQLite database (created as rotmicdev.db) and the built-in django debugging web server. File attachments will be saved in the dev_uploads/ folder.
+![Landing page](/screenshots/rotmic_home.png?raw=true)
 
-___Dependencies___
+![DNA sample](/screenshots/rotmic_dnasample.png?raw=true)
 
- * python 2.7
- * Django 1.6
- * Biopython
-
-Rotmic relies on additional third-party django apps and python modules. For convenience, these apps are cloned in the thirdparty/ folder. This folder will be automagically included in the Python path when you load rotmic:
-
- * reversion -- versioning (view and revert changes to data records)
- * selectable -- javascript elements for dynamic lookup of related records in forms
- * xlrd -- Excel table import
- * pytz -- time zone management
- * south -- data base migration management (will become part of standard django from version 1.7)
- * markdown -- text formatting (headlines, links, etc.) for description fields
-
-As these packages are included in the project source, they do not need to be installed separately. This minimizes the risk of version conflicts but also means that rotmic may not always be using the latest available version of those packages.
-
-___Rotmic setup___
-
-Download / Checkout the rotmic project into a new folder:
+See "screenshots" folder for more.
 
 
+Production setup <a name="production"></a>
+-----------------
+
+Within about five minutes, you can have your own rotmic server instance up and
+running on the Amazon cloud. For the typical usage of a lab or small
+institution, the resources offered for free, should be fully sufficient. There
+are two steps involved: (1) Reserve storage space on the Amazon AWS where your
+web server will save user-uploaded files -- this is referred to as an 'S3
+bucket'. (2) Deploy your webserver using Heroku. Step by step instructions:
+
+Before you start, choose a name for your new web server instance. The new 
+server will soon be available as http://*"app-name"*.herokuapp.com
+
+### 1. Set up cloud storage for user-uploaded files (attachments):
+
+1. Go to https://console.aws.amazon.com/
+   Create account if needed, verify account, sign in.
+   
+2. Menu: Services / S3
+    1. Click "Create Bucket"
+        * BTW, do _not_ use “Frankfurt” as a Region
+        * assign name of your choice (*"bucket-name"* below)
+3. Menu: Services / IAM (Identity and Access Management)
+    1. Go to “Users” (left menu)
+    2. Create User
+        * choose user name (best: same as *"app-name"*)
+        * keep “Generate Access Key for each User” checked
+    3. Show or download User Credentials
+        * copy Access Key ID and Secret Access Key to safe location (if lost, 
+          user needs to be re-generated), these will need to be given to the 
+          server as environment variables
+    4. Click “Close"
+    5. Click on new <app-name> user / go to “Permissions” Tab / “Attach Policy"
+        * enter “S3” in search field
+        * Activate “AmazonS3FullAccess"
+        * Click “Attach Policy"
+
+
+### 2. Set up Heroku web server instance:
+
+* Click [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/graik/rotmic&env[TIME_ZONE]=US/Eastern&env[LANGUAGE_CODE]=us-en&env[DATE_FORMAT]=Y-m-d&env[DATETIME_FORMAT]=Y-m-d H:i)
+    * choose a name for your web server (<app-name>)
+    * choose the same region as the one you picked for the S3 storage above (US seems the safest bet)
+* Fill in the three parameters for S3 cloud storage:
+    * S3 bucket name — use the *"bucket-name"* you chose during “Create Bucket” in AWS
+    * AWS_ACCESS_ID_KEY — the ID you noted in point 3.3 above
+    * AWS_ACCESS_SECRET_KEY — the even longer secret key, AWS showed you in 3.3 above
+    * you can adapt the other variables at any later point
+* Click “Deploy"
+
+
+### 3. Getting started with your new app:
+
+* Go to your new app: *app-name*.herokuapp.com
+    * Login: admin
+    * Password: rotmic2016
+    * Change password!!
+
+Three users have been created automatically:
+
+* admin — for adding users and changing permissions or all other kind of super powerful tasks
+* test_labmember — a user with typical end-user permissions
+* test_labmanager — can, in addition, create new storage racks and locations and can also create new categories for the classification of DNA, Protein or Chemicals
+
+You should remove the latter two accounts or at least set them to "inactive"
+once you have familiarized yourself with the permission and group management.
+
+### Modify and update a running heroku app
+   
+   - You can use the heroku dashboard to update your app directly from the rotmic.git repo.
+
+   - To make changes to your Rotmic server, clone the app project locally using the [Heroku Toolbelt](https://toolbelt.heroku.com/):
+
+      ```sh
+      heroku login
+      heroku git:clone --app *app-name*
+      ```
+   - ... and then update the heroku app from your local computer:
+
+      ```sh
+      cd YOURAPPNAME
+      git remote add origin https://github.com/graik/rotmic
+      git pull origin master # may trigger a few merge conflicts, depending on how long since last update
+      git push heroku master
+      ```
+   - This latter option has the advantage, that you can test changes locally. See section [Setup for development].
+
+
+Setup for development <a name="devsetup"></a>
+----------------------
+
+Download / Checkout the rotmic project into a new folder, create a python
+virtual environment and install all the required third-party dependencies:
+```shell
     git clone https://github.com/graik/rotmic.git rotmicdjango
+    cd rotmicdjango
+    virtualenv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+```
+You can later leave the virtual environment with the command `deactivate` and 
+activate it again with the `source venv/bin/activate` script.
 
-
-This will create a new folder rotmicdjango in your current directory. The next commands will create a SQLite database, and create tables for django housekeeping tasks (user and session management). Syncdb will not yet create tables for rotmic and third-party packages like reversion and guardian, which are all under south data migration control.
-
+The next commands create tables for django housekeeping tasks (user and session management). Syncdb will not yet create tables for rotmic and third-party packages like reversion and guardian, which are all under south data migration control.
+```shell
     cd rotmicdjango
     ./manage.py syncdb
         You just installed Django's auth system, which means you don't have any superusers defined.
         Would you like to create one now? (yes/no): no
-
+```
 It is important to NOT create a super user at this point. The rotmic data model introduces a "userprofile" table for saving user-specific settings. This table is "hard-linked" to the django.contrib.auth.User table and can only be created as long as this User table is still empty.
-
-We use the django migration system to create rotmic and reversion data structures:
+Now create rotmic data structures:
 
     ./manage.py migrate
 
-You can now create a super user for site administration -- please give it the username 'admin'.
+Install initial user permission groups and three example users. This will
+also create a super user "admin" with password rotmic2016:
 
-    ./manage.py createsuperuser
-        Username (leave blank to use 'raik'): admin
-
-If you want to start from an empty database, you can fire up the rotmic server now. 
-However, if you want to load some small example data set, do it now, **before** running the server for the first time:
-
-    ./manage.py loaddata rotmic/fixtures/users_test.json
-        Installed 123 object(s) from 1 fixture(s)
-    ./manage.py loaddata rotmic/fixtures/rotmic_test.json
-        Installed 154 object(s) from 1 fixture(s)
-
-This will create:
- * three users (a "normal" user raik, an anonymous user without any permissions, and a superuser admin)
- * table access permissions for these users
- * default categories for DNA, proteins, Oligos, Cells and Chemicals
- * Units for volume, mass and amounts
- * a couple of DNA data sheets (markers, vectors, two plasmids) and DNA and cell samples
-
-Note: Some units and default categories are "hard-coded" into the rotmic software (initialTypes.py, initialUnits.py, initialComponents.py). If missing, they will be created automatically during rotmic startup. That's why, it is important to load json data sets '''before''' firing up the server for the first time. Otherwise, primary keys for those entries in the json files may conflict with the primary keys of the newly created entries.
+    ./manage.py loaddata initial_usergroups.json
 
 Now you are ready to run the development / debugging web server:
 
@@ -104,37 +181,8 @@ Now you are ready to run the development / debugging web server:
         Starting development server at http://127.0.0.1:8000/
         Quit the server with CONTROL-C.
 
-Point your browser to http://127.0.0.1:8000 and start exploring the site.
+Point your browser to http://127.0.0.1:8000 and start exploring the site. Login as
+either `admin` (super user) or `test_user` (user with normal permissions) or
+`test_manager` (user who can also create storage locations and categories).
 
-Note: While you can get quite far with emacs and vi, for development and debugging, I highly recommend a professional Python development IDE. I have made good experiences with WingIDE.
-
-__Production server setup__
-
-... is better documented by the Django developers. Some notes:
-
-At this point, I recommend cloning directly from github (as described above) so that 
-it will be easy to update the server source code. Updating then consists of three easy commands:
-
-    git pull
-    ./manage.py collectstatic
-    ./manage.py migrate
-    sudo /etc/init.d/apache2 restart
-
-The 'collectstatic' command will update the folder from which static file content is served 
-(javascript, icons, css) by synchronizing it with rotmic/static. 'migrate' will perform
-south database migrations (only if the git pull command has created any additional migration
-files in rotmic/migrations/).
-
-`/rotmicsite/settings.py` is checked in as a symbolic link to `settings_dev.py`.
-Make a copy of `settings_dev.py`, adapt it to production needs, save it under a different name,
-e.g., `settings_prod.py` and then point `settings.py -> settings_prod.py`.
-
-**Important:** Re-generate the private SSH key -- the one in `settings_dev.py` is public on github!!
-
-Other things you will want to change are the database engine used (we are using postgresql). 
-`rotmicsite/` also contains django's default` wsgi.py` configuration module for using wsgi / apache. 
-
-If you are using apache, you have to adapt the setting for the `$LANG` environment variable in 
-`/etc/apache2/envvars`. Change `LANG=C` to `LANG="en_US.UTF-8"` or another unicode-compatible encoding. 
-Otherwise, you will likely run into UniCode encoding errors as soon a user tries to upload a file 
-with non-ascii characters in its file name.
+The test server uses a SQLite database (created as `db.sqlite3`) and the built-in django debugging web server. File attachments will be saved in the `dev_uploads/` folder.
