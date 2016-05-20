@@ -92,7 +92,7 @@ server will soon be available as http://*"app-name"*.herokuapp.com
 
 * Click [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/graik/rotmic&env[TIME_ZONE]=US/Eastern&env[LANGUAGE_CODE]=us-en&env[DATE_FORMAT]=Y-m-d&env[DATETIME_FORMAT]=Y-m-d H:i)
     * choose a name for your web server (<app-name>)
-    * choose the same region as the one you picked for the S3 storage above (US seems the saves bet)
+    * choose the same region as the one you picked for the S3 storage above (US seems the safest bet)
 * Fill in the three parameters for S3 cloud storage:
     * S3 bucket name — use the *"bucket-name"* you chose during “Create Bucket” in AWS
     * AWS_ACCESS_ID_KEY — the ID you noted in point 3.3 above
