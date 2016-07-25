@@ -63,8 +63,10 @@
         }
         
         // by default only call on fresh "Add New" form creation, don't update with category field or when form is reloaded with errors.
-        {% if not original.pk and not errors %}  
-            $( document ).ready(suggestId);
+        {% if not original.pk and not errors %}
+            if ($('#id_displayId').val() == ""){
+                $( document ).ready(suggestId);
+            }
         {% endif %}
         
         //GET indicates a freshly loaded form; POST means the form came back with errors
