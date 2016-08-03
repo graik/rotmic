@@ -24,6 +24,8 @@ USE_S3_STORAGE = not RUNNING_DEV_SERVER
 
 #USE_S3_STORAGE = True
 
+SSLIFY_DISABLE = RUNNING_DEV_SERVER
+
 ###############################
 ## Database and related config
 
@@ -85,6 +87,8 @@ try:
     SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', SECRET_KEY)
 except:
     pass
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 #################################
 ## Storage of User-uploaded files
@@ -150,6 +154,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                )
 
 MIDDLEWARE_CLASSES = (
+    'sslify.middleware.SSLifyMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
