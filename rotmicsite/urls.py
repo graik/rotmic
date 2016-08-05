@@ -58,6 +58,8 @@ urlpatterns = patterns('',
     
     ## search dialog
     url(r'^rotmic/search/(?P<model>.+)/$', V.search_dnacomponent, name='search'),
+    
+##    url(r'^rotmic/extractcds/(?P<pk>.+)/$', V.ExtractCDSView.as_view(), name='extractcds'),
 
     url(r'^', include(admin.site.urls)),
 )

@@ -346,6 +346,10 @@ class DnaComponent(Component, StatusMixinDna):
         except:
             pass
         return round(r, 0)
+    
+    def extractInsertGenbank(self):
+        """Work in progress?"""
+        return ""
 
     class Meta:
         app_label = 'rotmic'

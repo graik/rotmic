@@ -149,6 +149,7 @@
                     <p><br></p>
                     <ul class="object-tools">
                         <li><a href="{% url 'admin:rotmic_cellcomponent_add'%}?plasmid={{o.pk}}">Add Cell</a></li>
+                        <li><a href="{% url 'admin:rotmic_dnacomponent_add'%}?name={{o.name}}&displayId={{o.displayId}}cds">Extract CDS</a></li>
                     </ul>
                 {% endif %}
                 {% if o.componentType.category.name == 'Fragment' %}
@@ -159,7 +160,6 @@
                     </ul>
                 {% endif %}
                 
-               
                 {% if o.relatedDnaCount > 0 %}
                     <p>
                         <b>{{o.componentType.name}}</b> {{o.displayId}} is used <b>within</b> the following other <b>DNA constructs</b>:
