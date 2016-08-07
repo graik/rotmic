@@ -80,9 +80,13 @@ benchling_annotation=\
 @register.simple_tag
 def seqdisplay_libs():
     """benchling javascript import statement"""
-    f = ST.static('d3sequence.js')
-    r = "<script src='http://d3js.org/d3.v3.min.js' charset='utf-8'></script>\n"
-    r += "<script src='%s' type='text/javascript'></script>" % f
+    f1 = ST.static('d3.v3.min.js')
+    f2 = ST.static('d3sequence.js')
+
+    r = "<script src='%s' type='text/javascript' charset='utf-8'></script>\n"\
+        % f1 
+##    r = "<script src='http://d3js.org/d3.v3.min.js' charset='utf-8'></script>\n"
+    r += "<script src='%s' type='text/javascript'></script>" % f2
     return r
 
 @register.simple_tag
