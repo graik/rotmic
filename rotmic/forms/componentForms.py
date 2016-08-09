@@ -319,8 +319,8 @@ class DnaComponentForm(GenbankComponentForm):
             data['insert'] = None
             data['vectorBackbone'] = None
             
-        if category and (category != T.dcFragment):
-            data['translatesTo'] = None
+        ##if category and (category != T.dcFragment):
+        ##    data['translatesTo'] = None
         
         if category and (category not in [T.dcVectorBB, T.dcFragment] and 'markers' in data):
             data['markers'] = []

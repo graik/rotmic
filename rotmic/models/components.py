@@ -285,8 +285,8 @@ class DnaComponent(Component, StatusMixinDna):
             self.insert = None
             self.vectorBackbone = None
         
-        if category != 'Fragment':
-            self.translatesTo = None
+##        if category != 'Fragment':
+##            self.translatesTo = None
         
         return super(DnaComponent,self).save(*args, **kwargs)
 
