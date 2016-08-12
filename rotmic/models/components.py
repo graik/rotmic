@@ -195,7 +195,7 @@ class DnaComponent(Component, StatusMixinDna):
                                      help_text='start typing ID or name of marker')
     
     translatesTo = models.ForeignKey('ProteinComponent',
-                                     verbose_name='Translates to',
+                                     verbose_name='Generates Protein',
                                      related_name='codingSequences',
                                      help_text='start typing ID or name of encoded protein',
                                      null=True, blank=True,
