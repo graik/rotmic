@@ -154,29 +154,22 @@
         {% endblock sequence %}
 
     
-        {% if o.relatedDnaCount > 0 or o.as_plasmid_in_cell.count %}    
+        {% if o.relatedDnaCount > 0 %}    
         <div class='module'>
             <h2>Related Entries: 
-                {{o.relatedDnaCount|add:o.as_plasmid_in_cell.count}}
+                {{o.relatedDnaCount}}
                 <a href="#" onclick="toggle_visibility('related-entries');">(Hide/Show)</a>
             </h2>
             <div id='related-entries'>
             
-                        
-                {% if o.componentType.category.name == 'Plasmid' %}
-                    <p><br></p>
-                    <ul class="object-tools">
-                        <li><a href="{% url 'admin:rotmic_cellcomponent_add'%}?plasmid={{o.pk}}">Add Cell</a></li>
-                    </ul>
-                {% endif %}
+                <!--        
                 {% if o.componentType.category.name == 'Fragment' %}
                     <p><br></p>
                     <ul class="object-tools">
-                        <li><a href="{% url 'admin:rotmic_dnacomponent_add'%}?insert={{o.pk}}">Insert in Plasmid</a></li>
                         <li><a href="{% url 'admin:rotmic_proteincomponent_add'%}?name={{o.name}}&sequence={{o.seq2aa}}&encodedBy={{o.pk}}">Translate to Protein</a></li>
                     </ul>
                 {% endif %}
-                
+                -->
                
                 {% if o.relatedDnaCount > 0 %}
                     <p>
@@ -210,39 +203,6 @@
                     </div>
                 {% endif %}
                 
-                {% if o.as_plasmid_in_cell.count > 0 %}
-                    <p>
-                        {{o.displayId}} is used within the following <b>Cells</b>:
-                    </p>
-                    <div style="margin: 10px">
-                        <table cellspacing="1">
-                
-                            <thead>
-                            <tr>
-                                <th>used as</th>
-                                <th>in</th>
-                                <th>Species</th>
-                                <th>Description</th>
-                                <th>Samples</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                {% for x in o.as_plasmid_in_cell.all %}
-                                    <tr class="{% cycle 'row1' 'row2' %}">
-                                    
-                                    <td>plasmid</td>
-                                    <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
-                                    <td>{{x.componentType}}</td>
-                                    <td>{{x.showDescription}}</td>
-                                    <td style="text-align: center;">{{x.cell_samples.count}}</td>
-    
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% endif %}
-
             </div>
         </div>
         {% endif %}
@@ -251,7 +211,7 @@
 
     {% block samples %} {# replacing default sample block because we display DNA and Cell Samples#}
         <div class='module'>
-            <h2>Samples <a href="#" onclick="toggle_visibility('samples');">(Hide/Show)</a></h2>
+            <h2>Samples: {{o.allSamplesCount}} <a href="#" onclick="toggle_visibility('samples');">(Hide/Show)</a></h2>
             <div id='samples'>
                 <p><br></p>
                 <ul class="object-tools">
@@ -261,62 +221,62 @@
                     {% endif %}
                 </ul>
                 
-                {% with n=o.allSamplesCount %}
-                    {% if n > 0 %}
-                        <p>
-                            There are <b>{{n}} samples</b> (DNA or cell stock) registered for this DNA construct.<br>
-                        </p>
-                        
-                        <div style="margin: 10px">
-                            <table cellspacing="1">
-                    
-                                <thead>
-                                <tr>
-                                    <th>location</th>
-                                    <th>ID/<br>Pos.</th><th>Status</th>
-                                    <th>prepared</th><th>by</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                    <th>Sequencing</th>
-                                </tr>
-                                </thead>
-                    
-                                <tbody>
-                                {% for x in o.allSamples %}
-                                
-                                    <tr class="{% cycle 'row1' 'row2' %}">
-                                  
-                                        <td>{{x.container.showVerbose}}</td>
-                                                             
-                                        <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
-                                        
-                                        <td>{{x.showStatus}}</td>
-                                        
-                                        <td>{{x.preparedAt}}</td>
-                                        
-                                        <td>{{x.registeredBy}}</td>
-                                        
-                                        <td>{{x.showType}}</td>
-                                        
-                                        <td>{{x.description | truncateHTML:30}}</td>
+                {% if o.allSamplesCount %}
+                    <div style="margin: 10px">
+                        <table cellspacing="1">
+                
+                            <thead>
+                            <tr>
+                                <th>location</th>
+                                <th>ID/<br>Pos.</th><th>Status</th>
+                                <th>prepared</th><th>by</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Sequencing</th>
+                            </tr>
+                            </thead>
+                
+                            <tbody>
+                            {% for x in o.allSamples %}
+                            
+                                <tr class="{% cycle 'row1' 'row2' %}">
+                              
+                                    <td>{{x.container.showVerbose}}</td>
+                                                         
+                                    <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
+                                    
+                                    <td style="text-align:center">{{x.showStatus}}</td>
+                                    
+                                    <td>{{x.preparedAt}}</td>
+                                    
+                                    <td>{{x.registeredBy}}</td>
+                                    
+                                    <td style="text-align:center">
+                                        {% if x.showType == "Cell"%}
+                                            {{x.content.componentType}}
+                                        {% else %}
+                                            {{x.showType}}
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <td>{{x.description | truncateHTML:30}}</td>
 
-                                        <td>{{x.showSequencingAll}}</td>
-                                    </tr>
-                    
-                              {% endfor %}
-                              </tbody>
-                            </table>
-                            <p></p>
-                            <small>
-                                Help: Move mouse over content link to see content description. 
-                                Move mouse over sample description to see full length description.
-                            </small>
-                        </div>
-                    
-                    {% else %}
-                        <p>There are no samples registered for this DNA construct.</p>
-                    {% endif %}
-                {% endwith %}
+                                    <td>{{x.showSequencingAll}}</td>
+                                </tr>
+                
+                          {% endfor %}
+                          </tbody>
+                        </table>
+                        <p></p>
+                        <small>
+                            Help: Move mouse over content link to see content description. 
+                            Move mouse over sample description to see full length description.
+                        </small>
+                    </div>
+                
+                {% else %}
+                    <p>There are no samples registered for this DNA construct.</p>
+                {% endif %}
             </div>
         </div>
     
