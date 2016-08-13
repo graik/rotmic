@@ -11,14 +11,17 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         ## move links to protein records from Insert-Fragment to plasmid
-        dctype = orm.DnaComponentType.objects.filter(name='Plasmid')
-        plasmids = orm.DnaComponent.objects.filter(componentType__subTypeOf=dctype)
-        for p in plasmids:
-            if p.insert:
-                if p.insert.translatesTo:
-                    p.translatesTo = p.insert.translatesTo
-                    p.insert.translatesTo = None
-        
+        try:
+            dctype = orm.DnaComponentType.objects.filter(name='Plasmid')
+            plasmids = orm.DnaComponent.objects.filter(componentType__subTypeOf=dctype)
+            for p in plasmids:
+                if p.insert:
+                    if p.insert.translatesTo:
+                        p.translatesTo = p.insert.translatesTo
+                        p.insert.translatesTo = None
+        except:
+            print "Error: Could not run data migration for moving protein links from insert to plasmid."
+            
     def backwards(self, orm):
         pass
 
