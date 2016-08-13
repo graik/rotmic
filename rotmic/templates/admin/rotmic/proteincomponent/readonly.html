@@ -28,7 +28,8 @@
     {%endblock%}
 
     {% block content-details %}
-    <p>
+    <div style="margin: 10px">
+
         <table>
             <!--
             <tr class="row1" style="vertical-align:middle">
@@ -37,35 +38,35 @@
             -->
     
             <tr class="row1" style="vertical-align:middle" >
-                <td style="background-color:white; text-align:right" width="12">&bull;</td>
+                <td style="background-color:white; text-align:right">&bull;</td>
                 <td><b>Length:</b></td><td>{{o.length}} aa</td>
             </tr>
             <tr  class="row1" style="vertical-align:middle" >
-                <td style="background-color:white; text-align:right" width="12">&bull;</td>
+                <td style="background-color:white; text-align:right">&bull;</td>
                 <td><b>Molecular Weight:</b></td><td>{{o.mass |intcomma}} D</td>
             </tr>
             <tr class="row1" style="vertical-align:middle" >
-                <td style="background-color:white; text-align:right" width="12">&bull;</td>
+                <td style="background-color:white; text-align:right">&bull;</td>
                 <td><b>Isoelectric Point:</b></td><td>{{o.isoelectric}}</td>
             </tr>
             <tr class="row1" style="vertical-align:middle" >
-                <td style="background-color:white; text-align:right" width="12">&bull;</td>
+                <td style="background-color:white; text-align:right">&bull;</td>
                 <td><b>E (280 nm):</b></td><td>{{o.e280reduced |intcomma}} M<sup>-1</sup> cm<sup>-1</sup></td>
             </tr>
             {%if o.maxSS%}
                 <tr class="row1" style="vertical-align:middle" >
-                <td style="background-color:white; text-align:right" width="12">&bull;</td>
+                <td style="background-color:white; text-align:right">&bull;</td>
                 <td><b>E (280 nm):</b></td><td>{{o.e280ss |intcomma}} M<sup>-1</sup> cm<sup>-1</sup>
                    (assuming {{o.maxSS}} S-S bonds) </td>
                 </tr>
             {% else %}
                 <tr class="row1" style="vertical-align:middle" >
-                    <td style="background-color:white; text-align:right" width="12">&bull;</td>
+                    <td style="background-color:white; text-align:right">&bull;</td>
                     <td></td><td>no disulfide bonds possible</td>
                 </tr>
             {%endif%}
         </table>
-    </p>
+    </div>
     {% endblock %}
 
     {% block add-sample-url %} {# Link for "Add Sample" Button #}

@@ -93,7 +93,7 @@
     
         {% block samples %}
         <div class='module'>
-            <h2>Samples <a href="#" onclick="toggle_visibility('samples');">(Hide/Show)</a></h2>
+            <h2>Samples: {{o.samples.count}} <a href="#" onclick="toggle_visibility('samples');">(Hide/Show)</a></h2>
             <div id='samples'>
                 <p><br></p>
                 <ul class="object-tools">
@@ -109,10 +109,6 @@
 
                 {% with n=o.samples.count %}
                     {% if n > 0 %}
-                        <p>
-                            There are <b>{{n}} sample(s)</b> registered for this {{class_label}}.<br>
-                        </p>
-                        
                         <div style="margin: 10px">
                             <table cellspacing="1">
                     
