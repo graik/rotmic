@@ -73,7 +73,7 @@ def user_initials(user):
 def create_profile(sender, **kw):
     user = kw["instance"]
     if kw["created"]:
-        prefix = user_initials(user)
+        prefix = user_initials(user)  ## first and last name is not yet set at this point
         profile = UserProfile(user=user, prefix=prefix)
         profile.save()
 
