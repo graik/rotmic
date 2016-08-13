@@ -53,8 +53,7 @@ class MarkerTypeFilter( admin.SimpleListFilter ):
     
         markers = M.DnaComponent.objects.filter(componentType__name=self.value())
         constraint = Q(markers__in=markers)\
-            | Q(vectorBackbone__markers__in=markers)\
-            | Q(insert__markers__in=markers)
+            | Q(vectorBackbone__markers__in=markers)
         
         return q.filter(constraint)
     
@@ -111,8 +110,7 @@ class MarkerListFilter( admin.SimpleListFilter):
             return queryset
 
         constraint = Q(markers__in=selected)\
-            | Q(vectorBackbone__markers__in=selected)\
-            | Q(insert__markers__in=selected)
+            | Q(vectorBackbone__markers__in=selected)
         
         return queryset.filter(constraint)
 

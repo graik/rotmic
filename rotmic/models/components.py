@@ -178,10 +178,6 @@ class DnaComponent(Component, StatusMixinDna):
                                       blank=False,
                                       on_delete=models.PROTECT)    
     
-    insert = models.ForeignKey( 'self', blank=True, null=True,
-                                related_name='as_insert_in_dna',
-                                help_text='start typing ID or name of DNA <b>Fragment</b>')
-    
     vectorBackbone = models.ForeignKey( 'self', blank=True, null=True ,
                                         verbose_name='Vector Backbone',
                                         related_name='as_vector_in_plasmid',
@@ -254,8 +250,6 @@ class DnaComponent(Component, StatusMixinDna):
         @return (str, DnaComponent) -- (relationship, related component)
         """
         r = {}
-        if self.as_insert_in_dna.count():
-            r['insert'] = self.as_insert_in_dna.all()
         if self.as_vector_in_plasmid.count():
             r['vectorbackbone'] = self.as_vector_in_plasmid.all()
         if self.as_marker_in_dna.count():
@@ -282,7 +276,6 @@ class DnaComponent(Component, StatusMixinDna):
         category = self.componentType.category().name
 
         if category != 'Plasmid':
-            self.insert = None
             self.vectorBackbone = None
         
 ##        if category != 'Fragment':
@@ -295,28 +288,24 @@ class DnaComponent(Component, StatusMixinDna):
         """
         @return: QuerySet(DnaComponent)
         All markers contained in this DC directly or within a linked
-        insert or vector backbone.
+        vector backbone.
         Note: using queryset combination and limiting count() etc is speeding
         up this code
         """
         r = self.markers.all()  ## queryset
         if self.vectorBackbone:
             r = r | self.vectorBackbone.allMarkers() ## combine querysets
-        if self.insert:
-            r = r | self.insert.allMarkers()
         return r
     
     def allProteins( self ):
         """
-        All proteins encoded by this DNA or its markers / insert / vector
+        All proteins encoded by this DNA or its markers / vector
         @return [ProteinComponent]
         """
         r = [ self.translatesTo ] if self.translatesTo else []
 
         for m in self.markers.all():
             r += m.allProteins()
-        if self.insert:
-            r += self.insert.allProteins()
         if self.vectorBackbone:
             r += self.vectorBackbone.allProteins()
 

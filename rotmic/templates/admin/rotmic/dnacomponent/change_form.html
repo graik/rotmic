@@ -27,38 +27,32 @@
         //
         function hideShow() {
             var category = $("#id_componentCategory option:selected").text();
-            var f_insert = $('.field-box.field-insert').first()[0];
             var f_vector = $('.field-box.field-vectorBackbone').first()[0];
             var f_markers= $('.field-box.field-markers').first()[0];
             var f_translates = $('.field-box.field-translatesTo').first()[0]
             
             switch ( category ) {
                 case 'Vector Backbone':
-                    f_insert.style.visibility = 'hidden';
                     f_vector.style.visibility = 'hidden';
                     f_markers.style.visibility = 'visible';
                     f_translates.style.visibility = 'hidden';
                     break;
                 case 'Plasmid':
-                    f_insert.style.visibility = 'visible';
                     f_vector.style.visibility = 'visible';
                     f_markers.style.visibility = 'hidden';
                     f_translates.style.visibility = 'visible';
                     break;
                 case 'Fragment':
-                    f_insert.style.visibility = 'hidden';
                     f_vector.style.visibility = 'hidden';
                     f_markers.style.visibility = 'visible';
                     f_translates.style.visibility = 'visible';
                     break;
                 case 'Marker':
-                    f_insert.style.visibility = 'hidden';
                     f_vector.style.visibility = 'hidden';
                     f_markers.style.visibility = 'hidden';
                     f_translates.style.visibility = 'hidden';
                     break;
                 default:
-                    f_insert.style.visibility = 'hidden';
                     f_vector.style.visibility = 'hidden';
                     f_markers.style.visibility = 'hidden';
                     f_translates.first().style.visibility = 'hidden';
@@ -71,7 +65,7 @@
 
 
         //
-        // suggest name on vector / insert / category change but protect user edit
+        // suggest name on vector / category change but protect user edit
         //
         var default_name = {%if original.pk %}"{{original.name}}"{%else%}''{%endif%};
 
@@ -111,9 +105,8 @@
             if ( sessionStorage.getItem('name_changed') != '1' ){
                 if (category == 'Plasmid'){
                     var vector = $('#id_vectorBackbone_0').val();
-                    var insert = $('#id_insert_0').val();
 
-                    var r = [_extractName(vector), _extractName(insert) ];
+                    var r = [_extractName(vector),];
                     r = r.filter(function(x){return x != undefined});
 
                     $('#id_name').val( r.join('_') );    
@@ -125,7 +118,6 @@
         }
         
         $('#id_componentCategory').change(suggestName);
-        document.getElementById( 'id_insert_0' ).djselectableselect = suggestName;
         document.getElementById( 'id_vectorBackbone_0' ).djselectableselect = suggestName;
         
         //
@@ -137,11 +129,9 @@
             var categories = captureCategories();
             //var cat_marker = categories['Marker'].toString();
             var cat_vector = categories['Vector Backbone'].toString();
-            var cat_insert = categories['Fragment'].toString();
             
             var urladd = "{% url 'admin:rotmic_dnacomponent_add'%}?componentCategory="
             $("#add_id_vectorBackbone").attr('href', urladd + cat_vector);
-            $("#add_id_insert").attr('href', urladd + cat_insert);
         }
         
         $(document).ready(setPlusLinks);
