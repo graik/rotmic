@@ -56,16 +56,16 @@ dcVectorYeastIntegrating = getcreate(M.DnaComponentType, subTypeOf=dcVectorBB,
 
 ## Fragments (all optional)
 dcFragmentCDS = getcreate(M.DnaComponentType, subTypeOf=dcFragment, 
-                          name = 'CDS', isInsert=True)
+                          name = 'CDS',)
 
 dcFragmentProteinPart = getcreate(M.DnaComponentType, subTypeOf=dcFragment,
-                                    name = 'protein part', isInsert=True)
+                                    name = 'protein part')
 
 dcFragmentIntegration = getcreate(M.DnaComponentType, subTypeOf=dcFragment,
-                                    name = 'integration casette', isInsert=True)
+                                    name = 'integration casette')
 
 dcFragmentConstruction = getcreate(M.DnaComponentType, subTypeOf=dcFragment,
-                                    name = 'construction intermediate', isInsert=True)
+                                    name = 'construction intermediate')
 
 dcFragmentOther = getcreate(M.DnaComponentType, subTypeOf=dcFragment,
                                     name = 'other fragment')

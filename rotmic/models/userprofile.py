@@ -32,7 +32,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
     
     prefix = models.CharField('default Prefix', max_length=5,
-                              default='mt',
+                              default='id',
                               help_text='default ID prefix')
     
     dcPrefix = models.CharField('DNA Prefix', max_length=5,
@@ -62,10 +62,19 @@ class UserProfile(models.Model):
         app_label = 'rotmic'
         ordering = ('user',)
 
+def user_initials(user):
+    try:
+        if user.first_name and user.last_name:
+            return (user.first_name[0] + user.last_name[0]).lower()
+        return user.username[:2]
+    except:
+        return 'id'
+
 def create_profile(sender, **kw):
     user = kw["instance"]
     if kw["created"]:
-        profile = UserProfile(user=user, prefix='mt')
+        prefix = user_initials(user)  ## first and last name is not yet set at this point
+        profile = UserProfile(user=user, prefix=prefix)
         profile.save()
 
 post_save.connect(create_profile, sender=User)

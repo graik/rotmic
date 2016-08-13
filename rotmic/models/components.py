@@ -178,10 +178,6 @@ class DnaComponent(Component, StatusMixinDna):
                                       blank=False,
                                       on_delete=models.PROTECT)    
     
-    insert = models.ForeignKey( 'self', blank=True, null=True,
-                                related_name='as_insert_in_dna',
-                                help_text='start typing ID or name of DNA <b>Fragment</b>')
-    
     vectorBackbone = models.ForeignKey( 'self', blank=True, null=True ,
                                         verbose_name='Vector Backbone',
                                         related_name='as_vector_in_plasmid',
@@ -195,7 +191,7 @@ class DnaComponent(Component, StatusMixinDna):
                                      help_text='start typing ID or name of marker')
     
     translatesTo = models.ForeignKey('ProteinComponent',
-                                     verbose_name='Translates to',
+                                     verbose_name='Generates Protein',
                                      related_name='codingSequences',
                                      help_text='start typing ID or name of encoded protein',
                                      null=True, blank=True,
@@ -254,8 +250,6 @@ class DnaComponent(Component, StatusMixinDna):
         @return (str, DnaComponent) -- (relationship, related component)
         """
         r = {}
-        if self.as_insert_in_dna.count():
-            r['insert'] = self.as_insert_in_dna.all()
         if self.as_vector_in_plasmid.count():
             r['vectorbackbone'] = self.as_vector_in_plasmid.all()
         if self.as_marker_in_dna.count():
@@ -282,11 +276,10 @@ class DnaComponent(Component, StatusMixinDna):
         category = self.componentType.category().name
 
         if category != 'Plasmid':
-            self.insert = None
             self.vectorBackbone = None
         
-        if category != 'Fragment':
-            self.translatesTo = None
+##        if category != 'Fragment':
+##            self.translatesTo = None
         
         return super(DnaComponent,self).save(*args, **kwargs)
 
@@ -295,28 +288,24 @@ class DnaComponent(Component, StatusMixinDna):
         """
         @return: QuerySet(DnaComponent)
         All markers contained in this DC directly or within a linked
-        insert or vector backbone.
+        vector backbone.
         Note: using queryset combination and limiting count() etc is speeding
         up this code
         """
         r = self.markers.all()  ## queryset
         if self.vectorBackbone:
             r = r | self.vectorBackbone.allMarkers() ## combine querysets
-        if self.insert:
-            r = r | self.insert.allMarkers()
         return r
     
     def allProteins( self ):
         """
-        All proteins encoded by this DNA or its markers / insert / vector
+        All proteins encoded by this DNA or its markers / vector
         @return [ProteinComponent]
         """
         r = [ self.translatesTo ] if self.translatesTo else []
 
         for m in self.markers.all():
             r += m.allProteins()
-        if self.insert:
-            r += self.insert.allProteins()
         if self.vectorBackbone:
             r += self.vectorBackbone.allProteins()
 
@@ -468,7 +457,7 @@ class ProteinComponent(Component, StatusMixinDna):
         if not self.sequence:
             return 0.0
         try:
-            return PP.ProteinAnalysis(self.sequence).molecular_weight()
+            return round(PP.ProteinAnalysis(self.sequence).molecular_weight(),2)
         except:
             return 0.0
     
@@ -481,7 +470,37 @@ class ProteinComponent(Component, StatusMixinDna):
             return round(r, 2)
         except:
             return 0.0
+    
+    def maxSS( self ):
+        """
+        @return int, number of maximally possible S-S bonds (n_cys/2)
+        """
+        if not self.sequence:
+            return 0
+        return divmod( self.sequence.upper().count('C'), 2 )[0] ## full pairs only
         
+    def e280reduced( self ):
+        """
+        E(Prot) = Numb(Tyr)*Ext(Tyr) + Numb(Trp)*Ext(Trp) + Numb(Cystine)*Ext(Cystine)
+        where (for proteins in water measured at 280 nm): Ext(Tyr) = 1490, Ext(Trp) = 5500, Ext(Cystine) = 125;
+        @return float, extinction coefficient at 280 nm assuming no S-S bonds [/M/cm]
+        """
+        if not self.sequence:
+            return 0
+        eY = 1490
+        eW = 5500
+        nY = self.sequence.upper().count('Y')
+        nW = self.sequence.upper().count('W')        
+        return eY*nY + eW*nW
+    
+    def e280ss( self ):
+        """
+        @return extinction at 280 nm [/M/cm] assuming all Cys are involved in S-S bonds
+        """
+        if not self.sequence:
+            return 0
+        eSS = 125
+        return self.e280reduced() + self.maxSS() * eSS
 
     class Meta:
         app_label = 'rotmic'

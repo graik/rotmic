@@ -234,11 +234,6 @@ class DnaComponentForm(GenbankComponentForm):
             self.fields['componentCategory'].initial = T.dcPlasmid
             self.fields['componentType'].initial = T.dcPlasmidGeneric
 
-            ## pre-set category if 'translatesTo' is given as URL parameter
-            ## currently this doesn't seem to work
-            if 'translatesTo' in self.initial:
-                self.initial['componentType'] = unicode(T.dcFragmentCDS.pk)
-                self.initial['componentCategory'] = unicode(T.dcFragment.pk)
     
     def clean_sequence(self):
         """Enforce DNA sequence."""
@@ -266,11 +261,7 @@ class DnaComponentForm(GenbankComponentForm):
 
             if cat.id != T.dcVectorBB.id and self.instance.as_vector_in_plasmid.count():
                 raise ValidationError(msg + 'This construct is in use as a vector backbone.')
-            
-            if not cat.id in [T.dcFragment.id, T.dcMarker.id] and \
-               self.instance.as_insert_in_dna.count():
-                raise ValidationError(msg + 'This construct is in use as an insert.')
-                
+                            
             if cat.id != T.dcMarker.id and (self.instance.as_marker_in_cell.count() \
                                        or self.instance.as_marker_in_dna.count() ):
                 raise ValidationError(msg + 'This construct is in use as a marker.')
@@ -316,12 +307,8 @@ class DnaComponentForm(GenbankComponentForm):
                 category = t.category()
 
         if category and (category != T.dcPlasmid):
-            data['insert'] = None
             data['vectorBackbone'] = None
-            
-        if category and (category != T.dcFragment):
-            data['translatesTo'] = None
-        
+                    
         if category and (category not in [T.dcVectorBB, T.dcFragment] and 'markers' in data):
             data['markers'] = []
             
@@ -330,9 +317,7 @@ class DnaComponentForm(GenbankComponentForm):
             msg = u'Vector Backbone is required for Plasmids.'
             self._errors['vectorBackbone'] = self.error_class([msg])
         
-        ## validate Insert, Marker, Vector, and Protein categories
-        self._validateLinked(data['insert'], [T.dcFragment, T.dcMarker], 'insert')
-        
+        ## validate Marker, Vector, and Protein categories
         self._validateLinked(data['vectorBackbone'], [T.dcVectorBB], 'vectorBackbone')
         
         ##self._validateLinked(data['translatesTo'], [T.pcProtein], 'translatesTo')
@@ -347,17 +332,12 @@ class DnaComponentForm(GenbankComponentForm):
 
         widgets = getComponentWidgets( extra={
             'name' : forms.TextInput(attrs={'size':25,
-                            'title' : 'Erase in order to re-activate automatic name composition from insert and vector.'
+                            'title' : 'Erase in order to re-activate automatic name suggestion from vector.'
                         }),
 
             'sequence': forms.Textarea(attrs={'cols': 100, 'rows': 4,
                                                'style':'font-family:monospace'}), 
 
-            'insert' : sforms.AutoComboboxSelectWidget(lookup_class=L.InsertLookup, 
-                            allow_new=False,
-                            attrs={'size':32,
-                                   'title':'Select a DNA construct (must be classified as "Fragment").'
-                        }),
             'vectorBackbone' : sforms.AutoComboboxSelectWidget(
                                    lookup_class=L.VectorLookup, 
                                    allow_new=False,

@@ -86,18 +86,13 @@ class ComponentFilter(F.FilterSet):
 def searchDnaMarkers(qs, query):
     q = Q(markers__name__contains=query) | Q(markers__displayId__contains=query) |\
         Q(vectorBackbone__markers__name__contains=query) |\
-        Q(vectorBackbone__markers__displayId__contains=query) |\
-        Q(insert__markers__name__contains=query) |\
-        Q(insert__markers__displayId__contains=query)
+        Q(vectorBackbone__markers__displayId__contains=query)
         
     r = qs.filter(q)
     return r
 
 class DnaComponentFilter(ComponentFilter, F.FilterSet):
     
-    insertId  = F.CharFilter(name='insert', label='Insert (name or ID)',
-                             action=linkedSearch('insert'))
-
     vector  = F.CharFilter(name='vector', label='Base vector (name or ID)',
                            action=linkedSearch('vectorBackbone'))
     
@@ -125,9 +120,7 @@ class DnaComponentFilter(ComponentFilter, F.FilterSet):
 def searchCellMarkers(qs, query):
     q = Q(markers__name__contains=query) | Q(markers__displayId__contains=query) |\
         Q(plasmid__vectorBackbone__markers__name__contains=query) |\
-        Q(plasmid__vectorBackbone__markers__displayId__contains=query) |\
-        Q(plasmid__insert__markers__name__contains=query) |\
-        Q(plasmid__insert__markers__displayId__contains=query)
+        Q(plasmid__vectorBackbone__markers__displayId__contains=query)
         
     r = qs.filter(q)
     return r
