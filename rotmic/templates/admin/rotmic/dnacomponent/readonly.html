@@ -32,95 +32,93 @@
     
     {% block content-title%}<h2>Description</h2>{% endblock %}    
     
-    {% block content-details %}{% endblock %}
-        
     {% block content-description %}
-
         <div id="description">
             <p class='description'>
                 {{o.description|markdown}}
             </p>
+        </div>
+    {% endblock %}
             
-            <table>
-                <tr>
-                    <td></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
-                {% if o.vectorBackbone %}
-                    {% with o.vectorBackbone as vector %}
-                        <tr class="row1" style="vertical-align:middle">
-                            <td style="background-color:white;"> 
-                                <img src="{% static "img/icon_plasmid_open.png" %}" align="left" height="35"> 
-                            </td>
-                            <td style="vertical-align:middle">Vector<br>Backbone:</td>
-                            <td style="vertical-align:middle">
-                                <b><a href="{{vector.get_absolute_url}}" title="{{vector.description}}">
-                                {{vector}}</a></b>
-                            </td>
-                            <td style="vertical-align:middle">
-                                [{{vector.componentType.name}}]</td>
-                            <td style="vertical-align:middle"
-                                >{{vector.showDescription}}</td>
-                            <td></td>
-                        </tr>
-                        {% for m in vector.markers.all %}
-                            <tr  class="row1">
-                                <td style="background-color:white;">
-                                    <img src="{% static "img/icon_marker.png" %}" align="left">
-                                </td>
-                                <td>
-                                    Marker:
-                                </td>
-                                <td>
-                                    <a href="{{m.get_absolute_url}}" title="{{m.description}}"><b>{{m.name}}</b></a>
-                                </td>
-                                <td>[{{m.componentType.name}}]</td>
-                                <td>{{m.showDescription}}</td>
-                                <td></td>
-                            </tr>
-                        {% endfor %}
-                    {% endwith %}
-                {% endif %}
-                
-                {% for m in o.markers.all %}
-                    <tr class="row1">
-                        <td style="background-color:white;">
-                            <img src="{% static "img/icon_marker.png" %}" align="left"></td>
-                        <td>
-                            Marker (own):
+    {% block content-details %}
+        <table>
+            <tr>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            {% if o.vectorBackbone %}
+                {% with o.vectorBackbone as vector %}
+                    <tr class="row1" style="vertical-align:middle">
+                        <td style="background-color:white;"> 
+                            <img src="{% static "img/icon_plasmid_open.png" %}" align="left" height="35"> 
                         </td>
-                        <td>
-                            <a href="{{m.get_absolute_url}}" title="{{m.description}}"><b>{{m.name}}</b></a>
+                        <td style="vertical-align:middle">Vector<br>Backbone:</td>
+                        <td style="vertical-align:middle">
+                            <b><a href="{{vector.get_absolute_url}}" title="{{vector.description}}">
+                            {{vector}}</a></b>
                         </td>
-                        <td>[{{m.componentType.name}}]</td>
-                        <td>{{m.showDescription}}</td>
+                        <td style="vertical-align:middle">
+                            [{{vector.componentType.name}}]</td>
+                        <td style="vertical-align:middle"
+                            >{{vector.showDescription}}</td>
                         <td></td>
                     </tr>
-                {% endfor %}
-                
-                {% for x in o.allProteins %}
-                    <tr class="row1">
-                        <td style="background-color:white;">
-                            <img src="{% static "img/icon_protein.png" %}" align="left" height="30">
-                        </td>
-                        <td style="vertical-align:middle">
-                            generates<br>Protein:
-                        </td>
-                        <td style="vertical-align:middle">
-                            <b><a href="{{x.get_absolute_url}}" title="{{x.description}}">{{x}}</a></b></td>
-                        <td style="vertical-align:middle">
-                            [{{x.componentType.name}}]</td>
-                        <td style="vertical-align:middle">
-                            {{x.showDescription}}</td>
-                        <td style="text-align: center;vertical-align:middle;">
-                            {{x.protein_samples.count}} samples
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table></p>
+                    {% for m in vector.markers.all %}
+                        <tr  class="row1">
+                            <td style="background-color:white;">
+                                <img src="{% static "img/icon_marker.png" %}" align="left">
+                            </td>
+                            <td>
+                                Marker:
+                            </td>
+                            <td>
+                                <a href="{{m.get_absolute_url}}" title="{{m.description}}"><b>{{m.name}}</b></a>
+                            </td>
+                            <td>[{{m.componentType.name}}]</td>
+                            <td>{{m.showDescription}}</td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                {% endwith %}
+            {% endif %}
+            
+            {% for m in o.markers.all %}
+                <tr class="row1">
+                    <td style="background-color:white;">
+                        <img src="{% static "img/icon_marker.png" %}" align="left"></td>
+                    <td>
+                        Marker (own):
+                    </td>
+                    <td>
+                        <a href="{{m.get_absolute_url}}" title="{{m.description}}"><b>{{m.name}}</b></a>
+                    </td>
+                    <td>[{{m.componentType.name}}]</td>
+                    <td>{{m.showDescription}}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+            
+            {% for x in o.allProteins %}
+                <tr class="row1">
+                    <td style="background-color:white;">
+                        <img src="{% static "img/icon_protein.png" %}" align="left" height="30">
+                    </td>
+                    <td style="vertical-align:middle">
+                        generates<br>Protein:
+                    </td>
+                    <td style="vertical-align:middle">
+                        <b><a href="{{x.get_absolute_url}}" title="{{x.description}}">{{x}}</a></b></td>
+                    <td style="vertical-align:middle">
+                        [{{x.componentType.name}}]</td>
+                    <td style="vertical-align:middle">
+                        {{x.showDescription}}</td>
+                    <td style="text-align: center;vertical-align:middle;">
+                        {{x.protein_samples.count}} samples
+                    </td>
+                </tr>
+            {% endfor %}
+        </table></p>
 
-        </div>
-
-        {% endblock content-description%}
+    {% endblock content-details%}
 
     
     {% block content-middle %}

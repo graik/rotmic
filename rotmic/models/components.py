@@ -457,7 +457,7 @@ class ProteinComponent(Component, StatusMixinDna):
         if not self.sequence:
             return 0.0
         try:
-            return PP.ProteinAnalysis(self.sequence).molecular_weight()
+            return round(PP.ProteinAnalysis(self.sequence).molecular_weight(),2)
         except:
             return 0.0
     
@@ -470,7 +470,37 @@ class ProteinComponent(Component, StatusMixinDna):
             return round(r, 2)
         except:
             return 0.0
+    
+    def maxSS( self ):
+        """
+        @return int, number of maximally possible S-S bonds (n_cys/2)
+        """
+        if not self.sequence:
+            return 0
+        return divmod( self.sequence.upper().count('C'), 2 )[0] ## full pairs only
         
+    def e280reduced( self ):
+        """
+        E(Prot) = Numb(Tyr)*Ext(Tyr) + Numb(Trp)*Ext(Trp) + Numb(Cystine)*Ext(Cystine)
+        where (for proteins in water measured at 280 nm): Ext(Tyr) = 1490, Ext(Trp) = 5500, Ext(Cystine) = 125;
+        @return float, extinction coefficient at 280 nm assuming no S-S bonds [/M/cm]
+        """
+        if not self.sequence:
+            return 0
+        eY = 1490
+        eW = 5500
+        nY = self.sequence.upper().count('Y')
+        nW = self.sequence.upper().count('W')        
+        return eY*nY + eW*nW
+    
+    def e280ss( self ):
+        """
+        @return extinction at 280 nm [/M/cm] assuming all Cys are involved in S-S bonds
+        """
+        if not self.sequence:
+            return 0
+        eSS = 125
+        return self.e280reduced() + self.maxSS() * eSS
 
     class Meta:
         app_label = 'rotmic'
