@@ -75,7 +75,7 @@
             <ul class="object-tools">
                 <li>
                     <a href="{%url 'admin:rotmic_dnacomponent_add'%}?translatesTo={{o.pk}}&name={{o.name}}">
-                    Add encoding DNA</a>
+                    Add new encoding DNA</a>
                 </li>
             </ul>
 
@@ -114,7 +114,7 @@
             {% else %}
                 <p>
                     No encoding DNA constructs registered. You can connect DNA
-                    fragments to this protein using the "translates To" field
+                    constructs to this protein using the "generates Protein" field
                     in the DNA record.
                 </p>
             {% endif %}
