@@ -65,7 +65,7 @@ class UserProfile(models.Model):
 def create_profile(sender, **kw):
     user = kw["instance"]
     if kw["created"]:
-        profile = UserProfile(user=user, prefix='mt')
+        profile = UserProfile(user=user)
         profile.save()
 
 post_save.connect(create_profile, sender=User)
