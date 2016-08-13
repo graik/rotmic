@@ -26,10 +26,12 @@
                 <th scope="row"><a href="{% url 'admin:rotmic_dnacomponent_changelist' %}">DNA constructs</a></th>
                 <td><a href="{% url 'admin:rotmic_dnacomponent_add' %}" class="addlink">Add</a></td>
             </tr>
-            <tr>
+            <!--  Un-comment this line to show link to "Modified Cells" Table
+                <tr>
                 <th scope="row"><a href="{% url 'admin:rotmic_cellcomponent_changelist' %}">Modified Cells</a></th>
                 <td><a href="{% url 'admin:rotmic_cellcomponent_add' %}" class="addlink">Add</a></td>
-            </tr>
+                </tr>
+            -->
             <tr>
                 <th scope="row"><a href="{% url 'admin:rotmic_oligocomponent_changelist' %}">Oligonucleotides</a></th>
                 <td><a href="{% url 'admin:rotmic_oligocomponent_add' %}" class="addlink">Add</a></td>
@@ -143,7 +145,7 @@
     
                 {% if perms.rotmic.change_cellcomponenttype %}
                 <tr>
-                     <th scope="row"><a href="{% url 'admin:rotmic_cellcomponenttype_changelist' %}">Cell Categories</a></th>
+                     <th scope="row"><a href="{% url 'admin:rotmic_cellcomponenttype_changelist' %}">Cell Types &amp; Strains</a></th>
                      <td><a href="{% url 'admin:rotmic_cellcomponenttype_add' %}" class="addlink">Add</a></td>
                 </tr>
                 {% endif %}

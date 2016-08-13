@@ -72,10 +72,7 @@ class DnaComponentType( ComponentType ):
                                   limit_choices_to={'subTypeOf':None},
                                   related_name='subTypes',
                                   help_text='Assign to existing category or leave blank to create a new top-level category')
-    
-    isInsert = models.BooleanField('allow as insert', default=False,
-                                   help_text='Are fragments of this type selectable as inserts in plasmids?')
-    
+        
     def __unicode__(self):
         r = unicode(self.name)
         if self.subTypeOf:

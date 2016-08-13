@@ -245,7 +245,7 @@ class Sample( UserMixin, ReadonlyUrlMixin ):
     showExtendedId.short_description = u'Box : ID'
     
     def showContent(self):
-        """Table display of linked insert or ''"""
+        """Table display of linked content or ''"""
         x = self.content
         if not x:
             return u''

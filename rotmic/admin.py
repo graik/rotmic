@@ -43,18 +43,17 @@ class DnaComponentTypeAdmin( reversion.VersionAdmin ):
     fieldsets = (
         (None, {
             'fields': (('name', 'subTypeOf',),
-                       ('description', 'isInsert',),
+                       ('description',),
                        ('uri',),
                        )
             }
          ),
         )
     
-    list_display = ('__unicode__','subTypeOf', 'description', 'isInsert')
+    list_display = ('__unicode__','subTypeOf', 'description',)
     list_display_links = ('__unicode__',)
-    list_editable = ('isInsert',)
     
-    list_filter = ('subTypeOf', 'isInsert')
+    list_filter = ('subTypeOf',)
                        
 
 admin.site.register(M.DnaComponentType, DnaComponentTypeAdmin)
@@ -225,7 +224,7 @@ class RackAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmin, Up
     model_lookup = L.RackLookup
 
     def showLocationUrl(self, obj):
-        """Table display of linked insert or ''"""
+        """Table display of linked object"""
         assert isinstance(obj, M.Rack), 'object missmatch'
         x = obj.location
         if not x:
@@ -273,7 +272,7 @@ class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmi
     model_lookup = L.SampleContainerLookup
 
     def showLocationUrl(self, obj):
-        """Table display of linked insert or ''"""
+        """Table display of linked location or ''"""
         assert isinstance(obj, M.Container), 'object missmatch'
         x = obj.rack.location
         if not x:
@@ -285,7 +284,7 @@ class ContainerAdmin(UserRecordMixin, reversion.VersionAdmin, ViewFirstModelAdmi
     showLocationUrl.short_description = 'Location'
 
     def showRackUrl(self, obj):
-        """Table display of linked insert or ''"""
+        """Table display of linked Rack or ''"""
         assert isinstance(obj, M.Container), 'object missmatch'
         x = obj.rack
         if not x:

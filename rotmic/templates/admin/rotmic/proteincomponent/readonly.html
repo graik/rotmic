@@ -2,6 +2,7 @@
 {% load i18n admin_static admin_list %}
 {% load admin_urls %}
 {% load rotmicfilters benchling seqdisplay %}
+{% load humanize %}
 
 {% block extrastyle %}{{block.super}}
     {% seqdisplay_css %}
@@ -27,11 +28,38 @@
     {%endblock%}
 
     {% block content-details %}
-        <p><ul>
-            <li><b>Length:</b> {{o.length}} aa</li>
-            <li><b>Molecular Weight:</b> {{o.mass}} D</li>
-            <li><b>Isoelectric Point:</b> {{o.isoelectric}}</li>
-        </ul><p>
+    <div style="margin: 10px">
+        <table>
+            <tr class="row1" style="vertical-align:middle" >
+                <td style="background-color:white; text-align:right">&bull;</td>
+                <td><b>Length:</b></td><td>{{o.length}} aa</td>
+            </tr>
+            <tr  class="row1" style="vertical-align:middle" >
+                <td style="background-color:white; text-align:right">&bull;</td>
+                <td><b>Molecular Weight:</b></td><td>{{o.mass |intcomma}} D</td>
+            </tr>
+            <tr class="row1" style="vertical-align:middle" >
+                <td style="background-color:white; text-align:right">&bull;</td>
+                <td><b>Isoelectric Point:</b></td><td>{{o.isoelectric}}</td>
+            </tr>
+            <tr class="row1" style="vertical-align:middle" >
+                <td style="background-color:white; text-align:right">&bull;</td>
+                <td><b>E (280 nm):</b></td><td>{{o.e280reduced |intcomma}} M<sup>-1</sup> cm<sup>-1</sup></td>
+            </tr>
+            {%if o.maxSS%}
+                <tr class="row1" style="vertical-align:middle" >
+                <td style="background-color:white; text-align:right">&bull;</td>
+                <td><b>E (280 nm):</b></td><td>{{o.e280ss |intcomma}} M<sup>-1</sup> cm<sup>-1</sup>
+                   (assuming {{o.maxSS}} S-S bonds) </td>
+                </tr>
+            {% else %}
+                <tr class="row1" style="vertical-align:middle" >
+                    <td style="background-color:white; text-align:right">&bull;</td>
+                    <td></td><td>no disulfide bonds possible</td>
+                </tr>
+            {%endif%}
+        </table>
+    </div>
     {% endblock %}
 
     {% block add-sample-url %} {# Link for "Add Sample" Button #}
@@ -75,7 +103,7 @@
             <ul class="object-tools">
                 <li>
                     <a href="{%url 'admin:rotmic_dnacomponent_add'%}?translatesTo={{o.pk}}&name={{o.name}}">
-                    Add encoding DNA</a>
+                    Add new encoding DNA</a>
                 </li>
             </ul>
 
@@ -114,7 +142,7 @@
             {% else %}
                 <p>
                     No encoding DNA constructs registered. You can connect DNA
-                    fragments to this protein using the "translates To" field
+                    constructs to this protein using the "generates Protein" field
                     in the DNA record.
                 </p>
             {% endif %}

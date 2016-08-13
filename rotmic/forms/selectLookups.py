@@ -78,20 +78,6 @@ class ChemicalLookup(ModelLookup):
 registry.register(ChemicalLookup)
 
 
-class InsertLookup(ModelLookup):
-    """Lookup definition for selectable auto-completion fields"""
-    model = M.DnaComponent
-    search_fields = ('displayId__startswith', 'name__icontains')
-    
-    filters = {'componentType__subTypeOf': T.dcFragment,
-               'componentType__isInsert' : True}
-    
-    def get_item_id(self,item):
-        return item.pk
-
-registry.register(InsertLookup)
-
-
 class VectorLookup(ModelLookup):
     """Lookup definition for selectable auto-completion fields"""
     model = M.DnaComponent
