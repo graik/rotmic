@@ -133,8 +133,9 @@ class Rack(UserMixin, ReadonlyUrlMixin):
     
     def showSampleCount(self):
         """Show number of samples linked to pre-filtered Sample table"""
-        url = reverse('admin:rotmic_sample_changelist')
-        url += '?location=%s&rack=%s' % (self.location.displayId, self.displayId)
+        url = reverse('admin:rotmic_sample_changelist') + '?'
+        url += 'location=%s&' % self.location.displayId if self.location else ''
+        url += 'rack=%s' % self.displayId
         r = '<a href="%s" title="jump to samples">%s</a>' % (url, self.sampleCount())
         return html.mark_safe(r)
     showSampleCount.allow_tags = True
@@ -145,8 +146,9 @@ class Rack(UserMixin, ReadonlyUrlMixin):
     
     def showContainerCount(self):
         """Show number of containers linked to pre-filtered Container table"""
-        url = reverse('admin:rotmic_container_changelist')
-        url += '?location=%s&rack=%s' % (self.location.id, self.id)
+        url = reverse('admin:rotmic_container_changelist') + '?'
+        url += 'location=%s&' % self.location.displayId if self.location else ''
+        url += 'rack=%s' % self.id
         r = '<a href="%s" title="jump to containers">%s</a>' % (url, self.containerCount())
         return html.mark_safe(r)
     showContainerCount.allow_tags = True
