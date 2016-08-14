@@ -275,7 +275,8 @@ class CellSampleAdmin( reversion.VersionAdmin, SampleAdmin ):
          ('Content', {
              'fields' : ((
                           ('cell',),
-                          ('plasmid', 'cellCategory', 'cellType'),
+                          ('plasmid', 'cellType'),
+##                          ('plasmid', 'cellCategory', 'cellType'),
                           ('amount','amountUnit',),
                           ('solvent','aliquotNr',),
                         )),

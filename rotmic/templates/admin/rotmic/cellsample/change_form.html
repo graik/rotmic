@@ -2,7 +2,8 @@
 
 
 {% block func_extra %}
-{# <script charset="utf-8" type="text/javascript">  #}
+{# ## stopped working, re-implement using django-selectable example #}
+{# but for some reason, position completion stops working if this js is commented out #}
 
     // fetch all sub-types of given Category (Species) and fill cellType listbox
     // needs to be called as event from CategoryBox (assuming $(this) is sender
@@ -31,7 +32,7 @@
         $("#id_cellCategory").attr('selected', 'selected');
     }
   
-{# </script> #}
+
 {% endblock %}
 
 {% block bind_extra %}
