@@ -198,7 +198,7 @@ class CellSampleForm( SampleForm ):
     
     cellType = forms.ModelChoiceField(label='Strain',
                             queryset=M.CellComponentType.objects.exclude(subTypeOf=None),
-                            required=False,
+                            required=True,  ## note change to False, if cell field is re-activated
                             empty_label=None,
                             initial=T.ccMach1)
     
@@ -215,7 +215,12 @@ class CellSampleForm( SampleForm ):
         super(CellSampleForm, self).__init__(*args, **kwargs)
 
         ## keep constraint on DB level but allow user to specify via plasmid+type
-        self.fields['cell'].required = False
+        f = self.fields['cell']
+        f.required = False
+        
+        ## hide the cell field from the form to reduce complexity
+        f.widget = forms.HiddenInput()
+        f.label = f.help_text = ''
 
         o = kwargs.get('instance', None)
         if o:
@@ -285,11 +290,11 @@ class CellSampleForm( SampleForm ):
     
     class Meta:
         model = M.CellSample
-        widgets = getSampleWidgets( \
-            {'cell': sforms.AutoComboboxSelectWidget(lookup_class=L.SampleCellLookup,
-                                                    allow_new=False,
-                                                    attrs={'size':35}),
-             })
+##        widgets = getSampleWidgets( \
+##            {'cell': sforms.AutoComboboxSelectWidget(lookup_class=L.SampleCellLookup,
+##                                                    allow_new=False,
+##                                                    attrs={'size':35}),
+##             })
 
         
 class OligoSampleForm( SampleForm ):
