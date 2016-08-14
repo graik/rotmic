@@ -290,7 +290,7 @@ class CellSampleForm( SampleForm ):
     
     class Meta:
         model = M.CellSample
-##        widgets = getSampleWidgets( \
+        widgets = getSampleWidgets()
 ##            {'cell': sforms.AutoComboboxSelectWidget(lookup_class=L.SampleCellLookup,
 ##                                                    allow_new=False,
 ##                                                    attrs={'size':35}),
