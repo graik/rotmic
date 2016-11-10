@@ -103,14 +103,13 @@ class SampleForm(ModelFormWithRequest):
         r = self.cleaned_data['displayId']
         r = r.strip()
         
-        letter, number = ids.splitSampleId( r )
+        letter, number, suffix = ids.splitSampleId( r )
         
         if number is None:
-            raise ValidationError('Valid IDs must be of form "A01" or "01"')
+            raise ValidationError('Valid IDs must be of form "A01" or "01" or "01xyz"')
         
-        letter = letter.upper()
         number = '%02i' % number
-        return letter + number
+        return letter + number + suffix
     
     def clean_preparedBy(self):
         """Prevent non-authors from changing authorship"""

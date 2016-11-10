@@ -20,7 +20,7 @@ from django.contrib.auth.models import User
 
 import re, string
 
-ex_sampleId = re.compile('([A-Za-z]{0,1})([0-9]+)')
+ex_sampleId = re.compile('([A-Za-z]{0,1})([0-9]+)([a-zA-Z]{0,3})')
 ex_number = re.compile('([0-9]+)')
 
 def _extractNumbers( queryset, pattern ):
@@ -54,15 +54,15 @@ def __nextSampleInBox( samples ):
 
 def splitSampleId( sampleId ):
     """
-    sampleId - str, like 'A1' or '12'
-    @return (str, int) - letter, number
+    sampleId - str, like 'A1' or '12' or '12b'
+    @return (str, int, str) - letter, number, letter(s)
     """
     match = ex_sampleId.match(sampleId)
     if not match:
         return '', None
     
-    letter, number = match.groups()
-    return letter.upper(), int(number)
+    letter, number, suffix = match.groups()
+    return letter.upper(), int(number), suffix.lower()
 
 
 def __nextSampleInPlate( samples, columns=12, rows=8 ):
@@ -75,7 +75,7 @@ def __nextSampleInPlate( samples, columns=12, rows=8 ):
     ids = [ o.displayId for o in samples ]
     ids.sort()
 
-    id_tupples = [ splitSampleId( s ) for s in ids ]
+    id_tupples = [ splitSampleId( s )[0:2] for s in ids ]
     
     letter, number = id_tupples[-1]
     if number >= columns:
