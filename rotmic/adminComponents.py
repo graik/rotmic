@@ -178,7 +178,7 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
         (None, {
             'fields': (('displayId', 'name','status'),
                        ('componentCategory', 'componentType'),
-                       ('insert', 'vectorBackbone','markers', 'translatesTo' ),
+                       ('vectorBackbone','markers', 'translatesTo' ),
                        )
         }
          ),
@@ -210,7 +210,6 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
                     'projects', filters.SortedAuthorFilter)
     
     search_fields = ('displayId', 'name', 'description', 
-                     'insert__name', 'insert__displayId',
                      'vectorBackbone__name', 'vectorBackbone__displayId',
                      'vectorBackbone__markers__name', 'vectorBackbone__markers__displayId',
                      'projects__name')
@@ -224,7 +223,6 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     ## custom class variable for table generation
     csv_fields = OrderedDict( ComponentAdmin.csv_fields.items() + 
                               [
-                               ('Insert', 'insert.displayId'),
                                ('Vector', 'vectorBackbone.displayId'),
                                ('Markers', "markers.values_list('displayId', flat=True)"),
                                ('n Samples', 'allSamplesCount()'),
@@ -240,20 +238,7 @@ class DnaComponentAdmin( reversion.VersionAdmin, ComponentAdmin):
     def queryset(self, request):
         """Revert modification made by ComponentModelAdmin"""
         return super(ComponentAdmin,self).queryset(request)
- 
-        
-    def showInsertUrl(self, obj):
-        """Table display of linked insert or ''"""
-        assert isinstance(obj, M.DnaComponent), 'object missmatch'
-        x = obj.insert
-        if not x:
-            return u''
-        url = x.get_absolute_url()
-        return html.mark_safe('<a href="%s" title="%s">%s</a>- %s' \
-                              % (url, x.description, x.displayId, x.name))
-    showInsertUrl.allow_tags = True
-    showInsertUrl.short_description = 'Insert'
-        
+         
     def showVectorUrl(self, obj):
         """Table display of linked vector or ''"""
         assert isinstance(obj, M.DnaComponent), 'object missmatch'
@@ -380,7 +365,7 @@ class CellComponentAdmin( reversion.VersionAdmin, ComponentAdmin ):
         return super(ComponentAdmin,self).queryset(request)
 
     def showPlasmidUrl(self, obj):
-        """Table display of linked insert or ''"""
+        """Table display of linked plasmid or ''"""
         assert isinstance(obj, M.CellComponent), 'object missmatch'
         x = obj.plasmid
         if not x:

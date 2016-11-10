@@ -32,79 +32,93 @@
     
     {% block content-title%}<h2>Description</h2>{% endblock %}    
     
-    {% block content-details %}{% endblock %}
-        
     {% block content-description %}
-
         <div id="description">
             <p class='description'>
                 {{o.description|markdown}}
             </p>
         </div>
-        
-        <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;">
-            <h4>Sequence links and composition</h4>
-        </div>
-        <p><br></p>
-        
-        {% with o.componentType.category|upper as category %}
-            <table>
-                <tr>
-                    {% if o.insert %} 
-                        <th style="text-align: center;">Insert</th> <th width="20"></th> 
-                    {% endif %}
-                    {% if o.vectorBackbone %} 
-                        <th style="text-align: center;">Vector Backbone</th> <th width="20"></th>
-                        <th style="text-align: center;">Vector Markers</th> <th></th>
-                    {% endif %}
-                    {% if o.markers.all %}
-                        <th style="text-align: center;">Own Markers</th> <th></th>
-                    {% endif %}
-                </tr>
-                <tr>
-                    {% if o.insert %} 
-                        <td style="text-align: center;">
-                            <a href="{{o.insert.get_absolute_url}}" title="{{o.insert.description}}">{{o.insert.displayId}}</a>
-                            <p>
-                                <em>{{o.insert.name}}</em>
-                            </p>
-                            [{{o.insert.componentType}}]
-                        </td> <td></td>
-                    {% endif %}
-                    {% if o.vectorBackbone %} 
-                        {% with o.vectorBackbone as vector %}
-                            <td style="text-align: center;">
-                                <a href="{{vector.get_absolute_url}}" title="{{vector.description}}">{{vector.displayId}}</a>
-                                <p>
-                                    <em>{{vector.name}}</em>
-                                </p>
-                                [{{vector.componentType.name}}]
-                            </td> <td></td>
-                            <td style="text-align: center;">
-                                {% if vector.markers.all %}
-                                    {% for m in vector.markers.all %}
-                                        <a href="{{m.get_absolute_url}}" title="{{m.description}}">{{m}}</a><br>
-                                    {% endfor %}
-                                {% endif %}
-                            </td> <td></td>
-                        {% endwith %}
-                    {% endif %}
-                    {% if o.markers.all %}
-                        <td style="text-align: center;">
-                            {% for m in o.markers.all %}
-                                <a href="{{m.get_absolute_url}}" title="{{m.description}}">{{m}}</a><br>
-                            {% endfor %}
-                        </td> <td></td>
-                    {% endif %}
-                </tr>            
-            </table>
+    {% endblock %}
             
-            {% if not o.insert and not o.vectorBackbone and not o.markers.all %}
-                <p>There are no sequence features described.</p>
+    {% block content-details %}
+        <table>
+            <tr>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            {% if o.vectorBackbone %}
+                {% with o.vectorBackbone as vector %}
+                    <tr class="row1" style="vertical-align:middle">
+                        <td style="background-color:white;"> 
+                            <img src="{% static "img/icon_plasmid_open.png" %}" align="left" height="35"> 
+                        </td>
+                        <td style="vertical-align:middle">Vector<br>Backbone:</td>
+                        <td style="vertical-align:middle">
+                            <b><a href="{{vector.get_absolute_url}}" title="{{vector.description}}">
+                            {{vector}}</a></b>
+                        </td>
+                        <td style="vertical-align:middle">
+                            [{{vector.componentType.name}}]</td>
+                        <td style="vertical-align:middle"
+                            >{{vector.showDescription}}</td>
+                        <td></td>
+                    </tr>
+                    {% for m in vector.markers.all %}
+                        <tr  class="row1">
+                            <td style="background-color:white;">
+                                <img src="{% static "img/icon_marker.png" %}" align="left">
+                            </td>
+                            <td>
+                                Marker:
+                            </td>
+                            <td>
+                                <a href="{{m.get_absolute_url}}" title="{{m.description}}"><b>{{m.name}}</b></a>
+                            </td>
+                            <td>[{{m.componentType.name}}]</td>
+                            <td>{{m.showDescription}}</td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                {% endwith %}
             {% endif %}
-        {% endwith %}
+            
+            {% for m in o.markers.all %}
+                <tr class="row1">
+                    <td style="background-color:white;">
+                        <img src="{% static "img/icon_marker.png" %}" align="left"></td>
+                    <td>
+                        Marker (own):
+                    </td>
+                    <td>
+                        <a href="{{m.get_absolute_url}}" title="{{m.description}}"><b>{{m.name}}</b></a>
+                    </td>
+                    <td>[{{m.componentType.name}}]</td>
+                    <td>{{m.showDescription}}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+            
+            {% for x in o.allProteins %}
+                <tr class="row1">
+                    <td style="background-color:white;">
+                        <img src="{% static "img/icon_protein.png" %}" align="left" height="30">
+                    </td>
+                    <td style="vertical-align:middle">
+                        generates<br>Protein:
+                    </td>
+                    <td style="vertical-align:middle">
+                        <b><a href="{{x.get_absolute_url}}" title="{{x.description}}">{{x}}</a></b></td>
+                    <td style="vertical-align:middle">
+                        [{{x.componentType.name}}]</td>
+                    <td style="vertical-align:middle">
+                        {{x.showDescription}}</td>
+                    <td style="text-align: center;vertical-align:middle;">
+                        {{x.protein_samples.count}} samples
+                    </td>
+                </tr>
+            {% endfor %}
+        </table></p>
 
-    {% endblock content-description%}
+    {% endblock content-details%}
 
     
     {% block content-middle %}
@@ -137,28 +151,23 @@
             </div>        
         {% endblock sequence %}
 
-        
+    
+        {% if o.relatedDnaCount > 0 %}    
         <div class='module'>
             <h2>Related Entries: 
-                {{o.allProteins|length|add:o.relatedDnaCount|add:o.as_plasmid_in_cell.count}}
+                {{o.relatedDnaCount}}
                 <a href="#" onclick="toggle_visibility('related-entries');">(Hide/Show)</a>
             </h2>
             <div id='related-entries'>
             
-                {% if o.componentType.category.name == 'Plasmid' %}
-                    <p><br></p>
-                    <ul class="object-tools">
-                        <li><a href="{% url 'admin:rotmic_cellcomponent_add'%}?plasmid={{o.pk}}">Add Cell</a></li>
-                    </ul>
-                {% endif %}
+                <!--        
                 {% if o.componentType.category.name == 'Fragment' %}
                     <p><br></p>
                     <ul class="object-tools">
-                        <li><a href="{% url 'admin:rotmic_dnacomponent_add'%}?insert={{o.pk}}">Insert in Plasmid</a></li>
                         <li><a href="{% url 'admin:rotmic_proteincomponent_add'%}?name={{o.name}}&sequence={{o.seq2aa}}&encodedBy={{o.pk}}">Translate to Protein</a></li>
                     </ul>
                 {% endif %}
-                
+                -->
                
                 {% if o.relatedDnaCount > 0 %}
                     <p>
@@ -192,88 +201,15 @@
                     </div>
                 {% endif %}
                 
-                {% if o.as_plasmid_in_cell.count > 0 %}
-                    <p>
-                        {{o.displayId}} is used within the following <b>Cells</b>:
-                    </p>
-                    <div style="margin: 10px">
-                        <table cellspacing="1">
-                
-                            <thead>
-                            <tr>
-                                <th>used as</th>
-                                <th>in</th>
-                                <th>Species</th>
-                                <th>Description</th>
-                                <th>Samples</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                {% for x in o.as_plasmid_in_cell.all %}
-                                    <tr class="{% cycle 'row1' 'row2' %}">
-                                    
-                                    <td>plasmid</td>
-                                    <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
-                                    <td>{{x.componentType}}</td>
-                                    <td>{{x.showDescription}}</td>
-                                    <td style="text-align: center;">{{x.cell_samples.count}}</td>
-    
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% endif %}
-                
-                {% if o.allProteins %}
-                    <br>
-                    <p>
-                        {{o.displayId}} <b>encodes</b> the following <b>Proteins</b> or protein fragments:
-                    </p>
-                    <div style="margin: 10px">
-                        <table cellspacing="1">
-                
-                            <thead>
-                            <tr>
-                                <th>ID (name)</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Samples</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                {% for x in o.allProteins %}
-                                    <tr class="{% cycle 'row1' 'row2' %}">
-                                    
-                                    <td><b><a href="{{x.get_absolute_url}}">{{x}}</a></b></td>
-                                    <td>{{x.componentType}}</td>
-                                    <td>{{x.showDescription}}</td>
-                                    <td style="text-align: center;">{{0}}</td>
-    
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    {% if o.componentType.category.name == 'Fragment' %}
-                        <br>
-                        <p>
-                            No <b>protein translations</b> found for this DNA fragment.
-                            You can either use the "Translate to Protein" button to create a new protein
-                            record or press "Edit" and connect this DNA to an already existing protein record
-                            with the "translates To" field within the Edit form.
-                        </p>
-                    {% endif %}
-                {% endif %}
             </div>
         </div>
+        {% endif %}
     
     {% endblock content-middle %}
 
     {% block samples %} {# replacing default sample block because we display DNA and Cell Samples#}
         <div class='module'>
-            <h2>Samples <a href="#" onclick="toggle_visibility('samples');">(Hide/Show)</a></h2>
+            <h2>Samples: {{o.allSamplesCount}} <a href="#" onclick="toggle_visibility('samples');">(Hide/Show)</a></h2>
             <div id='samples'>
                 <p><br></p>
                 <ul class="object-tools">
@@ -283,62 +219,62 @@
                     {% endif %}
                 </ul>
                 
-                {% with n=o.allSamplesCount %}
-                    {% if n > 0 %}
-                        <p>
-                            There are <b>{{n}} samples</b> (DNA or cell stock) registered for this DNA construct.<br>
-                        </p>
-                        
-                        <div style="margin: 10px">
-                            <table cellspacing="1">
-                    
-                                <thead>
-                                <tr>
-                                    <th>location</th>
-                                    <th>ID/<br>Pos.</th><th>Status</th>
-                                    <th>prepared</th><th>by</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                    <th>Sequencing</th>
-                                </tr>
-                                </thead>
-                    
-                                <tbody>
-                                {% for x in o.allSamples %}
-                                
-                                    <tr class="{% cycle 'row1' 'row2' %}">
-                                  
-                                        <td>{{x.container.showVerbose}}</td>
-                                                             
-                                        <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
-                                        
-                                        <td>{{x.showStatus}}</td>
-                                        
-                                        <td>{{x.preparedAt}}</td>
-                                        
-                                        <td>{{x.registeredBy}}</td>
-                                        
-                                        <td>{{x.showType}}</td>
-                                        
-                                        <td>{{x.description | truncateHTML:30}}</td>
+                {% if o.allSamplesCount %}
+                    <div style="margin: 10px">
+                        <table cellspacing="1">
+                
+                            <thead>
+                            <tr>
+                                <th>location</th>
+                                <th>ID/<br>Pos.</th><th>Status</th>
+                                <th>prepared</th><th>by</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Sequencing</th>
+                            </tr>
+                            </thead>
+                
+                            <tbody>
+                            {% for x in o.allSamples %}
+                            
+                                <tr class="{% cycle 'row1' 'row2' %}">
+                              
+                                    <td>{{x.container.showVerbose}}</td>
+                                                         
+                                    <td><b><a href="{{x.get_absolute_url}}">{{x.displayId}}</a></b></td>
+                                    
+                                    <td style="text-align:center">{{x.showStatus}}</td>
+                                    
+                                    <td>{{x.preparedAt}}</td>
+                                    
+                                    <td>{{x.registeredBy}}</td>
+                                    
+                                    <td style="text-align:center">
+                                        {% if x.showType == "Cell"%}
+                                            {{x.content.componentType}}
+                                        {% else %}
+                                            {{x.showType}}
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <td>{{x.description | truncateHTML:30}}</td>
 
-                                        <td>{{x.showSequencingAll}}</td>
-                                    </tr>
-                    
-                              {% endfor %}
-                              </tbody>
-                            </table>
-                            <p></p>
-                            <small>
-                                Help: Move mouse over content link to see content description. 
-                                Move mouse over sample description to see full length description.
-                            </small>
-                        </div>
-                    
-                    {% else %}
-                        <p>There are no samples registered for this DNA construct.</p>
-                    {% endif %}
-                {% endwith %}
+                                    <td>{{x.showSequencingAll}}</td>
+                                </tr>
+                
+                          {% endfor %}
+                          </tbody>
+                        </table>
+                        <p></p>
+                        <small>
+                            Help: Move mouse over content link to see content description. 
+                            Move mouse over sample description to see full length description.
+                        </small>
+                    </div>
+                
+                {% else %}
+                    <p>There are no samples registered for this DNA construct.</p>
+                {% endif %}
             </div>
         </div>
     

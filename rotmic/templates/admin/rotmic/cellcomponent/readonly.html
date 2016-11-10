@@ -59,7 +59,7 @@
             </div>
 
             {% if o.plasmid %}
-                {% with plasmid=o.plasmid insert=o.plasmid.insert vector=o.plasmid.vectorBackbone %}
+                {% with plasmid=o.plasmid vector=o.plasmid.vectorBackbone %}
             
                     <div style="width: 100%; height: 1px;background: lightgrey; text-align: center;">
                         <h4>Plasmid <a href="{{plasmid.get_absolute_url}}">{{plasmid}}</a></h4>
@@ -70,21 +70,11 @@
                         <table style="margin: 10px auto;">
                             <tr>
                                 <th></th>
-                                <td style="text-align: center; font-weight:bold">Insert</td> <td></td> 
                                 <td style="text-align: center; font-weight:bold">Vector</td> <td></td> 
                                 <td style="text-align: center; font-weight:bold">Markers</td>
                             </tr>
                             <tr>
                                 <td></td>
-                                <td style="text-align: center;">
-                                    {% if insert %}
-                                        <a href="{{insert.get_absolute_url}}" title="{{insert.description}}">
-                                            {{insert.displayId}}</a> -- {{insert.name}}<br>
-                                            <dfn>[{{insert.componentType.name}}]</dfn>
-                                    {% else %}
-                                        No insert found.
-                                    {% endif %}
-                                </td><td></td>
                                 <td style="text-align: center;">
                                     {% if vector %}
                                         <a href="{{vector.get_absolute_url}}" title="{{vector.description}}">

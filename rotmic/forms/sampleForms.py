@@ -187,17 +187,28 @@ class DnaSampleForm( SampleForm ):
 
 
 class CellSampleForm( SampleForm ):
-    """Customized Form for CellSample add / change"""
+    """
+    Customized Form for CellSample add / change
     
-    cellCategory = forms.ModelChoiceField(label='In Species',
-                            queryset=M.CellComponentType.objects.filter(subTypeOf=None),
-                            required=False, 
-                            empty_label=None,
-                            initial=T.ccEcoli)
+    Note:
+    until v1.1.0, this form allowed to select either an existing cell record
+    directly or to specifiy plasmid + strain and have the cell record created
+    or linked in the background.
+    
+    The option to select cell records directly has been removed -- all the 
+    relevant code is merely commented out (see also sampleAdmin) so that it 
+    can be activated again if needed.
+    """
+    
+##    cellCategory = forms.ModelChoiceField(label='In Species',
+##                            queryset=M.CellComponentType.objects.filter(subTypeOf=None),
+##                            required=False, 
+##                            empty_label=None,
+##                            initial=T.ccEcoli)
     
     cellType = forms.ModelChoiceField(label='Strain',
                             queryset=M.CellComponentType.objects.exclude(subTypeOf=None),
-                            required=False,
+                            required=True,  ## note change to False, if cell field is re-activated
                             empty_label=None,
                             initial=T.ccMach1)
     
@@ -214,11 +225,16 @@ class CellSampleForm( SampleForm ):
         super(CellSampleForm, self).__init__(*args, **kwargs)
 
         ## keep constraint on DB level but allow user to specify via plasmid+type
-        self.fields['cell'].required = False
+        f = self.fields['cell']
+        f.required = False
+        
+        ## hide the cell field from the form to reduce complexity
+        f.widget = forms.HiddenInput()
+        f.label = f.help_text = ''
 
         o = kwargs.get('instance', None)
         if o:
-            self.fields['cellCategory'].initial = o.cell.componentType.category()
+##            self.fields['cellCategory'].initial = o.cell.componentType.category()
             self.fields['cellType'].initial = o.cell.componentType
             self.fields['plasmid'].initial = o.cell.plasmid
 
@@ -232,63 +248,64 @@ class CellSampleForm( SampleForm ):
         plasmid = data.get('plasmid', None)
         ctype = data.get('cellType', None)
         
-        if not cell and not (plasmid and ctype):
-            msg = u'Please specify either an existing cell or a plasmid and strain.'
-            self._errors['cell'] = self.error_class([msg])
-            try: 
-                del data['cell'] ## needed to really stop form saving
-            except: 
-                pass
+##        if not cell and not (ctype):
+##            msg = u'Please specify plasmid and strain or, at least, a strain (i.e. for competent cells w/o plasmid).'
+##            self._errors['cell'] = self.error_class([msg])
+##            try: 
+##                del data['cell'] ## needed to really stop form saving
+##            except: 
+##                pass
+##            
+##        elif plasmid and cell:
+##            if plasmid != cell.plasmid:
+##                msg = u'Given plasmid does not match selected cell record. Remove one or the other.'
+##                self._errors['plasmid'] = self.error_class([msg])
+##                del data['plasmid']
+##            if ctype != cell.componentType:
+##                msg = u'Given strain does not match selected cell record. Clear either plasmid or cell selection.'
+##                self._errors['cellType'] = self.error_class([msg])
+##                del data['cellType']
+##            
+##        if (not cell) and ctype:
             
-        elif plasmid and cell:
-            if plasmid != cell.plasmid:
-                msg = u'Given plasmid does not match selected cell record. Remove one or the other.'
-                self._errors['plasmid'] = self.error_class([msg])
-                del data['plasmid']
-            if ctype != cell.componentType:
-                msg = u'Given strain does not match selected cell record. Clear either plasmid or cell selection.'
-                self._errors['cellType'] = self.error_class([msg])
-                del data['cellType']
+        existing = M.CellComponent.objects.filter(plasmid=plasmid,
+                                                componentType=ctype)
+        if existing.count():
+            data['cell'] = existing.all()[0]
+            messages.success(self.request, 
+                             'Attached existing cell record %s (%s) to sample.'\
+                             % (data['cell'].displayId, data['cell'].name))
+        
+        else:
+            plasmidname = plasmid.name if plasmid else ''
+            newcell = M.CellComponent(componentType=ctype,
+                                    plasmid=plasmid,
+                                    displayId=M.CellComponent.nextAvailableId(self.request.user),
+                                    registeredBy = self.request.user,
+                                    registeredAt = datetime.datetime.now(),
+                                    name = plasmidname + '@' + ctype.name,
+                                    )
+            newcell.save()
+            ## Many2Many relationships can only be created after save
+            newcell.authors = [self.request.user]
+            newcell.projects = plasmid.projects.all() if plasmid else []
+            newcell.save()
             
-        if (not cell) and plasmid:
-            
-            existing = M.CellComponent.objects.filter(plasmid=plasmid,
-                                                    componentType=ctype)
-            if existing.count():
-                data['cell'] = existing.all()[0]
-                messages.success(self.request, 
-                                 'Attached existing cell record %s (%s) to sample.'\
-                                 % (data['cell'].displayId, data['cell'].name))
-            
-            else:
-                newcell = M.CellComponent(componentType=ctype,
-                                        plasmid=plasmid,
-                                        displayId=M.CellComponent.nextAvailableId(self.request.user),
-                                        registeredBy = self.request.user,
-                                        registeredAt = datetime.datetime.now(),
-                                        name = plasmid.name + '@' + ctype.name,
-                                        )
-                newcell.save()
-                ## Many2Many relationships can only be created after save
-                newcell.authors = [self.request.user]
-                newcell.projects = plasmid.projects.all()
-                newcell.save()
-                
-                data['cell'] = newcell
-                messages.success(self.request,
-                                 'Created new cell record %s (%s)' %\
-                                 (newcell.displayId, newcell.name))
+            data['cell'] = newcell
+            messages.success(self.request,
+                             'Created new cell record %s (%s)' %\
+                             (newcell.displayId, newcell.name))
 
         return data
     
     
     class Meta:
         model = M.CellSample
-        widgets = getSampleWidgets( \
-            {'cell': sforms.AutoComboboxSelectWidget(lookup_class=L.SampleCellLookup,
-                                                    allow_new=False,
-                                                    attrs={'size':35}),
-             })
+        widgets = getSampleWidgets()
+##            {'cell': sforms.AutoComboboxSelectWidget(lookup_class=L.SampleCellLookup,
+##                                                    allow_new=False,
+##                                                    attrs={'size':35}),
+##             })
 
         
 class OligoSampleForm( SampleForm ):

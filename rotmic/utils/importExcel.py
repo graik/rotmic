@@ -354,12 +354,12 @@ class ImportXlsComponent( ImportXls ):
     typeClass = M.ComponentType  ## abstract base class
 
     def generateName(self, d):
-        """If missing, compose name from insert and vectorbackbone"""
+        """If missing, compose name from vectorbackbone"""
         ## automatically create name
         try:
             pass
         except Exception as e:
-            d['errors']['name'] = [u'Error generating name from insert and vector: '+unicode(e)]
+            d['errors']['name'] = [u'Error generating name: '+unicode(e)]
         
 
     def correctStatus(self, d):
@@ -436,8 +436,7 @@ class ImportXlsDna( ImportXlsComponent ):
     
     # lookup instructions for fields (default model=DnaComponent,
     # targetfield=displayId)
-    xls2foreignkey = [ { 'field' : 'insert' },
-                       { 'field' : 'vectorBackbone', 
+    xls2foreignkey = [ { 'field' : 'vectorBackbone', 
                          'targetfield2' : 'name'},
                        { 'field' : 'componentType', 'model' : M.DnaComponentType,
                          'targetfield' : 'name'},
@@ -452,20 +451,6 @@ class ImportXlsDna( ImportXlsComponent ):
                        'targetfield2' : 'name' } 
                      ]
 
-    def generateName(self, d):
-        """If missing, compose name from insert and vectorbackbone"""
-        ## automatically create name
-        try:
-            if not d.get('name', '') and d.get('vectorBackbone','') and d.get('insert',''):
-                vector = M.DnaComponent.objects.get( id=d['vectorBackbone'])
-                insert = M.DnaComponent.objects.get( id=d['insert'])
-                
-                d['name'] = insert.name + '_' + vector.name
-
-        except Exception as e:
-            d['errors']['name'] = [u'Error generating name from insert and vector: '+unicode(e)]
-
-        
 
 class ImportXlsCell( ImportXlsComponent ):
     """Modifed cell import"""

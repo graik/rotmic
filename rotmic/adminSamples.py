@@ -273,12 +273,14 @@ class CellSampleAdmin( reversion.VersionAdmin, SampleAdmin ):
                     ))
             } ),
          ('Content', {
-             'fields' : ((('cell',),
-                          ('plasmid', 'cellCategory', 'cellType'),
+             'fields' : ((
+                          ('cell',),
+                          ('plasmid', 'cellType'),
+##                          ('plasmid', 'cellCategory', 'cellType'),
                           ('amount','amountUnit',),
                           ('solvent','aliquotNr',),
                         )),
-             'description': 'Select an <b>existing</b> Cell record <b>or</b> create a <b>new Cell</b> record on the fly from plasmid + strain below.'
+             ## 'description': 'Select an existing Cell record <b>or</b> specify plasmid + strain below.' ## cell field hidden in form
          }
         ), 
     ]
