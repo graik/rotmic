@@ -193,6 +193,13 @@ this trace.
         if searchfrags in sdic:
             return sdic[searchfrags]
         
+        ## look harder; now also check internal occurences of ID(s)
+        for i in range(0,len(frags)-n_fields+1):
+            if i < len(frags):
+                searchfrags = tuple(frags[i:i+n_fields]) ## any 1 or 2 fragments
+                if searchfrags in sdic:
+                    return sdic[searchfrags]
+        
         self.add_error('files',\
             'Cannot match %s to any of the samples.' % fname +\
             'No sample can be identified by %s.' % ' + '.join(searchfrags) )
