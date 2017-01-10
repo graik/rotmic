@@ -140,6 +140,12 @@ once you have familiarized yourself with the permission and group management.
 Setup for development <a name="devsetup"></a>
 ----------------------
 
+The default setup from PIP assumes you already have the following installed:
+  * Python 2.7
+  * virtualEnv (Ubuntu/Debian: python-virtualenv)
+  * Postgresql development (Ubuntu/Debian: libpq-dev; Redhat/CentOS: postgresql-devel; Cygwin: libpq-devel)
+     ** Note: you can use any other Django-supported database backend but the default configuration is for postgresql
+
 Download / Checkout the rotmic project into a new folder, create a python
 virtual environment and install all the required third-party dependencies:
 ```shell
